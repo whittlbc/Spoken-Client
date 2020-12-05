@@ -7,20 +7,18 @@
 //
 
 import Cocoa
+ 
+class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
 
-@NSApplicationMain
-class AppDelegate: NSObject, NSApplicationDelegate {
-
-
-
-    func applicationDidFinishLaunching(_ aNotification: Notification) {
-        // Insert code here to initialize your application
+    let windowControllerManager = WindowControllerManager()
+    
+    func applicationDidFinishLaunching(_ notification: Notification) {
+        showSidebarWindow(self)
     }
-
-    func applicationWillTerminate(_ aNotification: Notification) {
-        // Insert code here to tear down your application
+    
+    @objc func showSidebarWindow(_ sender: Any?) {
+        let sidebarWindow = windowControllerManager.newSidebarWindow()
+        sidebarWindow.showWindow(self)
+        sidebarWindow.addChildWindows()
     }
-
-
 }
-

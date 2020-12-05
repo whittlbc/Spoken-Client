@@ -8,19 +8,41 @@
 
 /* Begin PBXBuildFile section */
 		0990879525797561001660D1 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0990879425797561001660D1 /* AppDelegate.swift */; };
-		0990879725797561001660D1 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0990879625797561001660D1 /* ViewController.swift */; };
 		0990879925797563001660D1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0990879825797563001660D1 /* Assets.xcassets */; };
-		0990879C25797563001660D1 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0990879A25797563001660D1 /* Main.storyboard */; };
+		099087A625797645001660D1 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 099087A525797645001660D1 /* main.swift */; };
+		099087A8257976BF001660D1 /* WindowControllerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 099087A7257976BF001660D1 /* WindowControllerManager.swift */; };
+		099087BD25799BC2001660D1 /* Screen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 099087BC25799BC2001660D1 /* Screen.swift */; };
+		0995DDFC257AED6400DAA334 /* FloatingWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0995DDFB257AED6400DAA334 /* FloatingWindow.swift */; };
+		0995DDFF257AEDE000DAA334 /* SidebarWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0995DDFE257AEDE000DAA334 /* SidebarWindow.swift */; };
+		0995DE01257AEDEC00DAA334 /* SidebarWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0995DE00257AEDEC00DAA334 /* SidebarWindowController.swift */; };
+		0995DE04257AEFDA00DAA334 /* TeamMemberGroupWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0995DE03257AEFDA00DAA334 /* TeamMemberGroupWindow.swift */; };
+		0995DE07257AF49500DAA334 /* TeamMemberWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0995DE06257AF49500DAA334 /* TeamMemberWindow.swift */; };
+		0995DE0A257AF91400DAA334 /* TeamMemberViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0995DE09257AF91400DAA334 /* TeamMemberViewController.swift */; };
+		0995DE0C257AF98D00DAA334 /* TeamMemberView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0995DE0B257AF98D00DAA334 /* TeamMemberView.swift */; };
+		0995DE0E257B0AE500DAA334 /* TeamMemberAvatarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0995DE0D257B0AE500DAA334 /* TeamMemberAvatarView.swift */; };
+		0995DE10257B315200DAA334 /* RoundedShadowImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0995DE0F257B315200DAA334 /* RoundedShadowImageView.swift */; };
+		0995DE13257B388500DAA334 /* NSBezierPathExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0995DE12257B388500DAA334 /* NSBezierPathExt.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		0990879125797561001660D1 /* Chat.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Chat.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0990879425797561001660D1 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		0990879625797561001660D1 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		0990879825797563001660D1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		0990879B25797563001660D1 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		0990879D25797563001660D1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		0990879E25797563001660D1 /* Chat.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Chat.entitlements; sourceTree = "<group>"; };
+		099087A525797645001660D1 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
+		099087A7257976BF001660D1 /* WindowControllerManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowControllerManager.swift; sourceTree = "<group>"; };
+		099087BC25799BC2001660D1 /* Screen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Screen.swift; sourceTree = "<group>"; };
+		0995DDFB257AED6400DAA334 /* FloatingWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingWindow.swift; sourceTree = "<group>"; };
+		0995DDFE257AEDE000DAA334 /* SidebarWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarWindow.swift; sourceTree = "<group>"; };
+		0995DE00257AEDEC00DAA334 /* SidebarWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarWindowController.swift; sourceTree = "<group>"; };
+		0995DE03257AEFDA00DAA334 /* TeamMemberGroupWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamMemberGroupWindow.swift; sourceTree = "<group>"; };
+		0995DE06257AF49500DAA334 /* TeamMemberWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamMemberWindow.swift; sourceTree = "<group>"; };
+		0995DE09257AF91400DAA334 /* TeamMemberViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamMemberViewController.swift; sourceTree = "<group>"; };
+		0995DE0B257AF98D00DAA334 /* TeamMemberView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamMemberView.swift; sourceTree = "<group>"; };
+		0995DE0D257B0AE500DAA334 /* TeamMemberAvatarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamMemberAvatarView.swift; sourceTree = "<group>"; };
+		0995DE0F257B315200DAA334 /* RoundedShadowImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundedShadowImageView.swift; sourceTree = "<group>"; };
+		0995DE12257B388500DAA334 /* NSBezierPathExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NSBezierPathExt.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -53,14 +75,89 @@
 		0990879325797561001660D1 /* Chat */ = {
 			isa = PBXGroup;
 			children = (
+				099087A525797645001660D1 /* main.swift */,
 				0990879425797561001660D1 /* AppDelegate.swift */,
-				0990879625797561001660D1 /* ViewController.swift */,
+				099087A7257976BF001660D1 /* WindowControllerManager.swift */,
+				0995DDFD257AED9D00DAA334 /* SidebarWindow */,
+				0995DE02257AEFC700DAA334 /* TeamMemberGroupWindow */,
+				0995DE05257AF48800DAA334 /* TeamMemberWindow */,
+				0995DE08257AF90800DAA334 /* TeamMemberView */,
+				0995DDFA257AECC900DAA334 /* Shared */,
+				099087BB25799BA2001660D1 /* Utils */,
+				0995DE11257B386200DAA334 /* Extensions */,
+				099087B325797C69001660D1 /* Supporting Files */,
 				0990879825797563001660D1 /* Assets.xcassets */,
-				0990879A25797563001660D1 /* Main.storyboard */,
-				0990879D25797563001660D1 /* Info.plist */,
-				0990879E25797563001660D1 /* Chat.entitlements */,
 			);
 			path = Chat;
+			sourceTree = "<group>";
+		};
+		099087B325797C69001660D1 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				0990879E25797563001660D1 /* Chat.entitlements */,
+				0990879D25797563001660D1 /* Info.plist */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		099087BB25799BA2001660D1 /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				099087BC25799BC2001660D1 /* Screen.swift */,
+			);
+			path = Utils;
+			sourceTree = "<group>";
+		};
+		0995DDFA257AECC900DAA334 /* Shared */ = {
+			isa = PBXGroup;
+			children = (
+				0995DDFB257AED6400DAA334 /* FloatingWindow.swift */,
+				0995DE0F257B315200DAA334 /* RoundedShadowImageView.swift */,
+			);
+			path = Shared;
+			sourceTree = "<group>";
+		};
+		0995DDFD257AED9D00DAA334 /* SidebarWindow */ = {
+			isa = PBXGroup;
+			children = (
+				0995DDFE257AEDE000DAA334 /* SidebarWindow.swift */,
+				0995DE00257AEDEC00DAA334 /* SidebarWindowController.swift */,
+			);
+			path = SidebarWindow;
+			sourceTree = "<group>";
+		};
+		0995DE02257AEFC700DAA334 /* TeamMemberGroupWindow */ = {
+			isa = PBXGroup;
+			children = (
+				0995DE03257AEFDA00DAA334 /* TeamMemberGroupWindow.swift */,
+			);
+			path = TeamMemberGroupWindow;
+			sourceTree = "<group>";
+		};
+		0995DE05257AF48800DAA334 /* TeamMemberWindow */ = {
+			isa = PBXGroup;
+			children = (
+				0995DE06257AF49500DAA334 /* TeamMemberWindow.swift */,
+			);
+			path = TeamMemberWindow;
+			sourceTree = "<group>";
+		};
+		0995DE08257AF90800DAA334 /* TeamMemberView */ = {
+			isa = PBXGroup;
+			children = (
+				0995DE09257AF91400DAA334 /* TeamMemberViewController.swift */,
+				0995DE0B257AF98D00DAA334 /* TeamMemberView.swift */,
+				0995DE0D257B0AE500DAA334 /* TeamMemberAvatarView.swift */,
+			);
+			path = TeamMemberView;
+			sourceTree = "<group>";
+		};
+		0995DE11257B386200DAA334 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				0995DE12257B388500DAA334 /* NSBezierPathExt.swift */,
+			);
+			name = Extensions;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -122,7 +219,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				0990879925797563001660D1 /* Assets.xcassets in Resources */,
-				0990879C25797563001660D1 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -133,23 +229,24 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0990879725797561001660D1 /* ViewController.swift in Sources */,
+				099087BD25799BC2001660D1 /* Screen.swift in Sources */,
+				0995DE04257AEFDA00DAA334 /* TeamMemberGroupWindow.swift in Sources */,
 				0990879525797561001660D1 /* AppDelegate.swift in Sources */,
+				0995DE07257AF49500DAA334 /* TeamMemberWindow.swift in Sources */,
+				0995DE0A257AF91400DAA334 /* TeamMemberViewController.swift in Sources */,
+				0995DE01257AEDEC00DAA334 /* SidebarWindowController.swift in Sources */,
+				0995DDFF257AEDE000DAA334 /* SidebarWindow.swift in Sources */,
+				099087A625797645001660D1 /* main.swift in Sources */,
+				0995DE13257B388500DAA334 /* NSBezierPathExt.swift in Sources */,
+				0995DDFC257AED6400DAA334 /* FloatingWindow.swift in Sources */,
+				0995DE10257B315200DAA334 /* RoundedShadowImageView.swift in Sources */,
+				0995DE0C257AF98D00DAA334 /* TeamMemberView.swift in Sources */,
+				0995DE0E257B0AE500DAA334 /* TeamMemberAvatarView.swift in Sources */,
+				099087A8257976BF001660D1 /* WindowControllerManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXVariantGroup section */
-		0990879A25797563001660D1 /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				0990879B25797563001660D1 /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
-/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		0990879F25797563001660D1 /* Debug */ = {
