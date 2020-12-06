@@ -9,9 +9,9 @@
 import Cocoa
 
 class TeamMemberViewController: NSViewController {
-    
+
     public var teamMember:NSDictionary = [:]
-    
+
     override func loadView() {
         view = TeamMemberView(
             frame: NSRect(x: 0, y: 0, width: TeamMemberView.width, height: TeamMemberView.height),

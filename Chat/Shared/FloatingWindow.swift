@@ -24,10 +24,15 @@ class FloatingWindow: NSPanel {
         styleMask.insert(.nonactivatingPanel)
         styleMask.insert(.borderless)
         styleMask.remove(.titled)
+        styleMask.remove(.resizable)
         toolbar = nil
     }
  
     override var canBecomeMain: Bool {
+        true
+    }
+    
+    override var canBecomeKey: Bool {
         true
     }
     

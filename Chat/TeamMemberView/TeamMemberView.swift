@@ -14,9 +14,15 @@ class TeamMemberView: NSView {
     
     static let height = 32
     
-    var teamMember:NSDictionary
+    var teamMember: NSDictionary
+
+    override var acceptsFirstResponder: Bool {
+        return true
+    }
     
-    override var acceptsFirstResponder: Bool { return true }
+    override func acceptsFirstMouse(for event: NSEvent?) -> Bool {
+        return true
+    }
     
     required init(frame frameRect: NSRect, teamMember: NSDictionary) {
         self.teamMember = teamMember
@@ -38,7 +44,7 @@ class TeamMemberView: NSView {
         let yOrigin = (TeamMemberView.height - avatarDiameter) / 2
         let avatar = teamMember["avatar"] as! String
         let avatarImage = NSImage(byReferencing: NSURL(string: avatar)! as URL)
-        
+
         let subview = TeamMemberAvatarView(
             frame: NSRect(x: xOrigin, y: yOrigin, width: avatarDiameter, height: avatarDiameter),
             image: avatarImage,
@@ -47,7 +53,24 @@ class TeamMemberView: NSView {
             shadowColor: CGColor.black,
             shadowOpacity: 0.9
         )
-        
+
         addSubview(subview)
+    }
+
+    override func updateTrackingAreas() {
+        super.updateTrackingAreas()
+
+        for trackingArea in self.trackingAreas {
+            self.removeTrackingArea(trackingArea)
+        }
+
+        let options: NSTrackingArea.Options = [.mouseEnteredAndExited, .activeAlways]
+        let trackingArea = NSTrackingArea(rect: bounds, options: options, owner: self, userInfo: nil)
+
+        addTrackingArea(trackingArea)
+    }
+    
+    override func mouseDown(with event: NSEvent) {
+        print("DOWN")
     }
 }

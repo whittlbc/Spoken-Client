@@ -18,7 +18,6 @@ class RoundedShadowImageView: NSView {
 
         let cornerRadius = frame.width / 2
         self.layer?.cornerRadius = cornerRadius
-        self.layer?.backgroundColor = CGColor.white
         
         self.shadow = NSShadow()
         self.layer?.shadowOffset = shadowOffset

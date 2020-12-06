@@ -36,6 +36,7 @@ class TeamMemberGroupWindow: FloatingWindow {
         teamMemberController.teamMember = teamMember
         
         let teamMemberWindow = TeamMemberWindow(contentViewController: teamMemberController)
+        teamMemberWindow.bind(.title, to: teamMemberController, withKeyPath: "title", options: nil)
 
         teamMemberWindow.setFrameOrigin(NSPoint(
             x: CGFloat(Int(frame.origin.x) + SidebarWindow.width - TeamMemberWindow.offsetRight - TeamMemberView.width),
@@ -43,5 +44,7 @@ class TeamMemberGroupWindow: FloatingWindow {
         ))
         
         addChildWindow(teamMemberWindow, ordered: NSWindow.OrderingMode.above)
+        
+        teamMemberWindow.makeFirstResponder(teamMemberController.view)
     }
 }

@@ -38,7 +38,7 @@ class SidebarWindowController: NSWindowController, NSWindowDelegate {
         // Add active team member group window
         addActiveTeamMembersGroupWindow()
     }
-    
+
     func addActiveTeamMembersGroupWindow() {
         let win = window!
         let teamMembersGroupWindow = TeamMemberGroupWindow()
