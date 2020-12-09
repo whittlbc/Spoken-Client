@@ -22,7 +22,7 @@
 		0995DE0E257B0AE500DAA334 /* TeamMemberAvatarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0995DE0D257B0AE500DAA334 /* TeamMemberAvatarView.swift */; };
 		0995DE10257B315200DAA334 /* RoundedShadowImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0995DE0F257B315200DAA334 /* RoundedShadowImageView.swift */; };
 		0995DE13257B388500DAA334 /* NSBezierPathExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0995DE12257B388500DAA334 /* NSBezierPathExtension.swift */; };
-		0995DE1F25816AAB00DAA334 /* Env.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0995DE1E25816AAB00DAA334 /* Env.swift */; };
+		0995DE2125816B5E00DAA334 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0995DE2025816B5E00DAA334 /* Config.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -44,7 +44,9 @@
 		0995DE0D257B0AE500DAA334 /* TeamMemberAvatarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamMemberAvatarView.swift; sourceTree = "<group>"; };
 		0995DE0F257B315200DAA334 /* RoundedShadowImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundedShadowImageView.swift; sourceTree = "<group>"; };
 		0995DE12257B388500DAA334 /* NSBezierPathExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NSBezierPathExtension.swift; sourceTree = "<group>"; };
-		0995DE1E25816AAB00DAA334 /* Env.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Env.swift; sourceTree = "<group>"; };
+		0995DE2025816B5E00DAA334 /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
+		0995DE27258175AB00DAA334 /* Development.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Development.xcconfig; sourceTree = "<group>"; };
+		0995DE28258175C300DAA334 /* Production.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Production.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -86,6 +88,7 @@
 				0995DE1D2581698300DAA334 /* Networking */,
 				099087BB25799BA2001660D1 /* Utilities */,
 				0995DE1C2581695A00DAA334 /* Extensions */,
+				0995DE262581758200DAA334 /* Configs */,
 				099087B325797C69001660D1 /* Supporting Files */,
 				0990879825797563001660D1 /* Assets.xcassets */,
 			);
@@ -105,7 +108,7 @@
 			isa = PBXGroup;
 			children = (
 				099087BC25799BC2001660D1 /* Screen.swift */,
-				0995DE1E25816AAB00DAA334 /* Env.swift */,
+				0995DE2025816B5E00DAA334 /* Config.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -195,6 +198,15 @@
 			path = Networking;
 			sourceTree = "<group>";
 		};
+		0995DE262581758200DAA334 /* Configs */ = {
+			isa = PBXGroup;
+			children = (
+				0995DE27258175AB00DAA334 /* Development.xcconfig */,
+				0995DE28258175C300DAA334 /* Production.xcconfig */,
+			);
+			path = Configs;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -264,7 +276,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0995DE1F25816AAB00DAA334 /* Env.swift in Sources */,
 				099087BD25799BC2001660D1 /* Screen.swift in Sources */,
 				0995DE04257AEFDA00DAA334 /* TeamMemberGroupWindow.swift in Sources */,
 				0990879525797561001660D1 /* AppDelegate.swift in Sources */,
@@ -277,6 +288,7 @@
 				0995DDFC257AED6400DAA334 /* FloatingWindow.swift in Sources */,
 				0995DE10257B315200DAA334 /* RoundedShadowImageView.swift in Sources */,
 				0995DE0C257AF98D00DAA334 /* TeamMemberView.swift in Sources */,
+				0995DE2125816B5E00DAA334 /* Config.swift in Sources */,
 				0995DE0E257B0AE500DAA334 /* TeamMemberAvatarView.swift in Sources */,
 				099087A8257976BF001660D1 /* WindowControllerManager.swift in Sources */,
 			);
@@ -285,8 +297,9 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
-		0990879F25797563001660D1 /* Debug */ = {
+		0990879F25797563001660D1 /* Debug (Development) */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 0995DE27258175AB00DAA334 /* Development.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -343,10 +356,11 @@
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
-			name = Debug;
+			name = "Debug (Development)";
 		};
-		099087A025797563001660D1 /* Release */ = {
+		099087A025797563001660D1 /* Release (Development) */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 0995DE27258175AB00DAA334 /* Development.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -396,10 +410,11 @@
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 			};
-			name = Release;
+			name = "Release (Development)";
 		};
-		099087A225797563001660D1 /* Debug */ = {
+		099087A225797563001660D1 /* Debug (Development) */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 0995DE27258175AB00DAA334 /* Development.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Chat/Chat.entitlements;
@@ -414,10 +429,11 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 			};
-			name = Debug;
+			name = "Debug (Development)";
 		};
-		099087A325797563001660D1 /* Release */ = {
+		099087A325797563001660D1 /* Release (Development) */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 0995DE27258175AB00DAA334 /* Development.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Chat/Chat.entitlements;
@@ -432,7 +448,160 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 			};
-			name = Release;
+			name = "Release (Development)";
+		};
+		0995DE222581737700DAA334 /* Debug (Production) */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 0995DE28258175C300DAA334 /* Production.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = "Debug (Production)";
+		};
+		0995DE232581737700DAA334 /* Debug (Production) */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 0995DE28258175C300DAA334 /* Production.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Chat/Chat.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = Chat/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.benWhittle.Chat;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+			};
+			name = "Debug (Production)";
+		};
+		0995DE24258173B700DAA334 /* Release (Production) */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 0995DE28258175C300DAA334 /* Production.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+			};
+			name = "Release (Production)";
+		};
+		0995DE25258173B700DAA334 /* Release (Production) */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 0995DE28258175C300DAA334 /* Production.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Chat/Chat.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = Chat/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.benWhittle.Chat;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+			};
+			name = "Release (Production)";
 		};
 /* End XCBuildConfiguration section */
 
@@ -440,20 +609,24 @@
 		0990878C25797561001660D1 /* Build configuration list for PBXProject "Chat" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				0990879F25797563001660D1 /* Debug */,
-				099087A025797563001660D1 /* Release */,
+				0990879F25797563001660D1 /* Debug (Development) */,
+				0995DE222581737700DAA334 /* Debug (Production) */,
+				099087A025797563001660D1 /* Release (Development) */,
+				0995DE24258173B700DAA334 /* Release (Production) */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = "Release (Production)";
 		};
 		099087A125797563001660D1 /* Build configuration list for PBXNativeTarget "Chat" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				099087A225797563001660D1 /* Debug */,
-				099087A325797563001660D1 /* Release */,
+				099087A225797563001660D1 /* Debug (Development) */,
+				0995DE232581737700DAA334 /* Debug (Production) */,
+				099087A325797563001660D1 /* Release (Development) */,
+				0995DE25258173B700DAA334 /* Release (Production) */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = "Release (Production)";
 		};
 /* End XCConfigurationList section */
 	};
