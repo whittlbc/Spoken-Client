@@ -15,6 +15,8 @@ public enum Config {
     enum Keys {
         static let env = "ENV"
         static let apiURL = "API_URL"
+        static let appName = "APP_NAME"
+        static let appBundleID = "APP_BUNDLE_ID"
     }
 
     // App environment options
@@ -31,12 +33,19 @@ public enum Config {
         return dict
     }()
     
+    // Get a required environment variable of string type.
+    private static func getRequiredStringEnvVar(forKey key: String) -> String {
+        guard let envVar = Config.infoDict[key] as? String else {
+            fatalError("\(key) not set in plist for this environment.")
+        }
+        
+        return envVar
+    }
+        
     // Current app environment
     static let env: Env = {
         // Get "ENV" environment variable string from plist dict.
-        guard let environment = Config.infoDict[Keys.env] as? String else {
-            fatalError(Config.notSetMessage(Keys.env))
-        }
+        let environment = Config.getRequiredStringEnvVar(forKey: Keys.env)
         
         // Get the proper Env enum for this environment variable
         guard let env = Env(rawValue: environment) else {
@@ -47,15 +56,11 @@ public enum Config {
     }()
 
     // Base URL for API interactions.
-    static let apiURL: String = {
-        guard let apiURL = Config.infoDict[Keys.env] as? String else {
-            fatalError(Config.notSetMessage(Keys.env))
-        }
-        
-        return apiURL
-    }()
+    static let apiURL = Config.getRequiredStringEnvVar(forKey: Keys.apiURL)
     
-    private static func notSetMessage(_ envVarName: String) -> String {
-        return "\(envVarName) not set in plist for this environment."
-    }
+    // App name.
+    static let appName = Config.getRequiredStringEnvVar(forKey: Keys.appName)
+    
+    // App bundle identifier.
+    static let appBundleID = Config.getRequiredStringEnvVar(forKey: Keys.appBundleID)
 }

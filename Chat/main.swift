@@ -10,8 +10,15 @@ import Cocoa
 
 autoreleasepool {
     withExtendedLifetime(AppDelegate()) { delegate in
+        // Get shared application.
         let app = NSApplication.shared
+        
+        // Set delegate to AppDelegate.
         app.delegate = delegate
+        
+        logger.info("Launching app...")
+        
+        // Start the app.
         app.run()
     }
 }

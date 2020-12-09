@@ -14,7 +14,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     
     func applicationDidFinishLaunching(_ notification: Notification) {
         showSidebarWindow(self)
-        print(Config.env)
     }
     
     @objc func showSidebarWindow(_ sender: Any?) {
