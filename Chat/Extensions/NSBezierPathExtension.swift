@@ -35,6 +35,8 @@ extension NSBezierPath {
                 case .closePath:
                     path.closeSubpath()
                     didClosePath = true
+                default:
+                    continue
                 }
             }
             

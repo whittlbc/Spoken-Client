@@ -21,7 +21,8 @@
 		0995DE0C257AF98D00DAA334 /* TeamMemberView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0995DE0B257AF98D00DAA334 /* TeamMemberView.swift */; };
 		0995DE0E257B0AE500DAA334 /* TeamMemberAvatarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0995DE0D257B0AE500DAA334 /* TeamMemberAvatarView.swift */; };
 		0995DE10257B315200DAA334 /* RoundedShadowImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0995DE0F257B315200DAA334 /* RoundedShadowImageView.swift */; };
-		0995DE13257B388500DAA334 /* NSBezierPathExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0995DE12257B388500DAA334 /* NSBezierPathExt.swift */; };
+		0995DE13257B388500DAA334 /* NSBezierPathExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0995DE12257B388500DAA334 /* NSBezierPathExtension.swift */; };
+		0995DE1F25816AAB00DAA334 /* Env.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0995DE1E25816AAB00DAA334 /* Env.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -42,7 +43,8 @@
 		0995DE0B257AF98D00DAA334 /* TeamMemberView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamMemberView.swift; sourceTree = "<group>"; };
 		0995DE0D257B0AE500DAA334 /* TeamMemberAvatarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamMemberAvatarView.swift; sourceTree = "<group>"; };
 		0995DE0F257B315200DAA334 /* RoundedShadowImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundedShadowImageView.swift; sourceTree = "<group>"; };
-		0995DE12257B388500DAA334 /* NSBezierPathExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NSBezierPathExt.swift; sourceTree = "<group>"; };
+		0995DE12257B388500DAA334 /* NSBezierPathExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NSBezierPathExtension.swift; sourceTree = "<group>"; };
+		0995DE1E25816AAB00DAA334 /* Env.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Env.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -77,14 +79,13 @@
 			children = (
 				099087A525797645001660D1 /* main.swift */,
 				0990879425797561001660D1 /* AppDelegate.swift */,
-				099087A7257976BF001660D1 /* WindowControllerManager.swift */,
-				0995DDFD257AED9D00DAA334 /* SidebarWindow */,
-				0995DE02257AEFC700DAA334 /* TeamMemberGroupWindow */,
-				0995DE05257AF48800DAA334 /* TeamMemberWindow */,
-				0995DE08257AF90800DAA334 /* TeamMemberView */,
-				0995DDFA257AECC900DAA334 /* Shared */,
-				099087BB25799BA2001660D1 /* Utils */,
-				0995DE11257B386200DAA334 /* Extensions */,
+				0995DE142581610200DAA334 /* Managers */,
+				0995DE152581610F00DAA334 /* Windows */,
+				0995DE162581611400DAA334 /* Views */,
+				0995DE172581611D00DAA334 /* Models */,
+				0995DE1D2581698300DAA334 /* Networking */,
+				099087BB25799BA2001660D1 /* Utilities */,
+				0995DE1C2581695A00DAA334 /* Extensions */,
 				099087B325797C69001660D1 /* Supporting Files */,
 				0990879825797563001660D1 /* Assets.xcassets */,
 			);
@@ -100,21 +101,13 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		099087BB25799BA2001660D1 /* Utils */ = {
+		099087BB25799BA2001660D1 /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
 				099087BC25799BC2001660D1 /* Screen.swift */,
+				0995DE1E25816AAB00DAA334 /* Env.swift */,
 			);
-			path = Utils;
-			sourceTree = "<group>";
-		};
-		0995DDFA257AECC900DAA334 /* Shared */ = {
-			isa = PBXGroup;
-			children = (
-				0995DDFB257AED6400DAA334 /* FloatingWindow.swift */,
-				0995DE0F257B315200DAA334 /* RoundedShadowImageView.swift */,
-			);
-			path = Shared;
+			path = Utilities;
 			sourceTree = "<group>";
 		};
 		0995DDFD257AED9D00DAA334 /* SidebarWindow */ = {
@@ -126,38 +119,80 @@
 			path = SidebarWindow;
 			sourceTree = "<group>";
 		};
-		0995DE02257AEFC700DAA334 /* TeamMemberGroupWindow */ = {
-			isa = PBXGroup;
-			children = (
-				0995DE03257AEFDA00DAA334 /* TeamMemberGroupWindow.swift */,
-			);
-			path = TeamMemberGroupWindow;
-			sourceTree = "<group>";
-		};
-		0995DE05257AF48800DAA334 /* TeamMemberWindow */ = {
-			isa = PBXGroup;
-			children = (
-				0995DE06257AF49500DAA334 /* TeamMemberWindow.swift */,
-			);
-			path = TeamMemberWindow;
-			sourceTree = "<group>";
-		};
 		0995DE08257AF90800DAA334 /* TeamMemberView */ = {
 			isa = PBXGroup;
 			children = (
 				0995DE09257AF91400DAA334 /* TeamMemberViewController.swift */,
 				0995DE0B257AF98D00DAA334 /* TeamMemberView.swift */,
-				0995DE0D257B0AE500DAA334 /* TeamMemberAvatarView.swift */,
 			);
 			path = TeamMemberView;
 			sourceTree = "<group>";
 		};
-		0995DE11257B386200DAA334 /* Extensions */ = {
+		0995DE142581610200DAA334 /* Managers */ = {
 			isa = PBXGroup;
 			children = (
-				0995DE12257B388500DAA334 /* NSBezierPathExt.swift */,
+				099087A7257976BF001660D1 /* WindowControllerManager.swift */,
 			);
-			name = Extensions;
+			path = Managers;
+			sourceTree = "<group>";
+		};
+		0995DE152581610F00DAA334 /* Windows */ = {
+			isa = PBXGroup;
+			children = (
+				0995DE03257AEFDA00DAA334 /* TeamMemberGroupWindow.swift */,
+				0995DE06257AF49500DAA334 /* TeamMemberWindow.swift */,
+				0995DDFB257AED6400DAA334 /* FloatingWindow.swift */,
+				0995DDFD257AED9D00DAA334 /* SidebarWindow */,
+			);
+			path = Windows;
+			sourceTree = "<group>";
+		};
+		0995DE162581611400DAA334 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				0995DE1B258162F200DAA334 /* RoundedShadowImageView */,
+				0995DE1A2581623400DAA334 /* TeamMemberAvatarView */,
+				0995DE08257AF90800DAA334 /* TeamMemberView */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		0995DE172581611D00DAA334 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		0995DE1A2581623400DAA334 /* TeamMemberAvatarView */ = {
+			isa = PBXGroup;
+			children = (
+				0995DE0D257B0AE500DAA334 /* TeamMemberAvatarView.swift */,
+			);
+			path = TeamMemberAvatarView;
+			sourceTree = "<group>";
+		};
+		0995DE1B258162F200DAA334 /* RoundedShadowImageView */ = {
+			isa = PBXGroup;
+			children = (
+				0995DE0F257B315200DAA334 /* RoundedShadowImageView.swift */,
+			);
+			path = RoundedShadowImageView;
+			sourceTree = "<group>";
+		};
+		0995DE1C2581695A00DAA334 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				0995DE12257B388500DAA334 /* NSBezierPathExtension.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
+		0995DE1D2581698300DAA334 /* Networking */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Networking;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -229,6 +264,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0995DE1F25816AAB00DAA334 /* Env.swift in Sources */,
 				099087BD25799BC2001660D1 /* Screen.swift in Sources */,
 				0995DE04257AEFDA00DAA334 /* TeamMemberGroupWindow.swift in Sources */,
 				0990879525797561001660D1 /* AppDelegate.swift in Sources */,
@@ -237,7 +273,7 @@
 				0995DE01257AEDEC00DAA334 /* SidebarWindowController.swift in Sources */,
 				0995DDFF257AEDE000DAA334 /* SidebarWindow.swift in Sources */,
 				099087A625797645001660D1 /* main.swift in Sources */,
-				0995DE13257B388500DAA334 /* NSBezierPathExt.swift in Sources */,
+				0995DE13257B388500DAA334 /* NSBezierPathExtension.swift in Sources */,
 				0995DDFC257AED6400DAA334 /* FloatingWindow.swift in Sources */,
 				0995DE10257B315200DAA334 /* RoundedShadowImageView.swift in Sources */,
 				0995DE0C257AF98D00DAA334 /* TeamMemberView.swift in Sources */,

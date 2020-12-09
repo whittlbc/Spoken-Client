@@ -10,7 +10,7 @@ import Cocoa
 
 struct Screen {
     
-     static func getHeight() -> Int {
+    static func getHeight() -> Int {
         let currentScreen = Screen.getCurrentScreen()
         return Int(currentScreen.frame.height)
     }
