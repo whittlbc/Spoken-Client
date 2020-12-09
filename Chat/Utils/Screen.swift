@@ -8,15 +8,15 @@
 
 import Cocoa
 
-class Screen {
+struct Screen {
     
-    static func getHeight() -> Int {
-        let currentScreen = getCurrentScreen()
+     static func getHeight() -> Int {
+        let currentScreen = Screen.getCurrentScreen()
         return Int(currentScreen.frame.height)
     }
     
     static func getWidth() -> Int {
-        let currentScreen = getCurrentScreen()
+        let currentScreen = Screen.getCurrentScreen()
         return Int(currentScreen.frame.width)
     }
     

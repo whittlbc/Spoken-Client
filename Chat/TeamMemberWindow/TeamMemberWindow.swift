@@ -24,10 +24,38 @@ class TeamMemberWindow: FloatingWindow {
         "avatar" : "https://dacxe0nzqx93t.cloudfront.net/team/andrea-salazar/color-avatar.jpg",
     ]
     
+    private var isMouseInside:Bool = false
+    
     override func mouseEntered(with event: NSEvent) {
+        if (isMouseInside) {
+            return
+        }
+        
+        isMouseInside = true
+        
         makeKeyAndOrderFront(self)
+        
+        backgroundColor = NSColor.white
+        
+        var newFrame = frame
+        newFrame.origin.x -= 20
+        newFrame.size.width += 20
+        
+        setFrame(newFrame, display: true)
     }
 
     override func mouseExited(with event: NSEvent) {
+        if (!isMouseInside) {
+            return
+        }
+        
+        isMouseInside = false
+        backgroundColor = NSColor.clear
+        
+        var newFrame = frame
+        newFrame.origin.x += 20
+        newFrame.size.width -= 20
+        
+        setFrame(newFrame, display: true)
     }
 }
