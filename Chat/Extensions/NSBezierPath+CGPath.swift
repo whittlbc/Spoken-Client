@@ -8,6 +8,7 @@
 
 import Cocoa
 
+// Extend NSBezierPath to include a function 'cgPath' that converts its data to a CGPath
 extension NSBezierPath {
     
     var cgPath: CGPath {

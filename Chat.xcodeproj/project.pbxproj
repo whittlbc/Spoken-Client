@@ -8,6 +8,11 @@
 
 /* Begin PBXBuildFile section */
 		096862CA258202BB00B9B614 /* Networking in Frameworks */ = {isa = PBXBuildFile; productRef = 096862C9258202BB00B9B614 /* Networking */; };
+		096862CD25829C5A00B9B614 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 096862CC25829C5A00B9B614 /* User.swift */; };
+		096862D025829D2600B9B614 /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 096862CF25829D2600B9B614 /* Model.swift */; };
+		096862D525829FE300B9B614 /* Arrow in Frameworks */ = {isa = PBXBuildFile; productRef = 096862D425829FE300B9B614 /* Arrow */; };
+		096862D82582A03F00B9B614 /* Arrow+Networking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 096862D72582A03F00B9B614 /* Arrow+Networking.swift */; };
+		096862DE2582A2EB00B9B614 /* User+Arrow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 096862DD2582A2EB00B9B614 /* User+Arrow.swift */; };
 		0990879525797561001660D1 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0990879425797561001660D1 /* AppDelegate.swift */; };
 		0990879925797563001660D1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0990879825797563001660D1 /* Assets.xcassets */; };
 		099087A625797645001660D1 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 099087A525797645001660D1 /* main.swift */; };
@@ -22,7 +27,7 @@
 		0995DE0C257AF98D00DAA334 /* TeamMemberView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0995DE0B257AF98D00DAA334 /* TeamMemberView.swift */; };
 		0995DE0E257B0AE500DAA334 /* TeamMemberAvatarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0995DE0D257B0AE500DAA334 /* TeamMemberAvatarView.swift */; };
 		0995DE10257B315200DAA334 /* RoundedShadowImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0995DE0F257B315200DAA334 /* RoundedShadowImageView.swift */; };
-		0995DE13257B388500DAA334 /* NSBezierPathExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0995DE12257B388500DAA334 /* NSBezierPathExtension.swift */; };
+		0995DE13257B388500DAA334 /* NSBezierPath+CGPath.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0995DE12257B388500DAA334 /* NSBezierPath+CGPath.swift */; };
 		0995DE2125816B5E00DAA334 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0995DE2025816B5E00DAA334 /* Config.swift */; };
 		0995DE2D25818AF000DAA334 /* Logging in Frameworks */ = {isa = PBXBuildFile; productRef = 0995DE2C25818AF000DAA334 /* Logging */; };
 		0995DE2F25818B3E00DAA334 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0995DE2E25818B3E00DAA334 /* Logger.swift */; };
@@ -33,6 +38,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		096862CC25829C5A00B9B614 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
+		096862CF25829D2600B9B614 /* Model.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
+		096862D72582A03F00B9B614 /* Arrow+Networking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Arrow+Networking.swift"; sourceTree = "<group>"; };
+		096862DD2582A2EB00B9B614 /* User+Arrow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "User+Arrow.swift"; sourceTree = "<group>"; };
 		0990879125797561001660D1 /* Chat.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Chat.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0990879425797561001660D1 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		0990879825797563001660D1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -50,7 +59,7 @@
 		0995DE0B257AF98D00DAA334 /* TeamMemberView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamMemberView.swift; sourceTree = "<group>"; };
 		0995DE0D257B0AE500DAA334 /* TeamMemberAvatarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamMemberAvatarView.swift; sourceTree = "<group>"; };
 		0995DE0F257B315200DAA334 /* RoundedShadowImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundedShadowImageView.swift; sourceTree = "<group>"; };
-		0995DE12257B388500DAA334 /* NSBezierPathExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NSBezierPathExtension.swift; sourceTree = "<group>"; };
+		0995DE12257B388500DAA334 /* NSBezierPath+CGPath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSBezierPath+CGPath.swift"; sourceTree = "<group>"; };
 		0995DE2025816B5E00DAA334 /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
 		0995DE29258180F600DAA334 /* Development.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Development.xcconfig; sourceTree = SOURCE_ROOT; };
 		0995DE2A2581814200DAA334 /* Production.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Production.xcconfig; sourceTree = SOURCE_ROOT; };
@@ -66,6 +75,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				096862D525829FE300B9B614 /* Arrow in Frameworks */,
 				096862CA258202BB00B9B614 /* Networking in Frameworks */,
 				0995DE2D25818AF000DAA334 /* Logging in Frameworks */,
 			);
@@ -180,6 +190,8 @@
 		0995DE172581611D00DAA334 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				096862CC25829C5A00B9B614 /* User.swift */,
+				096862CF25829D2600B9B614 /* Model.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -203,7 +215,9 @@
 		0995DE1C2581695A00DAA334 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
-				0995DE12257B388500DAA334 /* NSBezierPathExtension.swift */,
+				0995DE12257B388500DAA334 /* NSBezierPath+CGPath.swift */,
+				096862D72582A03F00B9B614 /* Arrow+Networking.swift */,
+				096862DD2582A2EB00B9B614 /* User+Arrow.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -261,6 +275,7 @@
 			packageProductDependencies = (
 				0995DE2C25818AF000DAA334 /* Logging */,
 				096862C9258202BB00B9B614 /* Networking */,
+				096862D425829FE300B9B614 /* Arrow */,
 			);
 			productName = Chat;
 			productReference = 0990879125797561001660D1 /* Chat.app */;
@@ -293,6 +308,7 @@
 			packageReferences = (
 				0995DE2B25818AF000DAA334 /* XCRemoteSwiftPackageReference "swift-log" */,
 				096862C8258202BB00B9B614 /* XCRemoteSwiftPackageReference "Networking" */,
+				096862D325829FE300B9B614 /* XCRemoteSwiftPackageReference "Arrow" */,
 			);
 			productRefGroup = 0990879225797561001660D1 /* Products */;
 			projectDirPath = "";
@@ -327,10 +343,12 @@
 				0995DE07257AF49500DAA334 /* TeamMemberWindow.swift in Sources */,
 				0995DE0A257AF91400DAA334 /* TeamMemberViewController.swift in Sources */,
 				0995DE01257AEDEC00DAA334 /* SidebarWindowController.swift in Sources */,
+				096862DE2582A2EB00B9B614 /* User+Arrow.swift in Sources */,
 				0995DDFF257AEDE000DAA334 /* SidebarWindow.swift in Sources */,
 				0995DE2F25818B3E00DAA334 /* Logger.swift in Sources */,
+				096862D82582A03F00B9B614 /* Arrow+Networking.swift in Sources */,
 				099087A625797645001660D1 /* main.swift in Sources */,
-				0995DE13257B388500DAA334 /* NSBezierPathExtension.swift in Sources */,
+				0995DE13257B388500DAA334 /* NSBezierPath+CGPath.swift in Sources */,
 				0995DDFC257AED6400DAA334 /* FloatingWindow.swift in Sources */,
 				0995DE352581A51F00DAA334 /* Keychain.swift in Sources */,
 				0995DE3D2581CF6A00DAA334 /* API.swift in Sources */,
@@ -338,7 +356,9 @@
 				0995DE0C257AF98D00DAA334 /* TeamMemberView.swift in Sources */,
 				0995DE2125816B5E00DAA334 /* Config.swift in Sources */,
 				0995DE0E257B0AE500DAA334 /* TeamMemberAvatarView.swift in Sources */,
+				096862D025829D2600B9B614 /* Model.swift in Sources */,
 				099087A8257976BF001660D1 /* WindowControllerManager.swift in Sources */,
+				096862CD25829C5A00B9B614 /* User.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -687,6 +707,14 @@
 				minimumVersion = 0.3.2;
 			};
 		};
+		096862D325829FE300B9B614 /* XCRemoteSwiftPackageReference "Arrow" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/freshOS/Arrow";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 6.0.0;
+			};
+		};
 		0995DE2B25818AF000DAA334 /* XCRemoteSwiftPackageReference "swift-log" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/apple/swift-log.git";
@@ -702,6 +730,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 096862C8258202BB00B9B614 /* XCRemoteSwiftPackageReference "Networking" */;
 			productName = Networking;
+		};
+		096862D425829FE300B9B614 /* Arrow */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 096862D325829FE300B9B614 /* XCRemoteSwiftPackageReference "Arrow" */;
+			productName = Arrow;
 		};
 		0995DE2C25818AF000DAA334 /* Logging */ = {
 			isa = XCSwiftPackageProductDependency;

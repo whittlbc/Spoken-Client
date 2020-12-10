@@ -2,6 +2,15 @@
   "object": {
     "pins": [
       {
+        "package": "Arrow",
+        "repositoryURL": "https://github.com/freshOS/Arrow",
+        "state": {
+          "branch": null,
+          "revision": "f5f9a3bb354e7bc69ca184c0cd95e67eb8254798",
+          "version": "6.0.0"
+        }
+      },
+      {
         "package": "Networking",
         "repositoryURL": "https://github.com/freshOS/Networking",
         "state": {
