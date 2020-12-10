@@ -9,16 +9,21 @@
 import AppKit
 
 class SidebarWindowController: NSWindowController, NSWindowDelegate {
+    
+    // SidebarWindow is this controller's window type.
+    typealias Window = SidebarWindow
 
+    // No need to specify window during init --> just going to use 'Window' type.
     convenience init() {
         self.init(window: nil)
     }
     
+    // Override delegated init -- initialize 'Window' type window.
     private override init(window: NSWindow?) {
         precondition(window == nil, "call init() with no window")
         
         // Initialize with new sidebar window.
-        super.init(window: SidebarWindowController.newWindow())
+        super.init(window: Window())
         
         // Assign self as new sidebar window's delegate.
         self.window!.delegate = self
@@ -27,22 +32,8 @@ class SidebarWindowController: NSWindowController, NSWindowDelegate {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    private static func newWindow() -> SidebarWindow {
-        // Create sidebar window.
-        let window = SidebarWindow()
 
-        // Right-align the window to the screen.
-        window.setFrameOrigin(NSPoint(x: Screen.getWidth() - SidebarWindow.width, y: 0))
-
-        // Set window frame size to take up the entire height of the screen.
-        var frame = window.frame
-        frame.size = NSSize(width: SidebarWindow.width, height: Screen.getHeight())
-        window.setFrame(frame, display: true)
-
-        return window
-    }
-
+    // Show main window and add child windows.
     override func showWindow(_ sender: Any?) {
         // Show main sidebar window.
         super.showWindow(sender)

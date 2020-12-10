@@ -54,4 +54,16 @@ class FloatingWindow: NSPanel {
     override func cancelOperation(_ sender: Any?) {
         // Override default behavior to prevent panel from closing
     }
+    
+    // Position window frame origin.
+    func repositionWindow(to origin: NSPoint) {
+        setFrameOrigin(origin)
+    }
+    
+    // Size window frame.
+    func resizeWindow(to size: NSSize) {
+        var newFrame = frame
+        newFrame.size = size
+        setFrame(newFrame, display: true)
+    }
 }
