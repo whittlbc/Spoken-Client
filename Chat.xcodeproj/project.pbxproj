@@ -13,6 +13,8 @@
 		096862D525829FE300B9B614 /* Arrow in Frameworks */ = {isa = PBXBuildFile; productRef = 096862D425829FE300B9B614 /* Arrow */; };
 		096862D82582A03F00B9B614 /* Arrow+Networking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 096862D72582A03F00B9B614 /* Arrow+Networking.swift */; };
 		096862DE2582A2EB00B9B614 /* User+Arrow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 096862DD2582A2EB00B9B614 /* User+Arrow.swift */; };
+		096862E22582A61C00B9B614 /* Name.swift in Sources */ = {isa = PBXBuildFile; fileRef = 096862E12582A61C00B9B614 /* Name.swift */; };
+		096862E52582A67F00B9B614 /* Name+Arrow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 096862E42582A67F00B9B614 /* Name+Arrow.swift */; };
 		0990879525797561001660D1 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0990879425797561001660D1 /* AppDelegate.swift */; };
 		0990879925797563001660D1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0990879825797563001660D1 /* Assets.xcassets */; };
 		099087A625797645001660D1 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 099087A525797645001660D1 /* main.swift */; };
@@ -42,6 +44,8 @@
 		096862CF25829D2600B9B614 /* Model.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
 		096862D72582A03F00B9B614 /* Arrow+Networking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Arrow+Networking.swift"; sourceTree = "<group>"; };
 		096862DD2582A2EB00B9B614 /* User+Arrow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "User+Arrow.swift"; sourceTree = "<group>"; };
+		096862E12582A61C00B9B614 /* Name.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Name.swift; sourceTree = "<group>"; };
+		096862E42582A67F00B9B614 /* Name+Arrow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Name+Arrow.swift"; sourceTree = "<group>"; };
 		0990879125797561001660D1 /* Chat.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Chat.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0990879425797561001660D1 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		0990879825797563001660D1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -192,6 +196,7 @@
 			children = (
 				096862CC25829C5A00B9B614 /* User.swift */,
 				096862CF25829D2600B9B614 /* Model.swift */,
+				096862E12582A61C00B9B614 /* Name.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -218,6 +223,7 @@
 				0995DE12257B388500DAA334 /* NSBezierPath+CGPath.swift */,
 				096862D72582A03F00B9B614 /* Arrow+Networking.swift */,
 				096862DD2582A2EB00B9B614 /* User+Arrow.swift */,
+				096862E42582A67F00B9B614 /* Name+Arrow.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -353,12 +359,14 @@
 				0995DE352581A51F00DAA334 /* Keychain.swift in Sources */,
 				0995DE3D2581CF6A00DAA334 /* API.swift in Sources */,
 				0995DE10257B315200DAA334 /* RoundedShadowImageView.swift in Sources */,
+				096862E52582A67F00B9B614 /* Name+Arrow.swift in Sources */,
 				0995DE0C257AF98D00DAA334 /* TeamMemberView.swift in Sources */,
 				0995DE2125816B5E00DAA334 /* Config.swift in Sources */,
 				0995DE0E257B0AE500DAA334 /* TeamMemberAvatarView.swift in Sources */,
 				096862D025829D2600B9B614 /* Model.swift in Sources */,
 				099087A8257976BF001660D1 /* WindowControllerManager.swift in Sources */,
 				096862CD25829C5A00B9B614 /* User.swift in Sources */,
+				096862E22582A61C00B9B614 /* Name.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

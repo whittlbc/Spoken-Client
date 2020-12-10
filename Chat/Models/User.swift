@@ -7,9 +7,15 @@
 //
 
 import Foundation
-import Networking
-import Arrow
 
 struct User: Identifiable {
     var uid = ""
+    var email = ""
+    var name = Name()
+    var avatar = ""
+    
+    func fullName() -> String {
+        let full = name.first + " " + name.last
+        return full.trimmingCharacters(in: .whitespaces)
+    }
 }

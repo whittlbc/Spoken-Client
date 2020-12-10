@@ -1,5 +1,5 @@
 //
-//  User+Arrow.swift
+//  Name+Arrow.swift
 //  Chat
 //
 //  Created by Ben Whittle on 12/10/20.
@@ -10,14 +10,12 @@ import Foundation
 import Arrow
 import Networking
 
-extension User: ArrowParsable {
+extension Name: ArrowParsable {
     
     public mutating func deserialize(_ json: JSON) {
-        uid <-- json["uid"]
-        email <-- json["email"]
-        name <-- json["name"]
-        avatar <-- json["avatar"]
+        first <-- json["first"]
+        last <-- json["last"]
     }
 }
 
-extension User: NetworkingJSONDecodable {}
+extension Name: NetworkingJSONDecodable {}
