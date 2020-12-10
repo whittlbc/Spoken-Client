@@ -1,5 +1,5 @@
 //
-//  Workspace.swift
+//  Member.swift
 //  Chat
 //
 //  Created by Ben Whittle on 12/10/20.
@@ -8,8 +8,7 @@
 
 import Foundation
 
-struct Workspace: Identifiable {
+struct Member: Identifiable {
     var uid = ""
-    var name = ""
-    var members = [Member]()
+    var user = User()
 }
