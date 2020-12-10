@@ -19,6 +19,7 @@
 		096862EB2582A8D000B9B614 /* Workspace+Arrow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 096862EA2582A8D000B9B614 /* Workspace+Arrow.swift */; };
 		096862EE2582ABCE00B9B614 /* Member.swift in Sources */ = {isa = PBXBuildFile; fileRef = 096862ED2582ABCE00B9B614 /* Member.swift */; };
 		096862F12582ACE100B9B614 /* Member+Arrow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 096862F02582ACE100B9B614 /* Member+Arrow.swift */; };
+		096862F42582B54F00B9B614 /* WorkspaceWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 096862F32582B54F00B9B614 /* WorkspaceWindow.swift */; };
 		0990879525797561001660D1 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0990879425797561001660D1 /* AppDelegate.swift */; };
 		0990879925797563001660D1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0990879825797563001660D1 /* Assets.xcassets */; };
 		099087A625797645001660D1 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 099087A525797645001660D1 /* main.swift */; };
@@ -54,6 +55,7 @@
 		096862EA2582A8D000B9B614 /* Workspace+Arrow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Workspace+Arrow.swift"; sourceTree = "<group>"; };
 		096862ED2582ABCE00B9B614 /* Member.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Member.swift; sourceTree = "<group>"; };
 		096862F02582ACE100B9B614 /* Member+Arrow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Member+Arrow.swift"; sourceTree = "<group>"; };
+		096862F32582B54F00B9B614 /* WorkspaceWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkspaceWindow.swift; sourceTree = "<group>"; };
 		0990879125797561001660D1 /* Chat.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Chat.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0990879425797561001660D1 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		0990879825797563001660D1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -185,6 +187,7 @@
 				0995DE06257AF49500DAA334 /* TeamMemberWindow.swift */,
 				0995DDFB257AED6400DAA334 /* FloatingWindow.swift */,
 				0995DDFD257AED9D00DAA334 /* SidebarWindow */,
+				096862F32582B54F00B9B614 /* WorkspaceWindow.swift */,
 			);
 			path = Windows;
 			sourceTree = "<group>";
@@ -376,6 +379,7 @@
 				0995DE10257B315200DAA334 /* RoundedShadowImageView.swift in Sources */,
 				096862F12582ACE100B9B614 /* Member+Arrow.swift in Sources */,
 				096862E52582A67F00B9B614 /* Name+Arrow.swift in Sources */,
+				096862F42582B54F00B9B614 /* WorkspaceWindow.swift in Sources */,
 				0995DE0C257AF98D00DAA334 /* TeamMemberView.swift in Sources */,
 				0995DE2125816B5E00DAA334 /* Config.swift in Sources */,
 				0995DE0E257B0AE500DAA334 /* TeamMemberAvatarView.swift in Sources */,

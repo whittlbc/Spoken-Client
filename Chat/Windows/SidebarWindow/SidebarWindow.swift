@@ -13,8 +13,12 @@ class SidebarWindow: FloatingWindow {
     
     // Largest width the sidebar's contents should ever get to.
     static let width:Int = 250
-            
-    static let teamOffsetTop = 205
+    
+    // Size of window.
+    static let size = NSSize(width: SidebarWindow.width, height: Screen.getHeight())
+
+    // Origin of window on screen.
+    static let origin = NSPoint(x: Screen.getWidth() - SidebarWindow.width, y: 0)
 
     // Override delegated init and size/position window on screen.
     override init(contentRect: NSRect, styleMask style: NSWindow.StyleMask, backing backingStoreType: NSWindow.BackingStoreType, defer flag: Bool) {
@@ -23,10 +27,8 @@ class SidebarWindow: FloatingWindow {
         // This will be the main window for our application.
         level = .mainMenu
         
-        // Right-align window to screen.
-        repositionWindow(to: NSPoint(x: Screen.getWidth() - SidebarWindow.width, y: 0))
-        
-        // Set window frame size to take up the entire height of the screen.
-        resizeWindow(to: NSSize(width: SidebarWindow.width, height: Screen.getHeight()))
+        // Position and size window on screen.
+        repositionWindow(to: SidebarWindow.origin)
+        resizeWindow(to: SidebarWindow.size)
     }
 }
