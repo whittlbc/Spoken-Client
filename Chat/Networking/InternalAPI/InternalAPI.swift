@@ -28,4 +28,5 @@ public class InternalAPI: API {
     override func isAuthed() -> Bool { true }
 }
 
+// Global internal API instance.
 public let api = InternalAPI()

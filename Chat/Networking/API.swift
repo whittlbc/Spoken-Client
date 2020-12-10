@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Networking
 
 public class API {
     
@@ -14,12 +15,20 @@ public class API {
     
     var authHeaderName: String?
     
+    var client: NetworkingClient
+    
     // Custom headers to include with each API request.
-    var headers: [String: String] { [:] }
+    var headers = [String: String]()
     
     init(baseURL: String, authHeaderName: String? = nil) {
         self.baseURL = baseURL
         self.authHeaderName = authHeaderName
+        
+        // Create new API client.
+        client = NetworkingClient(baseURL: baseURL)
+        
+        // Build and set headers for client.
+        setClientHeaders()
     }
     
     func getAuthHeaderToken() -> String? { nil }
@@ -32,6 +41,10 @@ public class API {
         }
         
         return requestHeaders
+    }
+    
+    func setClientHeaders() {
+        client.headers = buildHeaders()
     }
     
     func isAuthed() -> Bool { getAuthHeaderToken() != nil }

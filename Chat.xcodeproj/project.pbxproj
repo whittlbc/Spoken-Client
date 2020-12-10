@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		096862CA258202BB00B9B614 /* Networking in Frameworks */ = {isa = PBXBuildFile; productRef = 096862C9258202BB00B9B614 /* Networking */; };
 		0990879525797561001660D1 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0990879425797561001660D1 /* AppDelegate.swift */; };
 		0990879925797563001660D1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0990879825797563001660D1 /* Assets.xcassets */; };
 		099087A625797645001660D1 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 099087A525797645001660D1 /* main.swift */; };
@@ -65,6 +66,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				096862CA258202BB00B9B614 /* Networking in Frameworks */,
 				0995DE2D25818AF000DAA334 /* Logging in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -258,6 +260,7 @@
 			name = Chat;
 			packageProductDependencies = (
 				0995DE2C25818AF000DAA334 /* Logging */,
+				096862C9258202BB00B9B614 /* Networking */,
 			);
 			productName = Chat;
 			productReference = 0990879125797561001660D1 /* Chat.app */;
@@ -289,6 +292,7 @@
 			mainGroup = 0990878825797561001660D1;
 			packageReferences = (
 				0995DE2B25818AF000DAA334 /* XCRemoteSwiftPackageReference "swift-log" */,
+				096862C8258202BB00B9B614 /* XCRemoteSwiftPackageReference "Networking" */,
 			);
 			productRefGroup = 0990879225797561001660D1 /* Products */;
 			projectDirPath = "";
@@ -675,6 +679,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		096862C8258202BB00B9B614 /* XCRemoteSwiftPackageReference "Networking" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/freshOS/Networking";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.3.2;
+			};
+		};
 		0995DE2B25818AF000DAA334 /* XCRemoteSwiftPackageReference "swift-log" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/apple/swift-log.git";
@@ -686,6 +698,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		096862C9258202BB00B9B614 /* Networking */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 096862C8258202BB00B9B614 /* XCRemoteSwiftPackageReference "Networking" */;
+			productName = Networking;
+		};
 		0995DE2C25818AF000DAA334 /* Logging */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 0995DE2B25818AF000DAA334 /* XCRemoteSwiftPackageReference "swift-log" */;
