@@ -1,5 +1,5 @@
 //
-//  Logger.swift
+//  Client.swift
 //  Chat
 //
 //  Created by Ben Whittle on 12/9/20.
@@ -7,7 +7,4 @@
 //
 
 import Foundation
-import Logging
 
-// Global logger
-public let logger = Logger(label: Config.appBundleID)

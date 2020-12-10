@@ -8,7 +8,7 @@
 
 import Cocoa
 
-enum Screen {
+public enum Screen {
     
     static func getHeight() -> Int {
         let currentScreen = Screen.getCurrentScreen()

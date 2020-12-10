@@ -58,9 +58,19 @@ public enum Config {
     // Base URL for API interactions.
     static let apiURL = Config.getRequiredStringEnvVar(forKey: Keys.apiURL)
     
+    // Host of apiURL
+    static let apiHost: String = {
+        guard let url = URL(string: Config.apiURL), let host = url.host else {
+            fatalError("API_URL is not a valid url -- can't parse host")
+        }
+        
+        return host
+    }()
+    
     // App name.
     static let appName = Config.getRequiredStringEnvVar(forKey: Keys.appName)
     
     // App bundle identifier.
     static let appBundleID = Config.getRequiredStringEnvVar(forKey: Keys.appBundleID)
+    
 }
