@@ -9,6 +9,21 @@
 import AppKit
 
 class SidebarWindowController: NSWindowController, NSWindowDelegate {
+    
+    private static func newWindow() -> SidebarWindow {
+        // Create sidebar window.
+        let window = SidebarWindow()
+
+        // Right-align the window to the screen.
+        window.setFrameOrigin(NSPoint(x: Screen.getWidth() - SidebarWindow.width, y: 0))
+
+        // Set window frame size to take up the entire height of the screen.
+        var frame = window.frame
+        frame.size = NSSize(width: SidebarWindow.width, height: Screen.getHeight())
+        window.setFrame(frame, display: true)
+
+        return window
+    }
 
     convenience init() {
         self.init(window: nil)
@@ -16,26 +31,20 @@ class SidebarWindowController: NSWindowController, NSWindowDelegate {
     
     private override init(window: NSWindow?) {
         precondition(window == nil, "call init() with no window")
-                        
-        let window = SidebarWindow()
-
-        window.setFrameOrigin(NSPoint(x: Screen.getWidth() - SidebarWindow.width, y: 0))
-
-        var frame = window.frame
-        frame.size = NSSize(width: SidebarWindow.width, height: Screen.getHeight())
-        window.setFrame(frame, display: true)
-
-        super.init(window: window)
-        
-        window.delegate = self
+        super.init(window: SidebarWindowController.newWindow())
+        self.window!.delegate = self
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    public func addChildWindows() {
-        // Add active team member group window
+    override func showWindow(_ sender: Any?) {
+        super.showWindow(sender)
+        addChildWindows()
+    }
+    
+    func addChildWindows() {
         addActiveTeamMembersGroupWindow()
     }
 

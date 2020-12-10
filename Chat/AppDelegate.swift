@@ -10,19 +10,11 @@ import Cocoa
  
 class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
 
+    // Manager for all window controllers.
     let windowControllerManager = WindowControllerManager()
     
     func applicationDidFinishLaunching(_ notification: Notification) {
-        api.isAuthed() ? showSidebarWindow() : showSignInWindow()
-    }
-    
-    func showSidebarWindow() {
-        let sidebarWindow = windowControllerManager.newSidebarWindow()
-        sidebarWindow.showWindow(self)
-        sidebarWindow.addChildWindows()
-    }
-    
-    func showSignInWindow() {
-        logger.info("Showing sign-in window...")
+        // Launch initial app window dependent on current user's auth status.
+        windowControllerManager.launchInitialWindow()
     }
 }
