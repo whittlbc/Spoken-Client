@@ -11,16 +11,17 @@ import Networking
 
 public class API {
     
+    // Base URL for all API client requests
     var baseURL: String
     
+    // Name of auth header to use in client requests.
+    // Should not be included in headers params passed into init.
     var authHeaderName: String?
     
+    // API client - will be auto-initialized with url and headers during init.
     var client: NetworkingClient
     
-    // Custom headers to include with each API request.
-    var headers = [String: String]()
-    
-    init(baseURL: String, authHeaderName: String? = nil) {
+    init(baseURL: String, authHeaderName: String? = nil, headers: [String: String] = [:]) {
         self.baseURL = baseURL
         self.authHeaderName = authHeaderName
         
@@ -28,24 +29,29 @@ public class API {
         client = NetworkingClient(baseURL: baseURL)
         
         // Build and set headers for client.
-        setClientHeaders()
+        buildClientHeaders(headers)
     }
     
+    // Get the auth header value (token). Should be overridden by a function that
+    // fetches this value from either an environment variable or the user's keychain.
     func getAuthHeaderToken() -> String? { nil }
     
-    func buildHeaders() -> [String: String] {
-        var requestHeaders = headers
+    // Check whether the API client is current "authed" by checking if its auth header has a value.
+    func isAuthed() -> Bool { getAuthHeaderToken() != nil }
+
+    // Construct a dictionary of headers (default + auth headers) and assign these to the API client.
+    func buildClientHeaders(_ defaultHeaders: [String:String] = [:]) {
+        // Start with default headers dictionary.
+        var requestHeaders = defaultHeaders
         
-        if let authHeaderName = self.authHeaderName, let authHeaderToken = getAuthHeaderToken() {
+        // Add auth header if both name and value exist and it doesn't already exist in defaultHeaders.
+        if let authHeaderName = self.authHeaderName,
+           let authHeaderToken = getAuthHeaderToken(),
+           defaultHeaders[authHeaderName] == nil {
             requestHeaders[authHeaderName] = authHeaderToken
         }
         
-        return requestHeaders
+        // Assign headers to client.
+        client.headers = requestHeaders
     }
-    
-    func setClientHeaders() {
-        client.headers = buildHeaders()
-    }
-    
-    func isAuthed() -> Bool { getAuthHeaderToken() != nil }
 }

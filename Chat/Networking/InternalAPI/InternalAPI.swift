@@ -8,18 +8,23 @@
 
 import Foundation
 
+// This app's primary internal API.
 public class InternalAPI: API {
     
+    // Static version of the auth header name
     static let authTokenName = "Chat-Api-Token"
     
+    // Init an InternalAPI instance with a baseURL from env vars and the auth header as its only header.
     convenience init() {
         self.init(baseURL: Config.apiURL, authHeaderName: InternalAPI.authTokenName)
     }
     
-    private override init(baseURL: String, authHeaderName: String? = nil) {
-        super.init(baseURL: baseURL, authHeaderName: authHeaderName)
+    // Override delegated init
+    private override init(baseURL: String, authHeaderName: String? = nil, headers: [String: String] = [:]) {
+        super.init(baseURL: baseURL, authHeaderName: authHeaderName, headers: headers)
     }
 
+    // Fetch the auth header token from the user's keychain.
     override func getAuthHeaderToken() -> String? {
         return try? Keychain.getToken(forServer: Config.apiHost)
     }
