@@ -12,7 +12,7 @@ class SidebarWindow: FloatingWindow {
     
     static let width:Int = 250
             
-    static let activeTeamMembersGroupOffsetTop = 205
+    static let teamOffsetTop = 205
     
     override init(contentRect: NSRect, styleMask style: NSWindow.StyleMask, backing backingStoreType: NSWindow.BackingStoreType, defer flag: Bool) {
         super.init(contentRect: contentRect, styleMask: style, backing: backingStoreType, defer: flag)

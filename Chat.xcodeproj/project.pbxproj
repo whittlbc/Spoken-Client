@@ -15,7 +15,7 @@
 		0995DDFC257AED6400DAA334 /* FloatingWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0995DDFB257AED6400DAA334 /* FloatingWindow.swift */; };
 		0995DDFF257AEDE000DAA334 /* SidebarWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0995DDFE257AEDE000DAA334 /* SidebarWindow.swift */; };
 		0995DE01257AEDEC00DAA334 /* SidebarWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0995DE00257AEDEC00DAA334 /* SidebarWindowController.swift */; };
-		0995DE04257AEFDA00DAA334 /* TeamMemberGroupWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0995DE03257AEFDA00DAA334 /* TeamMemberGroupWindow.swift */; };
+		0995DE04257AEFDA00DAA334 /* TeamWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0995DE03257AEFDA00DAA334 /* TeamWindow.swift */; };
 		0995DE07257AF49500DAA334 /* TeamMemberWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0995DE06257AF49500DAA334 /* TeamMemberWindow.swift */; };
 		0995DE0A257AF91400DAA334 /* TeamMemberViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0995DE09257AF91400DAA334 /* TeamMemberViewController.swift */; };
 		0995DE0C257AF98D00DAA334 /* TeamMemberView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0995DE0B257AF98D00DAA334 /* TeamMemberView.swift */; };
@@ -43,7 +43,7 @@
 		0995DDFB257AED6400DAA334 /* FloatingWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingWindow.swift; sourceTree = "<group>"; };
 		0995DDFE257AEDE000DAA334 /* SidebarWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarWindow.swift; sourceTree = "<group>"; };
 		0995DE00257AEDEC00DAA334 /* SidebarWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarWindowController.swift; sourceTree = "<group>"; };
-		0995DE03257AEFDA00DAA334 /* TeamMemberGroupWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamMemberGroupWindow.swift; sourceTree = "<group>"; };
+		0995DE03257AEFDA00DAA334 /* TeamWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamWindow.swift; sourceTree = "<group>"; };
 		0995DE06257AF49500DAA334 /* TeamMemberWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamMemberWindow.swift; sourceTree = "<group>"; };
 		0995DE09257AF91400DAA334 /* TeamMemberViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamMemberViewController.swift; sourceTree = "<group>"; };
 		0995DE0B257AF98D00DAA334 /* TeamMemberView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamMemberView.swift; sourceTree = "<group>"; };
@@ -157,7 +157,7 @@
 		0995DE152581610F00DAA334 /* Windows */ = {
 			isa = PBXGroup;
 			children = (
-				0995DE03257AEFDA00DAA334 /* TeamMemberGroupWindow.swift */,
+				0995DE03257AEFDA00DAA334 /* TeamWindow.swift */,
 				0995DE06257AF49500DAA334 /* TeamMemberWindow.swift */,
 				0995DDFB257AED6400DAA334 /* FloatingWindow.swift */,
 				0995DDFD257AED9D00DAA334 /* SidebarWindow */,
@@ -317,7 +317,7 @@
 			files = (
 				099087BD25799BC2001660D1 /* Screen.swift in Sources */,
 				0995DE382581A9BC00DAA334 /* KeychainError.swift in Sources */,
-				0995DE04257AEFDA00DAA334 /* TeamMemberGroupWindow.swift in Sources */,
+				0995DE04257AEFDA00DAA334 /* TeamWindow.swift in Sources */,
 				0995DE3B2581CA7500DAA334 /* InternalAPI.swift in Sources */,
 				0990879525797561001660D1 /* AppDelegate.swift in Sources */,
 				0995DE07257AF49500DAA334 /* TeamMemberWindow.swift in Sources */,

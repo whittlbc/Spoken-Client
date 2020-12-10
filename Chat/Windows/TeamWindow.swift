@@ -1,5 +1,5 @@
 //
-//  TeamMemberGroupWindow.swift
+//  TeamWindow.swift
 //  Chat
 //
 //  Created by Ben Whittle on 12/4/20.
@@ -8,7 +8,7 @@
 
 import Cocoa
 
-class TeamMemberGroupWindow: FloatingWindow {
+class TeamWindow: FloatingWindow {
 
     static let width:Int = 250
     
@@ -19,13 +19,40 @@ class TeamMemberGroupWindow: FloatingWindow {
     ]
     
     static func calculateHeight() -> Int {
-        return TeamMemberGroupWindow.teamMembers.count * TeamMemberView.height
+        return TeamWindow.teamMembers.count * TeamMemberView.height
+    }
+    
+    override init(contentRect: NSRect, styleMask style: NSWindow.StyleMask, backing backingStoreType: NSWindow.BackingStoreType, defer flag: Bool) {
+        super.init(contentRect: contentRect, styleMask: style, backing: backingStoreType, defer: flag)
+
+        
+        // *** TODO: Fetch current user's teams from back-end ***
+        
+        
+        // --- TODO: All of this will be done after loading team from server. ---
+        
+        let teamHeight = TeamWindow.calculateHeight()
+
+        setFrameOrigin(NSPoint(
+            x: Screen.getWidth() - SidebarWindow.width,
+            y: Screen.getHeight() - SidebarWindow.teamOffsetTop - teamHeight
+        ))
+
+        var teamFrame = frame
+        teamFrame.size = NSSize(width: SidebarWindow.width, height: teamHeight)
+        setFrame(teamFrame, display: true)
+
+        // --------
+        
+        
+        
+        addChildWindows()
     }
     
     public func addChildWindows() {
         var i = 0
 
-        for teamMember in TeamMemberGroupWindow.teamMembers.reversed() {
+        for teamMember in TeamWindow.teamMembers.reversed() {
             addTeamMemberWindow(teamMember: teamMember as! NSDictionary, index: i)
             i += 1
         }

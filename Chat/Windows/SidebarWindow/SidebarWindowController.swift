@@ -9,6 +9,24 @@
 import AppKit
 
 class SidebarWindowController: NSWindowController, NSWindowDelegate {
+
+    convenience init() {
+        self.init(window: nil)
+    }
+    
+    private override init(window: NSWindow?) {
+        precondition(window == nil, "call init() with no window")
+        
+        // Initialize with new sidebar window.
+        super.init(window: SidebarWindowController.newWindow())
+        
+        // Assign self as new sidebar window's delegate.
+        self.window!.delegate = self
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     private static func newWindow() -> SidebarWindow {
         // Create sidebar window.
@@ -25,45 +43,15 @@ class SidebarWindowController: NSWindowController, NSWindowDelegate {
         return window
     }
 
-    convenience init() {
-        self.init(window: nil)
-    }
-    
-    private override init(window: NSWindow?) {
-        precondition(window == nil, "call init() with no window")
-        super.init(window: SidebarWindowController.newWindow())
-        self.window!.delegate = self
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
     override func showWindow(_ sender: Any?) {
+        // Show main sidebar window.
         super.showWindow(sender)
-        addChildWindows()
+        
+        // Add and show team window as a child window.
+        addTeamChildWindow()
     }
     
-    func addChildWindows() {
-        addActiveTeamMembersGroupWindow()
-    }
-
-    func addActiveTeamMembersGroupWindow() {
-        let win = window!
-        let teamMembersGroupWindow = TeamMemberGroupWindow()
-        let teamMembersGroupHeight = TeamMemberGroupWindow.calculateHeight()
-
-        teamMembersGroupWindow.setFrameOrigin(NSPoint(
-            x: Int(win.frame.origin.x),
-            y: Screen.getHeight() - SidebarWindow.activeTeamMembersGroupOffsetTop - teamMembersGroupHeight
-        ))
-
-        var teamMembersGroupFrame = teamMembersGroupWindow.frame
-        teamMembersGroupFrame.size = NSSize(width: Int(win.frame.size.width), height: teamMembersGroupHeight)
-        teamMembersGroupWindow.setFrame(teamMembersGroupFrame, display: true)
-        
-        win.addChildWindow(teamMembersGroupWindow, ordered: NSWindow.OrderingMode.above)
-        
-        teamMembersGroupWindow.addChildWindows()
+    private func addTeamChildWindow() {
+        window!.addChildWindow(TeamWindow(), ordered: NSWindow.OrderingMode.above)
     }
 }
