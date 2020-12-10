@@ -25,9 +25,10 @@
 		0995DE2125816B5E00DAA334 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0995DE2025816B5E00DAA334 /* Config.swift */; };
 		0995DE2D25818AF000DAA334 /* Logging in Frameworks */ = {isa = PBXBuildFile; productRef = 0995DE2C25818AF000DAA334 /* Logging */; };
 		0995DE2F25818B3E00DAA334 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0995DE2E25818B3E00DAA334 /* Logger.swift */; };
-		0995DE31258190EC00DAA334 /* Client.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0995DE30258190EC00DAA334 /* Client.swift */; };
 		0995DE352581A51F00DAA334 /* Keychain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0995DE342581A51F00DAA334 /* Keychain.swift */; };
 		0995DE382581A9BC00DAA334 /* KeychainError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0995DE372581A9BC00DAA334 /* KeychainError.swift */; };
+		0995DE3B2581CA7500DAA334 /* InternalAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0995DE3A2581CA7500DAA334 /* InternalAPI.swift */; };
+		0995DE3D2581CF6A00DAA334 /* API.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0995DE3C2581CF6A00DAA334 /* API.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -53,9 +54,10 @@
 		0995DE29258180F600DAA334 /* Development.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Development.xcconfig; sourceTree = SOURCE_ROOT; };
 		0995DE2A2581814200DAA334 /* Production.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Production.xcconfig; sourceTree = SOURCE_ROOT; };
 		0995DE2E25818B3E00DAA334 /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
-		0995DE30258190EC00DAA334 /* Client.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Client.swift; sourceTree = "<group>"; };
 		0995DE342581A51F00DAA334 /* Keychain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Keychain.swift; sourceTree = "<group>"; };
 		0995DE372581A9BC00DAA334 /* KeychainError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainError.swift; sourceTree = "<group>"; };
+		0995DE3A2581CA7500DAA334 /* InternalAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InternalAPI.swift; sourceTree = "<group>"; };
+		0995DE3C2581CF6A00DAA334 /* API.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = API.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -207,7 +209,8 @@
 		0995DE1D2581698300DAA334 /* Networking */ = {
 			isa = PBXGroup;
 			children = (
-				0995DE30258190EC00DAA334 /* Client.swift */,
+				0995DE392581CA6D00DAA334 /* InternalAPI */,
+				0995DE3C2581CF6A00DAA334 /* API.swift */,
 			);
 			path = Networking;
 			sourceTree = "<group>";
@@ -227,6 +230,14 @@
 				0995DE372581A9BC00DAA334 /* KeychainError.swift */,
 			);
 			path = Errors;
+			sourceTree = "<group>";
+		};
+		0995DE392581CA6D00DAA334 /* InternalAPI */ = {
+			isa = PBXGroup;
+			children = (
+				0995DE3A2581CA7500DAA334 /* InternalAPI.swift */,
+			);
+			path = InternalAPI;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -307,6 +318,7 @@
 				099087BD25799BC2001660D1 /* Screen.swift in Sources */,
 				0995DE382581A9BC00DAA334 /* KeychainError.swift in Sources */,
 				0995DE04257AEFDA00DAA334 /* TeamMemberGroupWindow.swift in Sources */,
+				0995DE3B2581CA7500DAA334 /* InternalAPI.swift in Sources */,
 				0990879525797561001660D1 /* AppDelegate.swift in Sources */,
 				0995DE07257AF49500DAA334 /* TeamMemberWindow.swift in Sources */,
 				0995DE0A257AF91400DAA334 /* TeamMemberViewController.swift in Sources */,
@@ -317,7 +329,7 @@
 				0995DE13257B388500DAA334 /* NSBezierPathExtension.swift in Sources */,
 				0995DDFC257AED6400DAA334 /* FloatingWindow.swift in Sources */,
 				0995DE352581A51F00DAA334 /* Keychain.swift in Sources */,
-				0995DE31258190EC00DAA334 /* Client.swift in Sources */,
+				0995DE3D2581CF6A00DAA334 /* API.swift in Sources */,
 				0995DE10257B315200DAA334 /* RoundedShadowImageView.swift in Sources */,
 				0995DE0C257AF98D00DAA334 /* TeamMemberView.swift in Sources */,
 				0995DE2125816B5E00DAA334 /* Config.swift in Sources */,

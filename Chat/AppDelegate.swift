@@ -13,13 +13,16 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     let windowControllerManager = WindowControllerManager()
     
     func applicationDidFinishLaunching(_ notification: Notification) {
-        // Figure out which direction to send the user based on whether they're logged in or not
-        showSidebarWindow()
+        api.isAuthed() ? showSidebarWindow() : showSignInWindow()
     }
     
     func showSidebarWindow() {
         let sidebarWindow = windowControllerManager.newSidebarWindow()
         sidebarWindow.showWindow(self)
         sidebarWindow.addChildWindows()
+    }
+    
+    func showSignInWindow() {
+        logger.info("Showing sign-in window...")
     }
 }
