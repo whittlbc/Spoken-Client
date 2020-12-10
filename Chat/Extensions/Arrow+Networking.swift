@@ -12,7 +12,7 @@ import Networking
 
 // Extend objects that are ArrowParsable and NetworkingJSONDecodable
 // to make it easy for all models to be JSON-decodable.
-extension ArrowParsable where Self: NetworkingJSONDecodable {
+extension ArrowParsable where Self: NetworkingJSONDecodable & Codable {
 
     public static func decode(_ json: Any) throws -> Self {
         var t: Self = Self()
@@ -24,3 +24,8 @@ extension ArrowParsable where Self: NetworkingJSONDecodable {
         return t
     }
 }
+
+extension User: NetworkingJSONDecodable {}
+extension Name: NetworkingJSONDecodable {}
+extension Workspace: NetworkingJSONDecodable {}
+extension Member: NetworkingJSONDecodable {}

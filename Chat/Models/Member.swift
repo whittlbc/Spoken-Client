@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct Member: Identifiable {
+struct Member: Identifiable, Codable {
     var uid = ""
     var user = User()
 }

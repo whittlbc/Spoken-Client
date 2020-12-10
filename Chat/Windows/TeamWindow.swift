@@ -33,9 +33,10 @@ class TeamWindow: FloatingWindow {
         
         let teamHeight = TeamWindow.calculateHeight()
 
+        // NOTE: Removed " - SidebarWindow.teamOffsetTop" from y
         setFrameOrigin(NSPoint(
             x: Screen.getWidth() - SidebarWindow.width,
-            y: Screen.getHeight() - SidebarWindow.teamOffsetTop - teamHeight
+            y: Screen.getHeight() - teamHeight
         ))
 
         var teamFrame = frame

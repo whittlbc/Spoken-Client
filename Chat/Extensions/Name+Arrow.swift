@@ -18,4 +18,4 @@ extension Name: ArrowParsable {
     }
 }
 
-extension Name: NetworkingJSONDecodable {}
+//extension Name: NetworkingJSONDecodable {}

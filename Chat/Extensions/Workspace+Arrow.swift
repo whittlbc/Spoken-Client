@@ -18,4 +18,4 @@ extension Workspace: ArrowParsable {
     }
 }
 
-extension Workspace: NetworkingJSONDecodable {}
+//extension Workspace: NetworkingJSONDecodable {}

@@ -20,6 +20,8 @@
 		096862EE2582ABCE00B9B614 /* Member.swift in Sources */ = {isa = PBXBuildFile; fileRef = 096862ED2582ABCE00B9B614 /* Member.swift */; };
 		096862F12582ACE100B9B614 /* Member+Arrow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 096862F02582ACE100B9B614 /* Member+Arrow.swift */; };
 		096862F42582B54F00B9B614 /* WorkspaceWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 096862F32582B54F00B9B614 /* WorkspaceWindow.swift */; };
+		096862F82582CF6700B9B614 /* Cache in Frameworks */ = {isa = PBXBuildFile; productRef = 096862F72582CF6700B9B614 /* Cache */; };
+		096862FB2582CF9500B9B614 /* Cache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 096862FA2582CF9500B9B614 /* Cache.swift */; };
 		0990879525797561001660D1 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0990879425797561001660D1 /* AppDelegate.swift */; };
 		0990879925797563001660D1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0990879825797563001660D1 /* Assets.xcassets */; };
 		099087A625797645001660D1 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 099087A525797645001660D1 /* main.swift */; };
@@ -56,6 +58,7 @@
 		096862ED2582ABCE00B9B614 /* Member.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Member.swift; sourceTree = "<group>"; };
 		096862F02582ACE100B9B614 /* Member+Arrow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Member+Arrow.swift"; sourceTree = "<group>"; };
 		096862F32582B54F00B9B614 /* WorkspaceWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkspaceWindow.swift; sourceTree = "<group>"; };
+		096862FA2582CF9500B9B614 /* Cache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Cache.swift; sourceTree = "<group>"; };
 		0990879125797561001660D1 /* Chat.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Chat.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0990879425797561001660D1 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		0990879825797563001660D1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -90,6 +93,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				096862D525829FE300B9B614 /* Arrow in Frameworks */,
+				096862F82582CF6700B9B614 /* Cache in Frameworks */,
 				096862CA258202BB00B9B614 /* Networking in Frameworks */,
 				0995DE2D25818AF000DAA334 /* Logging in Frameworks */,
 			);
@@ -150,6 +154,7 @@
 				0995DE2025816B5E00DAA334 /* Config.swift */,
 				0995DE2E25818B3E00DAA334 /* Logger.swift */,
 				0995DE342581A51F00DAA334 /* Keychain.swift */,
+				096862FA2582CF9500B9B614 /* Cache.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -297,6 +302,7 @@
 				0995DE2C25818AF000DAA334 /* Logging */,
 				096862C9258202BB00B9B614 /* Networking */,
 				096862D425829FE300B9B614 /* Arrow */,
+				096862F72582CF6700B9B614 /* Cache */,
 			);
 			productName = Chat;
 			productReference = 0990879125797561001660D1 /* Chat.app */;
@@ -330,6 +336,7 @@
 				0995DE2B25818AF000DAA334 /* XCRemoteSwiftPackageReference "swift-log" */,
 				096862C8258202BB00B9B614 /* XCRemoteSwiftPackageReference "Networking" */,
 				096862D325829FE300B9B614 /* XCRemoteSwiftPackageReference "Arrow" */,
+				096862F62582CF6700B9B614 /* XCRemoteSwiftPackageReference "Cache" */,
 			);
 			productRefGroup = 0990879225797561001660D1 /* Products */;
 			projectDirPath = "";
@@ -382,6 +389,7 @@
 				096862F42582B54F00B9B614 /* WorkspaceWindow.swift in Sources */,
 				0995DE0C257AF98D00DAA334 /* TeamMemberView.swift in Sources */,
 				0995DE2125816B5E00DAA334 /* Config.swift in Sources */,
+				096862FB2582CF9500B9B614 /* Cache.swift in Sources */,
 				0995DE0E257B0AE500DAA334 /* TeamMemberAvatarView.swift in Sources */,
 				096862D025829D2600B9B614 /* Model.swift in Sources */,
 				099087A8257976BF001660D1 /* WindowControllerManager.swift in Sources */,
@@ -743,6 +751,14 @@
 				minimumVersion = 6.0.0;
 			};
 		};
+		096862F62582CF6700B9B614 /* XCRemoteSwiftPackageReference "Cache" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/hyperoslo/Cache";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 6.0.0;
+			};
+		};
 		0995DE2B25818AF000DAA334 /* XCRemoteSwiftPackageReference "swift-log" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/apple/swift-log.git";
@@ -763,6 +779,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 096862D325829FE300B9B614 /* XCRemoteSwiftPackageReference "Arrow" */;
 			productName = Arrow;
+		};
+		096862F72582CF6700B9B614 /* Cache */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 096862F62582CF6700B9B614 /* XCRemoteSwiftPackageReference "Cache" */;
+			productName = Cache;
 		};
 		0995DE2C25818AF000DAA334 /* Logging */ = {
 			isa = XCSwiftPackageProductDependency;

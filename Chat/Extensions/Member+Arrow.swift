@@ -18,4 +18,4 @@ extension Member: ArrowParsable {
     }
 }
 
-extension Member: NetworkingJSONDecodable {}
+//extension Member: NetworkingJSONDecodable {}

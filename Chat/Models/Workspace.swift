@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct Workspace: Identifiable {
+struct Workspace: Identifiable, Codable {
     var uid = ""
     var name = ""
     var members = [Member]()

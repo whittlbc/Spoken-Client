@@ -20,4 +20,4 @@ extension User: ArrowParsable {
     }
 }
 
-extension User: NetworkingJSONDecodable {}
+//extension User: NetworkingJSONDecodable {}
