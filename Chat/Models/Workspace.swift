@@ -12,4 +12,9 @@ struct Workspace: Identifiable {
     var uid = ""
     var name = ""
     var members = [Member]()
+    
+    // Get current workspace from cache.
+    static var current: Workspace? {
+        nil // TODO: Fetch current workspace from cache
+    }
 }

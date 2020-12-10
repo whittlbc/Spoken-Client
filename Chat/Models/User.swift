@@ -18,4 +18,9 @@ struct User: Identifiable {
         let full = name.first + " " + name.last
         return full.trimmingCharacters(in: .whitespaces)
     }
+    
+    // Get current user from cache.
+    static var current: User? {
+        nil // TODO: Fetch current user from cache
+    }
 }

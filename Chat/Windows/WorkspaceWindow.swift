@@ -13,6 +13,9 @@ class WorkspaceWindow: FloatingWindow {
     // Let size and origin of window be equivalent to that of the Sidebar.
     static let size = SidebarWindow.size
     static let origin = SidebarWindow.origin
+    
+    // Current workspace.
+    var workspace = Workspace()
 
     // Override delegated init, size/position window on screen, and fetch workspaces.
     override init(contentRect: NSRect, styleMask style: NSWindow.StyleMask, backing backingStoreType: NSWindow.BackingStoreType, defer flag: Bool) {
@@ -23,14 +26,42 @@ class WorkspaceWindow: FloatingWindow {
         resizeWindow(to: SidebarWindow.size)
         
         // Load the current workspace.
-        loadWorkspace()
+        loadCurrentWorkspace()
     }
     
     // Load the current workspace for this user.
-    func loadWorkspace() {
-        // Get current workspace.
-        // Fetch current workspace members.
-        // Render members on screen as individual windows.
+    func loadCurrentWorkspace() {
+        // Get the current workspace or show the create new workspace window if user doesn't have any.
+        guard let currentWorkspace = getCurrentWorkspace() else {
+            showCreateNewWorkspace()
+            return
+        }
+        
+        // Assign workspace as current workspace.
+        workspace = currentWorkspace
+        
+        // Fetch all members in the current workspace.
+        // workspace.fetchMembers()
+        
+        // Render each member on screen as a separate window.
+        // workspace.members.forEach...
+    }
+    
+    func getCurrentWorkspace() -> Workspace? {
+        // If current workspace exists already, return it.
+        if let ws = Workspace.current {
+            return ws
+        }
+
+        // Fetch all workspaces for current user.
+        // User.current!.fetchWorkspaces()
+        
+        // Workspaces should be in cache now unless user is new and has no workspaces.
+        return Workspace.current
+    }
+    
+    func showCreateNewWorkspace() {
+        // TODO
     }
 }
 
