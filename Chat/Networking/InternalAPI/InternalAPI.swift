@@ -23,6 +23,9 @@ public class InternalAPI: API {
     override func getAuthHeaderToken() -> String? {
         return try? Keychain.getToken(forServer: Config.apiHost)
     }
+    
+    // HACK --> Remove this when starting to build sign-in flow
+    override func isAuthed() -> Bool { true }
 }
 
 public let api = InternalAPI()
