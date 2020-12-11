@@ -24,8 +24,11 @@
 		096862FE2582FF4300B9B614 /* User+Cache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 096862FD2582FF4300B9B614 /* User+Cache.swift */; };
 		09686301258300A900B9B614 /* Workspace+Cache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09686300258300A900B9B614 /* Workspace+Cache.swift */; };
 		0968630425830A0200B9B614 /* WorkspaceRoutes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0968630325830A0200B9B614 /* WorkspaceRoutes.swift */; };
-		0968630725830DB000B9B614 /* EndpointResources.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0968630625830DB000B9B614 /* EndpointResources.swift */; };
 		0968630A2583103300B9B614 /* MemberRoutes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 096863092583103300B9B614 /* MemberRoutes.swift */; };
+		0968630F2583178C00B9B614 /* WorkspaceLogicController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0968630E2583178C00B9B614 /* WorkspaceLogicController.swift */; };
+		0968631325831C2F00B9B614 /* User+API.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0968631225831C2F00B9B614 /* User+API.swift */; };
+		096863192583206500B9B614 /* Workspace+API.swift in Sources */ = {isa = PBXBuildFile; fileRef = 096863182583206500B9B614 /* Workspace+API.swift */; };
+		0968631C2583E80C00B9B614 /* Cache+Ids.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0968631B2583E80C00B9B614 /* Cache+Ids.swift */; };
 		0990879525797561001660D1 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0990879425797561001660D1 /* AppDelegate.swift */; };
 		0990879925797563001660D1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0990879825797563001660D1 /* Assets.xcassets */; };
 		099087A625797645001660D1 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 099087A525797645001660D1 /* main.swift */; };
@@ -65,8 +68,11 @@
 		096862FD2582FF4300B9B614 /* User+Cache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "User+Cache.swift"; sourceTree = "<group>"; };
 		09686300258300A900B9B614 /* Workspace+Cache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Workspace+Cache.swift"; sourceTree = "<group>"; };
 		0968630325830A0200B9B614 /* WorkspaceRoutes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkspaceRoutes.swift; sourceTree = "<group>"; };
-		0968630625830DB000B9B614 /* EndpointResources.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EndpointResources.swift; sourceTree = "<group>"; };
 		096863092583103300B9B614 /* MemberRoutes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemberRoutes.swift; sourceTree = "<group>"; };
+		0968630E2583178C00B9B614 /* WorkspaceLogicController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkspaceLogicController.swift; sourceTree = "<group>"; };
+		0968631225831C2F00B9B614 /* User+API.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "User+API.swift"; sourceTree = "<group>"; };
+		096863182583206500B9B614 /* Workspace+API.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Workspace+API.swift"; sourceTree = "<group>"; };
+		0968631B2583E80C00B9B614 /* Cache+Ids.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Cache+Ids.swift"; sourceTree = "<group>"; };
 		0990879125797561001660D1 /* Chat.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Chat.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0990879425797561001660D1 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		0990879825797563001660D1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -110,6 +116,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0968630D2583176B00B9B614 /* WorkspaceWindow */ = {
+			isa = PBXGroup;
+			children = (
+				096862F32582B54F00B9B614 /* WorkspaceWindow.swift */,
+				0968630E2583178C00B9B614 /* WorkspaceLogicController.swift */,
+			);
+			path = WorkspaceWindow;
+			sourceTree = "<group>";
+		};
 		0990878825797561001660D1 = {
 			isa = PBXGroup;
 			children = (
@@ -196,11 +211,11 @@
 		0995DE152581610F00DAA334 /* Windows */ = {
 			isa = PBXGroup;
 			children = (
+				0995DDFD257AED9D00DAA334 /* SidebarWindow */,
+				0968630D2583176B00B9B614 /* WorkspaceWindow */,
 				0995DE03257AEFDA00DAA334 /* TeamWindow.swift */,
 				0995DE06257AF49500DAA334 /* TeamMemberWindow.swift */,
 				0995DDFB257AED6400DAA334 /* FloatingWindow.swift */,
-				0995DDFD257AED9D00DAA334 /* SidebarWindow */,
-				096862F32582B54F00B9B614 /* WorkspaceWindow.swift */,
 			);
 			path = Windows;
 			sourceTree = "<group>";
@@ -253,6 +268,9 @@
 				096862F02582ACE100B9B614 /* Member+Arrow.swift */,
 				096862FD2582FF4300B9B614 /* User+Cache.swift */,
 				09686300258300A900B9B614 /* Workspace+Cache.swift */,
+				0968631225831C2F00B9B614 /* User+API.swift */,
+				096863182583206500B9B614 /* Workspace+API.swift */,
+				0968631B2583E80C00B9B614 /* Cache+Ids.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -288,7 +306,6 @@
 			children = (
 				0995DE3A2581CA7500DAA334 /* InternalAPI.swift */,
 				0968630325830A0200B9B614 /* WorkspaceRoutes.swift */,
-				0968630625830DB000B9B614 /* EndpointResources.swift */,
 				096863092583103300B9B614 /* MemberRoutes.swift */,
 			);
 			path = InternalAPI;
@@ -377,6 +394,9 @@
 			files = (
 				099087BD25799BC2001660D1 /* Screen.swift in Sources */,
 				096862EB2582A8D000B9B614 /* Workspace+Arrow.swift in Sources */,
+				096863192583206500B9B614 /* Workspace+API.swift in Sources */,
+				0968631325831C2F00B9B614 /* User+API.swift in Sources */,
+				0968631C2583E80C00B9B614 /* Cache+Ids.swift in Sources */,
 				096862EE2582ABCE00B9B614 /* Member.swift in Sources */,
 				0995DE382581A9BC00DAA334 /* KeychainError.swift in Sources */,
 				0968630425830A0200B9B614 /* WorkspaceRoutes.swift in Sources */,
@@ -406,11 +426,11 @@
 				0995DE2125816B5E00DAA334 /* Config.swift in Sources */,
 				096862FB2582CF9500B9B614 /* Cache.swift in Sources */,
 				09686301258300A900B9B614 /* Workspace+Cache.swift in Sources */,
-				0968630725830DB000B9B614 /* EndpointResources.swift in Sources */,
 				0995DE0E257B0AE500DAA334 /* TeamMemberAvatarView.swift in Sources */,
 				099087A8257976BF001660D1 /* WindowControllerManager.swift in Sources */,
 				096862CD25829C5A00B9B614 /* User.swift in Sources */,
 				096862E22582A61C00B9B614 /* Name.swift in Sources */,
+				0968630F2583178C00B9B614 /* WorkspaceLogicController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

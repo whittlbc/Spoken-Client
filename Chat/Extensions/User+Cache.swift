@@ -15,7 +15,7 @@ extension Cache {
     enum Users {
         
         // Storage instance.
-        static let storage: Storage<String, User> = Cache.newModelStorage(User.self)
+        static let storage: Storage<String, User> = Cache.newStorage(User.self)
         
         // Standardized user cache keys.
         enum Keys {
@@ -32,7 +32,7 @@ extension Cache {
             do {
                 try Users.storage.setObject(user, forKey: Keys.current)
             } catch {
-                logger.error("Error setting current user in cache: \(error)")
+                logger.error("Error setting current user in Users cache: \(error)")
             }
         }
     }

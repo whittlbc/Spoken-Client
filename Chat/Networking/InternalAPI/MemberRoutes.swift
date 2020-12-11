@@ -9,11 +9,17 @@
 import Foundation
 import Combine
 
+// Member resource.
+extension InternalAPI.Resources {
+    static let member = "/member"
+    static let members = "/members"
+}
+
 // Member requests.
 extension InternalAPI {
     
     // Fetch all members for a workspace.
-    func fetchMembers(forWorkspace workspace: Workspace) -> AnyPublisher<Member, Error> {
+    func fetchMembers(forWorkspace workspace: Workspace) -> AnyPublisher<[Member], Error> {
         get(Resources.members, params: ["workspace_id": workspace.id])
     }
 }

@@ -18,18 +18,18 @@ public enum Cache {
     // In-memory storage configuration.
     private static let memoryConfig = MemoryConfig(countLimit: 50, totalCostLimit: 0)
 
-    // Create new model-specific cache storage.
-    static func newModelStorage<T: Codable>(_ model: T.Type) -> Storage<String, T> {
+    // Create new cache storage object.
+    static func newStorage<T: Codable>(_ value: T.Type) -> Storage<String, T> {
         do {
             let cache: Storage<String, T> = try Storage(
                 diskConfig: diskConfig,
                 memoryConfig: memoryConfig,
-                transformer: TransformerFactory.forCodable(ofType: model)
+                transformer: TransformerFactory.forCodable(ofType: value)
             )
             
             return cache
         } catch {
-            fatalError("Failed to create new model cache for type \(model): \(error)")
+            fatalError("Failed to create new cache for type \(value): \(error)")
         }
     }
 }

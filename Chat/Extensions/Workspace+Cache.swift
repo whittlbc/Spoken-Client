@@ -15,7 +15,7 @@ extension Cache {
     enum Workspaces {
         
         // Storage instance.
-        static let storage: Storage<String, Workspace> = Cache.newModelStorage(Workspace.self)
+        static let storage: Storage<String, Workspace> = Cache.newStorage(Workspace.self)
         
         // Standardized workspace cache keys.
         enum Keys {
@@ -35,7 +35,7 @@ extension Cache {
                     forKey: Keys.current
                 )
             } catch {
-                logger.error("Error setting current workspace in cache: \(error)")
+                logger.error("Error setting current workspace in Workspaces cache: \(error)")
             }
         }
         
