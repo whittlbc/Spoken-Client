@@ -13,9 +13,7 @@ import Networking
 extension Member: ArrowParsable {
     
     public mutating func deserialize(_ json: JSON) {
-        uid <-- json["uid"]
+        id <-- json["id"]
         user <-- json["user"]
     }
 }
-
-//extension Member: NetworkingJSONDecodable {}

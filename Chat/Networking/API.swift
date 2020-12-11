@@ -9,7 +9,7 @@
 import Foundation
 import Networking
 
-public class API {
+public class API: NetworkingService {
     
     // Base URL for all API client requests
     var baseURL: String
@@ -19,14 +19,14 @@ public class API {
     var authHeaderName: String?
     
     // API client - will be auto-initialized with url and headers during init.
-    var client: NetworkingClient
+    public var network: NetworkingClient
     
     init(baseURL: String, authHeaderName: String? = nil, headers: [String: String] = [:]) {
         self.baseURL = baseURL
         self.authHeaderName = authHeaderName
         
         // Create new API client.
-        client = NetworkingClient(baseURL: baseURL)
+        network = NetworkingClient(baseURL: baseURL)
         
         // Build and set headers for client.
         buildClientHeaders(headers)
@@ -52,6 +52,6 @@ public class API {
         }
         
         // Assign headers to client.
-        client.headers = requestHeaders
+        network.headers = requestHeaders
     }
 }

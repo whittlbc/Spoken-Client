@@ -9,6 +9,6 @@
 import Foundation
 
 struct Member: Identifiable, Codable {
-    var uid = ""
+    var id = ""
     var user = User()
 }

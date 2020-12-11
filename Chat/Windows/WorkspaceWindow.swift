@@ -8,6 +8,7 @@
 
 import Cocoa
 
+// Window housing all sidebar app functionality as it relates to a given workspace.
 class WorkspaceWindow: FloatingWindow {
     
     // Let size and origin of window be equivalent to that of the Sidebar.
@@ -41,6 +42,7 @@ class WorkspaceWindow: FloatingWindow {
         workspace = currentWorkspace
         
         // Fetch all members in the current workspace.
+        
         // workspace.fetchMembers()
         
         // Render each member on screen as a separate window.

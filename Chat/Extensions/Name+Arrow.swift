@@ -17,5 +17,3 @@ extension Name: ArrowParsable {
         last <-- json["last"]
     }
 }
-
-//extension Name: NetworkingJSONDecodable {}

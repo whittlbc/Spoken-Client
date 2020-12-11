@@ -9,7 +9,7 @@
 import Foundation
 
 struct Workspace: Identifiable, Codable {
-    var uid = ""
+    var id = ""
     var name = ""
     var members = [Member]()
     
