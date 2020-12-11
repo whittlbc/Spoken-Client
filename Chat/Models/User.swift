@@ -21,6 +21,6 @@ struct User: Identifiable, Codable {
     
     // Get current user from cache.
     static var current: User? {
-        nil // TODO: Fetch current user from cache
+        Cache.Users.getCurrent()
     }
 }

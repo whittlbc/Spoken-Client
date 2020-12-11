@@ -8,20 +8,8 @@
 
 import Foundation
 import Cache
-import Networking
-import Arrow
 
-//let diskConfig = DiskConfig(name: Config.appBundleID)
-//
-//// In-memory storage configuration.
-//let memoryConfig = MemoryConfig(countLimit: 50, totalCostLimit: 0)
-//
-//let cache: Storage<String, User>? = try? Storage(
-//    diskConfig: diskConfig,
-//    memoryConfig: memoryConfig,
-//    transformer: TransformerFactory.forCodable(ofType: User.self)
-//)
-
+// Cache manager and creator.
 public enum Cache {
 
     // On-Disk storage configuration
@@ -44,7 +32,4 @@ public enum Cache {
             fatalError("Failed to create new model cache for type \(model): \(error)")
         }
     }
-    
-    // User cache
-    static let userStorage: Storage<String, User> = Cache.newModelStorage(User.self)
 }
