@@ -10,11 +10,13 @@ import Foundation
 import Combine
 
 class WorkspaceLogicController {
-        
+
     typealias Handler = (WorkspaceState) -> Void
     
+    // Current workspace displayed in workspace window.
     var currentWorkspace: Workspace?
     
+    // Array of API requests in case any need to be cancelled.
     var requests = [AnyCancellable]()
     
     // Load current workspace with all its members.
