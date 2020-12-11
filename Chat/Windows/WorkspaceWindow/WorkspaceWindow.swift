@@ -22,8 +22,20 @@ class WorkspaceWindow: FloatingWindow {
     static let size = SidebarWindow.size
     static let origin = SidebarWindow.origin
     
+    // Right padding of workspace window as it pertains to its content.
+    static let paddingRight = 6
+    
+    // X position of the right-most any content inside this window can be.
+    static let contentRight = Int(WorkspaceWindow.origin.x) + Int(WorkspaceWindow.size.width) - WorkspaceWindow.paddingRight
+    
     // Controller for all actions that can be performed in this window.
     private let logicController = WorkspaceLogicController()
+    
+    // Dictionary mapping a member's id to its respective window.
+    private var membersMap = [String:MemberWindow]()
+    
+    // Ordered list of members.
+    private var members = [Member]()
     
     // Override delegated init, size/position window on screen, and fetch workspaces.
     override init(contentRect: NSRect, styleMask style: NSWindow.StyleMask, backing backingStoreType: NSWindow.BackingStoreType, defer flag: Bool) {
@@ -38,9 +50,69 @@ class WorkspaceWindow: FloatingWindow {
     func loadCurrentWorkspace() {
         // Render loading view.
         render(.loading)
-        
+                
         logicController.load { [weak self] state in
             self?.render(state)
+        }
+    }
+    
+    // Create a new member window for a given member.
+    private func createMemberWindow(forMember member: Member) {
+        // Create member window.
+        let memberWindow = MemberWindow(member: member)
+
+        // Create member view controller and attach to window.
+        let memberController = MemberViewController(member: member)
+        memberWindow.contentViewController = memberController
+
+        // Bind member window events to controller.
+        memberWindow.bind(.title, to: memberController, withKeyPath: "title", options: nil)
+
+        // Make each member view the first responder inside the window.
+        memberWindow.makeFirstResponder(memberController.view)
+
+        // Add window to members map.
+        membersMap[member.id] = memberWindow
+    }
+    
+    // Add all member windows as child windows.
+    private func addMemberWindows() {
+        for member in members {
+            if let memberWindow = membersMap[member.id] {
+                addChildWindow(memberWindow, ordered: NSWindow.OrderingMode.above)
+            }
+        }
+    }
+    
+    // Update size and position of each member
+    private func sizeAndPositionMembers() {
+        var memberUpdates = [(MemberWindow, NSSize, NSPoint)]()
+        var newSize: NSSize
+        var newPosition: NSPoint
+        
+        // First calculate updates across all members.
+        for (i, member) in members.enumerated() {
+            // Ensure window actually exists.
+            guard let memberWindow = membersMap[member.id] else {
+                continue
+            }
+            
+            // Calculate new size.
+            newSize = memberWindow.calculateSize()
+            
+            // Calculate new position.
+            newPosition = NSPoint(
+                x: WorkspaceWindow.contentRight - Int(newSize.width),
+                y: 300 + (i * TeamMemberView.height) + (i * 10)
+            )
+            
+            // Add updates to list.
+            memberUpdates.append((memberWindow, newSize, newPosition))
+        }
+        
+        // Apply all updates.
+        for (memberWindow, size, position) in memberUpdates {
+            memberWindow.render(size: size, position: position)
         }
     }
     
@@ -70,13 +142,28 @@ class WorkspaceWindow: FloatingWindow {
     
     // Current workspace view
     private func renderWorkspace(_ workspace: Workspace) {
+        // Update members list.
+        members = workspace.members
+        
         // Render all members of workspace.
-        renderMembers(workspace.members)
+        renderMembers()
     }
     
     // Render all workspace members on screen in separate windows.
-    private func renderMembers(_ members: [Member]) {
-        print("Number of members: \(members.count)")
+    private func renderMembers() {
+        // Clear out members map.
+        membersMap.removeAll()
+        
+        // Create each member window and add them to the membersMap.
+        for member in members {
+            createMemberWindow(forMember: member)
+        }
+        
+        // Size and position member windows.
+        sizeAndPositionMembers()
+    
+        // Add all member windows as child windows.
+        addMemberWindows()
     }
     
     // Render workspace window contents based on current state.
