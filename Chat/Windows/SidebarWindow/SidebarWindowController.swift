@@ -35,14 +35,19 @@ class SidebarWindowController: NSWindowController, NSWindowDelegate {
 
     // Show main window and add child windows.
     override func showWindow(_ sender: Any?) {
-        // Show main sidebar window.
         super.showWindow(sender)
-        
-        // Add and show team window as a child window.
-        addTeamChildWindow()
+        addWorkspaceWindow()
     }
     
-    private func addTeamChildWindow() {
-        window!.addChildWindow(TeamWindow(), ordered: NSWindow.OrderingMode.above)
+    // Add workspace window as a child window.
+    private func addWorkspaceWindow() {
+        // Create new workspace window.
+        let workspaceWindow = WorkspaceWindow()
+        
+        // Add workspace window as top-most child window.
+        window!.addChildWindow(workspaceWindow, ordered: NSWindow.OrderingMode.above)
+        
+        // Load current workspace.
+        workspaceWindow.loadCurrentWorkspace()
     }
 }

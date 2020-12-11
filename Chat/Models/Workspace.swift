@@ -15,6 +15,7 @@ struct Workspace: Identifiable, Codable {
     
     // Get current workspace from cache.
     static var current: Workspace? {
-        Cache.Workspaces.getCurrent()
+        // Cache.Workspaces.getCurrent()
+        Mocks.Workspaces.current
     }
 }

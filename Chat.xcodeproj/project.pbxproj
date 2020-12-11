@@ -29,6 +29,7 @@
 		0968631325831C2F00B9B614 /* User+API.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0968631225831C2F00B9B614 /* User+API.swift */; };
 		096863192583206500B9B614 /* Workspace+API.swift in Sources */ = {isa = PBXBuildFile; fileRef = 096863182583206500B9B614 /* Workspace+API.swift */; };
 		0968631C2583E80C00B9B614 /* Cache+Ids.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0968631B2583E80C00B9B614 /* Cache+Ids.swift */; };
+		0968631F2583FB2A00B9B614 /* mocks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0968631E2583FB2A00B9B614 /* mocks.swift */; };
 		0990879525797561001660D1 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0990879425797561001660D1 /* AppDelegate.swift */; };
 		0990879925797563001660D1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0990879825797563001660D1 /* Assets.xcassets */; };
 		099087A625797645001660D1 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 099087A525797645001660D1 /* main.swift */; };
@@ -73,6 +74,7 @@
 		0968631225831C2F00B9B614 /* User+API.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "User+API.swift"; sourceTree = "<group>"; };
 		096863182583206500B9B614 /* Workspace+API.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Workspace+API.swift"; sourceTree = "<group>"; };
 		0968631B2583E80C00B9B614 /* Cache+Ids.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Cache+Ids.swift"; sourceTree = "<group>"; };
+		0968631E2583FB2A00B9B614 /* mocks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = mocks.swift; sourceTree = "<group>"; };
 		0990879125797561001660D1 /* Chat.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Chat.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0990879425797561001660D1 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		0990879825797563001660D1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -157,6 +159,7 @@
 				0995DE262581758200DAA334 /* Configs */,
 				099087B325797C69001660D1 /* Supporting Files */,
 				0990879825797563001660D1 /* Assets.xcassets */,
+				0968631E2583FB2A00B9B614 /* mocks.swift */,
 			);
 			path = Chat;
 			sourceTree = "<group>";
@@ -411,6 +414,7 @@
 				0995DDFF257AEDE000DAA334 /* SidebarWindow.swift in Sources */,
 				0995DE2F25818B3E00DAA334 /* Logger.swift in Sources */,
 				096862D82582A03F00B9B614 /* Arrow+Networking.swift in Sources */,
+				0968631F2583FB2A00B9B614 /* mocks.swift in Sources */,
 				099087A625797645001660D1 /* main.swift in Sources */,
 				0995DE13257B388500DAA334 /* NSBezierPath+CGPath.swift in Sources */,
 				0995DDFC257AED6400DAA334 /* FloatingWindow.swift in Sources */,

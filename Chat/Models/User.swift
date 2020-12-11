@@ -21,6 +21,7 @@ struct User: Identifiable, Codable {
     
     // Get current user from cache.
     static var current: User? {
-        Cache.Users.getCurrent()
+        // Cache.Users.getCurrent()
+        Mocks.Users.current
     }
 }

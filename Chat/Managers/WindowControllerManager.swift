@@ -10,8 +10,10 @@ import Cocoa
 
 class WindowControllerManager {
     
+    // Controller for the main application window -- the sidebar.
     var sidebarWindowController: SidebarWindowController?
     
+    // Launch first window of the application.
     func launchInitialWindow() {
         // Either show the sidebar or the sign-in window based on the current user's auth status.
         api.isAuthed() ? showSidebarWindow() : showSignInWindow()

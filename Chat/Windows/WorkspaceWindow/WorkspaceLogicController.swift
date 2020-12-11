@@ -62,20 +62,28 @@ class WorkspaceLogicController {
     
     // Fetch all members for the current workspace.
     private func fetchWorkspaceMembers(then handler: @escaping Handler) {
-        currentWorkspace!.fetchMembers().sink(receiveCompletion: { status in
-            switch status {
-            case .failure(let error):
-                handler(.failed(error))
-            default:
-                break
-            }
-        }) { (response: [Member]) in
-            // Set members on current workspace.
-            self.currentWorkspace!.members = response
-            
-            // Tell workspace window that all has been loaded.
-            handler(.loaded(self.currentWorkspace))
-            
-        }.store(in: &requests)
+//        currentWorkspace!.fetchMembers().sink(receiveCompletion: { status in
+//            switch status {
+//            case .failure(let error):
+//                handler(.failed(error))
+//            default:
+//                break
+//            }
+//        }) { (response: [Member]) in
+//            // Set members on current workspace.
+//            self.currentWorkspace!.members = response
+//
+//            // Tell workspace window that all has been loaded.
+//            handler(.loaded(self.currentWorkspace))
+//
+//        }.store(in: &requests)
+        
+        // ----- Mock logic below ------
+        
+        // Set members on current workspace.
+        self.currentWorkspace!.members = Mocks.Members.all
+
+        // Tell workspace window that all has been loaded.
+        handler(.loaded(self.currentWorkspace))
     }
 }

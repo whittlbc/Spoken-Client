@@ -32,13 +32,10 @@ class WorkspaceWindow: FloatingWindow {
         // Position and size window on screen.
         repositionWindow(to: SidebarWindow.origin)
         resizeWindow(to: SidebarWindow.size)
-        
-        // Initial workspace load.
-        loadCurrentWorkspace()
     }
 
     // Load current workspace with all its members.
-    private func loadCurrentWorkspace() {
+    func loadCurrentWorkspace() {
         // Render loading view.
         render(.loading)
         
@@ -53,12 +50,12 @@ class WorkspaceWindow: FloatingWindow {
     }
     
     // Error view
-    private func renderError(error: Error) {
+    private func renderError(_ error: Error) {
         // TODO
     }
     
     // Render workspace if exists; Otherwise, show the view to create a new workspace.
-    private func renderLoaded(workspace: Workspace?) {
+    private func renderLoaded(_ workspace: Workspace?) {
         if let ws = workspace {
             renderWorkspace(ws)
         } else {
@@ -66,29 +63,36 @@ class WorkspaceWindow: FloatingWindow {
         }
     }
     
-    // New workspace view
+    // Create new workspace view
     private func renderCreateFirstWorkspace() {
         // TODO
     }
     
+    // Current workspace view
     private func renderWorkspace(_ workspace: Workspace) {
         // Render all members of workspace.
         renderMembers(workspace.members)
     }
     
+    // Render all workspace members on screen in separate windows.
     private func renderMembers(_ members: [Member]) {
-        // TODO
+        print("Number of members: \(members.count)")
     }
     
     // Render workspace window contents based on current state.
     private func render(_ state: WorkspaceState) {
         switch state {
+        // Loading view
         case .loading:
             renderLoading()
+            
+        // Loaded view
         case .loaded(let workspace):
-            renderLoaded(workspace: workspace)
+            renderLoaded(workspace)
+        
+        // Error view
         case .failed(let error):
-            renderError(error: error)
+            renderError(error)
         }
     }
 }
