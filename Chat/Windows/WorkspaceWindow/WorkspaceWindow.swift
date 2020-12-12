@@ -18,15 +18,24 @@ enum WorkspaceState {
 // Window housing all sidebar app functionality as it relates to a given workspace.
 class WorkspaceWindow: FloatingWindow {
     
-    // Let size and origin of window be equivalent to that of the Sidebar.
+    // Size and origin of workspace window -- equivalent to that of the Sidebar.
     static let size = SidebarWindow.size
     static let origin = SidebarWindow.origin
     
     // Right padding of workspace window as it pertains to its content.
-    static let paddingRight = 6
+    static let paddingRight: Float = 6
     
-    // X position of the right-most any content inside this window can be.
-    static let contentRight = Int(WorkspaceWindow.origin.x) + Int(WorkspaceWindow.size.width) - WorkspaceWindow.paddingRight
+    // Style information of for group of member windows.
+    enum MembersStyle {
+        // X-position of the right edge of members.
+        static let rightEdge = Float(WorkspaceWindow.origin.x + WorkspaceWindow.size.width) - WorkspaceWindow.paddingRight
+        
+        // Initial distance of members from top of screen.
+        static let topOffset: Float = 240
+        
+        // Vertical spacing between members.
+        static let gutterSpacing: Float = 10
+    }
     
     // Controller for all actions that can be performed in this window.
     private let logicController = WorkspaceLogicController()
@@ -50,16 +59,22 @@ class WorkspaceWindow: FloatingWindow {
     func loadCurrentWorkspace() {
         // Render loading view.
         render(.loading)
-                
+
         logicController.load { [weak self] state in
             self?.render(state)
         }
     }
     
+    func onMemberStateUpdate() {
+        updateMemberSizesAndPositions()
+    }
+    
     // Create a new member window for a given member.
     private func createMemberWindow(forMember member: Member) {
         // Create member window.
-        let memberWindow = MemberWindow(member: member)
+        let memberWindow = MemberWindow(member: member, onStateUpdated: { [weak self] in
+            self?.onMemberStateUpdate()
+        })
 
         // Create member view controller and attach to window.
         let memberController = MemberViewController(member: member)
@@ -67,7 +82,7 @@ class WorkspaceWindow: FloatingWindow {
 
         // Bind member window events to controller.
         memberWindow.bind(.title, to: memberController, withKeyPath: "title", options: nil)
-
+ 
         // Make each member view the first responder inside the window.
         memberWindow.makeFirstResponder(memberController.view)
 
@@ -84,27 +99,24 @@ class WorkspaceWindow: FloatingWindow {
         }
     }
     
-    // Update size and position of each member
-    private func sizeAndPositionMembers() {
+    // Set initial size and position of each member.
+    private func setInitialMemberSizesAndPositions() {
+        let memberWindows = getOrderedMemberWindows()
         var memberUpdates = [(MemberWindow, NSSize, NSPoint)]()
         var newSize: NSSize
+        var newY: Float
         var newPosition: NSPoint
         
         // First calculate updates across all members.
-        for (i, member) in members.enumerated() {
-            // Ensure window actually exists.
-            guard let memberWindow = membersMap[member.id] else {
-                continue
-            }
-            
+        for (i, memberWindow) in memberWindows.enumerated() {
             // Calculate new size.
-            newSize = memberWindow.calculateSize()
+            newSize = memberWindow.calculateSize(forState: memberWindow.state)
             
-            // Calculate new position.
-            newPosition = NSPoint(
-                x: WorkspaceWindow.contentRight - Int(newSize.width),
-                y: 300 + (i * TeamMemberView.height) + (i * 10)
-            )
+            // Calculate new Y-position.
+            newY = getInitialYPositionForMember(memberWindow: memberWindow, atIndex: i)
+
+            // Calculate new position
+            newPosition = NSPoint(x: CGFloat(MembersStyle.rightEdge) - newSize.width, y: CGFloat(newY))
             
             // Add updates to list.
             memberUpdates.append((memberWindow, newSize, newPosition))
@@ -114,6 +126,106 @@ class WorkspaceWindow: FloatingWindow {
         for (memberWindow, size, position) in memberUpdates {
             memberWindow.render(size: size, position: position)
         }
+    }
+    
+    // Update size and position of each member.
+    private func updateMemberSizesAndPositions() {
+        var memberUpdates = [(MemberWindow, NSSize, NSPoint)]()
+        var memberWindow: MemberWindow
+        var newSize: NSSize
+        var newY: Float
+        var newPosition: NSPoint
+
+        // Get ordered list of existing member windows.
+        let memberWindows = getOrderedMemberWindows()
+                
+        // Find the index of the first member window that should change size due to a state change (if any).
+        guard let (firstIndexWithSizeChange, firstOffset) = findFirstMemberWithSizeChange(memberWindows) else {
+            return
+        }
+                
+        // Subtract firstOffset to all member windows above firstIndexWithSizeChange.
+        for i in 0..<firstIndexWithSizeChange {
+            memberWindow = memberWindows[i]
+            
+            // Add firstOffset to y-origin of member window.
+            newY = Float(memberWindow.frame.origin.y) - firstOffset
+            
+            // Create new position.
+            newPosition = NSPoint(x: memberWindow.frame.origin.x, y: CGFloat(newY))
+            
+            // Register update to apply later.
+            memberUpdates.append((
+                memberWindow,
+                memberWindow.frame.size,
+                NSPoint(x: memberWindow.frame.origin.x, y: CGFloat(newY))
+            ))
+        }
+        
+        var selfOffset: Float = 0
+        var offsetDueToSizeChanges: Float = 0
+        
+        // Apply updates to remaining member windows (including the first one with a size change).
+        for j in firstIndexWithSizeChange..<memberWindows.count {
+            memberWindow = memberWindows[j]
+
+            // Get the offset for this member window due to its own size change (if any).
+            selfOffset = j == firstIndexWithSizeChange ? firstOffset : memberWindow.getVerticalOffsetForStateChange()
+            
+            if abs(selfOffset) > 0 {
+                offsetDueToSizeChanges += selfOffset
+                newSize = memberWindow.calculateSize(forState: memberWindow.state)
+            } else {
+                newSize = memberWindow.frame.size
+            }
+                        
+            // Add offsetDueToSizeChanges to y-origin of member window.
+            newY = Float(memberWindow.frame.origin.y) + offsetDueToSizeChanges
+
+            // Calculate new position
+            newPosition = NSPoint(x: CGFloat(MembersStyle.rightEdge) - newSize.width, y: CGFloat(newY))
+            
+            // Add updates to list.
+            memberUpdates.append((memberWindow, newSize, newPosition))
+        }
+        
+        // Apply all updates.
+        for (memberWindow, size, position) in memberUpdates {
+            memberWindow.render(size: size, position: position)
+        }
+    }
+    
+    private func getInitialYPositionForMember(memberWindow: MemberWindow, atIndex index: Int) -> Float {
+        let heightWithGutter = Float(memberWindow.getIdleWindowSize().height) + MembersStyle.gutterSpacing
+        return Float(Screen.getHeight()) - MembersStyle.topOffset - (heightWithGutter * Float(index))
+    }
+    
+    private func getOrderedMemberWindows() -> [MemberWindow] {
+        var memberWindows = [MemberWindow]()
+                
+        for member in members {
+            guard let memberWindow = membersMap[member.id] else {
+                continue
+            }
+            
+            memberWindows.append(memberWindow)
+        }
+        
+        return memberWindows
+    }
+    
+    private func findFirstMemberWithSizeChange(_ memberWindows: [MemberWindow]) -> (Int, Float)? {
+        var offset: Float = 0
+        
+        for (i, memberWindow) in memberWindows.enumerated() {
+            offset = memberWindow.getVerticalOffsetForStateChange()
+                        
+            if abs(offset) > 0 {
+                return (i, offset)
+            }
+        }
+        
+        return nil
     }
     
     // Loading view
@@ -160,7 +272,7 @@ class WorkspaceWindow: FloatingWindow {
         }
         
         // Size and position member windows.
-        sizeAndPositionMembers()
+        setInitialMemberSizesAndPositions()
     
         // Add all member windows as child windows.
         addMemberWindows()

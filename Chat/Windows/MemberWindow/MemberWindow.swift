@@ -22,11 +22,22 @@ class MemberWindow: FloatingWindow {
     
     // The member's state on screen at any given time.
     var state = MemberState.idle
+    var prevState = MemberState.idle
+    
+    // Flag indicating whether mouse is inside window.
+    var isMouseInside = false
+    
+    // Flag indicating whether window has rendered for the first time.
+    var initialPositionSet = false
+    
+    // Closure provided by parent window for when state updates.
+    var onStateUpdated: (() -> Void)!
     
     // Proper initializer to use when rendering members.
-    convenience init(member: Member) {
+    convenience init(member: Member, onStateUpdated: @escaping () -> Void) {
         self.init()
         self.member = member
+        self.onStateUpdated = onStateUpdated
     }
     
     // Override delegated init
@@ -47,20 +58,25 @@ class MemberWindow: FloatingWindow {
         NSSize(width: 162, height: 50)
     }
     
-    func calculateSize() -> NSSize {
-        switch state {
+    func calculateSize(forState memberState: MemberState) -> NSSize {
+        switch memberState {
         // Default state
         case .idle:
             return getIdleWindowSize()
             
         // Hovering over a previously idle member
         case .previewing:
-            return getIdleWindowSize()
+            return getPreviewingWindowSize()
             
         // Recording a message to this member
         case .recording:
-            return getIdleWindowSize()
+            return getRecordingWindowSize()
         }
+    }
+    
+    // (Old Height - New Height) / 2
+    func getVerticalOffsetForStateChange() -> Float {
+        Float(calculateSize(forState: prevState).height - calculateSize(forState: state).height) / 2
     }
     
     // Render member window to a specific size and position.
@@ -70,36 +86,49 @@ class MemberWindow: FloatingWindow {
         repositionWindow(to: position)
     }
     
-//    override func mouseEntered(with event: NSEvent) {
-//        if (isMouseInside) {
-//            return
-//        }
-//
-//        isMouseInside = true
-//
-//        makeKeyAndOrderFront(self)
-//
-//        backgroundColor = NSColor.white
-//
-//        var newFrame = frame
-//        newFrame.origin.x -= 20
-//        newFrame.size.width += 20
-//
-//        setFrame(newFrame, display: true)
-//    }
-//
-//    override func mouseExited(with event: NSEvent) {
-//        if (!isMouseInside) {
-//            return
-//        }
-//
-//        isMouseInside = false
-//        backgroundColor = NSColor.clear
-//
-//        var newFrame = frame
-//        newFrame.origin.x += 20
-//        newFrame.size.width -= 20
-//
-//        setFrame(newFrame, display: true)
-//    }
+    override func mouseEntered(with event: NSEvent) {
+        if isMouseInside {
+            return
+        }
+        
+        isMouseInside = true
+        
+        makeKeyAndOrderFront(self)
+
+        switch state {
+        case .idle:
+            onMouseEnteredIdle()
+        default:
+            break
+        }
+    }
+
+    override func mouseExited(with event: NSEvent) {
+        if !isMouseInside {
+            return
+        }
+        
+        isMouseInside = false
+        
+        switch state {
+        case .previewing:
+            onMouseExitedPreviewing()
+        default:
+            break
+        }
+    }
+    
+    func onMouseEnteredIdle() {
+        setState(.previewing)
+    }
+    
+    func onMouseExitedPreviewing() {
+        setState(.idle)
+    }
+    
+    func setState(_ newState: MemberState) {
+        prevState = state
+        state = newState
+        onStateUpdated()
+    }
 }

@@ -12,7 +12,7 @@ class MemberViewController: NSViewController {
 
     // Workspace member associated with this view.
     var member = Member()
-
+    
     // Proper initializer to use when rendering member.
     convenience init(member: Member) {
         self.init()

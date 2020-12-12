@@ -18,6 +18,7 @@ class MemberView: NSView {
     // Override delgated init.
     private override init(frame frameRect: NSRect) {
         super.init(frame: frameRect)
+        frame = bounds
     }
 
     required init?(coder: NSCoder) {
