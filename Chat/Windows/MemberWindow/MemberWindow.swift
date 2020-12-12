@@ -31,10 +31,10 @@ class MemberWindow: FloatingWindow {
     var initialPositionSet = false
     
     // Closure provided by parent window for when state updates.
-    var onStateUpdated: (() -> Void)!
+    var onStateUpdated: ((String) -> Void)!
     
     // Proper initializer to use when rendering members.
-    convenience init(member: Member, onStateUpdated: @escaping () -> Void) {
+    convenience init(member: Member, onStateUpdated: @escaping (String) -> Void) {
         self.init()
         self.member = member
         self.onStateUpdated = onStateUpdated
@@ -43,6 +43,10 @@ class MemberWindow: FloatingWindow {
     // Override delegated init
     private override init(contentRect: NSRect, styleMask style: NSWindow.StyleMask, backing backingStoreType: NSWindow.BackingStoreType, defer flag: Bool) {
         super.init(contentRect: contentRect, styleMask: style, backing: backingStoreType, defer: flag)
+    }
+    
+    func registerStateUnchanged() {
+        prevState = state
     }
     
     // TODO: Use member to modify these (notifications should increase width a bit for example)
@@ -129,6 +133,6 @@ class MemberWindow: FloatingWindow {
     func setState(_ newState: MemberState) {
         prevState = state
         state = newState
-        onStateUpdated()
+        onStateUpdated(member.id)
     }
 }

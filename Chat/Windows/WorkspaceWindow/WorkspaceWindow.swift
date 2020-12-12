@@ -65,15 +65,24 @@ class WorkspaceWindow: FloatingWindow {
         }
     }
     
-    func onMemberStateUpdate() {
+    func onMemberStateUpdate(forMemberId: String) {
+        // Set previous state to current state for all adjacent member windows.
+        for (memberId, memberWindow) in membersMap {
+            if memberId == forMemberId {
+                continue
+            }
+            
+            memberWindow.registerStateUnchanged()
+        }
+        
         updateMemberSizesAndPositions()
     }
     
     // Create a new member window for a given member.
     private func createMemberWindow(forMember member: Member) {
         // Create member window.
-        let memberWindow = MemberWindow(member: member, onStateUpdated: { [weak self] in
-            self?.onMemberStateUpdate()
+        let memberWindow = MemberWindow(member: member, onStateUpdated: { [weak self] memberId in
+            self?.onMemberStateUpdate(forMemberId: memberId)
         })
 
         // Create member view controller and attach to window.
@@ -138,7 +147,7 @@ class WorkspaceWindow: FloatingWindow {
 
         // Get ordered list of existing member windows.
         let memberWindows = getOrderedMemberWindows()
-                
+
         // Find the index of the first member window that should change size due to a state change (if any).
         guard let (firstIndexWithSizeChange, firstOffset) = findFirstMemberWithSizeChange(memberWindows) else {
             return
@@ -178,7 +187,7 @@ class WorkspaceWindow: FloatingWindow {
             } else {
                 newSize = memberWindow.frame.size
             }
-                        
+
             // Add offsetDueToSizeChanges to y-origin of member window.
             newY = Float(memberWindow.frame.origin.y) + offsetDueToSizeChanges
 
