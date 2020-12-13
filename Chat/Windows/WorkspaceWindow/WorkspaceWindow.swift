@@ -34,7 +34,7 @@ class WorkspaceWindow: FloatingWindow {
         static let topOffset: Float = 240
         
         // Vertical spacing between members.
-        static let gutterSpacing: Float = 10
+        static let gutterSpacing: Float = 0
     }
     
     // Controller for all actions that can be performed in this window.
@@ -85,8 +85,14 @@ class WorkspaceWindow: FloatingWindow {
             self?.onMemberStateUpdate(forMemberId: memberId)
         })
 
+        let initialSize = memberWindow.calculateSize(forState: memberWindow.state)
+        
         // Create member view controller and attach to window.
-        let memberController = MemberViewController(member: member)
+        let memberController = MemberViewController(
+            member: member,
+            initialFrame: NSRect(x: 0, y: 0, width: initialSize.width, height: initialSize.height)
+        )
+        
         memberWindow.contentViewController = memberController
 
         // Bind member window events to controller.

@@ -33,6 +33,9 @@
 		0968632325840AB500B9B614 /* MemberWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0968632225840AB500B9B614 /* MemberWindow.swift */; };
 		09686328258427A500B9B614 /* MemberViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09686327258427A500B9B614 /* MemberViewController.swift */; };
 		0968632C2584299400B9B614 /* MemberView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0968632B2584299400B9B614 /* MemberView.swift */; };
+		0968633125859A3000B9B614 /* MemberAvatarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0968633025859A3000B9B614 /* MemberAvatarView.swift */; };
+		096863352586C2B000B9B614 /* RoundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 096863342586C2B000B9B614 /* RoundView.swift */; };
+		096863382586C42B00B9B614 /* RoundShadowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 096863372586C42B00B9B614 /* RoundShadowView.swift */; };
 		0990879525797561001660D1 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0990879425797561001660D1 /* AppDelegate.swift */; };
 		0990879925797563001660D1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0990879825797563001660D1 /* Assets.xcassets */; };
 		099087A625797645001660D1 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 099087A525797645001660D1 /* main.swift */; };
@@ -81,6 +84,9 @@
 		0968632225840AB500B9B614 /* MemberWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemberWindow.swift; sourceTree = "<group>"; };
 		09686327258427A500B9B614 /* MemberViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemberViewController.swift; sourceTree = "<group>"; };
 		0968632B2584299400B9B614 /* MemberView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemberView.swift; sourceTree = "<group>"; };
+		0968633025859A3000B9B614 /* MemberAvatarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemberAvatarView.swift; sourceTree = "<group>"; };
+		096863342586C2B000B9B614 /* RoundView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundView.swift; sourceTree = "<group>"; };
+		096863372586C42B00B9B614 /* RoundShadowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundShadowView.swift; sourceTree = "<group>"; };
 		0990879125797561001660D1 /* Chat.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Chat.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0990879425797561001660D1 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		0990879825797563001660D1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -148,6 +154,14 @@
 				0968632B2584299400B9B614 /* MemberView.swift */,
 			);
 			path = MemberView;
+			sourceTree = "<group>";
+		};
+		0968632F25859A0B00B9B614 /* MemberAvatarView */ = {
+			isa = PBXGroup;
+			children = (
+				0968633025859A3000B9B614 /* MemberAvatarView.swift */,
+			);
+			path = MemberAvatarView;
 			sourceTree = "<group>";
 		};
 		0990878825797561001660D1 = {
@@ -251,9 +265,12 @@
 			isa = PBXGroup;
 			children = (
 				096863262584279600B9B614 /* MemberView */,
+				0968632F25859A0B00B9B614 /* MemberAvatarView */,
 				0995DE1B258162F200DAA334 /* RoundedShadowImageView */,
 				0995DE1A2581623400DAA334 /* TeamMemberAvatarView */,
 				0995DE08257AF90800DAA334 /* TeamMemberView */,
+				096863342586C2B000B9B614 /* RoundView.swift */,
+				096863372586C42B00B9B614 /* RoundShadowView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -423,6 +440,7 @@
 				099087BD25799BC2001660D1 /* Screen.swift in Sources */,
 				096862EB2582A8D000B9B614 /* Workspace+Arrow.swift in Sources */,
 				096863192583206500B9B614 /* Workspace+API.swift in Sources */,
+				096863382586C42B00B9B614 /* RoundShadowView.swift in Sources */,
 				0968631325831C2F00B9B614 /* User+API.swift in Sources */,
 				0968631C2583E80C00B9B614 /* Cache+Ids.swift in Sources */,
 				096862EE2582ABCE00B9B614 /* Member.swift in Sources */,
@@ -431,6 +449,7 @@
 				0995DE04257AEFDA00DAA334 /* TeamWindow.swift in Sources */,
 				0995DE3B2581CA7500DAA334 /* InternalAPI.swift in Sources */,
 				0990879525797561001660D1 /* AppDelegate.swift in Sources */,
+				0968633125859A3000B9B614 /* MemberAvatarView.swift in Sources */,
 				0968632C2584299400B9B614 /* MemberView.swift in Sources */,
 				0995DE07257AF49500DAA334 /* TeamMemberWindow.swift in Sources */,
 				0968630A2583103300B9B614 /* MemberRoutes.swift in Sources */,
@@ -453,6 +472,7 @@
 				096862F42582B54F00B9B614 /* WorkspaceWindow.swift in Sources */,
 				096862FE2582FF4300B9B614 /* User+Cache.swift in Sources */,
 				0995DE0C257AF98D00DAA334 /* TeamMemberView.swift in Sources */,
+				096863352586C2B000B9B614 /* RoundView.swift in Sources */,
 				0995DE2125816B5E00DAA334 /* Config.swift in Sources */,
 				096862FB2582CF9500B9B614 /* Cache.swift in Sources */,
 				0968632325840AB500B9B614 /* MemberWindow.swift in Sources */,

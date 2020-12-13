@@ -9,22 +9,22 @@
 import Cocoa
 
 class MemberView: NSView {
-
-    // Proper initializer to use when rendering member.
-    convenience init() {
-        self.init(frame: NSZeroRect)
-    }
-    
-    // Override delgated init.
-    private override init(frame frameRect: NSRect) {
-        super.init(frame: frameRect)
-        frame = bounds
-    }
-
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
+//
+//    // Proper initializer to use when rendering member.
+//    convenience init() {
+//        self.init(frame: NSZeroRect)
+//    }
+//
+//    // Override delgated init.
+//    private override init(frame frameRect: NSRect) {
+//        super.init(frame: frameRect)
+//        frame = bounds
+//    }
+//
+//    required init?(coder: NSCoder) {
+//        fatalError("init(coder:) has not been implemented")
+//    }
+//
     override var acceptsFirstResponder: Bool {
         return true
     }
