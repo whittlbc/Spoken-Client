@@ -44,12 +44,6 @@
 		0995DDFC257AED6400DAA334 /* FloatingWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0995DDFB257AED6400DAA334 /* FloatingWindow.swift */; };
 		0995DDFF257AEDE000DAA334 /* SidebarWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0995DDFE257AEDE000DAA334 /* SidebarWindow.swift */; };
 		0995DE01257AEDEC00DAA334 /* SidebarWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0995DE00257AEDEC00DAA334 /* SidebarWindowController.swift */; };
-		0995DE04257AEFDA00DAA334 /* TeamWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0995DE03257AEFDA00DAA334 /* TeamWindow.swift */; };
-		0995DE07257AF49500DAA334 /* TeamMemberWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0995DE06257AF49500DAA334 /* TeamMemberWindow.swift */; };
-		0995DE0A257AF91400DAA334 /* TeamMemberViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0995DE09257AF91400DAA334 /* TeamMemberViewController.swift */; };
-		0995DE0C257AF98D00DAA334 /* TeamMemberView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0995DE0B257AF98D00DAA334 /* TeamMemberView.swift */; };
-		0995DE0E257B0AE500DAA334 /* TeamMemberAvatarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0995DE0D257B0AE500DAA334 /* TeamMemberAvatarView.swift */; };
-		0995DE10257B315200DAA334 /* RoundedShadowImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0995DE0F257B315200DAA334 /* RoundedShadowImageView.swift */; };
 		0995DE13257B388500DAA334 /* NSBezierPath+CGPath.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0995DE12257B388500DAA334 /* NSBezierPath+CGPath.swift */; };
 		0995DE2125816B5E00DAA334 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0995DE2025816B5E00DAA334 /* Config.swift */; };
 		0995DE2D25818AF000DAA334 /* Logging in Frameworks */ = {isa = PBXBuildFile; productRef = 0995DE2C25818AF000DAA334 /* Logging */; };
@@ -98,12 +92,6 @@
 		0995DDFB257AED6400DAA334 /* FloatingWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingWindow.swift; sourceTree = "<group>"; };
 		0995DDFE257AEDE000DAA334 /* SidebarWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarWindow.swift; sourceTree = "<group>"; };
 		0995DE00257AEDEC00DAA334 /* SidebarWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarWindowController.swift; sourceTree = "<group>"; };
-		0995DE03257AEFDA00DAA334 /* TeamWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamWindow.swift; sourceTree = "<group>"; };
-		0995DE06257AF49500DAA334 /* TeamMemberWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamMemberWindow.swift; sourceTree = "<group>"; };
-		0995DE09257AF91400DAA334 /* TeamMemberViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamMemberViewController.swift; sourceTree = "<group>"; };
-		0995DE0B257AF98D00DAA334 /* TeamMemberView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamMemberView.swift; sourceTree = "<group>"; };
-		0995DE0D257B0AE500DAA334 /* TeamMemberAvatarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamMemberAvatarView.swift; sourceTree = "<group>"; };
-		0995DE0F257B315200DAA334 /* RoundedShadowImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundedShadowImageView.swift; sourceTree = "<group>"; };
 		0995DE12257B388500DAA334 /* NSBezierPath+CGPath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSBezierPath+CGPath.swift"; sourceTree = "<group>"; };
 		0995DE2025816B5E00DAA334 /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
 		0995DE29258180F600DAA334 /* Development.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Development.xcconfig; sourceTree = SOURCE_ROOT; };
@@ -231,15 +219,6 @@
 			path = SidebarWindow;
 			sourceTree = "<group>";
 		};
-		0995DE08257AF90800DAA334 /* TeamMemberView */ = {
-			isa = PBXGroup;
-			children = (
-				0995DE09257AF91400DAA334 /* TeamMemberViewController.swift */,
-				0995DE0B257AF98D00DAA334 /* TeamMemberView.swift */,
-			);
-			path = TeamMemberView;
-			sourceTree = "<group>";
-		};
 		0995DE142581610200DAA334 /* Managers */ = {
 			isa = PBXGroup;
 			children = (
@@ -251,11 +230,9 @@
 		0995DE152581610F00DAA334 /* Windows */ = {
 			isa = PBXGroup;
 			children = (
-				0968632125840AA900B9B614 /* MemberWindow */,
 				0995DDFD257AED9D00DAA334 /* SidebarWindow */,
 				0968630D2583176B00B9B614 /* WorkspaceWindow */,
-				0995DE03257AEFDA00DAA334 /* TeamWindow.swift */,
-				0995DE06257AF49500DAA334 /* TeamMemberWindow.swift */,
+				0968632125840AA900B9B614 /* MemberWindow */,
 				0995DDFB257AED6400DAA334 /* FloatingWindow.swift */,
 			);
 			path = Windows;
@@ -266,9 +243,6 @@
 			children = (
 				096863262584279600B9B614 /* MemberView */,
 				0968632F25859A0B00B9B614 /* MemberAvatarView */,
-				0995DE1B258162F200DAA334 /* RoundedShadowImageView */,
-				0995DE1A2581623400DAA334 /* TeamMemberAvatarView */,
-				0995DE08257AF90800DAA334 /* TeamMemberView */,
 				096863342586C2B000B9B614 /* RoundView.swift */,
 				096863372586C42B00B9B614 /* RoundShadowView.swift */,
 			);
@@ -284,22 +258,6 @@
 				096862ED2582ABCE00B9B614 /* Member.swift */,
 			);
 			path = Models;
-			sourceTree = "<group>";
-		};
-		0995DE1A2581623400DAA334 /* TeamMemberAvatarView */ = {
-			isa = PBXGroup;
-			children = (
-				0995DE0D257B0AE500DAA334 /* TeamMemberAvatarView.swift */,
-			);
-			path = TeamMemberAvatarView;
-			sourceTree = "<group>";
-		};
-		0995DE1B258162F200DAA334 /* RoundedShadowImageView */ = {
-			isa = PBXGroup;
-			children = (
-				0995DE0F257B315200DAA334 /* RoundedShadowImageView.swift */,
-			);
-			path = RoundedShadowImageView;
 			sourceTree = "<group>";
 		};
 		0995DE1C2581695A00DAA334 /* Extensions */ = {
@@ -446,14 +404,11 @@
 				096862EE2582ABCE00B9B614 /* Member.swift in Sources */,
 				0995DE382581A9BC00DAA334 /* KeychainError.swift in Sources */,
 				0968630425830A0200B9B614 /* WorkspaceRoutes.swift in Sources */,
-				0995DE04257AEFDA00DAA334 /* TeamWindow.swift in Sources */,
 				0995DE3B2581CA7500DAA334 /* InternalAPI.swift in Sources */,
 				0990879525797561001660D1 /* AppDelegate.swift in Sources */,
 				0968633125859A3000B9B614 /* MemberAvatarView.swift in Sources */,
 				0968632C2584299400B9B614 /* MemberView.swift in Sources */,
-				0995DE07257AF49500DAA334 /* TeamMemberWindow.swift in Sources */,
 				0968630A2583103300B9B614 /* MemberRoutes.swift in Sources */,
-				0995DE0A257AF91400DAA334 /* TeamMemberViewController.swift in Sources */,
 				0995DE01257AEDEC00DAA334 /* SidebarWindowController.swift in Sources */,
 				096862DE2582A2EB00B9B614 /* User+Arrow.swift in Sources */,
 				0995DDFF257AEDE000DAA334 /* SidebarWindow.swift in Sources */,
@@ -466,19 +421,16 @@
 				096862E82582A88600B9B614 /* Workspace.swift in Sources */,
 				0995DE352581A51F00DAA334 /* Keychain.swift in Sources */,
 				0995DE3D2581CF6A00DAA334 /* API.swift in Sources */,
-				0995DE10257B315200DAA334 /* RoundedShadowImageView.swift in Sources */,
 				096862F12582ACE100B9B614 /* Member+Arrow.swift in Sources */,
 				096862E52582A67F00B9B614 /* Name+Arrow.swift in Sources */,
 				096862F42582B54F00B9B614 /* WorkspaceWindow.swift in Sources */,
 				096862FE2582FF4300B9B614 /* User+Cache.swift in Sources */,
-				0995DE0C257AF98D00DAA334 /* TeamMemberView.swift in Sources */,
 				096863352586C2B000B9B614 /* RoundView.swift in Sources */,
 				0995DE2125816B5E00DAA334 /* Config.swift in Sources */,
 				096862FB2582CF9500B9B614 /* Cache.swift in Sources */,
 				0968632325840AB500B9B614 /* MemberWindow.swift in Sources */,
 				09686301258300A900B9B614 /* Workspace+Cache.swift in Sources */,
 				09686328258427A500B9B614 /* MemberViewController.swift in Sources */,
-				0995DE0E257B0AE500DAA334 /* TeamMemberAvatarView.swift in Sources */,
 				099087A8257976BF001660D1 /* WindowControllerManager.swift in Sources */,
 				096862CD25829C5A00B9B614 /* User.swift in Sources */,
 				096862E22582A61C00B9B614 /* Name.swift in Sources */,
