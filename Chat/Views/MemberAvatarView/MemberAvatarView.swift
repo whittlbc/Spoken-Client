@@ -8,137 +8,87 @@
 
 import Cocoa
 
+// View representing a workspace member's avatar.
 class MemberAvatarView: NSView {
     
-    enum ShadowStyle {
-        static let color = CGColor.black
-        static let opacity: Float = 0.9
-    }
-
+    // URL string to avatar.
     var avatar = ""
-
-    // Proper initializer to use when rendering view.
-    convenience init(avatar: String, frame: NSRect) {
-        self.init(frame: frame)
-
-        // Set avatar string.
-        self.avatar = avatar
-
-        // Start loading image
-        
-        // Render avatar
-        self.render()
-    }
     
-    // Override delegated init.
-    private override init(frame frameRect: NSRect) {
-        super.init(frame: frameRect)
-    }
-
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
+    // Container view of avatar.
+    var containerView = RoundShadowView()
     
-    private func addShadow() {
-        shadow = NSShadow()
-        
-//      shadowOffset: CGSize(width: -5, height: -6),
-//      shadowRadius: 4,
-        layer?.shadowColor = ShadowStyle.color
-        layer?.shadowOpacity = ShadowStyle.opacity
-        
-//        layer?.shadowPath = NSBezierPath(
-//            roundedRect: NSRect(
-//                x: frame.origin.x + 2,
-//                y: frame.origin.y + 2,
-//                width: frame.width - 4,
-//                height: frame.height - 4
-//            ),
-//            xRadius: cornerRadius - 1,
-//            yRadius: cornerRadius - 1
-//        ).cgPath
-    }
+    // View with image content.
+    var imageView = RoundView()
     
-    private func renderImage() {
-        let image = NSImage(byReferencing: NSURL(string: avatar)! as URL)
+    // Render container view.
+    func renderContainerView() {
+        // Create new round view with with drop shadow.
+        containerView = RoundShadowView()
 
-        let imageView = NSImageView(image: image)
-
-        imageView.wantsLayer = true
-        
-        imageView.layer?.masksToBounds = true
-        
-//        imageView.layer?.cornerRadius = layer!.cornerRadius
-        
-        imageView.frame = bounds
+        // Make it layer based and allow for overflow so that shadow can be seen.
+        containerView.wantsLayer = true
+        containerView.layer?.masksToBounds = false
                 
-        addSubview(imageView)
+        // Add container view to self.
+        addSubview(containerView)
         
-//        imageView.translatesAutoresizingMaskIntoConstraints = false
-//
-//        NSLayoutConstraint.activate([
-//            imageView.heightAnchor.constraint(
-//                equalTo: heightAnchor
-//            ),
-//
-//            imageView.widthAnchor.constraint(
-//                equalTo: widthAnchor
-//            ),
-//
-//            // Align central axes.
-//            imageView.centerXAnchor.constraint(equalTo: centerXAnchor),
-//            imageView.centerYAnchor.constraint(equalTo: centerYAnchor),
-//        ])
-    }
-    
-    private func render() {
-        // Make view layer-based.
-        wantsLayer = true
+        // Set up auto-layout for sizing/positioning.
+        containerView.translatesAutoresizingMaskIntoConstraints = false
+                                
+        // Add auto-layout constraints.
+        NSLayoutConstraint.activate([
+            // Set height of container to 70% of self height.
+            containerView.heightAnchor.constraint(
+                equalTo: heightAnchor,
+                multiplier: 0.7
+            ),
+            
+            // Keep container height and width the same.
+            containerView.widthAnchor.constraint(equalTo: containerView.heightAnchor),
 
-        // Round corners.
-//        layer?.cornerRadius = self.accessibilityParent() ( bounds.width / 2 ) * 0.7
-        
-        // Add shadow.
-//        addShadow()
-        
-        // Render image as subview.
-        renderImage()
+            // Align right sides (but shift it left 5px).
+            containerView.rightAnchor.constraint(equalTo: rightAnchor, constant: -5.0),
+            
+            // Align horizontal axes.
+            containerView.centerYAnchor.constraint(equalTo: centerYAnchor),
+        ])
     }
     
-//    required init(frame frameRect: NSRect, image: NSImage, shadowOffset: CGSize, shadowRadius: CGFloat,
-//                  shadowColor: CGColor, shadowOpacity: Float) {
-//        super.init(frame: frameRect)
-//
-//        self.wantsLayer = true
-//
-//        let cornerRadius = frame.width / 2
-//        self.layer?.cornerRadius = cornerRadius
-//
-//        self.shadow = NSShadow()
-//        self.layer?.shadowOffset = shadowOffset
-//        self.layer?.shadowRadius = shadowRadius
-//        self.layer?.shadowColor = shadowColor
-//        self.layer?.shadowOpacity = shadowOpacity
-//        self.layer?.shadowPath = NSBezierPath(
-//            roundedRect: NSRect(
-//                x: frame.origin.x + 2,
-//                y: frame.origin.y + 2,
-//                width: frame.width - 4,
-//                height: frame.height - 4
-//            ),
-//            xRadius: cornerRadius - 1,
-//            yRadius: cornerRadius - 1
-//        ).cgPath
-//
-//        let imageView = NSImageView(image: image)
-//
-//        imageView.wantsLayer = true
-//        imageView.layer?.masksToBounds = true
-//        imageView.layer?.cornerRadius = cornerRadius
-//
-//        addSubview(imageView)
-//
-//        imageView.setFrameOrigin(NSPoint(x: 0, y: 0))
-//        imageView.setFrameSize(frame.size)
-//    }
+    // Render image view.
+    func renderImageView() {
+        // Create new round view.
+        let imageView = RoundView()
+                
+        // Make it layer based and ensure overflow is hidden.
+        imageView.wantsLayer = true
+        imageView.layer?.masksToBounds = true
+
+        // Add image to container.
+        containerView.addSubview(imageView)
+        
+        // Set up auto-layout for sizing/positioning.
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        
+        // Fix image size to container size (equal height, width, and center).
+        NSLayoutConstraint.activate([
+            imageView.heightAnchor.constraint(equalTo: containerView.heightAnchor),
+            imageView.widthAnchor.constraint(equalTo: containerView.heightAnchor),
+            imageView.centerXAnchor.constraint(equalTo: containerView.centerXAnchor),
+            imageView.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),
+        ])
+
+        // Create image from avatar URL.
+        let image = NSImage(byReferencing: URL(string: avatar)!)
+
+        // Set image to contents of view.
+        imageView.layer?.contents = image
+        
+        // Constrain the image's size to the view's size.
+        imageView.layer?.contentsGravity = .resizeAspectFill
+    }
+    
+    func render() {
+        renderContainerView()
+        renderImageView()
+    }
 }

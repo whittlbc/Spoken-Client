@@ -13,7 +13,11 @@ class MemberViewController: NSViewController {
     // Workspace member associated with this view.
     var member = Member()
     
+    // Initial member view frame -- provided from window.
     var initialFrame = NSRect()
+    
+    // Avatar subview.
+    var avatarView = MemberAvatarView()
     
     // Proper initializer to use when rendering member.
     convenience init(member: Member, initialFrame: NSRect) {
@@ -38,79 +42,44 @@ class MemberViewController: NSViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-                
-        let avatarContainerView = NSView()
         
-        view.addSubview(avatarContainerView)
+        // Add avatar view as subview.
+        addAvatarView()
+    }
+    
+    func addAvatarView() {
+        // Create new avatar view.
+        avatarView = MemberAvatarView()
         
-        avatarContainerView.translatesAutoresizingMaskIntoConstraints = false
+        // Assign avatar URL string.
+        avatarView.avatar = member.user.avatar
         
+        // Add it as a subview.
+        view.addSubview(avatarView)
+
+        // Set up auto-layout for sizing/positioning.
+        avatarView.translatesAutoresizingMaskIntoConstraints = false
+
+        // Add auto-layout constraints.
         NSLayoutConstraint.activate([
-            avatarContainerView.heightAnchor.constraint(
+            // Set avatar height equal to view height.
+            avatarView.heightAnchor.constraint(
                 equalTo: view.heightAnchor
             ),
             
-            avatarContainerView.widthAnchor.constraint(
-                equalTo: avatarContainerView.heightAnchor
-            ),
-
-            // Constrain right sides together.
-            avatarContainerView.rightAnchor.constraint(equalTo: view.rightAnchor),
-            
-            // Align horizontal axes.
-            avatarContainerView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-        ])
-        
-        let avatarView = RoundShadowView()
-                
-        avatarView.wantsLayer = true
-        avatarView.layer?.masksToBounds = false
-                
-        avatarContainerView.addSubview(avatarView)
-        
-        avatarView.translatesAutoresizingMaskIntoConstraints = false
-                                
-        NSLayoutConstraint.activate([
-            avatarView.heightAnchor.constraint(
-                equalTo: avatarContainerView.heightAnchor,
-                multiplier: 0.7
-            ),
-            
+            // Set avatar width equal to its own height.
             avatarView.widthAnchor.constraint(
                 equalTo: avatarView.heightAnchor
             ),
 
-            avatarView.rightAnchor.constraint(equalTo: avatarContainerView.rightAnchor, constant: -5.0),
-            avatarView.centerYAnchor.constraint(equalTo: avatarContainerView.centerYAnchor),
-        ])
-        
-        let avatarImageView = RoundView()
-                
-        avatarImageView.wantsLayer = true
-        
-        avatarImageView.layer?.masksToBounds = true
-                
-        avatarView.addSubview(avatarImageView)
-        
-        avatarImageView.translatesAutoresizingMaskIntoConstraints = false
-                                
-        NSLayoutConstraint.activate([
-            avatarImageView.heightAnchor.constraint(
-                equalTo: avatarView.heightAnchor
-            ),
+            // Align right sides.
+            avatarView.rightAnchor.constraint(equalTo: view.rightAnchor),
             
-            avatarImageView.widthAnchor.constraint(
-                equalTo: avatarView.heightAnchor
-            ),
-
-            avatarImageView.centerXAnchor.constraint(equalTo: avatarView.centerXAnchor),
-            avatarImageView.centerYAnchor.constraint(equalTo: avatarView.centerYAnchor),
+            // Align horizontal axes.
+            avatarView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
         ])
-
         
-        let image = NSImage(byReferencing: URL(string: member.user.avatar)!)
-
-        avatarImageView.layer?.contents = image
-        avatarImageView.layer?.contentsGravity = .resizeAspectFill
+        // Render avatar view, adding its own subviews.
+        avatarView.render()
     }
 }

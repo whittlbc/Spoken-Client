@@ -11,12 +11,16 @@ import Cocoa
 // Subclass of RoundView that adds an auto-sizing drop shadow.
 class RoundShadowView: RoundView {
     
+    // General offset of shadow from center.
     var shadowOffset = CGSize(width: 0, height: -1)
     
+    // Shadow blur amount.
     var shadowRadius: CGFloat = 3
     
+    // Shadow color.
     var shadowColor = CGColor.black
     
+    // Shadow opacity.
     var shadowOpacity: Float = 0.6
     
     override func layout() {

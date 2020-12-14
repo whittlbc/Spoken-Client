@@ -14,7 +14,11 @@ class RoundView: NSView {
     // Update corner radius to 50% on every call to layout
     override func layout() {
         super.layout()
+        
+        // Make view layer-based.
         wantsLayer = true
+        
+        // Set corner radius to 50%
         layer?.cornerRadius = bounds.height / 2
     }
 }
