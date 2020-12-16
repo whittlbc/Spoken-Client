@@ -34,7 +34,7 @@ class WorkspaceWindow: FloatingWindow {
         static let topOffset: Float = 240
         
         // Vertical spacing between members.
-        static let gutterSpacing: Float = 1
+        static let gutterSpacing: Float = 0
     }
     
     // Controller for all actions that can be performed in this window.

@@ -43,6 +43,16 @@ enum Mocks {
             avatar: "https://dacxe0nzqx93t.cloudfront.net/team/andrea-salazar/color-avatar.jpg"
         )
         
+        static let josh = User(
+            id: "d",
+            email: "josh@gmail.com",
+            name: Name(
+                first: "Josh",
+                last: "Jeans"
+            ),
+            avatar: "https://dacxe0nzqx93t.cloudfront.net/team/josh-jeans/color-avatar.jpg"
+        )
+        
         static let current = ben
     }
     
@@ -60,6 +70,7 @@ enum Mocks {
             Member(id: "ben", user: Users.ben),
             Member(id: "tyler", user: Users.tyler),
             Member(id: "andrea", user: Users.andrea),
+            Member(id: "josh", user: Users.josh),
         ]
     }
 }
