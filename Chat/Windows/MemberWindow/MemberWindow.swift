@@ -38,6 +38,19 @@ class MemberWindow: FloatingWindow {
     
     var previewingTimer: Timer?
     
+    static func defaultSizeForState(_ state: MemberState) -> NSSize {
+        switch state {
+        case .idle:
+            return NSSize(width: 32, height: 32)
+        case .previewing:
+            return NSSize(width: 50, height: 50)
+        case .recording:
+            return NSSize(width: 162, height: 50)
+        default:
+            return NSSize(width: 0, height: 0)
+        }
+    }
+    
     // Proper initializer to use when rendering members.
     convenience init(member: Member, onStateUpdated: @escaping (String) -> Void) {
         self.init()
@@ -82,17 +95,19 @@ class MemberWindow: FloatingWindow {
         destination = origin
     }
     
-    // TODO: Use member to modify these (notifications should increase width a bit for example)
+    // TODO: Add member-specific sizes on top of this once notifications are added.
     func getIdleWindowSize() -> NSSize {
-        NSSize(width: 32, height: 32)
+        MemberWindow.defaultSizeForState(.idle)
     }
     
+    // TODO: Add member-specific sizes on top of this once notifications are added.
     func getPreviewingWindowSize() -> NSSize {
-        NSSize(width: 50, height: 50)
+        MemberWindow.defaultSizeForState(.previewing)
     }
     
+    // TODO: Add member-specific sizes on top of this once notifications are added.
     func getRecordingWindowSize() -> NSSize {
-        NSSize(width: 162, height: 50)
+        MemberWindow.defaultSizeForState(.recording)
     }
     
     // Get the size of this window for a given state.

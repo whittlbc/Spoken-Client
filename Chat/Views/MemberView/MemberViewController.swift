@@ -59,12 +59,15 @@ class MemberViewController: NSViewController {
 
         // Set up auto-layout for sizing/positioning.
         avatarView.translatesAutoresizingMaskIntoConstraints = false
+        
+        // Get default idle height for member window.
+        let initialAvatarDiameter = MemberWindow.defaultSizeForState(.idle).height
 
         // Add auto-layout constraints.
         NSLayoutConstraint.activate([
-            avatarView.heightAnchor.constraint(equalToConstant: 32.0),
-            
-            avatarView.widthAnchor.constraint(equalToConstant: 32.0),
+            // Set initial diameter to that of the "idle" member window height.
+            avatarView.heightAnchor.constraint(equalToConstant: initialAvatarDiameter),
+            avatarView.widthAnchor.constraint(equalToConstant: initialAvatarDiameter),
 
             // Align right sides.
             avatarView.rightAnchor.constraint(equalTo: view.rightAnchor),
@@ -72,8 +75,8 @@ class MemberViewController: NSViewController {
             // Align horizontal axes.
             avatarView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
         ])
-//
-//        // Render avatar view, adding its own subviews.
+
+        // Render avatar view, adding its own subviews.
         avatarView.render()
     }
 }
