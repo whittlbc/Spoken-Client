@@ -9,7 +9,7 @@
 import Cocoa
 
 // Supported member states.
-enum MemberState {
+enum MemberState: String {
     case idle
     case previewing
     case recording
@@ -26,12 +26,17 @@ class MemberWindow: FloatingWindow {
     
     // Flag indicating whether mouse is inside window.
     var isMouseInside = false
-    
-    // Flag indicating whether window has rendered for the first time.
-    var initialPositionSet = false
-    
+        
     // Closure provided by parent window for when state updates.
     var onStateUpdated: ((String) -> Void)!
+    
+    var destination: NSPoint?
+    
+    var resizing = false
+    
+    var leftWhileResizing = false
+    
+    var previewingTimer: Timer?
     
     // Proper initializer to use when rendering members.
     convenience init(member: Member, onStateUpdated: @escaping (String) -> Void) {
@@ -45,8 +50,36 @@ class MemberWindow: FloatingWindow {
         super.init(contentRect: contentRect, styleMask: style, backing: backingStoreType, defer: flag)
     }
     
-    func registerStateUnchanged() {
+    func updateViewState() {
+        guard let viewController = contentViewController else {
+            logger.error("Unable to find MemberWindow's contentViewController...")
+            return
+        }
+        
+        guard let memberView = viewController.view as? MemberView else {
+            logger.error("Unable to find MemberViewController's MemberView...")
+            return
+        }
+        
+        // Don't update unless a diff exists.
+        if memberView.state == state {
+            return
+        }
+        
+        memberView.setState(state)
+    }
+    
+    // Promote previous state to current state.
+    func promotePreviousState() {
         prevState = state
+    }
+    
+    func getDestination() -> NSPoint {
+        destination ?? frame.origin
+    }
+    
+    func setDestination(_ origin: NSPoint) {
+        destination = origin
     }
     
     // TODO: Use member to modify these (notifications should increase width a bit for example)
@@ -62,6 +95,7 @@ class MemberWindow: FloatingWindow {
         NSSize(width: 162, height: 50)
     }
     
+    // Get the size of this window for a given state.
     func calculateSize(forState memberState: MemberState) -> NSSize {
         switch memberState {
         // Default state
@@ -71,32 +105,35 @@ class MemberWindow: FloatingWindow {
         // Hovering over a previously idle member
         case .previewing:
             return getPreviewingWindowSize()
-            
+
         // Recording a message to this member
         case .recording:
             return getRecordingWindowSize()
         }
     }
     
-    // (Old Height - New Height) / 2
-    func getVerticalOffsetForStateChange() -> Float {
-        Float(calculateSize(forState: prevState).height - calculateSize(forState: state).height) / 2
+    func getStateChangeSizeOffset() -> (Float, Float) {
+        let prevSize = calculateSize(forState: prevState)
+        let size = calculateSize(forState: state)
+        
+        return (
+            Float(prevSize.height - size.height) / 2,
+            Float(prevSize.width - size.width) / 2
+        )
     }
     
-    // Render member window to a specific size and position.
-    // TODO: Provide optional animatation params
-    func render(size: NSSize, position: NSPoint) {
-        resizeWindow(to: size)
-        repositionWindow(to: position)
+    func getSizeForCurrentState() -> NSSize {
+        calculateSize(forState: state)
     }
     
     override func mouseEntered(with event: NSEvent) {
+        // If mouse has already entered, do nothing.
         if isMouseInside {
             return
         }
         
         isMouseInside = true
-        
+
         makeKeyAndOrderFront(self)
 
         switch state {
@@ -106,9 +143,20 @@ class MemberWindow: FloatingWindow {
             break
         }
     }
-
+    
     override func mouseExited(with event: NSEvent) {
+        // If mouse has already exited, do nothing.
         if !isMouseInside {
+            return
+        }
+        
+        let loc = event.locationInWindow
+        let size = frame.size
+        
+        let isOutsideXBounds = loc.x < 0 || loc.x > size.width
+        let isOutsideYBounds = loc.y < 0 || loc.y > size.height
+        
+        if !isOutsideXBounds && !isOutsideYBounds {
             return
         }
         
@@ -122,6 +170,17 @@ class MemberWindow: FloatingWindow {
         }
     }
     
+    func forceMouseExit() {
+        isMouseInside = false
+
+        switch state {
+        case .previewing:
+            onMouseExitedPreviewing()
+        default:
+            break
+        }
+    }
+
     func onMouseEnteredIdle() {
         setState(.previewing)
     }
@@ -130,9 +189,52 @@ class MemberWindow: FloatingWindow {
         setState(.idle)
     }
     
+    @objc func ensureStillPreviewing() {
+        let loc = mouseLocationOutsideOfEventStream
+        let size = frame.size
+        
+        let isOutsideXBounds = loc.x < 0 || loc.x > size.width
+        let isOutsideYBounds = loc.y < 0 || loc.y > size.height
+        
+        if isOutsideXBounds || isOutsideYBounds {
+            if previewingTimer != nil {
+                previewingTimer?.invalidate()
+                previewingTimer = nil
+            }
+            
+            isMouseInside = false
+            onMouseExitedPreviewing()
+        }
+    }
+    
+    func startPreviewingTimer() {
+        if previewingTimer != nil {
+            return
+        }
+        
+        previewingTimer = Timer.scheduledTimer(
+            timeInterval: TimeInterval(0.15),
+            target: self,
+            selector: #selector(ensureStillPreviewing),
+            userInfo: nil,
+            repeats: true
+        )
+    }
+    
     func setState(_ newState: MemberState) {
         prevState = state
         state = newState
         onStateUpdated(member.id)
+        
+        if state != .previewing && previewingTimer != nil {
+            previewingTimer?.invalidate()
+            previewingTimer = nil
+        }
+    }
+        
+    // Render member window to a specific size and position.
+    func render(size: NSSize, position: NSPoint) {
+        resizeWindow(to: size)
+        repositionWindow(to: position)
     }
 }

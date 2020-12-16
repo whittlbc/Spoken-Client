@@ -19,9 +19,9 @@ class MemberAvatarView: NSView {
     
     // View with image content.
     var imageView = RoundView()
-    
+
     // Render container view.
-    func renderContainerView() {
+    private func renderContainerView() {
         // Create new round view with with drop shadow.
         containerView = RoundShadowView()
 
@@ -34,18 +34,15 @@ class MemberAvatarView: NSView {
         
         // Set up auto-layout for sizing/positioning.
         containerView.translatesAutoresizingMaskIntoConstraints = false
-                                
+
         // Add auto-layout constraints.
         NSLayoutConstraint.activate([
             // Set height of container to 70% of self height.
-            containerView.heightAnchor.constraint(
-                equalTo: heightAnchor,
-                multiplier: 0.7
-            ),
+            containerView.heightAnchor.constraint(equalTo: heightAnchor, multiplier: 0.7),
             
             // Keep container height and width the same.
             containerView.widthAnchor.constraint(equalTo: containerView.heightAnchor),
-
+            
             // Align right sides (but shift it left 5px).
             containerView.rightAnchor.constraint(equalTo: rightAnchor, constant: -5.0),
             
@@ -55,7 +52,7 @@ class MemberAvatarView: NSView {
     }
     
     // Render image view.
-    func renderImageView() {
+    private func renderImageView() {
         // Create new round view.
         let imageView = RoundView()
                 

@@ -57,9 +57,9 @@ enum Mocks {
     enum Members {
         
         static let all: [Member] = [
-            Member(id: "a", user: Users.ben),
-            Member(id: "b", user: Users.tyler),
-            Member(id: "c", user: Users.andrea),
+            Member(id: "ben", user: Users.ben),
+            Member(id: "tyler", user: Users.tyler),
+            Member(id: "andrea", user: Users.andrea),
         ]
     }
 }

@@ -19,7 +19,7 @@ class FloatingWindow: NSPanel {
         // Float above all other applications and windows.
         level = .floating
         
-        // Don't let it ever go away.
+        // Don't let it ever go away and prevent it from becoming an "active" window upon click.
         hidesOnDeactivate = false
         styleMask.insert(.nonactivatingPanel)
 

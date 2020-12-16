@@ -53,7 +53,7 @@ class MemberViewController: NSViewController {
         
         // Assign avatar URL string.
         avatarView.avatar = member.user.avatar
-        
+                        
         // Add it as a subview.
         view.addSubview(avatarView)
 
@@ -62,24 +62,18 @@ class MemberViewController: NSViewController {
 
         // Add auto-layout constraints.
         NSLayoutConstraint.activate([
-            // Set avatar height equal to view height.
-            avatarView.heightAnchor.constraint(
-                equalTo: view.heightAnchor
-            ),
+            avatarView.heightAnchor.constraint(equalToConstant: 32.0),
             
-            // Set avatar width equal to its own height.
-            avatarView.widthAnchor.constraint(
-                equalTo: avatarView.heightAnchor
-            ),
+            avatarView.widthAnchor.constraint(equalToConstant: 32.0),
 
             // Align right sides.
             avatarView.rightAnchor.constraint(equalTo: view.rightAnchor),
-            
+
             // Align horizontal axes.
             avatarView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
         ])
-        
-        // Render avatar view, adding its own subviews.
+//
+//        // Render avatar view, adding its own subviews.
         avatarView.render()
     }
 }
