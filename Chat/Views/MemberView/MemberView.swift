@@ -51,11 +51,6 @@ class MemberView: NSView {
     
     private func animateToIdle() {
         let avatarView = subviews[0] as! MemberAvatarView
-        
-        if ( avatarView.frame.size.height == 32 && avatarView.frame.size.width == 32 ) {
-            return
-        }
-
         let heightConstraint = avatarView.constraints[0]
         let widthConstraint = avatarView.constraints[1]
 
@@ -65,11 +60,6 @@ class MemberView: NSView {
     
     private func animateToPreviewing() {
         let avatarView = subviews[0] as! MemberAvatarView
-
-        if ( avatarView.frame.size.height == 50 && avatarView.frame.size.width == 50 ) {
-            return
-        }
-        
         let heightConstraint = avatarView.constraints[0]
         let widthConstraint = avatarView.constraints[1]
 
@@ -79,11 +69,6 @@ class MemberView: NSView {
 
     private func animateToRecording() {
         let avatarView = subviews[0] as! MemberAvatarView
-
-        if ( avatarView.frame.size.height == 50 && avatarView.frame.size.width == 50 ) {
-            return
-        }
-        
         let heightConstraint = avatarView.constraints[0]
         let widthConstraint = avatarView.constraints[1]
 
