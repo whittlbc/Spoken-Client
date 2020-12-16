@@ -46,8 +46,6 @@ class MemberWindow: FloatingWindow {
             return NSSize(width: 50, height: 50)
         case .recording:
             return NSSize(width: 162, height: 50)
-        default:
-            return NSSize(width: 0, height: 0)
         }
     }
     

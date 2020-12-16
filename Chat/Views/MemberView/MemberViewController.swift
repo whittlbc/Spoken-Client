@@ -62,12 +62,20 @@ class MemberViewController: NSViewController {
         
         // Get default idle height for member window.
         let initialAvatarDiameter = MemberWindow.defaultSizeForState(.idle).height
+        
+        // Create height and width constraints for avatar view.
+        let heightConstraint = avatarView.heightAnchor.constraint(equalToConstant: initialAvatarDiameter)
+        let widthConstraint = avatarView.widthAnchor.constraint(equalToConstant: initialAvatarDiameter)
+        
+        // Identify height and width constraints so you can query for them later.
+        heightConstraint.identifier = "height"
+        widthConstraint.identifier = "width"
 
         // Add auto-layout constraints.
         NSLayoutConstraint.activate([
             // Set initial diameter to that of the "idle" member window height.
-            avatarView.heightAnchor.constraint(equalToConstant: initialAvatarDiameter),
-            avatarView.widthAnchor.constraint(equalToConstant: initialAvatarDiameter),
+            heightConstraint,
+            widthConstraint,
 
             // Align right sides.
             avatarView.rightAnchor.constraint(equalTo: view.rightAnchor),

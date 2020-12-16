@@ -90,10 +90,13 @@ class MemberView: NSView {
             logger.error("Error extracting MemberAvatarView as first itsem in subviews: \(subviews[0])")
             return
         }
-
+        
         // Ensure avatar view has both a height and width constraint.
-        let heightConstraint = avatarView.constraints[0]
-        let widthConstraint = avatarView.constraints[1]
+        guard let heightConstraint = avatarView.constraints.first(where: { $0.identifier == "height" }),
+              let widthConstraint = avatarView.constraints.first(where: { $0.identifier == "width" }) else {
+            logger.error("MemberAvatarView height and width constraints not found...")
+            return
+        }
 
         // Get desired avatar diameter -- use window height.
         let avatarDiameter = MemberWindow.defaultSizeForState(state).height
