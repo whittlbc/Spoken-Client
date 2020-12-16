@@ -65,16 +65,16 @@ class WorkspaceWindow: FloatingWindow {
         }
     }
     
+    // Handle individual member window state updates as a group.
     func onMemberStateUpdate(activeMemberId: String) {
         // Promote previous state to current state for all adjacent member windows.
         for (memberId, memberWindow) in membersMap {
-            if memberId == activeMemberId {
-                continue
+            if memberId != activeMemberId {
+                memberWindow.promotePreviousState()
             }
-            
-            memberWindow.promotePreviousState()
         }
         
+        // Animate all member windows to new sizes/positions based on state change.
         updateMemberSizesAndPositions(activeMemberId: activeMemberId)
     }
         
@@ -85,7 +85,8 @@ class WorkspaceWindow: FloatingWindow {
             self?.onMemberStateUpdate(activeMemberId: memberId)
         })
 
-        let initialSize = memberWindow.calculateSize(forState: memberWindow.state)
+        // Get initial member window size.
+        let initialSize = memberWindow.getSizeForCurrentState()
         
         // Create member view controller and attach to window.
         let memberController = MemberViewController(
@@ -93,6 +94,7 @@ class WorkspaceWindow: FloatingWindow {
             initialFrame: NSRect(x: 0, y: 0, width: initialSize.width, height: initialSize.height)
         )
         
+        // Set MemberViewController as primary content view controller for member window.
         memberWindow.contentViewController = memberController
 
         // Bind member window events to controller.

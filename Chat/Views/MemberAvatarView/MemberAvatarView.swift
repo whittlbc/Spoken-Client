@@ -11,6 +11,15 @@ import Cocoa
 // View representing a workspace member's avatar.
 class MemberAvatarView: NSView {
     
+    // Style of avatar view relative to parent member view.
+    enum RelativeStyle {
+        // Height of avatar relative to parent member view.
+        static let relativeHeight: CGFloat = 0.7
+        
+        // Absolute left shift of avatar view relative to parent member view.
+        static let leftOffset: CGFloat = -5.0
+    }
+    
     // URL string to avatar.
     var avatar = ""
     
@@ -38,13 +47,13 @@ class MemberAvatarView: NSView {
         // Add auto-layout constraints.
         NSLayoutConstraint.activate([
             // Set height of container to 70% of self height.
-            containerView.heightAnchor.constraint(equalTo: heightAnchor, multiplier: 0.7),
+            containerView.heightAnchor.constraint(equalTo: heightAnchor, multiplier: RelativeStyle.relativeHeight),
             
             // Keep container height and width the same.
             containerView.widthAnchor.constraint(equalTo: containerView.heightAnchor),
             
-            // Align right sides (but shift it left 5px).
-            containerView.rightAnchor.constraint(equalTo: rightAnchor, constant: -5.0),
+            // Align right sides (but shift it left the specified amount).
+            containerView.rightAnchor.constraint(equalTo: rightAnchor, constant: RelativeStyle.leftOffset),
             
             // Align horizontal axes.
             containerView.centerYAnchor.constraint(equalTo: centerYAnchor),
