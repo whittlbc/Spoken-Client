@@ -36,7 +36,6 @@
 		0968633125859A3000B9B614 /* MemberAvatarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0968633025859A3000B9B614 /* MemberAvatarView.swift */; };
 		096863352586C2B000B9B614 /* RoundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 096863342586C2B000B9B614 /* RoundView.swift */; };
 		096863382586C42B00B9B614 /* RoundShadowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 096863372586C42B00B9B614 /* RoundShadowView.swift */; };
-		0968634025881E5200B9B614 /* NSSize+Area in Sources */ = {isa = PBXBuildFile; fileRef = 0968633F25881E5200B9B614 /* NSSize+Area */; };
 		0990879525797561001660D1 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0990879425797561001660D1 /* AppDelegate.swift */; };
 		0990879925797563001660D1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0990879825797563001660D1 /* Assets.xcassets */; };
 		099087A625797645001660D1 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 099087A525797645001660D1 /* main.swift */; };
@@ -82,7 +81,6 @@
 		0968633025859A3000B9B614 /* MemberAvatarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemberAvatarView.swift; sourceTree = "<group>"; };
 		096863342586C2B000B9B614 /* RoundView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundView.swift; sourceTree = "<group>"; };
 		096863372586C42B00B9B614 /* RoundShadowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundShadowView.swift; sourceTree = "<group>"; };
-		0968633F25881E5200B9B614 /* NSSize+Area */ = {isa = PBXFileReference; lastKnownFileType = text; path = "NSSize+Area"; sourceTree = "<group>"; };
 		0990879125797561001660D1 /* Chat.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Chat.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0990879425797561001660D1 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		0990879825797563001660D1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -276,7 +274,6 @@
 				0968631225831C2F00B9B614 /* User+API.swift */,
 				096863182583206500B9B614 /* Workspace+API.swift */,
 				0968631B2583E80C00B9B614 /* Cache+Ids.swift */,
-				0968633F25881E5200B9B614 /* NSSize+Area */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -438,7 +435,6 @@
 				096862CD25829C5A00B9B614 /* User.swift in Sources */,
 				096862E22582A61C00B9B614 /* Name.swift in Sources */,
 				0968630F2583178C00B9B614 /* WorkspaceLogicController.swift in Sources */,
-				0968634025881E5200B9B614 /* NSSize+Area in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

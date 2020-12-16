@@ -126,13 +126,13 @@ class WorkspaceWindow: FloatingWindow {
         
         // First calculate updates across all members.
         for (i, memberWindow) in memberWindows.enumerated() {
-            // Calculate new size.
+            // Calculate new size for member.
             newSize = memberWindow.calculateSize(forState: memberWindow.state)
             
-            // Calculate new Y-position.
+            // Calculate new y-position for member.
             newY = getInitialYPositionForMember(memberWindow: memberWindow, atIndex: i)
 
-            // Calculate new position
+            // Calculate new position for member.
             newPosition = NSPoint(x: CGFloat(MembersStyle.rightEdge) - newSize.width, y: CGFloat(newY))
             
             // Add updates to list.
@@ -147,20 +147,16 @@ class WorkspaceWindow: FloatingWindow {
     
     // Update size and position of each member.
     private func updateMemberSizesAndPositions(activeMemberId: String) {
-        // Get active member window (the window that triggered the update).
-        guard let activeMemberWindow = membersMap[activeMemberId] else {
-            logger.error("Unable to find active window that triggered size update...")
+        // Check if state update will cause size/position change.
+        let (shouldUpdate, activeWindow, activeHeightOffset, _) = getActiveMemberSizeChange(activeMemberId: activeMemberId)
+        if !shouldUpdate {
             return
         }
         
-        // Get the size offsets due to the active member window's size change.
-        let (activeMemberHeightOffset, activeMemberWidthOffset) = activeMemberWindow.getStateChangeSizeOffset()
-        
-        // Don't do anything if no size change should take place.
-        guard abs(activeMemberHeightOffset) > 0 || abs(activeMemberWidthOffset) > 0 else {
-            return
-        }
-        
+        // Unwrap active member and dimensions.
+        let activeMemberWindow = activeWindow!
+        let activeMemberHeightOffset = activeHeightOffset!
+
         // Get ordered list of existing member windows.
         let memberWindows = getOrderedMemberWindows()
         
@@ -168,32 +164,28 @@ class WorkspaceWindow: FloatingWindow {
         let activeIndex = memberWindows.firstIndex{ $0 === activeMemberWindow }
         let activeMemberIndex = activeIndex!
         
-        // Create array to store the new size and position of all adjacent member windows.
         var memberWindow: MemberWindow
-        var newY: CGFloat
         var newSize: NSSize
         var newPosition: NSPoint
         var destination: NSPoint
-
-        // Apply active member offset to all adjacent windows.
+        
+        // Create new size and position of all member windows.
         for i in 0..<memberWindows.count {
             memberWindow = memberWindows[i]
+            
+            // Animation destination of member due to state change.
             destination = memberWindow.getDestination()
             
-            if i < activeMemberIndex {
-                newY = CGFloat(Float(destination.y) - activeMemberHeightOffset)
-            } else {
-                newY = CGFloat(Float(destination.y) + activeMemberHeightOffset)
-            }
-            
+            // Get size of member winodw for its current state.
             newSize = memberWindow.getSizeForCurrentState()
-                        
+            
+            // Calculate new member window position.
             newPosition = NSPoint(
                 x: CGFloat(MembersStyle.rightEdge) - newSize.width,
-                y: newY
+                y: CGFloat(Float(destination.y) + (i < activeMemberIndex ? -activeMemberHeightOffset : activeMemberHeightOffset))
             )
             
-            // Set member destination origin.
+            // Set newly calculated destination on member window, itself.
             memberWindow.setDestination(newPosition)
         }
         
@@ -204,29 +196,26 @@ class WorkspaceWindow: FloatingWindow {
 
             var size: NSSize
             var position: NSPoint
+            var memberFrame: NSRect
             
             for memberWindow in memberWindows {
                 size = memberWindow.getSizeForCurrentState()
                 position = memberWindow.getDestination()
-                
-                memberWindow.animator().setFrame(
-                    NSRect(x: position.x, y: position.y, width: size.width, height: size.height),
-                    display: true
-                )
-                
+                memberFrame = NSRect(x: position.x, y: position.y, width: size.width, height: size.height)
+                memberWindow.animator().setFrame(memberFrame, display: true)
                 memberWindow.updateViewState()
             }
         })
 
         let activeIsPreviewing = activeMemberWindow.state == .previewing
         
-        for (i, memWin) in memberWindows.enumerated() {
+        for (i, memberWindow) in memberWindows.enumerated() {
             if i == activeMemberIndex {
                 continue
             }
             
-            if activeIsPreviewing && memWin.state == .previewing {
-                memWin.forceMouseExit()
+            if activeIsPreviewing && memberWindow.state == .previewing {
+                memberWindow.forceMouseExit()
             }
         }
         
@@ -235,14 +224,39 @@ class WorkspaceWindow: FloatingWindow {
         }
     }
     
-    private func getInitialYPositionForMember(memberWindow: MemberWindow, atIndex index: Int) -> Float {
-        let heightWithGutter = Float(memberWindow.getIdleWindowSize().height) + MembersStyle.gutterSpacing
-        return Float(Screen.getHeight()) - MembersStyle.topOffset - (heightWithGutter * Float(index))
+    private func getActiveMemberSizeChange(activeMemberId: String) -> (Bool, MemberWindow?, Float?, Float?) {
+        // Get active member window (the window that triggered the update).
+        guard let activeMemberWindow = membersMap[activeMemberId] else {
+            logger.error("Unable to find active window that triggered size update...")
+            return (false, nil, nil, nil)
+        }
+        
+        // Get the size offsets due to the active member window's size change.
+        let (activeMemberHeightOffset, activeMemberWidthOffset) = activeMemberWindow.getStateChangeSizeOffset()
+        
+        // Don't do anything if no size change should take place.
+        guard abs(activeMemberHeightOffset) > 0 || abs(activeMemberWidthOffset) > 0 else {
+            logger.warning("No active window size change occurred...")
+            return (false, nil, nil, nil)
+        }
+        
+        return (true, activeMemberWindow, activeMemberHeightOffset, activeMemberWidthOffset)
     }
     
+    // Get the initial y-position of the member window at the provided index.
+    private func getInitialYPositionForMember(memberWindow: MemberWindow, atIndex index: Int) -> Float {
+        // Get the idle member window height + any configured gutter spacing between members.
+        let heightWithGutter = Float(memberWindow.getIdleWindowSize().height) + MembersStyle.gutterSpacing
+        
+        // Calculate the absolute position of this members window.
+        return Float(Screen.getHeight()) - MembersStyle.topOffset - (heightWithGutter * Float(index))
+    }
+
+    // Get an array of member windows, top-to-bottom.
     private func getOrderedMemberWindows() -> [MemberWindow] {
         var memberWindows = [MemberWindow]()
                 
+        // Create an array of all workspace members with existing windows, top-to-bottom.
         for member in members {
             guard let memberWindow = membersMap[member.id] else {
                 continue
