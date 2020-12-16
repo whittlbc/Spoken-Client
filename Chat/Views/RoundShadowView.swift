@@ -36,10 +36,13 @@ class RoundShadowView: RoundView {
         self.layer?.shadowOpacity = shadowOpacity
         
         // Make shadow round.
+        let roundRadius = bounds.height / 2
+        
+        // Create round shadow path from bezier path converted to CGPath.
         self.layer?.shadowPath = NSBezierPath(
             roundedRect: bounds,
-            xRadius: bounds.height / 2,
-            yRadius: bounds.height / 2
+            xRadius: roundRadius,
+            yRadius: roundRadius
         ).cgPath
     }
 }

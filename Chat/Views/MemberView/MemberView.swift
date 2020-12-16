@@ -8,6 +8,7 @@
 
 import Cocoa
 
+// Primary content view of MemberWindow -- will always take up entire window size.
 class MemberView: NSView {
 
     // The member's state on screen at any given time -- should mirror that of MemberWindow.
@@ -63,21 +64,25 @@ class MemberView: NSView {
         }
     }
     
+    // Animate to idle state.
     private func animateToIdle() {
         // Update member avatar.
         animateAvatarView()
     }
     
+    // Animate to previewing state.
     private func animateToPreviewing() {
         // Update member avatar.
         animateAvatarView()
     }
     
+    // Animate to recording state.
     private func animateToRecording() {
         // Update member avatar.
         animateAvatarView()
     }
     
+    // Animate avatar view to the current state.
     private func animateAvatarView() {
         // Ensure member view has subviews.
         if subviews.count == 0 {

@@ -35,7 +35,7 @@ class MemberViewController: NSViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
-    // Use MemberView as view.
+    // Use MemberView as primary view for this controller.
     override func loadView() {
         view = MemberView(frame: initialFrame)
     }
@@ -70,7 +70,7 @@ class MemberViewController: NSViewController {
         // Identify height and width constraints so you can query for them later.
         heightConstraint.identifier = "height"
         widthConstraint.identifier = "width"
-
+        
         // Add auto-layout constraints.
         NSLayoutConstraint.activate([
             // Set initial diameter to that of the "idle" member window height.

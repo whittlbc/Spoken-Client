@@ -8,12 +8,13 @@
 
 import AppKit
 
+// Controller for sidebar window.
 class SidebarWindowController: NSWindowController, NSWindowDelegate {
     
     // SidebarWindow is this controller's window type.
     typealias Window = SidebarWindow
 
-    // No need to specify window during init --> just going to use 'Window' type.
+    // Window will be set to the above "Window" type, so no need to make the user set this during init.
     convenience init() {
         self.init(window: nil)
     }
@@ -36,6 +37,8 @@ class SidebarWindowController: NSWindowController, NSWindowDelegate {
     // Show main window and add child windows.
     override func showWindow(_ sender: Any?) {
         super.showWindow(sender)
+        
+        // Add workspace window as a child window.
         addWorkspaceWindow()
     }
     

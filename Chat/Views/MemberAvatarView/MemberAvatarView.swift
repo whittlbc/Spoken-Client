@@ -94,7 +94,10 @@ class MemberAvatarView: NSView {
     }
     
     func render() {
+        // Render avatar container.
         renderContainerView()
+        
+        // Render avatar image.
         renderImageView()
     }
 }

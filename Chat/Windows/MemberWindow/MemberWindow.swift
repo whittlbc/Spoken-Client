@@ -15,6 +15,7 @@ enum MemberState: String {
     case recording
 }
 
+// Window representing a workspace member.
 class MemberWindow: FloatingWindow {
 
     // Workspace member associated with window.

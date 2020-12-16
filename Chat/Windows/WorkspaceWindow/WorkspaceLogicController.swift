@@ -9,19 +9,21 @@
 import Foundation
 import Combine
 
+// Used by workspace window to offload all networking logic.
 class WorkspaceLogicController {
 
+    // Type of closure required as a callback by the instance methods below.
     typealias Handler = (WorkspaceState) -> Void
     
-    // Current workspace displayed in workspace window.
+    // The current workspace displayed in workspace window.
     var currentWorkspace: Workspace?
     
     // Array of API requests in case any need to be cancelled.
     var requests = [AnyCancellable]()
     
-    // Load current workspace with all its members.
+    // Load current workspace with all of its members.
     func load(then handler: @escaping Handler) {
-        // Get current workspace -- either its already been set or pull it from cache 
+        // Get current workspace -- either its already been set or pull it from cache.
         currentWorkspace = currentWorkspace ?? Workspace.current
         
         // If current workspace alredy exists, refetch its members. Otherwise, fetch user workspces first.
@@ -32,6 +34,7 @@ class WorkspaceLogicController {
     private func fetchUserWorkspaces(then handler: @escaping Handler) {
         let currentUser = User.current!
         
+        // Fetch current user's workspaces and handle networking response.
         currentUser.fetchWorkspaces().sink(receiveCompletion: { status in
             switch status {
             case .failure(let error):
@@ -62,6 +65,7 @@ class WorkspaceLogicController {
     
     // Fetch all members for the current workspace.
     private func fetchWorkspaceMembers(then handler: @escaping Handler) {
+//        // Fetch current workspace's members and handle networking response.
 //        currentWorkspace!.fetchMembers().sink(receiveCompletion: { status in
 //            switch status {
 //            case .failure(let error):

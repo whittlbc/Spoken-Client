@@ -8,6 +8,7 @@
 
 import Cocoa
 
+// Manager of all windows in this application.
 class WindowControllerManager {
     
     // Controller for the main application window -- the sidebar.
@@ -19,6 +20,7 @@ class WindowControllerManager {
         api.isAuthed() ? showSidebarWindow() : showSignInWindow()
     }
 
+    // Show the primary window of this application (i.e. the sidebar).
     func showSidebarWindow() {
         // Upsert the sidebarWindowController property.
         sidebarWindowController = sidebarWindowController ?? SidebarWindowController()
@@ -27,6 +29,7 @@ class WindowControllerManager {
         sidebarWindowController!.showWindow(self)
     }
     
+    // Show the sign-in window for unauthed users.
     func showSignInWindow() {
         logger.info("Showing sign-in window...")
     }
