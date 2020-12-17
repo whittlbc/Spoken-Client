@@ -19,7 +19,7 @@ class WorkspaceLogicController {
     var currentWorkspace: Workspace?
     
     // Array of API requests in case any need to be cancelled.
-    var requests = [AnyCancellable]()
+    private var requests = [AnyCancellable]()
     
     // Load current workspace with all of its members.
     func load(then handler: @escaping Handler) {

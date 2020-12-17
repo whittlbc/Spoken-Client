@@ -11,6 +11,7 @@ import Cocoa
 // Extend NSBezierPath to include a function 'cgPath' that converts its data to a CGPath
 extension NSBezierPath {
     
+    // Add computed property that converts current NSBezierPath into a corresponding CGPath.
     var cgPath: CGPath {
         let path = CGMutablePath()
         let points = UnsafeMutablePointer<NSPoint>.allocate(capacity: 3)

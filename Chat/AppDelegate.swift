@@ -11,7 +11,7 @@ import Cocoa
 class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
 
     // Manager for all window controllers.
-    let windowControllerManager = WindowControllerManager()
+    private let windowControllerManager = WindowControllerManager()
     
     func applicationDidFinishLaunching(_ notification: Notification) {
         // Launch initial app window dependent on current user's auth status.

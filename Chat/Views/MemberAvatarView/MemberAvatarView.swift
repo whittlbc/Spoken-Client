@@ -24,13 +24,13 @@ class MemberAvatarView: NSView {
     var avatar = ""
     
     // Container view of avatar.
-    var containerView = RoundShadowView()
+    private var containerView = RoundShadowView()
     
     // View with image content.
-    var imageView = RoundView()
-
-    // Render container view.
-    private func renderContainerView() {
+    private var imageView = RoundView()
+    
+    // Create new container view.
+    private func createContainerView() {
         // Create new round view with with drop shadow.
         containerView = RoundShadowView()
 
@@ -40,7 +40,10 @@ class MemberAvatarView: NSView {
                 
         // Add container view to self.
         addSubview(containerView)
-        
+    }
+    
+    // Set up container view auto-layout.
+    private func constrainContainerView() {
         // Set up auto-layout for sizing/positioning.
         containerView.translatesAutoresizingMaskIntoConstraints = false
 
@@ -58,12 +61,13 @@ class MemberAvatarView: NSView {
             // Align horizontal axes.
             containerView.centerYAnchor.constraint(equalTo: centerYAnchor),
         ])
+
     }
     
-    // Render image view.
-    private func renderImageView() {
+    // Create new image view.
+    private func createImageView() {
         // Create new round view.
-        let imageView = RoundView()
+        imageView = RoundView()
                 
         // Make it layer based and ensure overflow is hidden.
         imageView.wantsLayer = true
@@ -71,7 +75,10 @@ class MemberAvatarView: NSView {
 
         // Add image to container.
         containerView.addSubview(imageView)
-        
+    }
+    
+    // Set up image view auto-layout.
+    private func constrainImageView() {
         // Set up auto-layout for sizing/positioning.
         imageView.translatesAutoresizingMaskIntoConstraints = false
         
@@ -91,6 +98,25 @@ class MemberAvatarView: NSView {
         
         // Constrain the image's size to the view's size.
         imageView.layer?.contentsGravity = .resizeAspectFill
+
+    }
+
+    // Render container view.
+    private func renderContainerView() {
+        // Create container view.
+        createContainerView()
+        
+        // Constrain container view.
+        constrainContainerView()
+    }
+    
+    // Render image view.
+    private func renderImageView() {
+        // Create image view.
+        createImageView()
+        
+        // Constrain image view.
+        constrainImageView()
     }
     
     func render() {

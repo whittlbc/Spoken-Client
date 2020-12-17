@@ -11,13 +11,13 @@ import Cocoa
 class MemberViewController: NSViewController {
 
     // Workspace member associated with this view.
-    var member = Member()
+    private var member = Member()
     
     // Initial member view frame -- provided from window.
-    var initialFrame = NSRect()
+    private var initialFrame = NSRect()
     
     // Avatar subview.
-    var avatarView = MemberAvatarView()
+    private var avatarView = MemberAvatarView()
     
     // Proper initializer to use when rendering member.
     convenience init(member: Member, initialFrame: NSRect) {
@@ -47,8 +47,19 @@ class MemberViewController: NSViewController {
         addAvatarView()
     }
     
-    func addAvatarView() {
-        // Create new avatar view.
+    private func addAvatarView() {
+        // Create avatar view.
+        createAvatarView()
+        
+        // Constrain avatar view.
+        constrainAvatarView()
+        
+        // Render avatar view.
+        avatarView.render()
+    }
+    
+    // Create new avatar view subview.
+    private func createAvatarView() {
         avatarView = MemberAvatarView()
         
         // Assign avatar URL string.
@@ -56,7 +67,10 @@ class MemberViewController: NSViewController {
                         
         // Add it as a subview.
         view.addSubview(avatarView)
-
+    }
+    
+    // Add auto-layout constraints to avatar view.
+    private func constrainAvatarView() {
         // Set up auto-layout for sizing/positioning.
         avatarView.translatesAutoresizingMaskIntoConstraints = false
         
@@ -83,8 +97,5 @@ class MemberViewController: NSViewController {
             // Align horizontal axes.
             avatarView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
         ])
-
-        // Render avatar view, adding its own subviews.
-        avatarView.render()
     }
 }

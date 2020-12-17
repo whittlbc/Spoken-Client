@@ -12,7 +12,7 @@ import Cocoa
 class WindowControllerManager {
     
     // Controller for the main application window -- the sidebar.
-    var sidebarWindowController: SidebarWindowController?
+    private var sidebarWindowController: SidebarWindowController?
     
     // Launch first window of the application.
     func launchInitialWindow() {

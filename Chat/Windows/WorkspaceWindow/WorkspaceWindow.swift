@@ -373,7 +373,7 @@ class WorkspaceWindow: FloatingWindow {
     }
     
     // Render workspace window contents based on current state.
-    private func render(_ state: WorkspaceState) {
+    func render(_ state: WorkspaceState) {
         switch state {
         // Loading view
         case .loading:

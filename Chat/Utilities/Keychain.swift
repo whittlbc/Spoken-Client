@@ -122,6 +122,7 @@ public enum Keychain {
             kSecAttrServer as String: server,
         ]
         
+        // Add action-specific query attributes.
         switch forAction {
         case .add:
             query[kSecValueData as String] = tokenData!

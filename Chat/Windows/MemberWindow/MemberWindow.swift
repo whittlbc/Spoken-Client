@@ -31,14 +31,15 @@ class MemberWindow: FloatingWindow {
     var isMouseInside = false
         
     // Closure provided by parent window to be called every time state updates.
-    var onStateUpdated: ((String) -> Void)!
+    private var onStateUpdated: ((String) -> Void)!
     
+    // TODO: Switch to non-private computed property
     // The latest origin this window will-animate/has-animated to.
-    var destination: NSPoint?
+    private var destination: NSPoint?
     
     // Timer that double checks the mouse is still inside this window if its in the previewing state.
     // State will be forced out of the previewing state if the mouse is not.
-    var previewingTimer: Timer?
+    private var previewingTimer: Timer?
     
     // Get the default window size for the provided member state.
     static func defaultSizeForState(_ state: MemberState) -> NSSize {
@@ -203,17 +204,17 @@ class MemberWindow: FloatingWindow {
     }
 
     // Mouse entered idle state --> update state to previewing.
-    func onMouseEnteredIdle() {
+    private func onMouseEnteredIdle() {
         setState(.previewing)
     }
     
     // Mouse exited previewing state --> update state to idle.
-    func onMouseExitedPreviewing() {
+    private func onMouseExitedPreviewing() {
         setState(.idle)
     }
 
     // Ensure mouse is still inside this window...if it's not, manually register mouse as exited.
-    @objc func ensureStillPreviewing() {
+    @objc private func ensureStillPreviewing() {
         if !frame.isLocationInside(mouseLocationOutsideOfEventStream) {
             registerMouseExited()
         }
@@ -268,16 +269,16 @@ class MemberWindow: FloatingWindow {
     }
 
     // Handler called when state updates to idle.
-    func onIdle() {
+    private func onIdle() {
         // Invalidate previewing timer if it exists.
         cancelPreviewingTimer()
     }
     
     // Handler called when state updates to previewing.
-    func onPreviewing() {}
+    private func onPreviewing() {}
     
     // Handler called when state updates to recording.
-    func onRecording() {
+    private func onRecording() {
         // Invalidate previewing timer if it exists.
         cancelPreviewingTimer()
     }
