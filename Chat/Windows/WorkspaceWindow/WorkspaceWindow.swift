@@ -18,23 +18,38 @@ enum WorkspaceState {
 // Window housing all sidebar app functionality as it relates to a given workspace.
 class WorkspaceWindow: FloatingWindow {
     
-    // Size and origin of workspace window -- equivalent to that of the Sidebar.
+    // Size of workspace window -- same as Sidebar.
     static let size = SidebarWindow.size
+    
+    // Origin of workspace window -- same as Sidebar.
     static let origin = SidebarWindow.origin
     
     // Right padding of workspace window as it pertains to its content.
     static let paddingRight: Float = 6
     
-    // Style information of for group of member windows.
+    // Style information for group of member windows.
     enum MembersStyle {
         // X-position of the right edge of members.
         static let rightEdge = Float(WorkspaceWindow.origin.x + WorkspaceWindow.size.width) - WorkspaceWindow.paddingRight
         
-        // Initial distance of members from top of screen.
+        // Distance between top of workspace window and top-most member window.
         static let topOffset: Float = 240
         
         // Vertical spacing between members.
         static let gutterSpacing: Float = 0
+    }
+    
+    // Animation configuration for all child windows that this workspace window controls.
+    enum AnimationConfig {
+        
+        // Configuration for member window animations.
+        enum MemberWindows {
+            // Time it takes for a member window to update size and position during a state change.
+            static let duration = 0.13
+            
+            // Timing function associated with above duration.
+            static let timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeOut)
+        }
     }
     
     // Controller for all actions that can be performed in this window.
@@ -60,6 +75,7 @@ class WorkspaceWindow: FloatingWindow {
         // Render loading view.
         render(.loading)
 
+        // Load current workspace and render the returned state.
         logicController.load { [weak self] state in
             self?.render(state)
         }
@@ -118,42 +134,56 @@ class WorkspaceWindow: FloatingWindow {
     
     // Set initial size and position of each member.
     private func setInitialMemberSizesAndPositions() {
-        let memberWindows = getOrderedMemberWindows()
-        var memberUpdates = [(MemberWindow, NSSize, NSPoint)]()
-        var newSize: NSSize
-        var newY: Float
-        var newPosition: NSPoint
+        var specs = [(MemberWindow, NSSize, NSPoint)]()
+        var size: NSSize
+        var position: NSPoint
         
         // First calculate updates across all members.
-        for (i, memberWindow) in memberWindows.enumerated() {
-            // Calculate new size for member.
-            newSize = memberWindow.calculateSize(forState: memberWindow.state)
+        for (i, memberWindow) in getOrderedMemberWindows().enumerated() {
+            // Calculate member size.
+            size = memberWindow.getSizeForCurrentState()
             
-            // Calculate new y-position for member.
-            newY = getInitialYPositionForMember(memberWindow: memberWindow, atIndex: i)
-
-            // Calculate new position for member.
-            newPosition = NSPoint(x: CGFloat(MembersStyle.rightEdge) - newSize.width, y: CGFloat(newY))
+            // Calculate member position.
+            position = NSPoint(
+                x: getMemberXPosition(forMemberSize: size),
+                y: getInitialMemberYPosition(memberWindow: memberWindow, atIndex: i)
+            )
             
             // Add updates to list.
-            memberUpdates.append((memberWindow, newSize, newPosition))
+            specs.append((memberWindow, size, position))
         }
         
         // Apply all updates.
-        for (memberWindow, size, position) in memberUpdates {
+        for (memberWindow, size, position) in specs {
             memberWindow.render(size: size, position: position)
         }
     }
     
+    // Get x-position of member window for its given size.
+    private func getMemberXPosition(forMemberSize size: NSSize) -> CGFloat {
+        CGFloat(MembersStyle.rightEdge) - size.width
+    }
+    
+    // Get the initial y-position of the member window at the provided index.
+    private func getInitialMemberYPosition(memberWindow: MemberWindow, atIndex index: Int) -> CGFloat {
+        // Get the idle member window height + any configured gutter spacing between members.
+        let heightWithGutter = Float(memberWindow.getIdleWindowSize().height) + MembersStyle.gutterSpacing
+        
+        // Calculate the absolute position of this members window.
+        return CGFloat(Float(Screen.getHeight()) - MembersStyle.topOffset - (heightWithGutter * Float(index)))
+    }
+
     // Update size and position of each member.
     private func updateMemberSizesAndPositions(activeMemberId: String) {
-        // Check if state update will cause size/position change.
-        let (shouldUpdate, activeWindow, activeHeightOffset, _) = getActiveMemberSizeChange(activeMemberId: activeMemberId)
-        if !shouldUpdate {
+        // Check if the latest state update will cause the active member window's size to change.
+        let (sizeWillChange, activeWindow, activeHeightOffset, _) = getActiveMemberSizeChange(activeMemberId: activeMemberId)
+        
+        // Only continue if active member window will change size.
+        if !sizeWillChange {
             return
         }
         
-        // Unwrap active member and dimensions.
+        // Unwrap active member window and height offset.
         let activeMemberWindow = activeWindow!
         let activeMemberHeightOffset = activeHeightOffset!
 
@@ -164,66 +194,27 @@ class WorkspaceWindow: FloatingWindow {
         let activeIndex = memberWindows.firstIndex{ $0 === activeMemberWindow }
         let activeMemberIndex = activeIndex!
         
-        var memberWindow: MemberWindow
-        var newSize: NSSize
-        var newPosition: NSPoint
-        var destination: NSPoint
+        // Calculate new size and position destinations for all member windows.
+        calculateMemberWindowDestinations(
+            memberWindows: memberWindows,
+            activeMemberIndex: activeMemberIndex,
+            activeMemberHeightOffset: activeMemberHeightOffset
+        )
         
-        // Create new size and position of all member windows.
-        for i in 0..<memberWindows.count {
-            memberWindow = memberWindows[i]
-            
-            // Animation destination of member due to state change.
-            destination = memberWindow.getDestination()
-            
-            // Get size of member winodw for its current state.
-            newSize = memberWindow.getSizeForCurrentState()
-            
-            // Calculate new member window position.
-            newPosition = NSPoint(
-                x: CGFloat(MembersStyle.rightEdge) - newSize.width,
-                y: CGFloat(Float(destination.y) + (i < activeMemberIndex ? -activeMemberHeightOffset : activeMemberHeightOffset))
-            )
-            
-            // Set newly calculated destination on member window, itself.
-            memberWindow.setDestination(newPosition)
-        }
+        // Animate each member window to its new destination.
+        moveMemberWindowsToDestinations(memberWindows)
         
-        // Animate active member view and adjacent member windows.
-        NSAnimationContext.runAnimationGroup({ context in
-            context.duration = 0.13
-            context.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeOut)
-
-            var size: NSSize
-            var position: NSPoint
-            var memberFrame: NSRect
+        // If active member's new state is previewing, ensure it is the only member window in a previewing state.
+        if activeMemberWindow.state == .previewing {
+            ensureOnlyOneMemberIsPreviewing(memberWindows: memberWindows, activeMemberIndex: activeMemberIndex)
             
-            for memberWindow in memberWindows {
-                size = memberWindow.getSizeForCurrentState()
-                position = memberWindow.getDestination()
-                memberFrame = NSRect(x: position.x, y: position.y, width: size.width, height: size.height)
-                memberWindow.animator().setFrame(memberFrame, display: true)
-                memberWindow.updateViewState()
-            }
-        })
-
-        let activeIsPreviewing = activeMemberWindow.state == .previewing
-        
-        for (i, memberWindow) in memberWindows.enumerated() {
-            if i == activeMemberIndex {
-                continue
-            }
-            
-            if activeIsPreviewing && memberWindow.state == .previewing {
-                memberWindow.forceMouseExit()
-            }
-        }
-        
-        if activeIsPreviewing {
+            // Add a timer to check the mouse position in relation to the active member window, and force
+            // it out of the previewing state if the mouse isn't inside of the active member window anymore.
             activeMemberWindow.startPreviewingTimer()
         }
     }
-    
+        
+    // Determine how much (if any) the active member window will change due to its latest state change.
     private func getActiveMemberSizeChange(activeMemberId: String) -> (Bool, MemberWindow?, Float?, Float?) {
         // Get active member window (the window that triggered the update).
         guard let activeMemberWindow = membersMap[activeMemberId] else {
@@ -234,22 +225,13 @@ class WorkspaceWindow: FloatingWindow {
         // Get the size offsets due to the active member window's size change.
         let (activeMemberHeightOffset, activeMemberWidthOffset) = activeMemberWindow.getStateChangeSizeOffset()
         
-        // Don't do anything if no size change should take place.
+        // Don't do anything if no size change will take place.
         guard abs(activeMemberHeightOffset) > 0 || abs(activeMemberWidthOffset) > 0 else {
             logger.warning("No active window size change occurred...")
             return (false, nil, nil, nil)
         }
         
         return (true, activeMemberWindow, activeMemberHeightOffset, activeMemberWidthOffset)
-    }
-    
-    // Get the initial y-position of the member window at the provided index.
-    private func getInitialYPositionForMember(memberWindow: MemberWindow, atIndex index: Int) -> Float {
-        // Get the idle member window height + any configured gutter spacing between members.
-        let heightWithGutter = Float(memberWindow.getIdleWindowSize().height) + MembersStyle.gutterSpacing
-        
-        // Calculate the absolute position of this members window.
-        return Float(Screen.getHeight()) - MembersStyle.topOffset - (heightWithGutter * Float(index))
     }
 
     // Get an array of member windows, top-to-bottom.
@@ -267,7 +249,79 @@ class WorkspaceWindow: FloatingWindow {
         
         return memberWindows
     }
+    
+    // Calculate new animation destinations for each member window.
+    private func calculateMemberWindowDestinations(memberWindows: [MemberWindow], activeMemberIndex: Int, activeMemberHeightOffset: Float) {
+        var memberWindow: MemberWindow
+        var newSize: NSSize
+        var newPosition: NSPoint
+        var destination: NSPoint
         
+        // Calculate new size and position of all member windows.
+        for i in 0..<memberWindows.count {
+            memberWindow = memberWindows[i]
+            
+            // Get current animation destination of member.
+            destination = memberWindow.getDestination()
+            
+            // Get size of member window for its current state.
+            newSize = memberWindow.getSizeForCurrentState()
+            
+            // Calculate new member window position.
+            newPosition = NSPoint(
+                x: getMemberXPosition(forMemberSize: newSize),
+                y: CGFloat(Float(destination.y) + (i < activeMemberIndex ? -activeMemberHeightOffset : activeMemberHeightOffset))
+            )
+            
+            // Set newly calculated destination on member window, itself.
+            memberWindow.setDestination(newPosition)
+        }
+    }
+
+    // Animate each member window to its stored destination.
+    private func moveMemberWindowsToDestinations(_ memberWindows: [MemberWindow]) {
+        NSAnimationContext.runAnimationGroup({ context in
+            // Configure animation attributes.
+            context.duration = AnimationConfig.MemberWindows.duration
+            context.timingFunction = AnimationConfig.MemberWindows.timingFunction
+
+            // Vars for loop below.
+            var newSize: NSSize
+            var newPosition: NSPoint
+            var newFrame: NSRect
+            
+            for memberWindow in memberWindows {
+                // Get size and position to update the member window to.
+                newSize = memberWindow.getSizeForCurrentState()
+                newPosition = memberWindow.getDestination()
+                
+                // Create a new frame from the desired size and position.
+                newFrame = NSRect(x: newPosition.x, y: newPosition.y, width: newSize.width, height: newSize.height)
+                
+                // Animate the member window to its new frame.
+                memberWindow.animator().setFrame(newFrame, display: true)
+                
+                // Update the member window's content view to the latest state.
+                memberWindow.updateViewState()
+            }
+        })
+    }
+    
+    // Force a "mouse-exited" event on any previewing member windows that aren't the active member window.
+    private func ensureOnlyOneMemberIsPreviewing(memberWindows: [MemberWindow], activeMemberIndex: Int) {
+        for (i, memberWindow) in memberWindows.enumerated() {
+            if i == activeMemberIndex {
+                continue
+            }
+            
+            // If a member that isn't the active member is found to be in
+            // the previewing state, force it out of this state.
+            if memberWindow.state == .previewing {
+                memberWindow.forceMouseExit()
+            }
+        }
+    }
+    
     // Loading view
     private func renderLoading() {
         // TODO
