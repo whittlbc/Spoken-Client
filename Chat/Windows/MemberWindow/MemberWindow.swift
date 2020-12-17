@@ -23,22 +23,24 @@ class MemberWindow: FloatingWindow {
     
     // The member's state on screen at any given time.
     var state = MemberState.idle
+    
+    // The last state a member was in.
     var prevState = MemberState.idle
     
     // Flag indicating whether mouse is inside window.
     var isMouseInside = false
         
-    // Closure provided by parent window for when state updates.
+    // Closure provided by parent window to be called every time state updates.
     var onStateUpdated: ((String) -> Void)!
     
+    // The latest origin this window will-animate/has-animated to.
     var destination: NSPoint?
     
-    var resizing = false
-    
-    var leftWhileResizing = false
-    
+    // Timer that double checks the mouse is still inside this window if its in the previewing state.
+    // State will be forced out of the previewing state if the mouse is not.
     var previewingTimer: Timer?
     
+    // Get the default window size for the provided member state.
     static func defaultSizeForState(_ state: MemberState) -> NSSize {
         switch state {
         case .idle:
@@ -62,23 +64,24 @@ class MemberWindow: FloatingWindow {
         super.init(contentRect: contentRect, styleMask: style, backing: backingStoreType, defer: flag)
     }
     
+    // Update state of member view to match that of this window.
     func updateViewState() {
+        // Get this window's content view controller.
         guard let viewController = contentViewController else {
             logger.error("Unable to find MemberWindow's contentViewController...")
             return
         }
         
+        // Get this window's content view.
         guard let memberView = viewController.view as? MemberView else {
             logger.error("Unable to find MemberViewController's MemberView...")
             return
         }
         
-        // Don't update unless a diff exists.
-        if memberView.state == state {
-            return
+        // Update member view's state if it differs from this window's state.
+        if memberView.state != state {
+            memberView.setState(state)
         }
-        
-        memberView.setState(state)
     }
     
     // Promote previous state to current state.
@@ -86,10 +89,12 @@ class MemberWindow: FloatingWindow {
         prevState = state
     }
     
+    // Get window's animation destination -- fallback to frame origin.
     func getDestination() -> NSPoint {
         destination ?? frame.origin
     }
     
+    // Set window's animation destination.
     func setDestination(_ origin: NSPoint) {
         destination = origin
     }
@@ -109,33 +114,35 @@ class MemberWindow: FloatingWindow {
         MemberWindow.defaultSizeForState(.recording)
     }
     
-    // Get the size of this window for a given state.
+    // Get the size of this window for the given state.
     func calculateSize(forState memberState: MemberState) -> NSSize {
         switch memberState {
-        // Default state
+        // Idle window size.
         case .idle:
             return getIdleWindowSize()
             
-        // Hovering over a previously idle member
+        // Previewing window size.
         case .previewing:
             return getPreviewingWindowSize()
 
-        // Recording a message to this member
+        // Recording window size.
         case .recording:
             return getRecordingWindowSize()
         }
     }
     
+    // Get the positional offset for this window due its latest state change.
     func getStateChangeSizeOffset() -> (Float, Float) {
         let prevSize = calculateSize(forState: prevState)
-        let size = calculateSize(forState: state)
+        let currentSize = calculateSize(forState: state)
         
         return (
-            Float(prevSize.height - size.height) / 2,
-            Float(prevSize.width - size.width) / 2
+            Float(prevSize.height - currentSize.height) / 2,
+            Float(prevSize.width - currentSize.width) / 2
         )
     }
     
+    // Get window size for the current state.
     func getSizeForCurrentState() -> NSSize {
         calculateSize(forState: state)
     }
