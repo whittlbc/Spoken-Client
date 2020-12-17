@@ -92,7 +92,7 @@ class MemberAvatarView: NSView {
 
         // Create image from avatar URL.
         let image = NSImage(byReferencing: URL(string: avatar)!)
-
+                
         // Set image to contents of view.
         imageView.layer?.contents = image
         
