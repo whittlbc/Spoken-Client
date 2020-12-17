@@ -317,7 +317,7 @@ class WorkspaceWindow: FloatingWindow {
             // If a member that isn't the active member is found to be in
             // the previewing state, force it out of this state.
             if memberWindow.state == .previewing {
-                memberWindow.forceMouseExit()
+                memberWindow.registerMouseExited()
             }
         }
     }

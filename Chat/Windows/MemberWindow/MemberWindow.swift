@@ -146,17 +146,41 @@ class MemberWindow: FloatingWindow {
     func getSizeForCurrentState() -> NSSize {
         calculateSize(forState: state)
     }
-    
+
+    // Handle mouse-entered event.
     override func mouseEntered(with event: NSEvent) {
-        // If mouse has already entered, do nothing.
         if isMouseInside {
             return
         }
         
+        registerMouseEntered()
+    }
+    
+    // Handle mouse-exited event.
+    override func mouseExited(with event: NSEvent) {
+        // If mouse is already outside the window, do nothing.
+        if !isMouseInside {
+            return
+        }
+
+        // Double check that the mouse's location is actually outside this frame.
+        // This prevents the mouse-exited events that come through rapidly whenever
+        // this window is programmatically resized.
+        if frame.isLocationInside(event.locationInWindow) {
+            return
+        }
+        
+        registerMouseExited()
+    }
+    
+    // Mouse just entered the window.
+    func registerMouseEntered() {
         isMouseInside = true
 
+        // Make this window the key window as order it to front.
         makeKeyAndOrderFront(self)
 
+        // Handle mouse-entered event on a state-specific level.
         switch state {
         case .idle:
             onMouseEnteredIdle()
@@ -165,35 +189,11 @@ class MemberWindow: FloatingWindow {
         }
     }
     
-    override func mouseExited(with event: NSEvent) {
-        // If mouse has already exited, do nothing.
-        if !isMouseInside {
-            return
-        }
-        
-        let loc = event.locationInWindow
-        let size = frame.size
-        
-        let isOutsideXBounds = loc.x < 0 || loc.x > size.width
-        let isOutsideYBounds = loc.y < 0 || loc.y > size.height
-        
-        if !isOutsideXBounds && !isOutsideYBounds {
-            return
-        }
-        
+    // Mouse just exited the window.
+    func registerMouseExited() {
         isMouseInside = false
         
-        switch state {
-        case .previewing:
-            onMouseExitedPreviewing()
-        default:
-            break
-        }
-    }
-    
-    func forceMouseExit() {
-        isMouseInside = false
-
+        // Handle mouse-exited event on a state-specific level.
         switch state {
         case .previewing:
             onMouseExitedPreviewing()
@@ -202,37 +202,30 @@ class MemberWindow: FloatingWindow {
         }
     }
 
+    // Mouse entered idle state --> update state to previewing.
     func onMouseEnteredIdle() {
         setState(.previewing)
     }
     
+    // Mouse exited previewing state --> update state to idle.
     func onMouseExitedPreviewing() {
         setState(.idle)
     }
-    
+
+    // Ensure mouse is still inside this window...if it's not, manually register mouse as exited.
     @objc func ensureStillPreviewing() {
-        let loc = mouseLocationOutsideOfEventStream
-        let size = frame.size
-        
-        let isOutsideXBounds = loc.x < 0 || loc.x > size.width
-        let isOutsideYBounds = loc.y < 0 || loc.y > size.height
-        
-        if isOutsideXBounds || isOutsideYBounds {
-            if previewingTimer != nil {
-                previewingTimer?.invalidate()
-                previewingTimer = nil
-            }
-            
-            isMouseInside = false
-            onMouseExitedPreviewing()
+        if !frame.isLocationInside(mouseLocationOutsideOfEventStream) {
+            registerMouseExited()
         }
     }
     
+    // Start timer used to check whether mouse is still inside the previewing window.
     func startPreviewingTimer() {
         if previewingTimer != nil {
             return
         }
         
+        // Create timer that repeats call to self.ensureStillPreviewing every 150ms.
         previewingTimer = Timer.scheduledTimer(
             timeInterval: TimeInterval(0.15),
             target: self,
@@ -242,17 +235,53 @@ class MemberWindow: FloatingWindow {
         )
     }
     
+    // Invalidate previewing timer and reset to nil if it exists.
+    func cancelPreviewingTimer() {
+        if previewingTimer == nil {
+            return
+        }
+        
+        previewingTimer!.invalidate()
+        previewingTimer = nil
+    }
+    
+    // Update this window's state.
     func setState(_ newState: MemberState) {
-        prevState = state
+        // Promote previous state to current state.
+        promotePreviousState()
+        
+        // Update current state to provided new state.
         state = newState
+        
+        // Tell parent window that state was updated.
         onStateUpdated(member.id)
         
-        if state != .previewing && previewingTimer != nil {
-            previewingTimer?.invalidate()
-            previewingTimer = nil
+        // Handle state-specific change.
+        switch state {
+        case .idle:
+            onIdle()
+        case .previewing:
+            onPreviewing()
+        case .recording:
+            onRecording()
         }
     }
-        
+
+    // Handler called when state updates to idle.
+    func onIdle() {
+        // Invalidate previewing timer if it exists.
+        cancelPreviewingTimer()
+    }
+    
+    // Handler called when state updates to previewing.
+    func onPreviewing() {}
+    
+    // Handler called when state updates to recording.
+    func onRecording() {
+        // Invalidate previewing timer if it exists.
+        cancelPreviewingTimer()
+    }
+    
     // Render member window to a specific size and position.
     func render(size: NSSize, position: NSPoint) {
         resizeWindow(to: size)
