@@ -82,8 +82,8 @@ class MemberViewController: NSViewController {
         let widthConstraint = avatarView.widthAnchor.constraint(equalToConstant: initialAvatarDiameter)
         
         // Identify height and width constraints so you can query for them later.
-        heightConstraint.identifier = "height"
-        widthConstraint.identifier = "width"
+        heightConstraint.identifier = MemberAvatarView.ConstraintKeys.height
+        widthConstraint.identifier = MemberAvatarView.ConstraintKeys.width
         
         // Add auto-layout constraints.
         NSLayoutConstraint.activate([

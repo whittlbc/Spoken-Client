@@ -202,7 +202,7 @@ class WorkspaceWindow: FloatingWindow {
         )
         
         // Animate each member window to its new destination.
-        moveMemberWindowsToDestinations(memberWindows)
+        animateMemberWindowsToDestinations(memberWindows)
         
         // If active member's new state is previewing, ensure it is the only member window in a previewing state.
         if activeMemberWindow.state == .previewing {
@@ -279,11 +279,12 @@ class WorkspaceWindow: FloatingWindow {
     }
 
     // Animate each member window to its stored destination.
-    private func moveMemberWindowsToDestinations(_ memberWindows: [MemberWindow]) {
+    private func animateMemberWindowsToDestinations(_ memberWindows: [MemberWindow]) {
         NSAnimationContext.runAnimationGroup({ context in
             // Configure animation attributes.
             context.duration = AnimationConfig.MemberWindows.duration
             context.timingFunction = AnimationConfig.MemberWindows.timingFunction
+            context.allowsImplicitAnimation = true
 
             // Vars for loop below.
             var newSize: NSSize

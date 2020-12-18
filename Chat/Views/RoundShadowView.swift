@@ -11,38 +11,71 @@ import Cocoa
 // Subclass of RoundView that adds an auto-sizing drop shadow.
 class RoundShadowView: RoundView {
     
-    // General offset of shadow from center.
-    var shadowOffset = CGSize(width: 0, height: -1)
+    // Shadow properties to apply to view.
+    var shadowConfig: Shadow!
     
-    // Shadow blur amount.
-    var shadowRadius: CGFloat = 3
+    convenience init(shadowConfig: Shadow) {
+        self.init(frame: NSRect())
+        self.shadowConfig = shadowConfig
+    }
     
-    // Shadow color.
-    var shadowColor = CGColor.black
+    private override init(frame frameRect: NSRect) {
+        super.init(frame: frameRect)
+    }
     
-    // Shadow opacity.
-    var shadowOpacity: Float = 0.6
-    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
     override func layout() {
         super.layout()
         
-        // Create new shadow.
-        self.shadow = NSShadow()
+        // Add shadow to view.
+        applyShadowConfig()
+    }
+    
+    func applyShadowConfig() {
+        // Create new shadow for view.
+        shadow = NSShadow()
         
-        // Assign shadow properties.
-        self.layer?.shadowOffset = shadowOffset
-        self.layer?.shadowRadius = shadowRadius
-        self.layer?.shadowColor = shadowColor
-        self.layer?.shadowOpacity = shadowOpacity
+        // Apply shadow config properties.
+        layer?.shadowOffset = shadowConfig.offset
+        layer?.shadowRadius = shadowConfig.radius
+        layer?.shadowColor = shadowConfig.color
+        layer?.shadowOpacity = shadowConfig.opacity
         
         // Make shadow round.
         let roundRadius = bounds.height / 2
         
         // Create round shadow path from bezier path converted to CGPath.
-        self.layer?.shadowPath = NSBezierPath(
+        layer?.shadowPath = NSBezierPath(
             roundedRect: bounds,
             xRadius: roundRadius,
             yRadius: roundRadius
         ).cgPath
     }
+        
+    func animateShadow(opacity: Double, offset: CGSize, duration: Double) {
+        CATransaction.begin()
+        
+        let opacityAnimation = CABasicAnimation(keyPath: "shadowOpacity")
+        opacityAnimation.toValue = opacity
+        opacityAnimation.duration = duration
+        opacityAnimation.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeOut)
+        opacityAnimation.fillMode = CAMediaTimingFillMode.both
+        opacityAnimation.isRemovedOnCompletion = false
+
+        let offsetAnimation = CABasicAnimation(keyPath: "shadowOffset")
+        offsetAnimation.toValue = offset
+        offsetAnimation.duration = duration
+        offsetAnimation.timingFunction = opacityAnimation.timingFunction
+        offsetAnimation.fillMode = opacityAnimation.fillMode
+        offsetAnimation.isRemovedOnCompletion = false
+
+        layer?.add(offsetAnimation, forKey: offsetAnimation.keyPath!)
+        layer?.add(opacityAnimation, forKey: opacityAnimation.keyPath!)
+        
+        CATransaction.commit()
+    }
+
 }

@@ -54,6 +54,8 @@
 		0995DE3D2581CF6A00DAA334 /* API.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0995DE3C2581CF6A00DAA334 /* API.swift */; };
 		09F60AC6258BFD450020974A /* NSRect+Location.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F60AC5258BFD450020974A /* NSRect+Location.swift */; };
 		09F60AC9258C13680020974A /* Icon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F60AC8258C13680020974A /* Icon.swift */; };
+		09F60ACC258C2FD50020974A /* Style.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F60ACB258C2FD50020974A /* Style.swift */; };
+		09F60ACF258C37AC0020974A /* NSView+Animation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F60ACE258C37AC0020974A /* NSView+Animation.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -105,6 +107,8 @@
 		0995DE3C2581CF6A00DAA334 /* API.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = API.swift; sourceTree = "<group>"; };
 		09F60AC5258BFD450020974A /* NSRect+Location.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSRect+Location.swift"; sourceTree = "<group>"; };
 		09F60AC8258C13680020974A /* Icon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Icon.swift; sourceTree = "<group>"; };
+		09F60ACB258C2FD50020974A /* Style.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Style.swift; sourceTree = "<group>"; };
+		09F60ACE258C37AC0020974A /* NSView+Animation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSView+Animation.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -211,6 +215,7 @@
 				0995DE342581A51F00DAA334 /* Keychain.swift */,
 				096862FA2582CF9500B9B614 /* Cache.swift */,
 				09F60AC8258C13680020974A /* Icon.swift */,
+				09F60ACB258C2FD50020974A /* Style.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -280,6 +285,7 @@
 				096863182583206500B9B614 /* Workspace+API.swift */,
 				0968631B2583E80C00B9B614 /* Cache+Ids.swift */,
 				09F60AC5258BFD450020974A /* NSRect+Location.swift */,
+				09F60ACE258C37AC0020974A /* NSView+Animation.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -425,6 +431,7 @@
 				099087A625797645001660D1 /* main.swift in Sources */,
 				0995DE13257B388500DAA334 /* NSBezierPath+CGPath.swift in Sources */,
 				0995DDFC257AED6400DAA334 /* FloatingWindow.swift in Sources */,
+				09F60ACF258C37AC0020974A /* NSView+Animation.swift in Sources */,
 				096862E82582A88600B9B614 /* Workspace.swift in Sources */,
 				0995DE352581A51F00DAA334 /* Keychain.swift in Sources */,
 				0995DE3D2581CF6A00DAA334 /* API.swift in Sources */,
@@ -433,6 +440,7 @@
 				096862F42582B54F00B9B614 /* WorkspaceWindow.swift in Sources */,
 				09F60AC9258C13680020974A /* Icon.swift in Sources */,
 				096862FE2582FF4300B9B614 /* User+Cache.swift in Sources */,
+				09F60ACC258C2FD50020974A /* Style.swift in Sources */,
 				096863352586C2B000B9B614 /* RoundView.swift in Sources */,
 				0995DE2125816B5E00DAA334 /* Config.swift in Sources */,
 				096862FB2582CF9500B9B614 /* Cache.swift in Sources */,
