@@ -49,35 +49,31 @@ class MemberView: NSView {
     func setState(_ newState: MemberState) {        
         state = newState
         
+        // Handle state-specific change.
         switch state {
-        // Animate to idle state.
         case .idle:
-            animateToIdle()
-        
-        // Animate to previewing state.
+            onIdle()
         case .previewing:
-            animateToPreviewing()
-            
-        // Animate to recording state.
+            onPreviewing()
         case .recording:
-            animateToRecording()
+            onRecording()
         }
     }
     
-    // Animate to idle state.
-    private func animateToIdle() {
+    // Handler called when state updates to idle.
+    private func onIdle() {
         // Update member avatar.
         animateAvatarView()
     }
     
-    // Animate to previewing state.
-    private func animateToPreviewing() {
+    // Handler called when state updates to previewing.
+    private func onPreviewing() {
         // Update member avatar.
         animateAvatarView()
     }
     
-    // Animate to recording state.
-    private func animateToRecording() {
+    // Handler called when state updates to recording.
+    private func onRecording() {
         // Update member avatar.
         animateAvatarView()
     }
@@ -95,7 +91,7 @@ class MemberView: NSView {
             logger.error("Error extracting MemberAvatarView as first itsem in subviews: \(subviews[0])")
             return
         }
-                
+
         // Animate avatar view.
         avatarView.animateToState(state)
     }

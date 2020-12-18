@@ -54,28 +54,34 @@ class RoundShadowView: RoundView {
             yRadius: roundRadius
         ).cgPath
     }
-        
-    func animateShadow(opacity: Double, offset: CGSize, duration: Double) {
-        CATransaction.begin()
-        
-        let opacityAnimation = CABasicAnimation(keyPath: "shadowOpacity")
-        opacityAnimation.toValue = opacity
-        opacityAnimation.duration = duration
-        opacityAnimation.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeOut)
-        opacityAnimation.fillMode = CAMediaTimingFillMode.both
-        opacityAnimation.isRemovedOnCompletion = false
 
-        let offsetAnimation = CABasicAnimation(keyPath: "shadowOffset")
-        offsetAnimation.toValue = offset
-        offsetAnimation.duration = duration
-        offsetAnimation.timingFunction = opacityAnimation.timingFunction
-        offsetAnimation.fillMode = opacityAnimation.fillMode
-        offsetAnimation.isRemovedOnCompletion = false
-
-        layer?.add(offsetAnimation, forKey: offsetAnimation.keyPath!)
-        layer?.add(opacityAnimation, forKey: opacityAnimation.keyPath!)
+    // Update shadow config property with optional animation to new values.
+    func updateShadow(
+        toConfig config: Shadow,
+        animate: Bool = false,
+        duration: CFTimeInterval? = nil,
+        timingFunctionName: CAMediaTimingFunctionName? = nil) {
         
-        CATransaction.commit()
+        // Set shadow config to new given value.
+        shadowConfig = config
+        
+        // Animate to new values if desired.
+        if animate, let dur = duration, let timing = timingFunctionName {
+            animateToShadow(duration: dur, timingFunctionName: timing)
+        }
     }
-
+    
+    // Animate shadow values to those already set in shadow config.
+    func animateToShadow(duration: CFTimeInterval, timingFunctionName: CAMediaTimingFunctionName) {
+        animateAsGroup(
+            values: [
+                AnimationKey.shadowOffset: shadowConfig.offset,
+                AnimationKey.shadowRadius: shadowConfig.radius,
+                AnimationKey.shadowColor: shadowConfig.color,
+                AnimationKey.shadowOpacity: shadowConfig.opacity
+            ],
+            duration: duration,
+            timingFunctionName: timingFunctionName
+        )
+    }
 }

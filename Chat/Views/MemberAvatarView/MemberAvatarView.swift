@@ -35,9 +35,9 @@ class MemberAvatarView: NSView {
             
             // Raised shadow style.
             static let raised = Shadow(
-                offset: CGSize(width: 0, height: 2),
-                radius: 20,
-                opacity: 1
+                offset: CGSize(width: 1, height: -2),
+                radius: 5,
+                opacity: 0.5
             )
             
             // Get shadow style config for member state.
@@ -52,6 +52,16 @@ class MemberAvatarView: NSView {
         }
     }
     
+    // Animation configuration for all child views that this view owns.
+    enum AnimationConfig {
+        
+        // Configuration for container view animations.
+        enum ContainerView {
+            static let duration = WorkspaceWindow.AnimationConfig.MemberWindows.duration
+            static let timingFunctionName = WorkspaceWindow.AnimationConfig.MemberWindows.timingFunctionName
+        }
+    }
+
     // Auto-layout contraint identifiers.
     enum ConstraintKeys {
         static let height = "height"
@@ -173,7 +183,13 @@ class MemberAvatarView: NSView {
         // Get shadow config for state.
         let shadowConfig = Style.ShadowStyle.getShadow(forState: state)
         
-        containerView.animateShadow(opacity: Double(shadowConfig.opacity), offset: shadowConfig.offset, duration: 0.13)
+        // Animate container view's shadow to new config.
+        containerView.updateShadow(
+            toConfig: shadowConfig,
+            animate: true,
+            duration: AnimationConfig.ContainerView.duration,
+            timingFunctionName: AnimationConfig.ContainerView.timingFunctionName
+        )
     }
     
     // Render container view.

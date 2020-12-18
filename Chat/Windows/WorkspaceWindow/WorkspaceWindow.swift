@@ -47,8 +47,8 @@ class WorkspaceWindow: FloatingWindow {
             // Time it takes for a member window to update size and position during a state change.
             static let duration = 0.13
             
-            // Timing function associated with above duration.
-            static let timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeOut)
+            // Name of timing function to use for all member window animations.
+            static let timingFunctionName = CAMediaTimingFunctionName.easeOut
         }
     }
     
@@ -283,7 +283,7 @@ class WorkspaceWindow: FloatingWindow {
         NSAnimationContext.runAnimationGroup({ context in
             // Configure animation attributes.
             context.duration = AnimationConfig.MemberWindows.duration
-            context.timingFunction = AnimationConfig.MemberWindows.timingFunction
+            context.timingFunction = CAMediaTimingFunction(name: AnimationConfig.MemberWindows.timingFunctionName)
             context.allowsImplicitAnimation = true
 
             // Vars for loop below.
