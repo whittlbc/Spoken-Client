@@ -14,40 +14,73 @@ class MemberAvatarView: NSView {
     // View styling information.
     enum Style {
         
-        // Positional styling.
-        enum PositionStyle {
-            // Height of avatar relative to parent member view.
-            static let relativeHeight: CGFloat = 0.7
+        // Container view styling.
+        enum ContainerView {
             
-            // Absolute left shift of avatar view relative to parent member view.
-            static let leftOffset: CGFloat = -5.0
+            // Positional styling for container view.
+            enum PositionStyle {
+                
+                // Height of avatar relative to parent member view.
+                static let relativeHeight: CGFloat = 0.7
+                
+                // Absolute shift left of avatar view relative to parent member view.
+                static let leftOffset: CGFloat = -5.0
+            }
+            
+            // Shadow styling for container view.
+            enum ShadowStyle {
+                
+                // Default, non-raised, shadow style.
+                static let grounded = Shadow(
+                    offset: CGSize(width: 0, height: -1),
+                    radius: 3.0,
+                    opacity: 0.6
+                )
+                
+                // Raised shadow style.
+                static let raised = Shadow(
+                    offset: CGSize(width: 1, height: -2),
+                    radius: 5.0,
+                    opacity: 0.5
+                )
+                
+                // Get shadow style config for member state.
+                static func getShadow(forState state: MemberState) -> Shadow {
+                    switch state {
+                    case .idle:
+                        return grounded
+                    case .previewing, .recording:
+                        return raised
+                    }
+                }
+            }
         }
         
-        // Shadow style configs.
-        enum ShadowStyle {
+        // New recording indicator styling.
+        enum NewRecordingIndicator {
             
-            // Default, non-raised, shadow style.
-            static let grounded = Shadow(
-                offset: CGSize(width: 0, height: -1),
-                radius: 3,
-                opacity: 0.6
-            )
+            // Positional styling for new recording indicator.
+            enum PositionStyle {
+                
+                // Height of indicator relative to parent member view.
+                static let relativeHeight: CGFloat = 0.25
+                                
+                // Absolute shift left of indicator relative to parent member view.
+                static let leftOffset: CGFloat = -6.0
+                
+                // Absolute shift up of indicator relative to parent member view.
+                static let bottomOffset: CGFloat = -8.0
+            }
             
-            // Raised shadow style.
-            static let raised = Shadow(
-                offset: CGSize(width: 1, height: -2),
-                radius: 5,
-                opacity: 0.5
-            )
-            
-            // Get shadow style config for member state.
-            static func getShadow(forState state: MemberState) -> Shadow {
-                switch state {
-                case .idle:
-                    return grounded
-                case .previewing, .recording:
-                    return raised
-                }
+            // Shadow styling for new recording indicator.
+            enum ShadowStyle {
+                
+                // Default, non-raised, shadow style.
+                static let grounded = Shadow(
+                    offset: CGSize(width: 0, height: 0),
+                    radius: 3.0,
+                    opacity: 0.6
+                )
             }
         }
     }
@@ -55,7 +88,7 @@ class MemberAvatarView: NSView {
     // Animation configuration for all child views that this view owns.
     enum AnimationConfig {
         
-        // Configuration for container view animations.
+        // Container view animation config.
         enum ContainerView {
             static let duration = WorkspaceWindow.AnimationConfig.MemberWindows.duration
             static let timingFunctionName = WorkspaceWindow.AnimationConfig.MemberWindows.timingFunctionName
@@ -77,14 +110,20 @@ class MemberAvatarView: NSView {
     // View with image content.
     private var imageView = RoundView()
     
+    // New recording indicator icon.
+    private var newRecordingIndicator: RoundShadowView?
+    
+    // Get an auto-layout constraint for a given identifier.
     private func getConstraint(forIdentifier id: String) -> NSLayoutConstraint? {
         constraints.first(where: { $0.identifier == id })
     }
     
+    // Get this view's auto-layout height constraint.
     private func getHeightConstraint() -> NSLayoutConstraint? {
         getConstraint(forIdentifier: ConstraintKeys.height)
     }
     
+    // Get this view's auto-layout width constraint.
     private func getWidthConstraint() -> NSLayoutConstraint? {
         getConstraint(forIdentifier: ConstraintKeys.width)
     }
@@ -92,7 +131,9 @@ class MemberAvatarView: NSView {
     // Create new container view.
     private func createContainerView() {
         // Create new round view with with drop shadow.
-        containerView = RoundShadowView(shadowConfig: Style.ShadowStyle.getShadow(forState: .idle))
+        containerView = RoundShadowView(
+            shadowConfig: Style.ContainerView.ShadowStyle.getShadow(forState: .idle)
+        )
 
         // Make it layer based and allow for overflow so that shadow can be seen.
         containerView.wantsLayer = true
@@ -109,14 +150,20 @@ class MemberAvatarView: NSView {
 
         // Add auto-layout constraints.
         NSLayoutConstraint.activate([
-            // Set height of container to 70% of self height.
-            containerView.heightAnchor.constraint(equalTo: heightAnchor, multiplier: Style.PositionStyle.relativeHeight),
+            // Set height of container.
+            containerView.heightAnchor.constraint(
+                equalTo: heightAnchor,
+                multiplier: Style.ContainerView.PositionStyle.relativeHeight
+            ),
             
             // Keep container height and width the same.
             containerView.widthAnchor.constraint(equalTo: containerView.heightAnchor),
             
             // Align right sides (but shift it left the specified amount).
-            containerView.rightAnchor.constraint(equalTo: rightAnchor, constant: Style.PositionStyle.leftOffset),
+            containerView.rightAnchor.constraint(
+                equalTo: rightAnchor,
+                constant: Style.ContainerView.PositionStyle.leftOffset
+            ),
             
             // Align horizontal axes.
             containerView.centerYAnchor.constraint(equalTo: centerYAnchor),
@@ -159,11 +206,77 @@ class MemberAvatarView: NSView {
         imageView.layer?.contentsGravity = .resizeAspectFill
     }
     
-    func animateToState(_ state: MemberState) {
-        animateSize(toState: state)
-        animateShadow(toState: state)
+    // Create new recording indicator icon.
+    private func createNewRecordingIndicator() -> RoundShadowView {
+        // Create new round view with with drop shadow.
+        let indicator = RoundShadowView(
+            shadowConfig: Style.NewRecordingIndicator.ShadowStyle.grounded
+        )
+        
+        // Make it layer based and start it as hidden.
+        indicator.wantsLayer = true
+        indicator.layer?.masksToBounds = false
+        indicator.alphaValue = 0
+        
+        // Add indicator as subview above container view.
+        addSubview(indicator, positioned: NSWindow.OrderingMode.above, relativeTo: containerView)
+        
+        // Add auto-layout constraints to indicator.
+        constrainNewRecordingIndicator(indicator)
+
+        // Set icon as the contents of the view.
+        indicator.layer?.contents = Icon.plusCircle
+        
+        // Constrain the icon's image size to the view's size.
+        indicator.layer?.contentsGravity = .resizeAspectFill
+
+        // Assign new indicator to instance property.
+        newRecordingIndicator = indicator
+        
+        // Return newly created, unwrapped, view.
+        return newRecordingIndicator!
     }
     
+    // Set up new-recording indicator auto-layout.
+    private func constrainNewRecordingIndicator(_ indicator: RoundShadowView) {
+        // Set up auto-layout for sizing/positioning.
+        indicator.translatesAutoresizingMaskIntoConstraints = false
+
+        // Add auto-layout constraints.
+        NSLayoutConstraint.activate([
+            // Set height of indicator.
+            indicator.heightAnchor.constraint(
+                equalTo: heightAnchor,
+                multiplier: Style.NewRecordingIndicator.PositionStyle.relativeHeight
+            ),
+            
+            // Keep indicator height and width the same.
+            indicator.widthAnchor.constraint(equalTo: indicator.heightAnchor),
+            
+            // Align right sides (but shift it left the specified amount).
+            indicator.rightAnchor.constraint(
+                equalTo: rightAnchor,
+                constant: Style.NewRecordingIndicator.PositionStyle.leftOffset
+            ),
+            
+            // Align bottom sides (but shift it up the specified amount).
+            indicator.bottomAnchor.constraint(
+                equalTo: bottomAnchor,
+                constant: Style.NewRecordingIndicator.PositionStyle.bottomOffset
+            ),
+        ])
+    }
+    
+    // Animate self and subviews due to state change.
+    func animateToState(_ state: MemberState) {
+        // Animate this view's size.
+        animateSize(toState: state)
+        
+        // Animate this view's subviews.
+        animateSubviews(toState: state)
+    }
+    
+    // Animate diameter of avatar for given state.
     private func animateSize(toState state: MemberState) {
         // Ensure avatar view has both a height and width constraint.
         guard let heightConstraint = getHeightConstraint(), let widthConstraint = getWidthConstraint() else {
@@ -179,9 +292,25 @@ class MemberAvatarView: NSView {
         widthConstraint.animator().constant = avatarDiameter
     }
 
-    private func animateShadow(toState state: MemberState) {
-        // Get shadow config for state.
-        let shadowConfig = Style.ShadowStyle.getShadow(forState: state)
+    // Animate this view's subviews for a given state.
+    private func animateSubviews(toState state: MemberState) {
+        // Animate container subview.
+        animateContainerView(toState: state)
+        
+        // Animate "new recording" indicator.
+        animateNewRecordingIndicator(toState: state)
+    }
+    
+    // Toggle new recording indicator visibility based on state.
+    private func animateNewRecordingIndicator(toState state: MemberState) {
+        // Only show new recording indicator when previewing.
+        state == .previewing ? fadeInNewRecordingIndicator() : fadeOutNewRecordingIndicator()
+    }
+    
+    // Toggle the amount of drop shadow for container view based on state.
+    private func animateContainerView(toState state: MemberState) {
+        // Create new shadow config for state.
+        let shadowConfig = Style.ContainerView.ShadowStyle.getShadow(forState: state)
         
         // Animate container view's shadow to new config.
         containerView.updateShadow(
@@ -190,6 +319,26 @@ class MemberAvatarView: NSView {
             duration: AnimationConfig.ContainerView.duration,
             timingFunctionName: AnimationConfig.ContainerView.timingFunctionName
         )
+    }
+    
+    // Hide new recording indicator if it exists.
+    private func fadeOutNewRecordingIndicator() {
+        // Ensure new recording indicator subview exists.
+        guard let indicator = newRecordingIndicator else {
+            return
+        }
+
+        // Hide the indicator.
+        indicator.animator().alphaValue = 0
+    }
+    
+    // Upsert and show new recording indicator.
+    private func fadeInNewRecordingIndicator() {
+        // Upsert new recording indicator subview.
+        let indicator = newRecordingIndicator ?? createNewRecordingIndicator()
+        
+        // Show the indicator.
+        indicator.animator().alphaValue = 1
     }
     
     // Render container view.

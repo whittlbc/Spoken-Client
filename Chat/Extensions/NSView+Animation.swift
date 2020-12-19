@@ -19,6 +19,9 @@ extension NSView {
         static let shadowRadius = "shadowRadius"
         static let shadowColor = "shadowColor"
         static let shadowOpacity = "shadowOpacity"
+        
+        // Visibility
+        static let opacity = "opacity"
     }
 
     func animateAsGroup(
@@ -32,6 +35,9 @@ extension NSView {
         // Create new animation transaction.
         CATransaction.begin()
         
+        // Add completion handler.
+        CATransaction.setCompletionBlock(completionHandler)
+
         // Create and apply animations for each key/value.
         for (key, value) in values {
             if let animation = createAnimation(
@@ -76,14 +82,14 @@ extension NSView {
 
         // Double values.
         case AnimationKey.shadowRadius,
-             AnimationKey.shadowOpacity:
+             AnimationKey.shadowOpacity,
+             AnimationKey.opacity:
             if let val = value as? Double {
                 animation.toValue = val
             }
 
         // CGColor values.
         case AnimationKey.shadowColor:
-            break
             animation.toValue = value as! CGColor
             
         // Return no animation if key isn't supported.
@@ -103,8 +109,10 @@ extension NSView {
         case AnimationKey.shadowOffset,
              AnimationKey.shadowRadius,
              AnimationKey.shadowColor,
-             AnimationKey.shadowOpacity:
+             AnimationKey.shadowOpacity,
+             AnimationKey.opacity:
             layer?.add(animation, forKey: key)
+
         default:
             break
         }
