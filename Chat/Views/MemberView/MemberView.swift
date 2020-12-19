@@ -13,7 +13,7 @@ class MemberView: NSView {
 
     // The member's state on screen at any given time -- should mirror that of MemberWindow.
     var state = MemberState.idle
-    
+        
     // Allow this view to be the first responder in the chain to key events.
     override var acceptsFirstResponder: Bool { true }
     
@@ -43,6 +43,11 @@ class MemberView: NSView {
 
         // Add lastest tracking area.
         addTrackingArea(trackingArea)
+    }
+    
+    // Get parent MemberWindow.
+    private func getMemberWindow() -> MemberWindow? {
+        window as? MemberWindow
     }
         
     // Assume latest state from parent window and animate self/subviews accordingly.
@@ -94,5 +99,13 @@ class MemberView: NSView {
 
         // Animate avatar view.
         avatarView.animateToState(state)
+    }
+    
+    
+    func onAvatarClick() {
+        // Bubble up event to parent member window.
+        if let parent = getMemberWindow() {
+            parent.onAvatarClick()
+        }
     }
 }

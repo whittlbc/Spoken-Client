@@ -246,6 +246,14 @@ class MemberWindow: FloatingWindow {
         previewingTimer = nil
     }
     
+    // Handle avatar mouse-up events.
+    func onAvatarClick() {
+        // Update state to recording if clicking avatar while previewing.
+        if state == .previewing {
+            setState(.recording)
+        }
+    }
+    
     // Update this window's state.
     func setState(_ newState: MemberState) {
         // Promote previous state to current state.

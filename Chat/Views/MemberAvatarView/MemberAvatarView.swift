@@ -79,7 +79,7 @@ class MemberAvatarView: NSView {
                 static let grounded = Shadow(
                     offset: CGSize(width: 0, height: 0),
                     radius: 3.0,
-                    opacity: 0.6
+                    opacity: 0.5
                 )
             }
         }
@@ -112,6 +112,19 @@ class MemberAvatarView: NSView {
     
     // New recording indicator icon.
     private var newRecordingIndicator: RoundShadowView?
+        
+    // Handle mouse up event.
+    override func mouseUp(with event: NSEvent) {
+        // Bubble up event to parent member view.
+        if let parent = getMemberView() {
+            parent.onAvatarClick()
+        }
+    }
+    
+    // Get parent MemberView.
+    private func getMemberView() -> MemberView? {
+        superview as? MemberView
+    }
     
     // Get an auto-layout constraint for a given identifier.
     private func getConstraint(forIdentifier id: String) -> NSLayoutConstraint? {
