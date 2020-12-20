@@ -29,6 +29,9 @@ class MemberWindow: FloatingWindow {
     
     // Flag indicating whether mouse is inside window.
     var isMouseInside = false
+    
+    // Whether member is able to be interacted with by the user.
+    var isDisabled = false
         
     // Closure provided by parent window to be called every time state updates.
     private var onStateUpdated: ((String) -> Void)!
@@ -65,8 +68,23 @@ class MemberWindow: FloatingWindow {
         super.init(contentRect: contentRect, styleMask: style, backing: backingStoreType, defer: flag)
     }
     
+    // Check whether member window is currently in the idle state.
+    func isIdle() -> Bool {
+        state == .idle
+    }
+    
+    // Check whether member window is currently in the idle state.
+    func isPreviewing() -> Bool {
+        state == .previewing
+    }
+    
+    // Check whether member window is currently in the idle state.
+    func isRecording() -> Bool {
+        state == .recording
+    }
+    
     // Update state of member view to match that of this window.
-    func updateViewState() {
+    func updateViewState(isDisabled disabled: Bool? = nil) {
         // Get this window's content view controller.
         guard let viewController = contentViewController else {
             logger.error("Unable to find MemberWindow's contentViewController...")
@@ -79,10 +97,13 @@ class MemberWindow: FloatingWindow {
             return
         }
         
-        // Update member view's state if it differs from this window's state.
-        if memberView.state != state {
-            memberView.setState(state)
+        // Update disabled status if provided.
+        if let newDisabledStatus = disabled {
+            isDisabled = newDisabledStatus
         }
+        
+        // Update member view's state if it differs from this window's state.
+        memberView.setState(state, isDisabled: disabled)
     }
     
     // Promote previous state to current state.

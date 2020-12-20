@@ -83,6 +83,13 @@ class MemberAvatarView: NSView {
                 )
             }
         }
+        
+        // Image blur layer styling.
+        enum BlurLayer {
+            
+            // Input radius of gaussian blur.
+            static let blurRadius = 2.0
+        }
     }
     
     // Animation configuration for all child views that this view owns.
@@ -90,6 +97,12 @@ class MemberAvatarView: NSView {
         
         // Container view animation config.
         enum ContainerView {
+            static let duration = WorkspaceWindow.AnimationConfig.MemberWindows.duration
+            static let timingFunctionName = WorkspaceWindow.AnimationConfig.MemberWindows.timingFunctionName
+        }
+        
+        // Image blur layer animation config.
+        enum BlurLayer {
             static let duration = WorkspaceWindow.AnimationConfig.MemberWindows.duration
             static let timingFunctionName = WorkspaceWindow.AnimationConfig.MemberWindows.timingFunctionName
         }
@@ -112,7 +125,10 @@ class MemberAvatarView: NSView {
     
     // New recording indicator icon.
     private var newRecordingIndicator: RoundShadowView?
-        
+    
+    // Blur layer to fade-in when member is disabled.
+    private var blurLayer: CALayer?
+    
     // Handle mouse up event.
     override func mouseUp(with event: NSEvent) {
         // Bubble up event to parent member view.
@@ -217,6 +233,9 @@ class MemberAvatarView: NSView {
         
         // Constrain the image's size to the view's size.
         imageView.layer?.contentsGravity = .resizeAspectFill
+        
+        // Allow the image view to respond to filters added to it.
+        imageView.layerUsesCoreImageFilters = true
     }
     
     // Create new recording indicator icon.
@@ -280,13 +299,38 @@ class MemberAvatarView: NSView {
         ])
     }
     
+    // Create new blur layer and add it as a sublayer to image view.
+    private func createBlurLayer() -> CALayer {
+        // Create new layer the size of image view.
+        let blur = CALayer()
+        blur.frame = imageView.bounds
+        blur.contentsGravity = .resizeAspectFill
+
+        // Make it transparent and mask it.
+        blur.backgroundColor = NSColor.clear.cgColor
+        blur.masksToBounds = true
+        
+        // Add a zero-value gaussian blur.
+        if let blurFilter = CIFilter(name: "CIGaussianBlur", parameters: [kCIInputRadiusKey: 0]) {
+            blur.backgroundFilters = [blurFilter]
+        }
+        
+        // Assign new blur layer to instance property.
+        blurLayer = blur
+        
+        // Add blur layer as sublayer to image view.
+        imageView.layer?.addSublayer(blur)
+                
+        return blur
+    }
+    
     // Animate self and subviews due to state change.
-    func animateToState(_ state: MemberState) {
+    func animateToState(_ state: MemberState, isDisabled: Bool) {
         // Animate this view's size.
         animateSize(toState: state)
         
         // Animate this view's subviews.
-        animateSubviews(toState: state)
+        animateSubviews(toState: state, isDisabled: isDisabled)
     }
     
     // Animate diameter of avatar for given state.
@@ -306,18 +350,15 @@ class MemberAvatarView: NSView {
     }
 
     // Animate this view's subviews for a given state.
-    private func animateSubviews(toState state: MemberState) {
+    private func animateSubviews(toState state: MemberState, isDisabled: Bool) {
         // Animate container subview.
         animateContainerView(toState: state)
         
+        // Animate image subview.
+        animateImageView(isDisabled: isDisabled)
+        
         // Animate "new recording" indicator.
         animateNewRecordingIndicator(toState: state)
-    }
-    
-    // Toggle new recording indicator visibility based on state.
-    private func animateNewRecordingIndicator(toState state: MemberState) {
-        // Only show new recording indicator when previewing.
-        state == .previewing ? fadeInNewRecordingIndicator() : fadeOutNewRecordingIndicator()
     }
     
     // Toggle the amount of drop shadow for container view based on state.
@@ -334,6 +375,26 @@ class MemberAvatarView: NSView {
         )
     }
     
+    // Toggle blur layer based on disabled status of member.
+    private func animateImageView(isDisabled: Bool) {
+        isDisabled ? fadeInBlurLayer() : fadeOutBlurLayer()
+    }
+    
+    // Toggle new recording indicator visibility based on state.
+    private func animateNewRecordingIndicator(toState state: MemberState) {
+        // Only show new recording indicator when previewing.
+        state == .previewing ? fadeInNewRecordingIndicator() : fadeOutNewRecordingIndicator()
+    }
+    
+    // Upsert and show new recording indicator.
+    private func fadeInNewRecordingIndicator() {
+        // Upsert new recording indicator subview.
+        let indicator = newRecordingIndicator ?? createNewRecordingIndicator()
+        
+        // Show the indicator.
+        indicator.animator().alphaValue = 1
+    }
+    
     // Hide new recording indicator if it exists.
     private func fadeOutNewRecordingIndicator() {
         // Ensure new recording indicator subview exists.
@@ -345,13 +406,34 @@ class MemberAvatarView: NSView {
         indicator.animator().alphaValue = 0
     }
     
-    // Upsert and show new recording indicator.
-    private func fadeInNewRecordingIndicator() {
-        // Upsert new recording indicator subview.
-        let indicator = newRecordingIndicator ?? createNewRecordingIndicator()
+    // Upsert and fade-in the gaussian blur layer.
+    private func fadeInBlurLayer() {
+        animateAsGroup(
+            values: [AnimationKey.blurRadius: Style.BlurLayer.blurRadius],
+            duration: AnimationConfig.BlurLayer.duration,
+            timingFunctionName: AnimationConfig.BlurLayer.timingFunctionName,
+            onLayer: blurLayer ?? createBlurLayer()
+        )
+    }
+
+    // Fade-out the gaussian blur layer and remove it.
+    private func fadeOutBlurLayer() {
+        // Ensure blur layer exists.
+        guard let blur = blurLayer else {
+            return
+        }
         
-        // Show the indicator.
-        indicator.animator().alphaValue = 1
+        // Fade out blur layer.
+        animateAsGroup(
+            values: [AnimationKey.blurRadius: 0],
+            duration: AnimationConfig.BlurLayer.duration,
+            timingFunctionName: AnimationConfig.BlurLayer.timingFunctionName,
+            onLayer: blur,
+            completionHandler: {
+                // Remove blur layer from image view layer after it's faded out.
+                blur.removeFromSuperlayer()
+            }
+        )
     }
     
     // Render container view.

@@ -13,7 +13,10 @@ class MemberView: NSView {
 
     // The member's state on screen at any given time -- should mirror that of MemberWindow.
     var state = MemberState.idle
-        
+
+    // Whether member is able to be interacted with by the user.
+    var isDisabled = false
+
     // Allow this view to be the first responder in the chain to key events.
     override var acceptsFirstResponder: Bool { true }
     
@@ -24,6 +27,9 @@ class MemberView: NSView {
     override func layout() {
         super.layout()
         frame = bounds
+        wantsLayer = true
+        layer?.backgroundColor = NSColor.clear.cgColor
+        layerUsesCoreImageFilters = true
     }
 
     // Add a tracking area that takes up the entirete of this view and listens for important mouse events.
@@ -49,36 +55,23 @@ class MemberView: NSView {
     private func getMemberWindow() -> MemberWindow? {
         window as? MemberWindow
     }
-        
-    // Assume latest state from parent window and animate self/subviews accordingly.
-    func setState(_ newState: MemberState) {        
-        state = newState
-        
-        // Handle state-specific change.
-        switch state {
-        case .idle:
-            onIdle()
-        case .previewing:
-            onPreviewing()
-        case .recording:
-            onRecording()
+    
+    func onAvatarClick() {
+        // Bubble up event to parent member window.
+        if let parent = getMemberWindow() {
+            parent.onAvatarClick()
         }
     }
-    
-    // Handler called when state updates to idle.
-    private func onIdle() {
-        // Update member avatar.
-        animateAvatarView()
-    }
-    
-    // Handler called when state updates to previewing.
-    private func onPreviewing() {
-        // Update member avatar.
-        animateAvatarView()
-    }
-    
-    // Handler called when state updates to recording.
-    private func onRecording() {
+        
+    // Assume latest state from parent window and animate self/subviews accordingly.
+    func setState(_ newState: MemberState, isDisabled disabled: Bool? = nil) {
+        state = newState
+                        
+        // Update disabled status if provided.
+        if let newDisabledStatus = disabled {
+            isDisabled = newDisabledStatus
+        }
+        
         // Update member avatar.
         animateAvatarView()
     }
@@ -98,14 +91,6 @@ class MemberView: NSView {
         }
 
         // Animate avatar view.
-        avatarView.animateToState(state)
-    }
-    
-    
-    func onAvatarClick() {
-        // Bubble up event to parent member window.
-        if let parent = getMemberWindow() {
-            parent.onAvatarClick()
-        }
+        avatarView.animateToState(state, isDisabled: isDisabled)
     }
 }

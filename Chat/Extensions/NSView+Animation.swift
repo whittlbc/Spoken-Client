@@ -22,6 +22,9 @@ extension NSView {
         
         // Visibility
         static let opacity = "opacity"
+        
+        // Background filters
+        static let blurRadius = "backgroundFilters.CIGaussianBlur.inputRadius"
     }
 
     func animateAsGroup(
@@ -30,7 +33,11 @@ extension NSView {
         timingFunctionName: CAMediaTimingFunctionName = CAMediaTimingFunctionName.linear,
         fillMode: CAMediaTimingFillMode = CAMediaTimingFillMode.both,
         isRemovedOnCompletion: Bool = false,
+        onLayer: CALayer? = nil,
         completionHandler: (() -> Void)? = nil) {
+        
+        // Resolve which layer to animate.
+        let toLayer = onLayer ?? layer
         
         // Create new animation transaction.
         CATransaction.begin()
@@ -48,7 +55,7 @@ extension NSView {
                 fillMode: fillMode,
                 isRemovedOnCompletion: isRemovedOnCompletion
             ) {
-                applyAnimation(animation)
+                applyAnimation(animation, toLayer: toLayer!)
             }
         }
         
@@ -83,7 +90,8 @@ extension NSView {
         // Double values.
         case AnimationKey.shadowRadius,
              AnimationKey.shadowOpacity,
-             AnimationKey.opacity:
+             AnimationKey.opacity,
+             AnimationKey.blurRadius:
             if let val = value as? Double {
                 animation.toValue = val
             }
@@ -100,7 +108,7 @@ extension NSView {
         return animation
     }
     
-    func applyAnimation(_ animation: CABasicAnimation) {
+    func applyAnimation(_ animation: CABasicAnimation, toLayer: CALayer) {
         let key = animation.keyPath!
         
         switch key {
@@ -110,8 +118,9 @@ extension NSView {
              AnimationKey.shadowRadius,
              AnimationKey.shadowColor,
              AnimationKey.shadowOpacity,
-             AnimationKey.opacity:
-            layer?.add(animation, forKey: key)
+             AnimationKey.opacity,
+             AnimationKey.blurRadius:
+            toLayer.add(animation, forKey: key)
 
         default:
             break

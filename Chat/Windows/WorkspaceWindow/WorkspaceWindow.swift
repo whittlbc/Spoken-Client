@@ -175,17 +175,13 @@ class WorkspaceWindow: FloatingWindow {
 
     // Update size and position of each member.
     private func updateMemberSizesAndPositions(activeMemberId: String) {
-        // Check if the latest state update will cause the active member window's size to change.
-        let (sizeWillChange, activeWindow, activeHeightOffset, _) = getActiveMemberSizeChange(activeMemberId: activeMemberId)
-        
-        // Only continue if active member window will change size.
-        if !sizeWillChange {
+        // Get the active member window's size change due to its latest state change.
+        let (activeWindow, activeHeightOffset, _) = getActiveMemberSizeChange(activeMemberId: activeMemberId)
+
+        // Only proceed if the active member window and its height offset was successfully found.
+        guard let activeMemberWindow = activeWindow, let activeMemberHeightOffset = activeHeightOffset else {
             return
         }
-        
-        // Unwrap active member window and height offset.
-        let activeMemberWindow = activeWindow!
-        let activeMemberHeightOffset = activeHeightOffset!
 
         // Get ordered list of existing member windows.
         let memberWindows = getOrderedMemberWindows()
@@ -202,7 +198,11 @@ class WorkspaceWindow: FloatingWindow {
         )
         
         // Animate each member window to its new destination.
-        animateMemberWindowsToDestinations(memberWindows)
+        animateMemberWindowsToDestinations(
+            memberWindows: memberWindows,
+            activeMemberIndex: activeMemberIndex,
+            activeMemberIsRecording: activeMemberWindow.isRecording()
+        )
         
         // If active member's new state is previewing, ensure it is the only member window in a previewing state.
         if activeMemberWindow.state == .previewing {
@@ -215,11 +215,11 @@ class WorkspaceWindow: FloatingWindow {
     }
         
     // Determine how much (if any) the active member window will change due to its latest state change.
-    private func getActiveMemberSizeChange(activeMemberId: String) -> (Bool, MemberWindow?, Float?, Float?) {
+    private func getActiveMemberSizeChange(activeMemberId: String) -> (MemberWindow?, Float?, Float?) {
         // Get active member window (the window that triggered the update).
         guard let activeMemberWindow = membersMap[activeMemberId] else {
             logger.error("Unable to find active window that triggered size update...")
-            return (false, nil, nil, nil)
+            return (nil, nil, nil)
         }
         
         // Get the size offsets due to the active member window's size change.
@@ -228,10 +228,10 @@ class WorkspaceWindow: FloatingWindow {
         // Don't do anything if no size change will take place.
         guard abs(activeMemberHeightOffset) > 0 || abs(activeMemberWidthOffset) > 0 else {
             logger.warning("No active window size change occurred...")
-            return (false, nil, nil, nil)
+            return (nil, nil, nil)
         }
         
-        return (true, activeMemberWindow, activeMemberHeightOffset, activeMemberWidthOffset)
+        return (activeMemberWindow, activeMemberHeightOffset, activeMemberWidthOffset)
     }
 
     // Get an array of member windows, top-to-bottom.
@@ -251,7 +251,11 @@ class WorkspaceWindow: FloatingWindow {
     }
     
     // Calculate new animation destinations for each member window.
-    private func calculateMemberWindowDestinations(memberWindows: [MemberWindow], activeMemberIndex: Int, activeMemberHeightOffset: Float) {
+    private func calculateMemberWindowDestinations(
+        memberWindows: [MemberWindow],
+        activeMemberIndex: Int,
+        activeMemberHeightOffset: Float) {
+        
         var memberWindow: MemberWindow
         var newSize: NSSize
         var newPosition: NSPoint
@@ -279,7 +283,11 @@ class WorkspaceWindow: FloatingWindow {
     }
 
     // Animate each member window to its stored destination.
-    private func animateMemberWindowsToDestinations(_ memberWindows: [MemberWindow]) {
+    private func animateMemberWindowsToDestinations(
+        memberWindows: [MemberWindow],
+        activeMemberIndex: Int,
+        activeMemberIsRecording: Bool) {
+                
         NSAnimationContext.runAnimationGroup({ context in
             // Configure animation attributes.
             context.duration = AnimationConfig.MemberWindows.duration
@@ -291,7 +299,7 @@ class WorkspaceWindow: FloatingWindow {
             var newPosition: NSPoint
             var newFrame: NSRect
             
-            for memberWindow in memberWindows {
+            for (i, memberWindow) in memberWindows.enumerated() {
                 // Get size and position to update the member window to.
                 newSize = memberWindow.getSizeForCurrentState()
                 newPosition = memberWindow.getDestination()
@@ -303,7 +311,9 @@ class WorkspaceWindow: FloatingWindow {
                 memberWindow.animator().setFrame(newFrame, display: true)
                 
                 // Update the member window's content view to the latest state.
-                memberWindow.updateViewState()
+                memberWindow.updateViewState(
+                    isDisabled: activeMemberIsRecording && i != activeMemberIndex
+                )
             }
         })
     }
