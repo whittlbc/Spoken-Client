@@ -171,7 +171,7 @@ class MemberWindow: FloatingWindow {
 
     // Handle mouse-entered event.
     override func mouseEntered(with event: NSEvent) {
-        if isMouseInside {
+        if isMouseInside || isDisabled {
             return
         }
         
@@ -181,7 +181,7 @@ class MemberWindow: FloatingWindow {
     // Handle mouse-exited event.
     override func mouseExited(with event: NSEvent) {
         // If mouse is already outside the window, do nothing.
-        if !isMouseInside {
+        if !isMouseInside || isDisabled {
             return
         }
 

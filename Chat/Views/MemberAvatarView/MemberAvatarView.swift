@@ -88,7 +88,7 @@ class MemberAvatarView: NSView {
         enum BlurLayer {
             
             // Input radius of gaussian blur.
-            static let blurRadius = 2.0
+            static let blurRadius = 1.6
         }
     }
     

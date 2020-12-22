@@ -11,6 +11,13 @@ import Cocoa
 // Primary content view of MemberWindow -- will always take up entire window size.
 class MemberView: NSView {
 
+    // View styling info.
+    enum Style {
+        
+        // Opacity of view when disabled.
+        static let disabledOpacity: CGFloat = 0.25
+    }
+    
     // The member's state on screen at any given time -- should mirror that of MemberWindow.
     var state = MemberState.idle
 
@@ -57,6 +64,11 @@ class MemberView: NSView {
     }
     
     func onAvatarClick() {
+        // Ignore if view is disabled.
+        if isDisabled {
+            return
+        }
+        
         // Bubble up event to parent member window.
         if let parent = getMemberWindow() {
             parent.onAvatarClick()
@@ -67,13 +79,19 @@ class MemberView: NSView {
     func setState(_ newState: MemberState, isDisabled disabled: Bool? = nil) {
         state = newState
                         
-        // Update disabled status if provided.
-        if let newDisabledStatus = disabled {
+        // Update disabled status if provided and different.
+        if let newDisabledStatus = disabled, newDisabledStatus == !isDisabled {
             isDisabled = newDisabledStatus
+            animateDisability()
         }
         
         // Update member avatar.
         animateAvatarView()
+    }
+    
+    // Animate disabled state
+    private func animateDisability() {
+        animator().alphaValue = isDisabled ? Style.disabledOpacity : 1.0
     }
     
     // Animate avatar view to the current state.
