@@ -111,6 +111,11 @@ class MemberWindow: FloatingWindow {
         prevState = state
     }
     
+    // Cancel recording and switch back to idle state.
+    func cancelRecording() {
+        setState(.idle)
+    }
+    
     // Get window's animation destination -- fallback to frame origin.
     func getDestination() -> NSPoint {
         destination ?? frame.origin

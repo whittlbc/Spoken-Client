@@ -7,6 +7,7 @@
 //
 
 import Cocoa
+import HotKey
 
 // Workspace window state.
 enum WorkspaceState {
@@ -60,6 +61,8 @@ class WorkspaceWindow: FloatingWindow {
     
     // Ordered list of members.
     private var members = [Member]()
+    
+    private var escKeyListener: HotKey!
             
     // Override delegated init, size/position window on screen, and fetch workspaces.
     override init(contentRect: NSRect, styleMask style: NSWindow.StyleMask, backing backingStoreType: NSWindow.BackingStoreType, defer flag: Bool) {
@@ -68,8 +71,44 @@ class WorkspaceWindow: FloatingWindow {
         // Position and size window on screen.
         repositionWindow(to: SidebarWindow.origin)
         resizeWindow(to: SidebarWindow.size)
+        
+        // Create global keypress listeners.
+        createKeyListeners()
     }
 
+    // Create listeners for all global key-bindings.
+    func createKeyListeners() {
+        createEscKeyListener()
+    }
+    
+    // Create escape key listener.
+    func createEscKeyListener() {
+        escKeyListener = HotKey(key: .escape, modifiers: [])
+        
+        // Listen for escape key-down event.
+        escKeyListener.keyDownHandler = { [weak self] in
+            self?.onEscPress()
+        }
+    }
+    
+    // Handle escape button key-down event.
+    func onEscPress() {
+        findAndCancelActiveRecording()
+    }
+    
+    // Cancel any active recording if one exists.
+    func findAndCancelActiveRecording() {
+        // See if there's an active recording taking place and cancel it if so.
+        if let activeRecordingMember = findActiveRecordingMember() {
+            activeRecordingMember.cancelRecording()
+        }
+    }
+    
+    // Find the first member with a recording state.
+    func findActiveRecordingMember() -> MemberWindow? {
+        getOrderedMemberWindows().first(where: { $0.isRecording() })
+    }
+    
     // Load current workspace with all its members.
     func loadCurrentWorkspace() {
         // Render loading view.
@@ -93,7 +132,7 @@ class WorkspaceWindow: FloatingWindow {
         // Animate all member windows to new sizes/positions based on state change.
         updateMemberSizesAndPositions(activeMemberId: activeMemberId)
     }
-        
+    
     // Create a new member window for a given member.
     private func createMemberWindow(forMember member: Member) {
         // Create member window.
