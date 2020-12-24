@@ -29,20 +29,27 @@ class PulseView: NSView {
     func addLayer() {
         // Create new layer with initial frame as bounds and center position.
         let pulseLayer = CALayer()
+        
         pulseLayer.frame = bounds
-        pulseLayer.position = NSPoint(x: bounds.size.width / 2, y: bounds.size.height / 2)
+        
+        let diameter = bounds.size.width
+        let radius = diameter / 2
+        
+        pulseLayer.position = NSPoint(x: radius, y: radius)
 
         // Make it transparent and round.
         pulseLayer.backgroundColor = NSColor.blue.cgColor
         pulseLayer.masksToBounds = true
-        pulseLayer.cornerRadius = bounds.height / 2
+        pulseLayer.cornerRadius = radius
     
         // Add this pulse layer as a sublayer.
         layer?.addSublayer(pulseLayer)
         
+        let scale = Double((MemberWindow.RecordingStyle.size.width / diameter) - 0.25)
+        
         animateAsGroup(
             values: [
-                AnimationKey.scale: 2.8,
+                AnimationKey.scale: scale,
                 AnimationKey.opacity: 0.0
             ],
             duration: 1.0,
