@@ -16,18 +16,10 @@ class PulseView: NSView {
         // Make view layer-based.
         wantsLayer = true
         layer?.masksToBounds = false
-        
-        // Add pulse layers.
-        addLayers()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-
-    override func layout() {
-        super.layout()
-        frame = bounds
     }
     
     func addLayers() {
@@ -35,24 +27,25 @@ class PulseView: NSView {
     }
     
     func addLayer() {
+        // Create new layer with initial frame as bounds and center position.
         let pulseLayer = CALayer()
         pulseLayer.frame = bounds
-//        pulseLayer.contentsGravity = .resizeAspectFill
+        pulseLayer.position = NSPoint(x: bounds.size.width / 2, y: bounds.size.height / 2)
 
-        // Make it transparent and mask it.
+        // Make it transparent and round.
         pulseLayer.backgroundColor = NSColor.blue.cgColor
-//        pulseLayer.masksToBounds = true
-//        pulseLayer.cornerRadius = bounds.height / 2
-        pulseLayer.position = NSPoint(x: frame.size.width / 2, y: frame.size.height / 2)
+        pulseLayer.masksToBounds = true
+        pulseLayer.cornerRadius = bounds.height / 2
     
+        // Add this pulse layer as a sublayer.
         layer?.addSublayer(pulseLayer)
         
         animateAsGroup(
             values: [
-                AnimationKey.scale: 2
-//                AnimationKey.opacity: 0.0
+                AnimationKey.scale: 2.8,
+                AnimationKey.opacity: 0.0
             ],
-            duration: 2,
+            duration: 1.0,
             timingFunctionName: CAMediaTimingFunctionName.easeOut,
             onLayer: pulseLayer
         )

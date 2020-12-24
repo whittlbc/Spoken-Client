@@ -64,6 +64,9 @@ class MemberViewController: NSViewController {
         
         // Assign avatar URL string.
         avatarView.avatar = member.user.avatar
+        
+        avatarView.wantsLayer = true
+        avatarView.layer?.masksToBounds = false
 
         // Add it as a subview.
         view.addSubview(avatarView)

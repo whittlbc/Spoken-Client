@@ -138,10 +138,22 @@ class MemberAvatarView: NSView {
     }
     
     // Style self and subviews for recording animations.
-    func addRecordingStyle() {}
+    func addRecordingStyle() {
+        // Upsert pulse view.
+        pulseView = pulseView ?? createPulseView()
+        
+        // Start animating pulse view.
+        
+    }
     
     // Remove style added for recording animations.
-    func removeRecordingStyle() {}
+    func removeRecordingStyle() {
+        // Remove pulse view if it exists.
+        if pulseView != nil {
+            pulseView!.removeFromSuperview()
+            pulseView = nil
+        }
+    }
     
     // Get parent MemberView.
     private func getMemberView() -> MemberView? {
@@ -326,8 +338,11 @@ class MemberAvatarView: NSView {
     }
 
     private func createPulseView() -> PulseView {
+        // Start pulse view frame as the dimensions of container view.
+        let pulseDim = containerView.frame.size.height
+        
         // Create new pulse view animation.
-        let pulse = PulseView(frame: bounds)
+        let pulse = PulseView(frame: NSRect(x: 0, y: 0, width: pulseDim, height: pulseDim))
 
         // Add pulse view as a subview below container view.
         addSubview(pulse, positioned: NSWindow.OrderingMode.below, relativeTo: containerView)
@@ -338,6 +353,8 @@ class MemberAvatarView: NSView {
         // Assign new PulseView to instance method.
         pulseView = pulse
 
+        pulseView?.addLayers()
+        
         return pulse
     }
     
@@ -370,16 +387,6 @@ class MemberAvatarView: NSView {
         
         // Animate this view's subviews.
         animateSubviews(toState: state, isDisabled: isDisabled)
-        
-        // Handle state-specific animations.
-//        switch state {
-//        case .idle:
-//            onAnimateToIdle()
-//        case .previewing:
-//            onAnimateToPreviewing()
-//        case .recording:
-//            onAnimateToRecording()
-//        }
     }
     
     // Animate diameter of avatar for given state.
@@ -413,21 +420,6 @@ class MemberAvatarView: NSView {
         
         // Animate "new recording" indicator.
         animateNewRecordingIndicator(toState: state)
-    }
-    
-    private func onAnimateToIdle() {
-        // Remove pulse view if it exists.
-        if pulseView != nil {
-            pulseView!.removeFromSuperview()
-            pulseView = nil
-        }
-    }
-    
-    private func onAnimateToPreviewing() {}
-    
-    private func onAnimateToRecording() {
-        // Upsert pulse view animation.
-        pulseView = pulseView ?? createPulseView()
     }
     
     // Toggle the amount of drop shadow for container view based on state.
