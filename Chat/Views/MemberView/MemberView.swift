@@ -120,7 +120,7 @@ class MemberView: NSView {
         // Flip avatar view x-alignment from right to center.
         avatarViewRightConstraint.isActive = false
         avatarViewCenterXConstraint.isActive = true
-        
+                        
         // Add recording style to avatar.
         avatarView.addRecordingStyle()
     }

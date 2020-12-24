@@ -36,6 +36,7 @@ extension NSView {
         timingFunctionName: CAMediaTimingFunctionName = CAMediaTimingFunctionName.linear,
         fillMode: CAMediaTimingFillMode = CAMediaTimingFillMode.both,
         isRemovedOnCompletion: Bool = false,
+        repeatCount: Float = 0,
         onLayer: CALayer? = nil,
         completionHandler: (() -> Void)? = nil) {
         
@@ -56,7 +57,8 @@ extension NSView {
                 duration: duration,
                 timingFunctionName: timingFunctionName,
                 fillMode: fillMode,
-                isRemovedOnCompletion: isRemovedOnCompletion
+                isRemovedOnCompletion: isRemovedOnCompletion,
+                repeatCount: repeatCount
             ) {
                 applyAnimation(animation, toLayer: toLayer!)
             }
@@ -72,7 +74,8 @@ extension NSView {
         duration: CFTimeInterval,
         timingFunctionName: CAMediaTimingFunctionName = CAMediaTimingFunctionName.linear,
         fillMode: CAMediaTimingFillMode = CAMediaTimingFillMode.both,
-        isRemovedOnCompletion: Bool = false) -> CABasicAnimation? {
+        isRemovedOnCompletion: Bool = false,
+        repeatCount: Float = 0) -> CABasicAnimation? {
         
         // Create basic animation.
         let animation = CABasicAnimation(keyPath: key)
@@ -80,6 +83,7 @@ extension NSView {
         animation.timingFunction = CAMediaTimingFunction(name: timingFunctionName)
         animation.fillMode = fillMode
         animation.isRemovedOnCompletion = isRemovedOnCompletion
+        animation.repeatCount = repeatCount
         
         // Assign new value based on type.
         switch key {
