@@ -65,11 +65,8 @@ class MemberAvatarView: NSView {
                 // Height of indicator relative to parent member view.
                 static let relativeHeight: CGFloat = 0.25
                                 
-                // Absolute shift left of indicator relative to parent member view.
-                static let leftOffset: CGFloat = -6.0
-                
-                // Absolute shift up of indicator relative to parent member view.
-                static let bottomOffset: CGFloat = -8.0
+                // Absolute shift of indicator relative to parent member view.
+                static let edgeOffset: CGFloat = -8.0
             }
             
             // Shadow styling for new recording indicator.
@@ -126,9 +123,12 @@ class MemberAvatarView: NSView {
     // New recording indicator icon.
     private var newRecordingIndicator: RoundShadowView?
     
+    // Pulsing animation view.
+    private var pulseView: PulseView?
+    
     // Blur layer to fade-in when member is disabled.
     private var blurLayer: CALayer?
-    
+        
     // Handle mouse up event.
     override func mouseUp(with event: NSEvent) {
         // Bubble up event to parent member view.
@@ -136,6 +136,12 @@ class MemberAvatarView: NSView {
             parent.onAvatarClick()
         }
     }
+    
+    // Style self and subviews for recording animations.
+    func addRecordingStyle() {}
+    
+    // Remove style added for recording animations.
+    func removeRecordingStyle() {}
     
     // Get parent MemberView.
     private func getMemberView() -> MemberView? {
@@ -176,7 +182,7 @@ class MemberAvatarView: NSView {
     private func constrainContainerView() {
         // Set up auto-layout for sizing/positioning.
         containerView.translatesAutoresizingMaskIntoConstraints = false
-
+        
         // Add auto-layout constraints.
         NSLayoutConstraint.activate([
             // Set height of container.
@@ -188,13 +194,8 @@ class MemberAvatarView: NSView {
             // Keep container height and width the same.
             containerView.widthAnchor.constraint(equalTo: containerView.heightAnchor),
             
-            // Align right sides (but shift it left the specified amount).
-            containerView.rightAnchor.constraint(
-                equalTo: rightAnchor,
-                constant: Style.ContainerView.PositionStyle.leftOffset
-            ),
-            
-            // Align horizontal axes.
+            // Center-align axes.
+            containerView.centerXAnchor.constraint(equalTo: centerXAnchor),
             containerView.centerYAnchor.constraint(equalTo: centerYAnchor),
         ])
     }
@@ -288,13 +289,13 @@ class MemberAvatarView: NSView {
             // Align right sides (but shift it left the specified amount).
             indicator.rightAnchor.constraint(
                 equalTo: rightAnchor,
-                constant: Style.NewRecordingIndicator.PositionStyle.leftOffset
+                constant: Style.NewRecordingIndicator.PositionStyle.edgeOffset
             ),
             
             // Align bottom sides (but shift it up the specified amount).
             indicator.bottomAnchor.constraint(
                 equalTo: bottomAnchor,
-                constant: Style.NewRecordingIndicator.PositionStyle.bottomOffset
+                constant: Style.NewRecordingIndicator.PositionStyle.edgeOffset
             ),
         ])
     }
@@ -323,6 +324,44 @@ class MemberAvatarView: NSView {
                 
         return blur
     }
+
+    private func createPulseView() -> PulseView {
+        // Create new pulse view animation.
+        let pulse = PulseView(frame: bounds)
+
+        // Add pulse view as a subview below container view.
+        addSubview(pulse, positioned: NSWindow.OrderingMode.below, relativeTo: containerView)
+        
+        // Add pulse view constraints.
+        constrainPulseView(pulse)
+        
+        // Assign new PulseView to instance method.
+        pulseView = pulse
+
+        return pulse
+    }
+    
+    // Set up new-recording indicator auto-layout.
+    private func constrainPulseView(_ pulse: PulseView) {
+        // Set up auto-layout for sizing/positioning.
+        pulse.translatesAutoresizingMaskIntoConstraints = false
+
+        // Add auto-layout constraints.
+        NSLayoutConstraint.activate([
+            // Set height of pulse view.
+            pulse.heightAnchor.constraint(
+                equalTo: heightAnchor,
+                multiplier: Style.ContainerView.PositionStyle.relativeHeight
+            ),
+            
+            // Keep pulse view height and width the same.
+            pulse.widthAnchor.constraint(equalTo: pulse.heightAnchor),
+            
+            // Align center axes.
+            pulse.centerXAnchor.constraint(equalTo: centerXAnchor),
+            pulse.centerYAnchor.constraint(equalTo: centerYAnchor),
+        ])
+    }
     
     // Animate self and subviews due to state change.
     func animateToState(_ state: MemberState, isDisabled: Bool) {
@@ -331,10 +370,25 @@ class MemberAvatarView: NSView {
         
         // Animate this view's subviews.
         animateSubviews(toState: state, isDisabled: isDisabled)
+        
+        // Handle state-specific animations.
+//        switch state {
+//        case .idle:
+//            onAnimateToIdle()
+//        case .previewing:
+//            onAnimateToPreviewing()
+//        case .recording:
+//            onAnimateToRecording()
+//        }
     }
     
     // Animate diameter of avatar for given state.
     private func animateSize(toState state: MemberState) {
+        // Ignore size changes to recording state.
+        if state == .recording {
+            return
+        }
+        
         // Ensure avatar view has both a height and width constraint.
         guard let heightConstraint = getHeightConstraint(), let widthConstraint = getWidthConstraint() else {
             logger.error("Both height and width constraints required to animate member avatar view size...")
@@ -359,6 +413,21 @@ class MemberAvatarView: NSView {
         
         // Animate "new recording" indicator.
         animateNewRecordingIndicator(toState: state)
+    }
+    
+    private func onAnimateToIdle() {
+        // Remove pulse view if it exists.
+        if pulseView != nil {
+            pulseView!.removeFromSuperview()
+            pulseView = nil
+        }
+    }
+    
+    private func onAnimateToPreviewing() {}
+    
+    private func onAnimateToRecording() {
+        // Upsert pulse view animation.
+        pulseView = pulseView ?? createPulseView()
     }
     
     // Toggle the amount of drop shadow for container view based on state.

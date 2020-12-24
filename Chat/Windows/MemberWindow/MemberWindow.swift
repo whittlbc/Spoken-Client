@@ -52,8 +52,12 @@ class MemberWindow: FloatingWindow {
         case .previewing:
             return NSSize(width: 50, height: 50)
         case .recording:
-            return NSSize(width: 162, height: 50)
+            return NSSize(width: 50, height: 50)
         }
+    }
+    
+    enum RecordingStyle {
+        static let size = NSSize(width: 120, height: 120)
     }
     
     // Proper initializer to use when rendering members.
@@ -82,18 +86,28 @@ class MemberWindow: FloatingWindow {
     func isRecording() -> Bool {
         state == .recording
     }
-    
-    // Update state of member view to match that of this window.
-    func updateViewState(isDisabled disabled: Bool? = nil) {
+
+    // Get MemberView --> this window's primary content view.
+    func getMemberView() -> MemberView? {
         // Get this window's content view controller.
         guard let viewController = contentViewController else {
             logger.error("Unable to find MemberWindow's contentViewController...")
-            return
+            return nil
         }
         
         // Get this window's content view.
         guard let memberView = viewController.view as? MemberView else {
             logger.error("Unable to find MemberViewController's MemberView...")
+            return nil
+        }
+        
+        return memberView
+    }
+    
+    // Update state of member view to match that of this window.
+    func updateViewState(isDisabled disabled: Bool? = nil) {
+        // Get member view.
+        guard let memberView = getMemberView() else {
             return
         }
         
@@ -111,8 +125,11 @@ class MemberWindow: FloatingWindow {
         prevState = state
     }
     
+    func startRecording() {}
+    
     // Cancel recording and switch back to idle state.
     func cancelRecording() {
+        removeRecordingStyle()
         setState(.idle)
     }
     
@@ -172,6 +189,56 @@ class MemberWindow: FloatingWindow {
     // Get window size for the current state.
     func getSizeForCurrentState() -> NSSize {
         calculateSize(forState: state)
+    }
+    
+    // Update size/position of window and contents to fit recording animations.
+    func addRecordingStyle() {
+        // Get member view.
+        guard let memberView = getMemberView() else {
+            return
+        }
+        
+        // Calculate new position of recording-style window.
+        let newPosition = getRecordingStyleWindowPosition()
+    
+        // Update window size and position.
+        resizeWindow(to: RecordingStyle.size)
+        repositionWindow(to: newPosition)
+    
+        // Add member view's recording style.
+        memberView.addRecordingStyle()
+    }
+    
+    // Revert size/position updates added during recording.
+    func removeRecordingStyle() {
+        // Get member view.
+        guard let memberView = getMemberView() else {
+            return
+        }
+
+        // Get previous size and position of window before recording style was added.
+        let prevSize = calculateSize(forState: prevState)
+        
+        // Update window size and position.
+        resizeWindow(to: prevSize)
+        repositionWindow(to: destination!)
+        
+        // Remove member view's recording style.
+        memberView.removeRecordingStyle()
+    }
+    
+    // Create new position for window based on size of recording style.
+    func getRecordingStyleWindowPosition() -> NSPoint {
+        let currSize = frame.size
+        let currPos = frame.origin
+        
+        let widthOffset = (currSize.width - RecordingStyle.size.width) / 2
+        let heightOffset = (currSize.height - RecordingStyle.size.height) / 2
+                
+        let newX = currPos.x + widthOffset
+        let newY = currPos.y + heightOffset
+        
+        return NSPoint(x: newX, y: newY)
     }
 
     // Handle mouse-entered event.

@@ -23,7 +23,13 @@ class MemberView: NSView {
 
     // Whether member is able to be interacted with by the user.
     var isDisabled = false
-
+    
+    // Right auto-layout constraint of avatar view.
+    var avatarViewRightConstraint: NSLayoutConstraint!
+    
+    // Center-X auto-layout constraint of avatar view.
+    var avatarViewCenterXConstraint: NSLayoutConstraint!
+    
     // Allow this view to be the first responder in the chain to key events.
     override var acceptsFirstResponder: Bool { true }
     
@@ -34,9 +40,6 @@ class MemberView: NSView {
     override func layout() {
         super.layout()
         frame = bounds
-        wantsLayer = true
-        layer?.backgroundColor = NSColor.clear.cgColor
-        layerUsesCoreImageFilters = true
     }
 
     // Add a tracking area that takes up the entirete of this view and listens for important mouse events.
@@ -63,6 +66,7 @@ class MemberView: NSView {
         window as? MemberWindow
     }
     
+    // Handle when avatar view is clicked on.
     func onAvatarClick() {
         // Ignore if view is disabled.
         if isDisabled {
@@ -78,7 +82,7 @@ class MemberView: NSView {
     // Assume latest state from parent window and animate self/subviews accordingly.
     func setState(_ newState: MemberState, isDisabled disabled: Bool? = nil) {
         state = newState
-                        
+
         // Update disabled status if provided and different.
         if let newDisabledStatus = disabled, newDisabledStatus == !isDisabled {
             isDisabled = newDisabledStatus
@@ -89,6 +93,53 @@ class MemberView: NSView {
         animateAvatarView()
     }
     
+    // Get child avatar view.
+    func getAvatarView() -> MemberAvatarView? {
+        // Ensure member view has subviews.
+        if subviews.count == 0 {
+            logger.error("Can't animate member avatar view -- MemberView subviews is empty...")
+            return nil
+        }
+        
+        // Ensure member view has an avatar view.
+        guard let avatarView = subviews[0] as? MemberAvatarView else {
+            logger.error("Error extracting MemberAvatarView as first itsem in subviews: \(subviews[0])")
+            return nil
+        }
+        
+        return avatarView
+    }
+    
+    // Add recording style to subviews.
+    func addRecordingStyle() {
+        // Get avatar view.
+        guard let avatarView = getAvatarView() else {
+            return
+        }
+                
+        // Flip avatar view x-alignment from right to center.
+        avatarViewRightConstraint.isActive = false
+        avatarViewCenterXConstraint.isActive = true
+        
+        // Add recording style to avatar.
+        avatarView.addRecordingStyle()
+    }
+    
+    // Remove recording style to subviews.
+    func removeRecordingStyle() {
+        // Get avatar view.
+        guard let avatarView = getAvatarView() else {
+            return
+        }
+
+        // Flip avatar view x-alignment from right to center.
+        avatarViewCenterXConstraint.isActive = false
+        avatarViewRightConstraint.isActive = true
+        
+        // Add recording style to avatar.
+        avatarView.removeRecordingStyle()
+    }
+    
     // Animate disabled state
     private func animateDisability() {
         animator().alphaValue = isDisabled ? Style.disabledOpacity : 1.0
@@ -96,15 +147,8 @@ class MemberView: NSView {
     
     // Animate avatar view to the current state.
     private func animateAvatarView() {
-        // Ensure member view has subviews.
-        if subviews.count == 0 {
-            logger.error("Can't animate member avatar view -- MemberView subviews is empty...")
-            return
-        }
-        
-        // Ensure member view has an avatar view.
-        guard let avatarView = subviews[0] as? MemberAvatarView else {
-            logger.error("Error extracting MemberAvatarView as first itsem in subviews: \(subviews[0])")
+        // Get avatar view.
+        guard let avatarView = getAvatarView() else {
             return
         }
 

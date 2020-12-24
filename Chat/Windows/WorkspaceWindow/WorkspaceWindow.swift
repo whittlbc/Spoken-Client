@@ -157,7 +157,7 @@ class WorkspaceWindow: FloatingWindow {
  
         // Make each member view the first responder inside the window.
         memberWindow.makeFirstResponder(memberController.view)
-        
+                
         // Add window to members map.
         membersMap[member.id] = memberWindow
     }
@@ -169,6 +169,12 @@ class WorkspaceWindow: FloatingWindow {
                 addChildWindow(memberWindow, ordered: NSWindow.OrderingMode.above)
             }
         }
+    }
+    
+    // Move existing child window to front of other child windows
+    private func moveChildWindowToFront(_ win: NSWindow) {
+        removeChildWindow(win)
+        addChildWindow(win, ordered: NSWindow.OrderingMode.above)
     }
     
     // Set initial size and position of each member.
@@ -217,7 +223,7 @@ class WorkspaceWindow: FloatingWindow {
         // Get the active member window's size change due to its latest state change.
         let (activeWindow, activeHeightOffset, _) = getActiveMemberSizeChange(activeMemberId: activeMemberId)
 
-        // Only proceed if the active member window and its height offset was successfully found.
+        // Only proceed if the active member window and its height offset were successfully found.
         guard let activeMemberWindow = activeWindow, let activeMemberHeightOffset = activeHeightOffset else {
             return
         }
@@ -228,6 +234,9 @@ class WorkspaceWindow: FloatingWindow {
         // Find the index of the active member window.
         let activeIndex = memberWindows.firstIndex{ $0 === activeMemberWindow }
         let activeMemberIndex = activeIndex!
+        
+        // Check if active member is recording.
+        let activeMemberIsRecording = activeMemberWindow.isRecording()
         
         // Calculate new size and position destinations for all member windows.
         calculateMemberWindowDestinations(
@@ -240,11 +249,11 @@ class WorkspaceWindow: FloatingWindow {
         animateMemberWindowsToDestinations(
             memberWindows: memberWindows,
             activeMemberIndex: activeMemberIndex,
-            activeMemberIsRecording: activeMemberWindow.isRecording()
+            activeMemberIsRecording: activeMemberIsRecording
         )
         
         // If active member's new state is previewing, ensure it is the only member window in a previewing state.
-        if activeMemberWindow.state == .previewing {
+        if activeMemberWindow.isPreviewing() {
             ensureOnlyOneMemberIsPreviewing(memberWindows: memberWindows, activeMemberIndex: activeMemberIndex)
             
             // Add a timer to check the mouse position in relation to the active member window, and force
@@ -264,12 +273,7 @@ class WorkspaceWindow: FloatingWindow {
         // Get the size offsets due to the active member window's size change.
         let (activeMemberHeightOffset, activeMemberWidthOffset) = activeMemberWindow.getStateChangeSizeOffset()
         
-        // Don't do anything if no size change will take place.
-        guard abs(activeMemberHeightOffset) > 0 || abs(activeMemberWidthOffset) > 0 else {
-            logger.warning("No active window size change occurred...")
-            return (nil, nil, nil)
-        }
-        
+        // Return active member window with its size offset parameters.
         return (activeMemberWindow, activeMemberHeightOffset, activeMemberWidthOffset)
     }
 
@@ -326,7 +330,7 @@ class WorkspaceWindow: FloatingWindow {
         memberWindows: [MemberWindow],
         activeMemberIndex: Int,
         activeMemberIsRecording: Bool) {
-                
+        
         NSAnimationContext.runAnimationGroup({ context in
             // Configure animation attributes.
             context.duration = AnimationConfig.MemberWindows.duration
@@ -339,6 +343,12 @@ class WorkspaceWindow: FloatingWindow {
             var newFrame: NSRect
             
             for (i, memberWindow) in memberWindows.enumerated() {
+                // Ignore changes to active member window frame.
+                if activeMemberIsRecording && i == activeMemberIndex {
+                    memberWindow.updateViewState(isDisabled: false)
+                    continue
+                }
+                
                 // Get size and position to update the member window to.
                 newSize = memberWindow.getSizeForCurrentState()
                 newPosition = memberWindow.getDestination()
@@ -354,6 +364,24 @@ class WorkspaceWindow: FloatingWindow {
                     isDisabled: activeMemberIsRecording && i != activeMemberIndex
                 )
             }
+            
+        }, completionHandler: { [weak self] in
+            // Only proceed if active member is recording...
+            if !activeMemberIsRecording {
+                return
+            }
+            
+            // Get active member window.
+            let activeMemberWindow = memberWindows[activeMemberIndex]
+            
+            // Move active member window in front of other member windows.
+            self?.moveChildWindowToFront(activeMemberWindow)
+        
+            // Add recording style to active member window.
+            activeMemberWindow.addRecordingStyle()
+            
+            // Start recording.
+            activeMemberWindow.startRecording()
         })
     }
     

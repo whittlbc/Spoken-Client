@@ -58,13 +58,7 @@ class FloatingWindow: NSPanel {
             // Ignore AppKit's attempts to set this property
         }
     }
-    
-    // Make key window and add it to the window menu.
-    override func makeKey() {
-        super.makeKey()
-        NSApplication.shared.addWindowsItem(self, title: title, filename: false)
-    }
-    
+
     override func cancelOperation(_ sender: Any?) {
         // Override default behavior to prevent panel from closing
     }

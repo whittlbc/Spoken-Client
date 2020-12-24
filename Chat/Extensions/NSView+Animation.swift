@@ -20,11 +20,14 @@ extension NSView {
         static let shadowColor = "shadowColor"
         static let shadowOpacity = "shadowOpacity"
         
-        // Visibility
+        // Visibility keys.
         static let opacity = "opacity"
         
-        // Background filters
+        // Background filter keys.
         static let blurRadius = "backgroundFilters.CIGaussianBlur.inputRadius"
+        
+        // Transform keys.
+        static let scale = "transform.scale"
     }
 
     func animateAsGroup(
@@ -41,7 +44,7 @@ extension NSView {
         
         // Create new animation transaction.
         CATransaction.begin()
-        
+                
         // Add completion handler.
         CATransaction.setCompletionBlock(completionHandler)
 
@@ -77,7 +80,7 @@ extension NSView {
         animation.timingFunction = CAMediaTimingFunction(name: timingFunctionName)
         animation.fillMode = fillMode
         animation.isRemovedOnCompletion = isRemovedOnCompletion
-
+        
         // Assign new value based on type.
         switch key {
         
@@ -91,7 +94,8 @@ extension NSView {
         case AnimationKey.shadowRadius,
              AnimationKey.shadowOpacity,
              AnimationKey.opacity,
-             AnimationKey.blurRadius:
+             AnimationKey.blurRadius,
+             AnimationKey.scale:
             if let val = value as? Double {
                 animation.toValue = val
             }
@@ -119,7 +123,8 @@ extension NSView {
              AnimationKey.shadowColor,
              AnimationKey.shadowOpacity,
              AnimationKey.opacity,
-             AnimationKey.blurRadius:
+             AnimationKey.blurRadius,
+             AnimationKey.scale:
             toLayer.add(animation, forKey: key)
 
         default:

@@ -64,7 +64,7 @@ class MemberViewController: NSViewController {
         
         // Assign avatar URL string.
         avatarView.avatar = member.user.avatar
-                        
+
         // Add it as a subview.
         view.addSubview(avatarView)
     }
@@ -81,7 +81,16 @@ class MemberViewController: NSViewController {
         let heightConstraint = avatarView.heightAnchor.constraint(equalToConstant: initialAvatarDiameter)
         let widthConstraint = avatarView.widthAnchor.constraint(equalToConstant: initialAvatarDiameter)
         
-        // Identify height and width constraints so you can query for them later.
+        // Get member view.
+        let memberView = view as! MemberView
+        
+        // Create right constraint to be activated.
+        memberView.avatarViewRightConstraint = avatarView.rightAnchor.constraint(equalTo: view.rightAnchor)
+        
+        // Create center-x constraint to be activated later.
+        memberView.avatarViewCenterXConstraint = avatarView.centerXAnchor.constraint(equalTo: view.centerXAnchor)
+        
+        // Identify constraints so you can query for them later.
         heightConstraint.identifier = MemberAvatarView.ConstraintKeys.height
         widthConstraint.identifier = MemberAvatarView.ConstraintKeys.width
         
@@ -92,7 +101,7 @@ class MemberViewController: NSViewController {
             widthConstraint,
 
             // Align right sides.
-            avatarView.rightAnchor.constraint(equalTo: view.rightAnchor),
+            memberView.avatarViewRightConstraint,
 
             // Align horizontal axes.
             avatarView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
