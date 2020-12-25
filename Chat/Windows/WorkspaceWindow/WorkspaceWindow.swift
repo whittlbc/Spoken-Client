@@ -62,8 +62,12 @@ class WorkspaceWindow: FloatingWindow {
     // Ordered list of members.
     private var members = [Member]()
     
+    // Create global hotkey for escape key.
     private var escKeyListener: HotKey!
-            
+    
+    // Create global hotkey for return key.
+    private var returnKeyListener: HotKey!
+    
     // Override delegated init, size/position window on screen, and fetch workspaces.
     override init(contentRect: NSRect, styleMask style: NSWindow.StyleMask, backing backingStoreType: NSWindow.BackingStoreType, defer flag: Bool) {
         super.init(contentRect: contentRect, styleMask: style, backing: backingStoreType, defer: flag)
@@ -78,7 +82,21 @@ class WorkspaceWindow: FloatingWindow {
 
     // Create listeners for all global key-bindings.
     func createKeyListeners() {
+        // Create escape key-down event handler.
         createEscKeyListener()
+        
+        // Create return key-down event handler.
+        createReturnKeyListener()
+        
+        // Turn off all key listeners to start.
+        toggleRecordingKeyEventListeners(enable: false)
+    }
+    
+    // Toggle on/off the key-event listeners active during recordings.
+    func toggleRecordingKeyEventListeners(enable: Bool) {
+        let isPaused = !enable
+        escKeyListener.isPaused = isPaused
+        returnKeyListener.isPaused = isPaused
     }
     
     // Create escape key listener.
@@ -91,16 +109,39 @@ class WorkspaceWindow: FloatingWindow {
         }
     }
     
+    // Create return key listener.
+    func createReturnKeyListener() {
+        returnKeyListener = HotKey(key: .return, modifiers: [])
+        
+        // Listen for escape key-down event.
+        returnKeyListener.keyDownHandler = { [weak self] in
+            self?.onReturnPress()
+        }
+    }
+
     // Handle escape button key-down event.
     func onEscPress() {
         findAndCancelActiveRecording()
     }
     
-    // Cancel any active recording if one exists.
+    // Handle return button key-down event.
+    func onReturnPress() {
+        findAndSendActiveRecording()
+    }
+    
+    // Cancel the active recording if one exists.
     func findAndCancelActiveRecording() {
         // See if there's an active recording taking place and cancel it if so.
         if let activeRecordingMember = findActiveRecordingMember() {
             activeRecordingMember.cancelRecording()
+        }
+    }
+    
+    // Send the active recording if one exists.
+    func findAndSendActiveRecording() {
+        // See if there's an active recording taking place and send it if so.
+        if let activeRecordingMember = findActiveRecordingMember() {
+            activeRecordingMember.sendRecording()
         }
     }
     

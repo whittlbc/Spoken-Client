@@ -87,6 +87,16 @@ class MemberWindow: FloatingWindow {
         state == .recording
     }
     
+    // Get parent workspace window.
+    func getWorkspaceWindow() -> WorkspaceWindow? {
+        guard let workspaceWindow = parent as? WorkspaceWindow else {
+            logger.error("Unable to find MemberWindow's parent Workspace window...")
+            return nil
+        }
+        
+        return workspaceWindow
+    }
+    
     // Get MemberViewController --> this window's primary content view controller.
     func getMemberViewController() -> MemberViewController? {
         guard let memberViewController = contentViewController as? MemberViewController else {
@@ -134,12 +144,36 @@ class MemberWindow: FloatingWindow {
         prevState = state
     }
     
-    func startRecording() {}
+    // Start a new audio message to send to this member.
+    func startRecording() {
+        // Enable key event listners.
+        toggleRecordingKeyEventListeners(enable: true)
+    }
     
     // Cancel recording and switch back to idle state.
     func cancelRecording() {
+        // Disable key event listners.
+        toggleRecordingKeyEventListeners(enable: false)
+
+        // Remove styling animations that were added during recording.
         removeRecordingStyle()
+        
+        // Revert state to idle.
         setState(.idle)
+    }
+    
+    // Send the active audio message to this member.
+    func sendRecording() {
+        print("Sending recording...")
+    }
+    
+    // Tell parent workspace window to toggle on/off the key-event listeners tied to recording.
+    func toggleRecordingKeyEventListeners(enable: Bool) {
+        guard let workspaceWindow = getWorkspaceWindow() else {
+            return
+        }
+        
+        workspaceWindow.toggleRecordingKeyEventListeners(enable: enable)
     }
     
     // Get window's animation destination -- fallback to frame origin.
