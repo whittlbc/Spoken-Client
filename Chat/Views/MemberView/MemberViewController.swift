@@ -57,7 +57,7 @@ class MemberViewController: NSViewController, ParticleLabDelegate {
         particleLab = ParticleLab(
             width: UInt(120),
             height: UInt(120),
-            numParticles: ParticleCount.FourtyNinetySix
+            numParticles: ParticleCount.TwentyFourtyEight
         )
 
         particleLab.particleLabDelegate = self
@@ -102,9 +102,9 @@ class MemberViewController: NSViewController, ParticleLabDelegate {
             particleLab.setGravityWellProperties(
                 gravityWellIndex: 0,
                 normalisedPositionX: 0.5,
-                normalisedPositionY: 0.5,
+                normalisedPositionY: prepSteps % 60 == 0 ? 0.4 : 0.6,
                 mass: 40,
-                spin: 30
+                spin: 25
             )
             
             j = 1
@@ -220,10 +220,10 @@ class MemberViewController: NSViewController, ParticleLabDelegate {
         if steps % 80 == 0 {
             particleLab.setGravityWellProperties(
                 gravityWellIndex: 0,
-                normalisedPositionX: steps % 100 == 0 ? 0.5 : 0.55,
-                normalisedPositionY: steps % 100 == 0 ? 0.5 : 0.55,
+                normalisedPositionX: 0.5,
+                normalisedPositionY: 0.5,
                 mass: 40,
-                spin: 30
+                spin: 25
             )
 
             i = 1

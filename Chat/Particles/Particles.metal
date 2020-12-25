@@ -38,20 +38,13 @@ kernel void particleRendererShader(texture2d<float, access::write> outTexture [[
     float4 outColor;
 
     if (type == 0) {
-        outColor = float4(0.1, 0.7, 0.6, 1.0);
+        outColor = float4(0.37, 0.33, 0.76, 1);
     } else if (type == 1) {
-        outColor = float4(0.1, 0.6, 0.88, 1.0);
+        outColor = float4(0.13, 0.39, 0.94, 1);
     } else {
-        outColor = float4(0.9, 0.8, 0.5, 1.0);
+        outColor = float4(0.2, 0.78, 0.88, 1);
     }
     
-//    const float4 outColor = float4(
-//        type == 0 ? particleColor.r : type == 1 ? particleColor.g : particleColor.b,
-//        type == 0 ? particleColor.b : type == 1 ? particleColor.r : particleColor.g,
-//        type == 0 ? particleColor.g : type == 1 ? particleColor.b : particleColor.r,
-//        1
-//    );
-
     // ---
     
     const float2 gravityWellZeroPosition =  float2(inGravityWell[0].x, inGravityWell[0].y);
