@@ -210,8 +210,8 @@ class MemberViewController: NSViewController, ParticleLabDelegate {
     
     func particleLabDidUpdate(status: String) {
         particleLab.resetGravityWells()
-        steps += 1
         handleParticleStep()
+        steps += 1
     }
         
     func handleParticleStep() {
