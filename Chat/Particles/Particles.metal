@@ -35,9 +35,22 @@ kernel void particleRendererShader(texture2d<float, access::write> outTexture [[
     const uint type = id % 3;
     const float typeTweak = 1 + type;
     
-    const float4 outColor = float4(type == 0 ? particleColor.r : type == 1 ? particleColor.g : particleColor.b,
-                                   type == 0 ? particleColor.b : type == 1 ? particleColor.r : particleColor.g,
-                                   type == 0 ? particleColor.g : type == 1 ? particleColor.b : particleColor.r, 1);
+    float4 outColor;
+
+    if (type == 0) {
+        outColor = float4(0.1, 0.7, 0.6, 1.0);
+    } else if (type == 1) {
+        outColor = float4(0.1, 0.6, 0.88, 1.0);
+    } else {
+        outColor = float4(0.9, 0.8, 0.5, 1.0);
+    }
+    
+//    const float4 outColor = float4(
+//        type == 0 ? particleColor.r : type == 1 ? particleColor.g : particleColor.b,
+//        type == 0 ? particleColor.b : type == 1 ? particleColor.r : particleColor.g,
+//        type == 0 ? particleColor.g : type == 1 ? particleColor.b : particleColor.r,
+//        1
+//    );
 
     // ---
     
@@ -309,21 +322,4 @@ kernel void particleRendererShader(texture2d<float, access::write> outTexture [[
     };
     
     outParticles[id] = outParticle;
-    
-    
-    // ----
-    /*
-     uint2 textureCoordinate(fast::floor(id / imageWidth),id % int(imageWidth));
-     
-     if (textureCoordinate.x < imageWidth && textureCoordinate.y < imageWidth)
-     {
-     float4 accumColor = inTexture.read(textureCoordinate);
-     
-     accumColor.rgb = (accumColor.rgb * 0.9f);
-     accumColor.a = 1.0f;
-     
-     outTexture.write(accumColor, textureCoordinate);
-     }
-     */
-    
 }

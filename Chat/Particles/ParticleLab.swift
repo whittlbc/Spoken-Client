@@ -51,7 +51,7 @@ class ParticleLab: MTKView
 
     weak var particleLabDelegate: ParticleLabDelegate?
     
-    var particleColor = ParticleColor(R: 1, G: 0.8, B: 0.4, A: 1)
+    var particleColor = ParticleColor(R: 0.1, G: 0.7, B: 0.6, A: 1)
     var dragFactor: Float = 0.97
     var respawnOutOfBoundsParticles = false
     
@@ -457,6 +457,7 @@ enum GravityWell
 enum ParticleCount: Int {
     case FifteenThirtySix = 1_536
     case TwentyFourtyEight = 2_048
+    case FourtyNinetySix = 4_096
     case EigthMillion = 32_768
     case QtrMillion = 65_536
     case HalfMillion = 131_072
