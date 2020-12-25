@@ -9,7 +9,7 @@
 import Cocoa
 
 // Supported member states.
-enum MemberState: String {
+enum MemberState {
     case idle
     case previewing
     case recording
