@@ -72,8 +72,7 @@ class ParticleLab: MTKView
     let statusPrefix: String
     var statusPostix: String = ""
     
-    init(width: UInt, height: UInt, numParticles: ParticleCount, hiDPI: Bool)
-    {
+    init(width: UInt, height: UInt, numParticles: ParticleCount) {
         particleCount = numParticles.rawValue
         
         imageWidth = width
@@ -91,36 +90,31 @@ class ParticleLab: MTKView
         
         statusPrefix = formatter.string(from: NSNumber(value: numParticles.rawValue * 4))! + " Particles"
  
-        let frameWidth = hiDPI ? width / UInt(2.0) : width
-        let frameHeight = hiDPI ? height / UInt(2.0) : height
-        
-        super.init(frame: CGRect(x: 0, y: 0, width: Int(frameWidth), height: Int(frameHeight)), device:  MTLCreateSystemDefaultDevice())
+        super.init(frame: CGRect(x: 0, y: 0, width: Int(width), height: Int(height)), device:  MTLCreateSystemDefaultDevice())
         
         framebufferOnly = false
         drawableSize = CGSize(width: CGFloat(imageWidth), height: CGFloat(imageHeight));
-        
+
         wantsLayer = true
         layer?.backgroundColor = CGColor.clear
         layer?.isOpaque = false
+        layer?.masksToBounds = true
+        layer?.cornerRadius = frame.size.height / 2
         
         setUpParticles()
         
         setUpMetal()
     }
 
-    required init(coder: NSCoder)
-    {
+    required init(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
     
-    deinit
-    {
+    deinit {
         free(particlesMemory)
     }
 
-    private func setUpParticles()
-    {
+    private func setUpParticles() {
         posix_memalign(&particlesMemory, alignment, particlesMemoryByteSize)
         
         particlesVoidPtr = OpaquePointer(particlesMemory)
@@ -130,103 +124,95 @@ class ParticleLab: MTKView
         resetParticles(edgesOnly: true)
     }
     
-    func resetGravityWells()
-    {
+    func resetGravityWells() {
         setGravityWellProperties(gravityWell: .One, normalisedPositionX: 0.5, normalisedPositionY: 0.5, mass: 0, spin: 0)
         setGravityWellProperties(gravityWell: .Two, normalisedPositionX: 0.5, normalisedPositionY: 0.5, mass: 0, spin: 0)
         setGravityWellProperties(gravityWell: .Three, normalisedPositionX: 0.5, normalisedPositionY: 0.5, mass: 0, spin: 0)
         setGravityWellProperties(gravityWell: .Four, normalisedPositionX: 0.5, normalisedPositionY: 0.5, mass: 0, spin: 0)
     }
     
-    func resetParticles(edgesOnly: Bool = false)
-    {
-        func rand() -> Float32
-        {
+    func resetParticles(edgesOnly: Bool = false) {
+        func rand() -> Float32 {
             return Float(drand48() - 0.5) * 0.005
         }
         
-        let imageWidthDouble = Double(imageWidth)
-        let imageHeightDouble = Double(imageHeight)
+        let imageWidthDouble = Double(35)
+        let imageHeightDouble = Double(35)
+        let widthOffset = Float((Double(imageWidth) - imageWidthDouble) / 2)
+        let heightOffset = Float((Double(imageHeight) - imageHeightDouble) / 2)
         
-        for index in particlesParticleBufferPtr.startIndex ..< particlesParticleBufferPtr.endIndex
-        {
-            var positionAX = Float(drand48() * imageWidthDouble)
-            var positionAY = Float(drand48() * imageHeightDouble)
+        for index in particlesParticleBufferPtr.startIndex ..< particlesParticleBufferPtr.endIndex {
+            var positionAX = Float(drand48() * imageWidthDouble) + widthOffset
+            var positionAY = Float(drand48() * imageHeightDouble) + heightOffset
             
-            var positionBX = Float(drand48() * imageWidthDouble)
-            var positionBY = Float(drand48() * imageHeightDouble)
+            var positionBX = Float(drand48() * imageWidthDouble) + widthOffset
+            var positionBY = Float(drand48() * imageHeightDouble) + heightOffset
             
-            var positionCX = Float(drand48() * imageWidthDouble)
-            var positionCY = Float(drand48() * imageHeightDouble)
+            var positionCX = Float(drand48() * imageWidthDouble) + widthOffset
+            var positionCY = Float(drand48() * imageHeightDouble) + heightOffset
             
-            var positionDX = Float(drand48() * imageWidthDouble)
-            var positionDY = Float(drand48() * imageHeightDouble)
+            var positionDX = Float(drand48() * imageWidthDouble) + widthOffset
+            var positionDY = Float(drand48() * imageHeightDouble) + heightOffset
+//
+//            if edgesOnly {
+//                let positionRule = Int(arc4random() % 4)
+//
+//                if positionRule == 0
+//                {
+//                    positionAX = 0
+//                    positionBX = 0
+//                    positionCX = 0
+//                    positionDX = 0
+//                }
+//                else if positionRule == 1
+//                {
+//                    positionAX = Float(imageWidth)
+//                    positionBX = Float(imageWidth)
+//                    positionCX = Float(imageWidth)
+//                    positionDX = Float(imageWidth)
+//                }
+//                else if positionRule == 2
+//                {
+//                    positionAY = 0
+//                    positionBY = 0
+//                    positionCY = 0
+//                    positionDY = 0
+//                }
+//                else
+//                {
+//                    positionAY = Float(imageHeight)
+//                    positionBY = Float(imageHeight)
+//                    positionCY = Float(imageHeight)
+//                    positionDY = Float(imageHeight)
+//                }
+//            }
             
-            if edgesOnly
-            {
-                let positionRule = Int(arc4random() % 4)
-                
-                if positionRule == 0
-                {
-                    positionAX = 0
-                    positionBX = 0
-                    positionCX = 0
-                    positionDX = 0
-                }
-                else if positionRule == 1
-                {
-                    positionAX = Float(imageWidth)
-                    positionBX = Float(imageWidth)
-                    positionCX = Float(imageWidth)
-                    positionDX = Float(imageWidth)
-                }
-                else if positionRule == 2
-                {
-                    positionAY = 0
-                    positionBY = 0
-                    positionCY = 0
-                    positionDY = 0
-                }
-                else
-                {
-                    positionAY = Float(imageHeight)
-                    positionBY = Float(imageHeight)
-                    positionCY = Float(imageHeight)
-                    positionDY = Float(imageHeight)
-                }
-            }
-            
-            let particle = Particle(A: Vector4(x: positionAX, y: positionAY, z: rand(), w: rand()),
+            let particle = Particle(
+                A: Vector4(x: positionAX, y: positionAY, z: rand(), w: rand()),
                 B: Vector4(x: positionBX, y: positionBY, z: rand(), w: rand()),
                 C: Vector4(x: positionCX, y: positionCY, z: rand(), w: rand()),
-                D: Vector4(x: positionDX, y: positionDY, z: rand(), w: rand()))
+                D: Vector4(x: positionDX, y: positionDY, z: rand(), w: rand())
+            )
             
             particlesParticleBufferPtr[index] = particle
         }
     }
     
-    private func setUpMetal()
-    {
+    private func setUpMetal() {
         device = MTLCreateSystemDefaultDevice()
         
-        guard let device = device else
-        {
+        guard let device = device else {
             particleLabDelegate?.particleLabMetalUnavailable()
-            
             return
         }
         
         defaultLibrary = device.makeDefaultLibrary()
         commandQueue = device.makeCommandQueue()
-        
         kernelFunction = defaultLibrary.makeFunction(name: "particleRendererShader")
         
-        do
-        {
+        do {
             try pipelineState = device.makeComputePipelineState(function: kernelFunction!)
-        }
-        catch
-        {
+        } catch {
             fatalError("newComputePipelineStateWithFunction failed ")
         }
 
@@ -245,19 +231,75 @@ class ParticleLab: MTKView
         imageHeightFloatBuffer = device.makeBuffer(bytes: &imageHeightFloat, length: MemoryLayout<Float>.size, options: [])
     }
     
-    override func draw(_ dirtyRect: CGRect)
-    {
-        guard let device = device else
-        {
+    func stepThrough() {
+        guard let device = device else {
             particleLabDelegate?.particleLabMetalUnavailable()
-            
+            return
+        }
+
+        let commandBuffer = commandQueue.makeCommandBuffer()
+        let commandEncoder = commandBuffer?.makeComputeCommandEncoder()
+        
+        commandEncoder!.setComputePipelineState(pipelineState)
+        
+        let particlesBufferNoCopy = device.makeBuffer(
+            bytesNoCopy: particlesMemory!,
+            length: Int(particlesMemoryByteSize),
+            options: [],
+            deallocator: nil
+        )
+        
+        commandEncoder!.setBuffer(particlesBufferNoCopy, offset: 0, index: 0)
+        commandEncoder!.setBuffer(particlesBufferNoCopy, offset: 0, index: 1)
+        
+        let inGravityWell = device.makeBuffer(bytes: &gravityWellParticle, length: particleSize, options: [])
+        commandEncoder!.setBuffer(inGravityWell, offset: 0, index: 2)
+        
+        let colorBuffer = device.makeBuffer(bytes: &particleColor, length: MemoryLayout<ParticleColor>.size, options: [])
+        commandEncoder!.setBuffer(colorBuffer, offset: 0, index: 3)
+        
+        commandEncoder!.setBuffer(imageWidthFloatBuffer, offset: 0, index: 4)
+        commandEncoder!.setBuffer(imageHeightFloatBuffer, offset: 0, index: 5)
+        
+        let dragFactorBuffer = device.makeBuffer(bytes: &dragFactor, length: MemoryLayout<Float>.size, options: [])
+        commandEncoder!.setBuffer(dragFactorBuffer, offset: 0, index: 6)
+        
+        let respawnOutOfBoundsParticlesBuffer = device.makeBuffer(bytes: &respawnOutOfBoundsParticles, length: MemoryLayout<Bool>.size, options: [])
+        commandEncoder!.setBuffer(respawnOutOfBoundsParticlesBuffer, offset: 0, index: 7)
+
+        guard let drawable = currentDrawable else {
+            commandEncoder!.endEncoding()
+            print("metalLayer.nextDrawable() returned nil")
+            return
+        }
+
+        if clearOnStep {
+            drawable.texture.replace(
+                region: self.region,
+                mipmapLevel: 0,
+                withBytes: blankBitmapRawData,
+                bytesPerRow: Int(bytesPerRow)
+            )
+        }
+                
+        commandEncoder!.setTexture(drawable.texture, index: 0)
+        
+        commandEncoder?.dispatchThreadgroups(threadgroupsPerGrid!, threadsPerThreadgroup: threadsPerThreadgroup)
+        
+        commandEncoder!.endEncoding()
+        
+        commandBuffer!.commit()
+    }
+    
+    override func draw(_ dirtyRect: CGRect) {
+        guard let device = device else {
+            particleLabDelegate?.particleLabMetalUnavailable()
             return
         }
         
         frameNumber += 1
         
-        if frameNumber == 100
-        {
+        if frameNumber == 100 {
             let frametime = (CFAbsoluteTimeGetCurrent() - frameStartTime) / 100
            
             statusPostix = String(format: " at %.1f fps", 1 / frametime)
@@ -293,46 +335,26 @@ class ParticleLab: MTKView
         let respawnOutOfBoundsParticlesBuffer = device.makeBuffer(bytes: &respawnOutOfBoundsParticles, length: MemoryLayout<Bool>.size, options: [])
         commandEncoder!.setBuffer(respawnOutOfBoundsParticlesBuffer, offset: 0, index: 7)
 
-        guard let drawable = currentDrawable else
-        {
+        guard let drawable = currentDrawable else {
             commandEncoder!.endEncoding()
-            
             print("metalLayer.nextDrawable() returned nil")
-            
             return
         }
 
-        if clearOnStep
-        {
-            drawable.texture.replace(region: self.region,
+        if clearOnStep {
+            drawable.texture.replace(
+                region: self.region,
                 mipmapLevel: 0,
                 withBytes: blankBitmapRawData,
-                bytesPerRow: Int(bytesPerRow))
+                bytesPerRow: Int(bytesPerRow)
+            )
         }
-        
-            
+                
         commandEncoder!.setTexture(drawable.texture, index: 0)
         
-        //(threadgroupsPerGrid, threadsPerThreadgroup: threadsPerThreadgroup)
         commandEncoder?.dispatchThreadgroups(threadgroupsPerGrid!, threadsPerThreadgroup: threadsPerThreadgroup)
         
         commandEncoder!.endEncoding()
-        
-        /* FIXME XXX
-        if !clearOnStep
-        {
-            let inPlaceTexture = UnsafeMutablePointer<MTLTexture?>.allocate(capacity: 1)
-            inPlaceTexture.initialize(to: drawable.texture)
-            
-            blur.encodeToCommandBuffer(commandBuffer!,
-                                       inPlaceTexture: inPlaceTexture,
-                fallbackCopyAllocator: nil)
-            
-            erode.encodeToCommandBuffer(commandBuffer!,
-                                        inPlaceTexture: inPlaceTexture,
-                fallbackCopyAllocator: nil)
-        }
-         */
         
         commandBuffer!.commit()
         
@@ -341,8 +363,7 @@ class ParticleLab: MTKView
         particleLabDelegate?.particleLabDidUpdate(status: statusPrefix + statusPostix)
     }
     
-    final func getGravityWellNormalisedPosition(gravityWell: GravityWell) -> (x: Float, y: Float)
-    {
+    final func getGravityWellNormalisedPosition(gravityWell: GravityWell) -> (x: Float, y: Float) {
         let returnPoint: (x: Float, y: Float)
         
         let imageWidthFloat = Float(imageWidth)
@@ -366,8 +387,7 @@ class ParticleLab: MTKView
         return returnPoint
     }
     
-    final func setGravityWellProperties(gravityWellIndex: Int, normalisedPositionX: Float, normalisedPositionY: Float, mass: Float, spin: Float)
-    {
+    final func setGravityWellProperties(gravityWellIndex: Int, normalisedPositionX: Float, normalisedPositionY: Float, mass: Float, spin: Float) {
         switch gravityWellIndex
         {
         case 1:
@@ -434,8 +454,10 @@ enum GravityWell
 
 //  Since each Particle instance defines four particles, the visible particle count
 //  in the API is four times the number we need to create.
-enum ParticleCount: Int
-{
+enum ParticleCount: Int {
+    case FifteenThirtySix = 1_536
+    case TwentyFourtyEight = 2_048
+    case EigthMillion = 32_768
     case QtrMillion = 65_536
     case HalfMillion = 131_072
     case OneMillion =  262_144

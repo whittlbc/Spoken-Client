@@ -139,20 +139,17 @@ class MemberAvatarView: NSView {
     
     // Style self and subviews for recording animations.
     func addRecordingStyle() {
-        // Upsert pulse view.
-        pulseView = pulseView ?? createPulseView()
-        
-        // Start animating pulse view.
-        
+//        // Upsert pulse view.
+//        pulseView = pulseView ?? createPulseView()
     }
     
     // Remove style added for recording animations.
     func removeRecordingStyle() {
-        // Remove pulse view if it exists.
-        if pulseView != nil {
-            pulseView!.removeFromSuperview()
-            pulseView = nil
-        }
+//        // Remove pulse view if it exists.
+//        if pulseView != nil {
+//            pulseView!.removeFromSuperview()
+//            pulseView = nil
+//        }
     }
     
     // Get parent MemberView.

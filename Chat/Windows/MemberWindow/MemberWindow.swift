@@ -86,12 +86,21 @@ class MemberWindow: FloatingWindow {
     func isRecording() -> Bool {
         state == .recording
     }
+    
+    // Get MemberViewController --> this window's primary content view controller.
+    func getMemberViewController() -> MemberViewController? {
+        guard let memberViewController = contentViewController as? MemberViewController else {
+            logger.error("Unable to find MemberWindow's contentViewController...")
+            return nil
+        }
+        
+        return memberViewController
+    }
 
     // Get MemberView --> this window's primary content view.
     func getMemberView() -> MemberView? {
         // Get this window's content view controller.
-        guard let viewController = contentViewController else {
-            logger.error("Unable to find MemberWindow's contentViewController...")
+        guard let viewController = getMemberViewController() else {
             return nil
         }
         
@@ -193,11 +202,11 @@ class MemberWindow: FloatingWindow {
     
     // Update size/position of window and contents to fit recording animations.
     func addRecordingStyle() {
-        // Get member view.
-        guard let memberView = getMemberView() else {
+        // Get member view controller and view.
+        guard let memberViewController = getMemberViewController(), let memberView = getMemberView() else {
             return
         }
-        
+                
         // Calculate new position of recording-style window.
         let newPosition = getRecordingStyleWindowPosition()
     
@@ -207,12 +216,15 @@ class MemberWindow: FloatingWindow {
     
         // Add member view's recording style.
         memberView.addRecordingStyle()
+        
+        // Add particle lab.
+        memberViewController.addParticleLab()
     }
     
     // Revert size/position updates added during recording.
     func removeRecordingStyle() {
-        // Get member view.
-        guard let memberView = getMemberView() else {
+        // Get member view controller and view.
+        guard let memberViewController = getMemberViewController(), let memberView = getMemberView() else {
             return
         }
 
@@ -225,6 +237,9 @@ class MemberWindow: FloatingWindow {
         
         // Remove member view's recording style.
         memberView.removeRecordingStyle()
+        
+        // Remove particle lab.
+        memberViewController.removeParticleLab()
     }
     
     // Create new position for window based on size of recording style.

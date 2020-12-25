@@ -30,6 +30,8 @@ class MemberView: NSView {
     // Center-X auto-layout constraint of avatar view.
     var avatarViewCenterXConstraint: NSLayoutConstraint!
     
+    var particleLab: ParticleLab!
+    
     // Allow this view to be the first responder in the chain to key events.
     override var acceptsFirstResponder: Bool { true }
     
@@ -139,7 +141,7 @@ class MemberView: NSView {
         // Add recording style to avatar.
         avatarView.removeRecordingStyle()
     }
-    
+        
     // Animate disabled state
     private func animateDisability() {
         animator().alphaValue = isDisabled ? Style.disabledOpacity : 1.0
