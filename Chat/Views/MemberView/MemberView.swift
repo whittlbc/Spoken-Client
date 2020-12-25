@@ -103,9 +103,9 @@ class MemberView: NSView {
             return nil
         }
         
-        // Ensure member view has an avatar view.
-        guard let avatarView = subviews[0] as? MemberAvatarView else {
-            logger.error("Error extracting MemberAvatarView as first itsem in subviews: \(subviews[0])")
+        // Get avatar view subview.
+        guard let avatarView = firstSubview(ofType: MemberAvatarView.self) else {
+            logger.error("Error extracting MemberAvatarView as a subview.")
             return nil
         }
         

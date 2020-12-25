@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0949C897259686E800B61D1F /* NSView+Subviews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0949C896259686E800B61D1F /* NSView+Subviews.swift */; };
 		096862CA258202BB00B9B614 /* Networking in Frameworks */ = {isa = PBXBuildFile; productRef = 096862C9258202BB00B9B614 /* Networking */; };
 		096862CD25829C5A00B9B614 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 096862CC25829C5A00B9B614 /* User.swift */; };
 		096862D525829FE300B9B614 /* Arrow in Frameworks */ = {isa = PBXBuildFile; productRef = 096862D425829FE300B9B614 /* Arrow */; };
@@ -63,6 +64,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0949C896259686E800B61D1F /* NSView+Subviews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSView+Subviews.swift"; sourceTree = "<group>"; };
 		096862CC25829C5A00B9B614 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		096862D72582A03F00B9B614 /* Arrow+Networking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Arrow+Networking.swift"; sourceTree = "<group>"; };
 		096862DD2582A2EB00B9B614 /* User+Arrow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "User+Arrow.swift"; sourceTree = "<group>"; };
@@ -296,6 +298,7 @@
 				0968631B2583E80C00B9B614 /* Cache+Ids.swift */,
 				09F60AC5258BFD450020974A /* NSRect+Location.swift */,
 				09F60ACE258C37AC0020974A /* NSView+Animation.swift */,
+				0949C896259686E800B61D1F /* NSView+Subviews.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -443,6 +446,7 @@
 				0968633125859A3000B9B614 /* MemberAvatarView.swift in Sources */,
 				0968632C2584299400B9B614 /* MemberView.swift in Sources */,
 				0968630A2583103300B9B614 /* MemberRoutes.swift in Sources */,
+				0949C897259686E800B61D1F /* NSView+Subviews.swift in Sources */,
 				0995DE01257AEDEC00DAA334 /* SidebarWindowController.swift in Sources */,
 				09F60AC6258BFD450020974A /* NSRect+Location.swift in Sources */,
 				096862DE2582A2EB00B9B614 /* User+Arrow.swift in Sources */,
