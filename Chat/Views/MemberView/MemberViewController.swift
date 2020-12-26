@@ -126,7 +126,7 @@ class MemberViewController: NSViewController, ParticleLabDelegate {
 
         prepSteps += 1
         
-        if prepSteps == 180 {
+        if prepSteps == 30 {
             cancelTimer()
         }
     }

@@ -136,65 +136,29 @@ class ParticleLab: MTKView
             return Float(drand48() - 0.5) * 0.005
         }
         
-        let imageWidthDouble = Double(35)
-        let imageHeightDouble = Double(35)
-        let widthOffset = Float((Double(imageWidth) - imageWidthDouble) / 2)
-        let heightOffset = Float((Double(imageHeight) - imageHeightDouble) / 2)
-        
-        for index in particlesParticleBufferPtr.startIndex ..< particlesParticleBufferPtr.endIndex {
-            var positionAX = Float(drand48() * imageWidthDouble) + widthOffset
-            var positionAY = Float(drand48() * imageHeightDouble) + heightOffset
+        let imageWidthDouble = Double(imageWidth)
+        let imageHeightDouble = Double(imageHeight)
+        var ax, ay, bx, by, cx, cy, dx, dy: Float
+
+        for i in particlesParticleBufferPtr.startIndex ..< particlesParticleBufferPtr.endIndex {
+            ax = Float(drand48() * imageWidthDouble)
+            ay = Float(drand48() * imageHeightDouble)
             
-            var positionBX = Float(drand48() * imageWidthDouble) + widthOffset
-            var positionBY = Float(drand48() * imageHeightDouble) + heightOffset
+            bx = Float(drand48() * imageWidthDouble)
+            by = Float(drand48() * imageHeightDouble)
             
-            var positionCX = Float(drand48() * imageWidthDouble) + widthOffset
-            var positionCY = Float(drand48() * imageHeightDouble) + heightOffset
+            cx = Float(drand48() * imageWidthDouble)
+            cy = Float(drand48() * imageHeightDouble)
             
-            var positionDX = Float(drand48() * imageWidthDouble) + widthOffset
-            var positionDY = Float(drand48() * imageHeightDouble) + heightOffset
-//
-//            if edgesOnly {
-//                let positionRule = Int(arc4random() % 4)
-//
-//                if positionRule == 0
-//                {
-//                    positionAX = 0
-//                    positionBX = 0
-//                    positionCX = 0
-//                    positionDX = 0
-//                }
-//                else if positionRule == 1
-//                {
-//                    positionAX = Float(imageWidth)
-//                    positionBX = Float(imageWidth)
-//                    positionCX = Float(imageWidth)
-//                    positionDX = Float(imageWidth)
-//                }
-//                else if positionRule == 2
-//                {
-//                    positionAY = 0
-//                    positionBY = 0
-//                    positionCY = 0
-//                    positionDY = 0
-//                }
-//                else
-//                {
-//                    positionAY = Float(imageHeight)
-//                    positionBY = Float(imageHeight)
-//                    positionCY = Float(imageHeight)
-//                    positionDY = Float(imageHeight)
-//                }
-//            }
-            
-            let particle = Particle(
-                A: Vector4(x: positionAX, y: positionAY, z: rand(), w: rand()),
-                B: Vector4(x: positionBX, y: positionBY, z: rand(), w: rand()),
-                C: Vector4(x: positionCX, y: positionCY, z: rand(), w: rand()),
-                D: Vector4(x: positionDX, y: positionDY, z: rand(), w: rand())
+            dx = Float(drand48() * imageWidthDouble)
+            dy = Float(drand48() * imageHeightDouble)
+                        
+            particlesParticleBufferPtr[i] = Particle(
+                A: Vector4(x: ax, y: ay, z: rand(), w: rand()),
+                B: Vector4(x: bx, y: by, z: rand(), w: rand()),
+                C: Vector4(x: cx, y: cy, z: rand(), w: rand()),
+                D: Vector4(x: dx, y: dy, z: rand(), w: rand())
             )
-            
-            particlesParticleBufferPtr[index] = particle
         }
     }
     
