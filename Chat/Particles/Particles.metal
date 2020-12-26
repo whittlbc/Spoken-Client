@@ -68,6 +68,7 @@ kernel void particleRendererShader(texture2d<float, access::write> outTexture [[
     
     if (particlePositionA.x > 0 && particlePositionA.y > 0 && particlePositionA.x < imageWidth && particlePositionA.y < imageHeight)
     {
+//        outTexture.write(particlePositionA.x > (imageWidth / 2) ? outColor : float4(0, 0, 0, 0), particlePositionA);
         outTexture.write(outColor, particlePositionA);
     }
     else if (respawnOutOfBoundsParticles)
@@ -102,6 +103,7 @@ kernel void particleRendererShader(texture2d<float, access::write> outTexture [[
     
     if (particlePositionB.x > 0 && particlePositionB.y > 0 && particlePositionB.x < imageWidth && particlePositionB.y < imageHeight)
     {
+//        outTexture.write(particlePositionB.x > (imageWidth / 2) ? outColor : float4(0, 0, 0, 0), particlePositionB);
         outTexture.write(outColor, particlePositionB);
     }
     else if (respawnOutOfBoundsParticles)
@@ -132,11 +134,11 @@ kernel void particleRendererShader(texture2d<float, access::write> outTexture [[
     
     // ---
     
-    
     const uint2 particlePositionC(inParticle[2].x, inParticle[2].y);
     
     if (particlePositionC.x > 0 && particlePositionC.y > 0 && particlePositionC.x < imageWidth && particlePositionC.y < imageHeight)
     {
+//        outTexture.write(particlePositionC.x > (imageWidth / 2) ? outColor : float4(0, 0, 0, 0), particlePositionC);
         outTexture.write(outColor, particlePositionC);
     }
     else if (respawnOutOfBoundsParticles)
@@ -172,6 +174,7 @@ kernel void particleRendererShader(texture2d<float, access::write> outTexture [[
     
     if (particlePositionD.x > 0 && particlePositionD.y > 0 && particlePositionD.x < imageWidth && particlePositionD.y < imageHeight)
     {
+//        outTexture.write(particlePositionD.x > (imageWidth / 2) ? outColor : float4(0, 0, 0, 0), particlePositionD);
         outTexture.write(outColor, particlePositionD);
     }
     else if (respawnOutOfBoundsParticles)

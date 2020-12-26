@@ -19,6 +19,7 @@ class MemberViewController: NSViewController, ParticleLabDelegate {
     // Avatar subview.
     private var avatarView = MemberAvatarView()
     
+    //
     private var particleLab: ParticleLab!
         
     private var steps: Int = 0
@@ -225,7 +226,7 @@ class MemberViewController: NSViewController, ParticleLabDelegate {
                 normalisedPositionX: 0.5,
                 normalisedPositionY: 0.5,
                 mass: 70,
-                spin: 100
+                spin: 70
             )
             
             i = 1

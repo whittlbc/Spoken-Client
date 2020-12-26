@@ -11,8 +11,8 @@ import Metal
 import MetalPerformanceShaders
 import MetalKit
 
-class ParticleLab: MTKView
-{
+class ParticleLab: MTKView {
+    
     let imageWidth: UInt
     let imageHeight: UInt
     
@@ -40,10 +40,12 @@ class ParticleLab: MTKView
     private var particlesParticlePtr: UnsafeMutablePointer<Particle>!
     private var particlesParticleBufferPtr: UnsafeMutableBufferPointer<Particle>!
     
-    private var gravityWellParticle = Particle(A: Vector4(x: 0, y: 0, z: 0, w: 0),
+    private var gravityWellParticle = Particle(
+        A: Vector4(x: 0, y: 0, z: 0, w: 0),
         B: Vector4(x: 0, y: 0, z: 0, w: 0),
         C: Vector4(x: 0, y: 0, z: 0, w: 0),
-        D: Vector4(x: 0, y: 0, z: 0, w: 0))
+        D: Vector4(x: 0, y: 0, z: 0, w: 0)
+    )
     
     private var frameStartTime: CFAbsoluteTime!
     private var frameNumber = 0
@@ -191,7 +193,6 @@ class ParticleLab: MTKView
         var imageHeightFloat = Float(imageHeight)
         
         imageWidthFloatBuffer =  device.makeBuffer(bytes: &imageWidthFloat, length: MemoryLayout<Float>.size, options: [])
-        
         imageHeightFloatBuffer = device.makeBuffer(bytes: &imageHeightFloat, length: MemoryLayout<Float>.size, options: [])
     }
     
