@@ -9,10 +9,12 @@
 import Cocoa
 
 // Supported member states.
-enum MemberState: String {
+enum MemberState {
     case idle
     case previewing
     case recording
+    case recordingSending
+    case recordingSent
 }
 
 // Window representing a workspace member.
@@ -53,6 +55,10 @@ class MemberWindow: FloatingWindow {
             return NSSize(width: 50, height: 50)
         case .recording:
             return NSSize(width: 50, height: 50)
+        case .recordingSending:
+            return NSSize(width: 50, height: 50)
+        case .recordingSent:
+            return NSSize(width: 50, height: 50)
         }
     }
     
@@ -77,21 +83,50 @@ class MemberWindow: FloatingWindow {
         state == .idle
     }
     
-    // Check whether member window is currently in the idle state.
+    // Check whether member window is currently in the previewing state.
     func isPreviewing() -> Bool {
         state == .previewing
     }
     
-    // Check whether member window is currently in the idle state.
+    // Check whether member window is currently in the recording state.
     func isRecording() -> Bool {
         state == .recording
+    }
+    
+    // Check whether member window is currently in the recording-sending state.
+    func isRecordingSending() -> Bool {
+        state == .recordingSending
+    }
+    
+    // Check whether member window is currently in the recording-sent state.
+    func isRecordingSent() -> Bool {
+        state == .recordingSent
+    }
+    
+    // Get parent workspace window.
+    func getWorkspaceWindow() -> WorkspaceWindow? {
+        guard let workspaceWindow = parent as? WorkspaceWindow else {
+            logger.error("Unable to find MemberWindow's parent Workspace window...")
+            return nil
+        }
+        
+        return workspaceWindow
+    }
+    
+    // Get MemberViewController --> this window's primary content view controller.
+    func getMemberViewController() -> MemberViewController? {
+        guard let memberViewController = contentViewController as? MemberViewController else {
+            logger.error("Unable to find MemberWindow's contentViewController...")
+            return nil
+        }
+        
+        return memberViewController
     }
 
     // Get MemberView --> this window's primary content view.
     func getMemberView() -> MemberView? {
         // Get this window's content view controller.
-        guard let viewController = contentViewController else {
-            logger.error("Unable to find MemberWindow's contentViewController...")
+        guard let viewController = getMemberViewController() else {
             return nil
         }
         
@@ -125,12 +160,44 @@ class MemberWindow: FloatingWindow {
         prevState = state
     }
     
-    func startRecording() {}
+    // Start a new audio message to send to this member.
+    func startRecording() {
+        // Enable key event listners.
+        toggleRecordingKeyEventListeners(enable: true)
+    }
     
     // Cancel recording and switch back to idle state.
     func cancelRecording() {
+        // Disable key event listners.
+        toggleRecordingKeyEventListeners(enable: false)
+
+        // Remove styling animations that were added during recording.
         removeRecordingStyle()
+        
+        // Revert state to idle.
         setState(.idle)
+    }
+    
+    // Send the active audio message to this member.
+    func sendRecording() {
+        // Update state to recording-sending.
+        setState(.recordingSending)
+        
+        // Get member view controller and view.
+        guard let memberViewController = getMemberViewController() else {
+            return
+        }
+        
+        memberViewController.spin = true
+    }
+    
+    // Tell parent workspace window to toggle on/off the key-event listeners tied to recording.
+    func toggleRecordingKeyEventListeners(enable: Bool) {
+        guard let workspaceWindow = getWorkspaceWindow() else {
+            return
+        }
+        
+        workspaceWindow.toggleRecordingKeyEventListeners(enable: enable)
     }
     
     // Get window's animation destination -- fallback to frame origin.
@@ -158,6 +225,16 @@ class MemberWindow: FloatingWindow {
         MemberWindow.defaultSizeForState(.recording)
     }
     
+    // TODO: Add member-specific sizes on top of this once notifications are added.
+    func getRecordingSendingWindowSize() -> NSSize {
+        MemberWindow.defaultSizeForState(.recordingSending)
+    }
+    
+    // TODO: Add member-specific sizes on top of this once notifications are added.
+    func getRecordingSentWindowSize() -> NSSize {
+        MemberWindow.defaultSizeForState(.recordingSent)
+    }
+    
     // Get the size of this window for the given state.
     func calculateSize(forState memberState: MemberState) -> NSSize {
         switch memberState {
@@ -172,6 +249,14 @@ class MemberWindow: FloatingWindow {
         // Recording window size.
         case .recording:
             return getRecordingWindowSize()
+            
+        // Recording sending window size.
+        case .recordingSending:
+            return getRecordingSendingWindowSize()
+            
+        // Recording sent window size.
+        case .recordingSent:
+            return getRecordingSentWindowSize()
         }
     }
     
@@ -193,11 +278,11 @@ class MemberWindow: FloatingWindow {
     
     // Update size/position of window and contents to fit recording animations.
     func addRecordingStyle() {
-        // Get member view.
-        guard let memberView = getMemberView() else {
+        // Get member view controller and view.
+        guard let memberViewController = getMemberViewController(), let memberView = getMemberView() else {
             return
         }
-        
+                
         // Calculate new position of recording-style window.
         let newPosition = getRecordingStyleWindowPosition()
     
@@ -207,12 +292,15 @@ class MemberWindow: FloatingWindow {
     
         // Add member view's recording style.
         memberView.addRecordingStyle()
+        
+        // Add particle lab.
+        memberViewController.addParticleLab()
     }
     
     // Revert size/position updates added during recording.
     func removeRecordingStyle() {
-        // Get member view.
-        guard let memberView = getMemberView() else {
+        // Get member view controller and view.
+        guard let memberViewController = getMemberViewController(), let memberView = getMemberView() else {
             return
         }
 
@@ -225,6 +313,9 @@ class MemberWindow: FloatingWindow {
         
         // Remove member view's recording style.
         memberView.removeRecordingStyle()
+        
+        // Remove particle lab.
+        memberViewController.removeParticleLab()
     }
     
     // Create new position for window based on size of recording style.
@@ -366,6 +457,10 @@ class MemberWindow: FloatingWindow {
             onPreviewing()
         case .recording:
             onRecording()
+        case .recordingSending:
+            onRecordingSending()
+        case .recordingSent:
+            onRecordingSent()
         }
     }
 
@@ -383,6 +478,12 @@ class MemberWindow: FloatingWindow {
         // Invalidate previewing timer if it exists.
         cancelPreviewingTimer()
     }
+    
+    // Handler called when state updates to recording-sending.
+    private func onRecordingSending() {}
+    
+    // Handler called when state updates to recording-sent.
+    private func onRecordingSent() {}
     
     // Render member window to a specific size and position.
     func render(size: NSSize, position: NSPoint) {

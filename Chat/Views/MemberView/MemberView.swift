@@ -30,6 +30,8 @@ class MemberView: NSView {
     // Center-X auto-layout constraint of avatar view.
     var avatarViewCenterXConstraint: NSLayoutConstraint!
     
+    var particleLab: ParticleLab!
+    
     // Allow this view to be the first responder in the chain to key events.
     override var acceptsFirstResponder: Bool { true }
     
@@ -101,9 +103,9 @@ class MemberView: NSView {
             return nil
         }
         
-        // Ensure member view has an avatar view.
-        guard let avatarView = subviews[0] as? MemberAvatarView else {
-            logger.error("Error extracting MemberAvatarView as first itsem in subviews: \(subviews[0])")
+        // Get avatar view subview.
+        guard let avatarView = firstSubview(ofType: MemberAvatarView.self) else {
+            logger.error("Error extracting MemberAvatarView as a subview.")
             return nil
         }
         
@@ -139,7 +141,7 @@ class MemberView: NSView {
         // Add recording style to avatar.
         avatarView.removeRecordingStyle()
     }
-    
+        
     // Animate disabled state
     private func animateDisability() {
         animator().alphaValue = isDisabled ? Style.disabledOpacity : 1.0

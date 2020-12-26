@@ -62,8 +62,12 @@ class WorkspaceWindow: FloatingWindow {
     // Ordered list of members.
     private var members = [Member]()
     
+    // Create global hotkey for escape key.
     private var escKeyListener: HotKey!
-            
+    
+    // Create global hotkey for return key.
+    private var returnKeyListener: HotKey!
+    
     // Override delegated init, size/position window on screen, and fetch workspaces.
     override init(contentRect: NSRect, styleMask style: NSWindow.StyleMask, backing backingStoreType: NSWindow.BackingStoreType, defer flag: Bool) {
         super.init(contentRect: contentRect, styleMask: style, backing: backingStoreType, defer: flag)
@@ -78,7 +82,21 @@ class WorkspaceWindow: FloatingWindow {
 
     // Create listeners for all global key-bindings.
     func createKeyListeners() {
+        // Create escape key-down event handler.
         createEscKeyListener()
+        
+        // Create return key-down event handler.
+        createReturnKeyListener()
+        
+        // Turn off all key listeners to start.
+        toggleRecordingKeyEventListeners(enable: false)
+    }
+    
+    // Toggle on/off the key-event listeners active during recordings.
+    func toggleRecordingKeyEventListeners(enable: Bool) {
+        let isPaused = !enable
+        escKeyListener.isPaused = isPaused
+        returnKeyListener.isPaused = isPaused
     }
     
     // Create escape key listener.
@@ -91,16 +109,39 @@ class WorkspaceWindow: FloatingWindow {
         }
     }
     
+    // Create return key listener.
+    func createReturnKeyListener() {
+        returnKeyListener = HotKey(key: .return, modifiers: [])
+        
+        // Listen for escape key-down event.
+        returnKeyListener.keyDownHandler = { [weak self] in
+            self?.onReturnPress()
+        }
+    }
+
     // Handle escape button key-down event.
     func onEscPress() {
         findAndCancelActiveRecording()
     }
     
-    // Cancel any active recording if one exists.
+    // Handle return button key-down event.
+    func onReturnPress() {
+        findAndSendActiveRecording()
+    }
+    
+    // Cancel the active recording if one exists.
     func findAndCancelActiveRecording() {
         // See if there's an active recording taking place and cancel it if so.
         if let activeRecordingMember = findActiveRecordingMember() {
             activeRecordingMember.cancelRecording()
+        }
+    }
+    
+    // Send the active recording if one exists.
+    func findAndSendActiveRecording() {
+        // See if there's an active recording taking place and send it if so.
+        if let activeRecordingMember = findActiveRecordingMember() {
+            activeRecordingMember.sendRecording()
         }
     }
     
@@ -128,7 +169,7 @@ class WorkspaceWindow: FloatingWindow {
                 memberWindow.promotePreviousState()
             }
         }
-        
+                
         // Animate all member windows to new sizes/positions based on state change.
         updateMemberSizesAndPositions(activeMemberId: activeMemberId)
     }
@@ -235,8 +276,10 @@ class WorkspaceWindow: FloatingWindow {
         let activeIndex = memberWindows.firstIndex{ $0 === activeMemberWindow }
         let activeMemberIndex = activeIndex!
         
-        // Check if active member is recording.
-        let activeMemberIsRecording = activeMemberWindow.isRecording()
+        // Check if active member is in a recording-based state.
+        let inRecordingBasedState = activeMemberWindow.isRecording() ||
+            activeMemberWindow.isRecordingSending() ||
+            activeMemberWindow.isRecordingSent()
         
         // Calculate new size and position destinations for all member windows.
         calculateMemberWindowDestinations(
@@ -249,7 +292,7 @@ class WorkspaceWindow: FloatingWindow {
         animateMemberWindowsToDestinations(
             memberWindows: memberWindows,
             activeMemberIndex: activeMemberIndex,
-            activeMemberIsRecording: activeMemberIsRecording
+            activeMemberInRecordingBasedState: inRecordingBasedState
         )
         
         // If active member's new state is previewing, ensure it is the only member window in a previewing state.
@@ -329,7 +372,7 @@ class WorkspaceWindow: FloatingWindow {
     private func animateMemberWindowsToDestinations(
         memberWindows: [MemberWindow],
         activeMemberIndex: Int,
-        activeMemberIsRecording: Bool) {
+        activeMemberInRecordingBasedState: Bool) {
         
         NSAnimationContext.runAnimationGroup({ context in
             // Configure animation attributes.
@@ -344,7 +387,7 @@ class WorkspaceWindow: FloatingWindow {
             
             for (i, memberWindow) in memberWindows.enumerated() {
                 // Ignore changes to active member window frame.
-                if activeMemberIsRecording && i == activeMemberIndex {
+                if activeMemberInRecordingBasedState && i == activeMemberIndex {
                     memberWindow.updateViewState(isDisabled: false)
                     continue
                 }
@@ -361,18 +404,18 @@ class WorkspaceWindow: FloatingWindow {
                 
                 // Update the member window's content view to the latest state.
                 memberWindow.updateViewState(
-                    isDisabled: activeMemberIsRecording && i != activeMemberIndex
+                    isDisabled: activeMemberInRecordingBasedState && i != activeMemberIndex
                 )
             }
             
         }, completionHandler: { [weak self] in
-            // Only proceed if active member is recording...
-            if !activeMemberIsRecording {
-                return
-            }
-            
             // Get active member window.
             let activeMemberWindow = memberWindows[activeMemberIndex]
+            
+            // Only proceed if active member window is in the recording state.
+            if !activeMemberWindow.isRecording() {
+                return
+            }
             
             // Move active member window in front of other member windows.
             self?.moveChildWindowToFront(activeMemberWindow)
