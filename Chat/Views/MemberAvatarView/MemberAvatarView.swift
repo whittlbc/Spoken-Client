@@ -49,7 +49,10 @@ class MemberAvatarView: NSView {
                     switch state {
                     case .idle:
                         return grounded
-                    case .previewing, .recording:
+                    case .previewing,
+                         .recording,
+                         .recordingSending,
+                         .recordingSent:
                         return raised
                     }
                 }
@@ -379,20 +382,30 @@ class MemberAvatarView: NSView {
     
     // Animate self and subviews due to state change.
     func animateToState(_ state: MemberState, isDisabled: Bool) {
-        // Animate this view's size.
-        animateSize(toState: state)
+        // Apply size change animation (if state change says to do so).
+        if shouldAnimateSizeChange(forState: state) {
+            animateSize(toState: state)
+        }
         
         // Animate this view's subviews.
         animateSubviews(toState: state, isDisabled: isDisabled)
     }
     
+    // Determine whether a state change should cause a size change animation.
+    private func shouldAnimateSizeChange(forState state: MemberState) -> Bool {
+        // Animate size change on all non-recording-based states.
+        switch state {
+        case .recording,
+             .recordingSending,
+             .recordingSent:
+            return false
+        default:
+            return true
+        }
+    }
+    
     // Animate diameter of avatar for given state.
     private func animateSize(toState state: MemberState) {
-        // Ignore size changes to recording state.
-        if state == .recording {
-            return
-        }
-        
         // Ensure avatar view has both a height and width constraint.
         guard let heightConstraint = getHeightConstraint(), let widthConstraint = getWidthConstraint() else {
             logger.error("Both height and width constraints required to animate member avatar view size...")

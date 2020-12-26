@@ -26,6 +26,8 @@ class MemberViewController: NSViewController, ParticleLabDelegate {
     private var prepSteps: Int = 0
     
     private var particlePrepTimer: Timer?
+    
+    var spin = false
 
     // Proper initializer to use when rendering member.
     convenience init(member: Member, initialFrame: NSRect) {
@@ -217,7 +219,19 @@ class MemberViewController: NSViewController, ParticleLabDelegate {
     func handleParticleStep() {
         var i = 0
 
-        if steps % 80 == 0 {
+        if spin {
+            particleLab.setGravityWellProperties(
+                gravityWellIndex: 0,
+                normalisedPositionX: 0.5,
+                normalisedPositionY: 0.5,
+                mass: 70,
+                spin: 100
+            )
+            
+            i = 1
+        }
+        
+        if !spin && steps % 80 == 0 {
             particleLab.setGravityWellProperties(
                 gravityWellIndex: 0,
                 normalisedPositionX: 0.5,
