@@ -183,12 +183,12 @@ class MemberWindow: FloatingWindow {
         // Update state to recording-sending.
         setState(.recordingSending)
         
-        // Get member view controller and view.
-        guard let memberViewController = getMemberViewController() else {
-            return
-        }
+//        // Get member view controller and view.
+//        guard let memberViewController = getMemberViewController() else {
+//            return
+//        }
         
-        memberViewController.spin = true
+//        memberViewController.spin = true
     }
     
     // Tell parent workspace window to toggle on/off the key-event listeners tied to recording.

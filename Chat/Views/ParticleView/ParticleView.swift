@@ -11,6 +11,7 @@ import Metal
 import MetalPerformanceShaders
 import MetalKit
 
+// View using Metal and gravity-based physics to simulate particle motion across a group of particles.
 class ParticleView: MTKView {
     
     let imageWidth: UInt
@@ -40,12 +41,7 @@ class ParticleView: MTKView {
     private var particlesParticlePtr: UnsafeMutablePointer<Particle>!
     private var particlesParticleBufferPtr: UnsafeMutableBufferPointer<Particle>!
     
-    private var gravityWellParticle = Particle(
-        A: Vector4(x: 0, y: 0, z: 0, w: 0),
-        B: Vector4(x: 0, y: 0, z: 0, w: 0),
-        C: Vector4(x: 0, y: 0, z: 0, w: 0),
-        D: Vector4(x: 0, y: 0, z: 0, w: 0)
-    )
+    private var gravityWellParticle = Particle()
     
     let particleSize = MemoryLayout<Particle>.size
     
@@ -59,7 +55,6 @@ class ParticleView: MTKView {
 
     var clearOnStep = true
     
-    // Current frame count.
     var frameCount: Int = 0
     
     private var initialGravityStep: Int = 0
@@ -120,50 +115,43 @@ class ParticleView: MTKView {
     }
     
     func resetGravityWells() {
-        setGravityWellProperties(gravityWell: .One, normalisedPositionX: 0.5, normalisedPositionY: 0.5, mass: 0, spin: 0)
-        setGravityWellProperties(gravityWell: .Two, normalisedPositionX: 0.5, normalisedPositionY: 0.5, mass: 0, spin: 0)
-        setGravityWellProperties(gravityWell: .Three, normalisedPositionX: 0.5, normalisedPositionY: 0.5, mass: 0, spin: 0)
-        setGravityWellProperties(gravityWell: .Four, normalisedPositionX: 0.5, normalisedPositionY: 0.5, mass: 0, spin: 0)
+        setGravityWellProperties(gravityWell: .One)
+        setGravityWellProperties(gravityWell: .Two)
+        setGravityWellProperties(gravityWell: .Three)
+        setGravityWellProperties(gravityWell: .Four)
     }
     
     func resetGravityWell(atIndex index: Int) {
-        setGravityWellProperties(gravityWellIndex: index, normalisedPositionX: 0.5, normalisedPositionY: 0.5, mass: 0, spin: 0)
+        setGravityWellProperties(gravityWellIndex: index)
     }
     
     func resetParticles() {
-        func rand() -> Float32 {
-            return Float(drand48() - 0.5) * 0.005
-        }
-        
-        let imageWidthDouble = Double(imageWidth)
-        let imageHeightDouble = Double(imageHeight)
-        var ax, ay, bx, by, cx, cy, dx, dy: Float
-
         for i in particlesParticleBufferPtr.startIndex ..< particlesParticleBufferPtr.endIndex {
-            ax = Float(drand48() * imageWidthDouble)
-            ay = Float(drand48() * imageHeightDouble)
-            
-            bx = Float(drand48() * imageWidthDouble)
-            by = Float(drand48() * imageHeightDouble)
-            
-            cx = Float(drand48() * imageWidthDouble)
-            cy = Float(drand48() * imageHeightDouble)
-            
-            dx = Float(drand48() * imageWidthDouble)
-            dy = Float(drand48() * imageHeightDouble)
-                        
-            particlesParticleBufferPtr[i] = Particle(
-                A: Vector4(x: ax, y: ay, z: rand(), w: rand()),
-                B: Vector4(x: bx, y: by, z: rand(), w: rand()),
-                C: Vector4(x: cx, y: cy, z: rand(), w: rand()),
-                D: Vector4(x: dx, y: dy, z: rand(), w: rand())
-            )
+            particlesParticleBufferPtr[i] = newParticle()
         }
     }
     
+    func newParticleVector() -> Vector4 {
+        func rand() -> Float32 { Float(drand48() - 0.5) * 0.005 }
+
+        return Vector4(
+            x: Float(drand48() * Double(imageWidth)),
+            y: Float(drand48() * Double(imageHeight)),
+            z: rand(),
+            w: rand()
+        )
+    }
+    
+    func newParticle() -> Particle {
+        Particle(
+            A: newParticleVector(),
+            B: newParticleVector(),
+            C: newParticleVector(),
+            D: newParticleVector()
+        )
+    }
+    
     private func setUpMetal() {
-        device = MTLCreateSystemDefaultDevice()
-        
         guard let device = device else {
             particleViewDelegate?.particleViewMetalUnavailable()
             return
@@ -171,6 +159,8 @@ class ParticleView: MTKView {
         
         defaultLibrary = device.makeDefaultLibrary()
         commandQueue = device.makeCommandQueue()
+        
+        // Get kernal renderer function from metal file ParticleShader.metal
         kernelFunction = defaultLibrary.makeFunction(name: "particleShader")
         
         do {
@@ -181,8 +171,8 @@ class ParticleView: MTKView {
 
         let threadExecutionWidth = pipelineState.threadExecutionWidth
         
-        threadsPerThreadgroup = MTLSize(width:threadExecutionWidth,height:1,depth:1)
-        threadgroupsPerGrid = MTLSize(width:particleCount / threadExecutionWidth, height:1, depth:1)
+        threadsPerThreadgroup = MTLSize(width: threadExecutionWidth, height: 1, depth: 1)
+        threadgroupsPerGrid = MTLSize(width: particleCount / threadExecutionWidth, height: 1, depth: 1)
         
         var imageWidthFloat = Float(imageWidth)
         var imageHeightFloat = Float(imageHeight)
@@ -230,7 +220,7 @@ class ParticleView: MTKView {
             j = 1
         }
         
-        for index in j..<4 {
+        for index in j..<GravityWell.allCases.count {
             resetGravityWell(atIndex: index)
         }
         
@@ -311,52 +301,76 @@ class ParticleView: MTKView {
         particleViewDelegate?.particleViewDidUpdate()
     }
     
+    // Override draw function on each frame.
     override func draw(_ dirtyRect: CGRect) {
         stepThrough(present: true)
         frameCount += 1
     }
     
-    final func getGravityWellNormalisedPosition(gravityWell: GravityWell) -> (x: Float, y: Float) {
-        let returnPoint: (x: Float, y: Float)
-        
-        let imageWidthFloat = Float(imageWidth)
-        let imageHeightFloat = Float(imageHeight)
-
-        switch gravityWell
-        {
-        case .One:
-            returnPoint = (x: gravityWellParticle.A.x / imageWidthFloat, y: gravityWellParticle.A.y / imageHeightFloat)
-            
-        case .Two:
-            returnPoint = (x: gravityWellParticle.B.x / imageWidthFloat, y: gravityWellParticle.B.y / imageHeightFloat)
-            
-        case .Three:
-            returnPoint = (x: gravityWellParticle.C.x / imageWidthFloat, y: gravityWellParticle.C.y / imageHeightFloat)
-            
-        case .Four:
-            returnPoint = (x: gravityWellParticle.D.x / imageWidthFloat, y: gravityWellParticle.D.y / imageHeightFloat)
-        }
-
-        return returnPoint
-    }
-    
-    final func setGravityWellProperties(gravityWellIndex: Int, normalisedPositionX: Float, normalisedPositionY: Float, mass: Float, spin: Float) {
-        switch gravityWellIndex {
+    // Get the GravityWell at the specified index.
+    func getGravityWell(atIndex index: Int) -> GravityWell {
+        switch index {
         case 1:
-            setGravityWellProperties(gravityWell: .Two, normalisedPositionX: normalisedPositionX, normalisedPositionY: normalisedPositionY, mass: mass, spin: spin)
-            
+            return .Two
         case 2:
-            setGravityWellProperties(gravityWell: .Three, normalisedPositionX: normalisedPositionX, normalisedPositionY: normalisedPositionY, mass: mass, spin: spin)
-
+            return .Three
         case 3:
-            setGravityWellProperties(gravityWell: .Four, normalisedPositionX: normalisedPositionX, normalisedPositionY: normalisedPositionY, mass: mass, spin: spin)
-            
+            return .Four
         default:
-            setGravityWellProperties(gravityWell: .One, normalisedPositionX: normalisedPositionX, normalisedPositionY: normalisedPositionY, mass: mass, spin: spin)
+            return .One
         }
     }
     
-    final func setGravityWellProperties(gravityWell: GravityWell, normalisedPositionX: Float, normalisedPositionY: Float, mass: Float, spin: Float) {
+    // Get the associated gravity well particle vector component for the type of gravity well provided.
+    func getGravityParticleVectorForWell(gravityWell: GravityWell) -> Vector4 {
+        switch gravityWell {
+        case .One:
+            return gravityWellParticle.A
+        case .Two:
+            return gravityWellParticle.B
+        case .Three:
+            return gravityWellParticle.C
+        case .Four:
+            return gravityWellParticle.D
+        }
+    }
+    
+    // Get the normalized x/y position of the gravity well particle for the given gravity well.
+    final func getGravityWellNormalisedPosition(gravityWell: GravityWell) -> (x: Float, y: Float) {
+        // Get gravity particle vector component for the given gravity well.
+        let gravityParticleVector = getGravityParticleVectorForWell(gravityWell: gravityWell)
+        
+        return (
+            x: gravityParticleVector.x / Float(imageWidth),
+            y: gravityParticleVector.y / Float(imageHeight)
+        )
+    }
+    
+    // Set gravity well properties for provided index of gravity well.
+    final func setGravityWellProperties(
+        gravityWellIndex: Int,
+        normalisedPositionX: Float = 0.5,
+        normalisedPositionY: Float = 0.5,
+        mass: Float = 0,
+        spin: Float = 0) {
+        
+        setGravityWellProperties(
+            gravityWell: getGravityWell(atIndex: gravityWellIndex),
+            normalisedPositionX: normalisedPositionX,
+            normalisedPositionY: normalisedPositionY,
+            mass: mass,
+            spin: spin
+        )
+    }
+    
+    // Set gravity well properties for provided gravity well.
+    final func setGravityWellProperties(
+        gravityWell: GravityWell,
+        normalisedPositionX: Float = 0.5,
+        normalisedPositionY: Float = 0.5,
+        mass: Float = 0,
+        spin: Float = 0) {
+        
         let imageWidthFloat = Float(imageWidth)
         let imageHeightFloat = Float(imageHeight)
         
@@ -388,7 +402,8 @@ class ParticleView: MTKView {
     }
 }
 
-enum GravityWell {
+// Valid gravity wells inside the particle area.
+enum GravityWell: CaseIterable {
     case One
     case Two
     case Three
@@ -403,12 +418,13 @@ enum ParticleCount: Int {
 
 // Matrix4x4 - Particle colors
 struct ParticleColor {
-    var A: Vector4 = Vector4(x: 0, y: 0, z: 0, w: 0)
-    var B: Vector4 = Vector4(x: 0, y: 0, z: 0, w: 0)
-    var C: Vector4 = Vector4(x: 0, y: 0, z: 0, w: 0)
-    var D: Vector4 = Vector4(x: 0, y: 0, z: 0, w: 0)
+    var A: Vector4 = Vector4()
+    var B: Vector4 = Vector4()
+    var C: Vector4 = Vector4()
+    var D: Vector4 = Vector4()
 }
 
+// Spec making it easier to create ParticleColor structs using NSColor representations.
 struct ParticleColorSpec {
     var A: NSColor
     var B: NSColor
@@ -416,41 +432,30 @@ struct ParticleColorSpec {
     var D: NSColor
     
     func createParticleColor() -> ParticleColor {
-        ParticleColor(
-            A: Vector4(
-                x: Float32(self.A.redComponent),
-                y: Float32(self.A.greenComponent),
-                z: Float32(self.A.blueComponent),
-                w: Float32(self.A.alphaComponent)
-            ),
-            B: Vector4(
-                x: Float32(self.B.redComponent),
-                y: Float32(self.B.greenComponent),
-                z: Float32(self.B.blueComponent),
-                w: Float32(self.B.alphaComponent)
-            ),
-            C: Vector4(
-                x: Float32(self.C.redComponent),
-                y: Float32(self.C.greenComponent),
-                z: Float32(self.C.blueComponent),
-                w: Float32(self.C.alphaComponent)
-            ),
-            D: Vector4(
-                x: Float32(self.D.redComponent),
-                y: Float32(self.D.greenComponent),
-                z: Float32(self.D.blueComponent),
-                w: Float32(self.D.alphaComponent)
+        func colorToVector(_ color: NSColor) -> Vector4 {
+            Vector4(
+                x: Float32(color.redComponent),
+                y: Float32(color.greenComponent),
+                z: Float32(color.blueComponent),
+                w: Float32(color.alphaComponent)
             )
+        }
+        
+        return ParticleColor(
+            A: colorToVector(self.A),
+            B: colorToVector(self.B),
+            C: colorToVector(self.C),
+            D: colorToVector(self.D)
         )
     }
 }
 
 // Matrix4x4 - Particle positions and velocity.
 struct Particle {
-    var A: Vector4 = Vector4(x: 0, y: 0, z: 0, w: 0)
-    var B: Vector4 = Vector4(x: 0, y: 0, z: 0, w: 0)
-    var C: Vector4 = Vector4(x: 0, y: 0, z: 0, w: 0)
-    var D: Vector4 = Vector4(x: 0, y: 0, z: 0, w: 0)
+    var A: Vector4 = Vector4()
+    var B: Vector4 = Vector4()
+    var C: Vector4 = Vector4()
+    var D: Vector4 = Vector4()
 }
 
 // Regular particles use x and y for position and z and w for velocity.
