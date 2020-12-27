@@ -19,15 +19,9 @@ class MemberViewController: NSViewController, ParticleViewDelegate {
     // Avatar subview.
     private var avatarView = MemberAvatarView()
     
-    // 
-    private var particleView: ParticleView!
+    // Member particle view for audio animation.
+    private var particleView: MemberParticleView!
         
-    private var steps: Int = 0
-    
-    private var prepSteps: Int = 0
-    
-    private var particlePrepTimer: Timer?
-    
     var spin = false
 
     // Proper initializer to use when rendering member.
@@ -57,85 +51,8 @@ class MemberViewController: NSViewController, ParticleViewDelegate {
         // Add avatar view as subview.
         addAvatarView()
         
-        particleView = ParticleView(
-            width: UInt(120),
-            height: UInt(120),
-            numParticles: ParticleCount.TwentyFourtyEight,
-            colors: ParticleColorSpec(
-                A: Color.fromRGBA(95, 84, 194, 1),
-                B: Color.fromRGBA(95, 84, 194, 1),
-                C: Color.fromRGBA(33, 99, 240, 1),
-                D: Color.fromRGBA(51, 199, 224, 1)
-            )
-        )
-
-        particleView.particleViewDelegate = self
-        particleView.dragFactor = 0.95
-        particleView.clearOnStep = true
-        particleView.respawnOutOfBoundsParticles = false
-        particleView.resetParticles(edgesOnly: false)
-        
-        startTimer()
-    }
-    
-    // Start timer used to check whether mouse is still inside the previewing window.
-    func startTimer() {
-        if particlePrepTimer != nil {
-            return
-        }
-        
-        // Create timer that repeats call to self.ensureStillPreviewing every 150ms.
-        particlePrepTimer = Timer.scheduledTimer(
-            timeInterval: TimeInterval(0.0166),
-            target: self,
-            selector: #selector(prepTimer),
-            userInfo: nil,
-            repeats: true
-        )
-    }
-    
-    // Invalidate previewing timer and reset to nil if it exists.
-    func cancelTimer() {
-        if particlePrepTimer == nil {
-            return
-        }
-        
-        particlePrepTimer!.invalidate()
-        particlePrepTimer = nil
-    }
-    
-    @objc func prepTimer() {
-        var j = 0
-        
-        if prepSteps % 30 == 0 {
-            particleView.setGravityWellProperties(
-                gravityWellIndex: 0,
-                normalisedPositionX: 0.5,
-                normalisedPositionY: prepSteps % 60 == 0 ? 0.4 : 0.6,
-                mass: 40,
-                spin: 25
-            )
-            
-            j = 1
-        }
-        
-        for index in j..<4 {
-            particleView.setGravityWellProperties(
-                gravityWellIndex: index,
-                normalisedPositionX: 0.5,
-                normalisedPositionY: 0.5,
-                mass: 0,
-                spin: 0
-            )
-        }
-        
-        particleView.stepThrough()
-
-        prepSteps += 1
-        
-        if prepSteps == 30 {
-            cancelTimer()
-        }
+        // Create particle view for voice audio animation.
+        createParticleView()
     }
     
     private func addAvatarView() {
@@ -202,14 +119,27 @@ class MemberViewController: NSViewController, ParticleViewDelegate {
         ])
     }
     
-    func addParticleLab() {
-        particleView.frame = view.frame
-        particleView.layer?.cornerRadius = view.frame.size.height / 2
-                
-        view.addSubview(particleView, positioned: NSWindow.OrderingMode.below, relativeTo: avatarView)
+    func createParticleView() {
+        particleView = MemberParticleView()
+        particleView.particleViewDelegate = self
     }
     
-    func removeParticleLab() {
+    func addParticleView() {
+        updateParticleViewSize()
+        
+        view.addSubview(
+            particleView,
+            positioned: NSWindow.OrderingMode.below,
+            relativeTo: avatarView
+        )
+    }
+    
+    func updateParticleViewSize() {
+        particleView.frame = view.frame
+        particleView.layer?.cornerRadius = view.frame.size.height / 2
+    }
+    
+    func removeParticleView() {
         particleView.removeFromSuperview()
     }
     
@@ -219,46 +149,6 @@ class MemberViewController: NSViewController, ParticleViewDelegate {
     
     func particleViewDidUpdate() {
         particleView.resetGravityWells()
-        handleParticleStep()
-        steps += 1
-    }
-        
-    func handleParticleStep() {
-        var i = 0
-
-        if spin {
-            particleView.setGravityWellProperties(
-                gravityWellIndex: 0,
-                normalisedPositionX: 0.5,
-                normalisedPositionY: 0.5,
-                mass: 70,
-                spin: 70
-            )
-            
-            i = 1
-        }
-        
-        if !spin && steps % 80 == 0 {
-            particleView.setGravityWellProperties(
-                gravityWellIndex: 0,
-                normalisedPositionX: 0.5,
-                normalisedPositionY: 0.5,
-                mass: 40,
-                spin: 25
-            )
-
-            i = 1
-        }
-
-        for index in i..<4 {
-            particleView.setGravityWellProperties(
-                gravityWellIndex: index,
-                normalisedPositionX: 0.5,
-                normalisedPositionY: 0.5,
-                mass: 0,
-                spin: 0
-            )
-        }
-    
+        particleView.handleParticleStep()
     }
 }

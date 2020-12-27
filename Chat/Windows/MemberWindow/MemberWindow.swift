@@ -294,7 +294,7 @@ class MemberWindow: FloatingWindow {
         memberView.addRecordingStyle()
         
         // Add particle lab.
-        memberViewController.addParticleLab()
+        memberViewController.addParticleView()
     }
     
     // Revert size/position updates added during recording.
@@ -315,7 +315,7 @@ class MemberWindow: FloatingWindow {
         memberView.removeRecordingStyle()
         
         // Remove particle lab.
-        memberViewController.removeParticleLab()
+        memberViewController.removeParticleView()
     }
     
     // Create new position for window based on size of recording style.

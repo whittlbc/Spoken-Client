@@ -51,13 +51,22 @@ class ParticleView: MTKView {
     
     var particleColors: ParticleColor!
     
-    var dragFactor: Float = 0.97
+    var dragFactor: Float = 0.95
     
     var respawnOutOfBoundsParticles = false
     
     weak var particleViewDelegate: ParticleViewDelegate?
 
     var clearOnStep = true
+    
+    // Current frame count.
+    var frameCount: Int = 0
+    
+    private var initialGravityStep: Int = 0
+    
+    private let initialGravitySteps: Int = 30
+    
+    private var initialGravityTimer: Timer?
     
     init(width: UInt, height: UInt, numParticles: ParticleCount, colors: ParticleColorSpec) {
         imageWidth = width
@@ -88,6 +97,10 @@ class ParticleView: MTKView {
         setUpParticles()
         
         setUpMetal()
+        
+        resetParticles()
+        
+        applyInitialGravity()
     }
 
     required init(coder: NSCoder) {
@@ -105,7 +118,7 @@ class ParticleView: MTKView {
         particlesParticlePtr = UnsafeMutablePointer<Particle>(particlesVoidPtr)
         particlesParticleBufferPtr = UnsafeMutableBufferPointer(start: particlesParticlePtr, count: particleCount)
         
-        resetParticles(edgesOnly: true)
+        resetParticles()
     }
     
     func resetGravityWells() {
@@ -115,7 +128,11 @@ class ParticleView: MTKView {
         setGravityWellProperties(gravityWell: .Four, normalisedPositionX: 0.5, normalisedPositionY: 0.5, mass: 0, spin: 0)
     }
     
-    func resetParticles(edgesOnly: Bool = false) {
+    func resetGravityWell(atIndex index: Int) {
+        setGravityWellProperties(gravityWellIndex: index, normalisedPositionX: 0.5, normalisedPositionY: 0.5, mass: 0, spin: 0)
+    }
+    
+    func resetParticles() {
         func rand() -> Float32 {
             return Float(drand48() - 0.5) * 0.005
         }
@@ -161,7 +178,7 @@ class ParticleView: MTKView {
         do {
             try pipelineState = device.makeComputePipelineState(function: kernelFunction!)
         } catch {
-            fatalError("newComputePipelineStateWithFunction failed ")
+            fatalError("newComputePipelineStateWithFunction failed with error: \(error)")
         }
 
         let threadExecutionWidth = pipelineState.threadExecutionWidth
@@ -176,7 +193,59 @@ class ParticleView: MTKView {
         imageHeightFloatBuffer = device.makeBuffer(bytes: &imageHeightFloat, length: MemoryLayout<Float>.size, options: [])
     }
     
-    func stepThrough() {
+    
+    private func applyInitialGravity() {
+        if initialGravityTimer != nil {
+            return
+        }
+        
+        initialGravityTimer = Timer.scheduledTimer(
+            timeInterval: TimeInterval(1/60),
+            target: self,
+            selector: #selector(applyInitialGravityStep),
+            userInfo: nil,
+            repeats: true
+        )
+    }
+    
+    func cancelInitialGravityTimer() {
+        if initialGravityTimer == nil {
+            return
+        }
+        
+        initialGravityTimer!.invalidate()
+        initialGravityTimer = nil
+    }
+
+    @objc func applyInitialGravityStep() {
+        var j = 0
+        
+        if initialGravityStep % 30 == 0 {
+            setGravityWellProperties(
+                gravityWellIndex: 0,
+                normalisedPositionX: 0.5,
+                normalisedPositionY: initialGravityStep % 15 == 0 ? 0.4 : 0.6,
+                mass: 40,
+                spin: 25
+            )
+            
+            j = 1
+        }
+        
+        for index in j..<4 {
+            resetGravityWell(atIndex: index)
+        }
+        
+        stepThrough()
+
+        initialGravityStep += 1
+        
+        if initialGravityStep == initialGravitySteps {
+            cancelInitialGravityTimer()
+        }
+    }
+    
+    func stepThrough(present: Bool = false) {
         guard let device = device else {
             particleViewDelegate?.particleViewMetalUnavailable()
             return
@@ -234,66 +303,19 @@ class ParticleView: MTKView {
         commandEncoder!.endEncoding()
         
         commandBuffer!.commit()
-    }
-    
-    override func draw(_ dirtyRect: CGRect) {
-        guard let device = device else {
-            particleViewDelegate?.particleViewMetalUnavailable()
+        
+        if !present {
             return
         }
-        
-        let commandBuffer = commandQueue.makeCommandBuffer()
-        let commandEncoder = commandBuffer?.makeComputeCommandEncoder()
-        
-        commandEncoder!.setComputePipelineState(pipelineState)
-        
-        let particlesBufferNoCopy = device.makeBuffer(bytesNoCopy: particlesMemory!, length: Int(particlesMemoryByteSize),
-            options: [], deallocator: nil)
-        
-        commandEncoder!.setBuffer(particlesBufferNoCopy, offset: 0, index: 0)
-        commandEncoder!.setBuffer(particlesBufferNoCopy, offset: 0, index: 1)
-        
-        let inGravityWell = device.makeBuffer(bytes: &gravityWellParticle, length: particleSize, options: [])
-        commandEncoder!.setBuffer(inGravityWell, offset: 0, index: 2)
-        
-        let colorBuffer = device.makeBuffer(bytes: &particleColors, length: MemoryLayout<ParticleColor>.size, options: [])
-        commandEncoder!.setBuffer(colorBuffer, offset: 0, index: 3)
-        
-        commandEncoder!.setBuffer(imageWidthFloatBuffer, offset: 0, index: 4)
-        commandEncoder!.setBuffer(imageHeightFloatBuffer, offset: 0, index: 5)
-        
-        let dragFactorBuffer = device.makeBuffer(bytes: &dragFactor, length: MemoryLayout<Float>.size, options: [])
-        commandEncoder!.setBuffer(dragFactorBuffer, offset: 0, index: 6)
-        
-        let respawnOutOfBoundsParticlesBuffer = device.makeBuffer(bytes: &respawnOutOfBoundsParticles, length: MemoryLayout<Bool>.size, options: [])
-        commandEncoder!.setBuffer(respawnOutOfBoundsParticlesBuffer, offset: 0, index: 7)
-
-        guard let drawable = currentDrawable else {
-            commandEncoder!.endEncoding()
-            print("metalLayer.nextDrawable() returned nil")
-            return
-        }
-
-        if clearOnStep {
-            drawable.texture.replace(
-                region: self.region,
-                mipmapLevel: 0,
-                withBytes: blankBitmapRawData,
-                bytesPerRow: Int(bytesPerRow)
-            )
-        }
-                
-        commandEncoder!.setTexture(drawable.texture, index: 0)
-        
-        commandEncoder?.dispatchThreadgroups(threadgroupsPerGrid!, threadsPerThreadgroup: threadsPerThreadgroup)
-        
-        commandEncoder!.endEncoding()
-        
-        commandBuffer!.commit()
         
         drawable.present()
 
         particleViewDelegate?.particleViewDidUpdate()
+    }
+    
+    override func draw(_ dirtyRect: CGRect) {
+        stepThrough(present: true)
+        frameCount += 1
     }
     
     final func getGravityWellNormalisedPosition(gravityWell: GravityWell) -> (x: Float, y: Float) {
@@ -321,8 +343,7 @@ class ParticleView: MTKView {
     }
     
     final func setGravityWellProperties(gravityWellIndex: Int, normalisedPositionX: Float, normalisedPositionY: Float, mass: Float, spin: Float) {
-        switch gravityWellIndex
-        {
+        switch gravityWellIndex {
         case 1:
             setGravityWellProperties(gravityWell: .Two, normalisedPositionX: normalisedPositionX, normalisedPositionY: normalisedPositionY, mass: mass, spin: spin)
             
@@ -337,13 +358,11 @@ class ParticleView: MTKView {
         }
     }
     
-    final func setGravityWellProperties(gravityWell: GravityWell, normalisedPositionX: Float, normalisedPositionY: Float, mass: Float, spin: Float)
-    {
+    final func setGravityWellProperties(gravityWell: GravityWell, normalisedPositionX: Float, normalisedPositionY: Float, mass: Float, spin: Float) {
         let imageWidthFloat = Float(imageWidth)
         let imageHeightFloat = Float(imageHeight)
         
-        switch gravityWell
-        {
+        switch gravityWell {
         case .One:
             gravityWellParticle.A.x = imageWidthFloat * normalisedPositionX
             gravityWellParticle.A.y = imageHeightFloat * normalisedPositionY

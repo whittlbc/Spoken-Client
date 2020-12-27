@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		09074D7D2599222700E72F93 /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09074D7C2599222700E72F93 /* Color.swift */; };
+		09074D81259934B900E72F93 /* MemberParticleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09074D80259934B900E72F93 /* MemberParticleView.swift */; };
 		0949C897259686E800B61D1F /* NSView+Subviews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0949C896259686E800B61D1F /* NSView+Subviews.swift */; };
 		0949C8B2259908E900B61D1F /* ParticleViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0949C8B1259908E900B61D1F /* ParticleViewDelegate.swift */; };
 		096862CA258202BB00B9B614 /* Networking in Frameworks */ = {isa = PBXBuildFile; productRef = 096862C9258202BB00B9B614 /* Networking */; };
@@ -67,6 +68,7 @@
 
 /* Begin PBXFileReference section */
 		09074D7C2599222700E72F93 /* Color.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
+		09074D80259934B900E72F93 /* MemberParticleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemberParticleView.swift; sourceTree = "<group>"; };
 		0949C896259686E800B61D1F /* NSView+Subviews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSView+Subviews.swift"; sourceTree = "<group>"; };
 		0949C8B1259908E900B61D1F /* ParticleViewDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParticleViewDelegate.swift; sourceTree = "<group>"; };
 		096862CC25829C5A00B9B614 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
@@ -143,6 +145,7 @@
 		0949C8A52598EB7000B61D1F /* MemberParticleView */ = {
 			isa = PBXGroup;
 			children = (
+				09074D80259934B900E72F93 /* MemberParticleView.swift */,
 			);
 			path = MemberParticleView;
 			sourceTree = "<group>";
@@ -445,6 +448,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				09074D81259934B900E72F93 /* MemberParticleView.swift in Sources */,
 				099087BD25799BC2001660D1 /* Screen.swift in Sources */,
 				096862EB2582A8D000B9B614 /* Workspace+Arrow.swift in Sources */,
 				096863192583206500B9B614 /* Workspace+API.swift in Sources */,
