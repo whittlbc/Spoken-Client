@@ -99,8 +99,6 @@ class ParticleView: MTKView {
         setUpMetal()
         
         resetParticles()
-        
-        applyInitialGravity()
     }
 
     required init(coder: NSCoder) {
@@ -194,7 +192,7 @@ class ParticleView: MTKView {
     }
     
     
-    private func applyInitialGravity() {
+    func applyInitialGravity() {
         if initialGravityTimer != nil {
             return
         }
@@ -208,7 +206,7 @@ class ParticleView: MTKView {
         )
     }
     
-    func cancelInitialGravityTimer() {
+    private func cancelInitialGravityTimer() {
         if initialGravityTimer == nil {
             return
         }

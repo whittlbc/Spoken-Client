@@ -8,8 +8,10 @@
 
 import Cocoa
 
+// Particle view used for voice audio animations behind member view.
 class MemberParticleView: ParticleView {
     
+    // Colors to use for each of the 4 particle groups.
     static let colors = ParticleColorSpec(
         A: Color.fromRGBA(95, 84, 194, 1),
         B: Color.fromRGBA(95, 84, 194, 1),
@@ -17,21 +19,28 @@ class MemberParticleView: ParticleView {
         D: Color.fromRGBA(51, 199, 224, 1)
     )
     
-    static let size = MemberWindow.RecordingStyle.size
+    // Initial size of this view.
+    static let initialSize = MemberWindow.RecordingStyle.size
     
+    // Total number of particles to render.
     static let numParticles = ParticleCount.TwentyFourtyEight
 
+    // Proper initializer to use when creating this view.
     convenience init() {
         self.init(
-            width: UInt(MemberParticleView.size.width),
-            height: UInt(MemberParticleView.size.height),
+            width: UInt(MemberParticleView.initialSize.width),
+            height: UInt(MemberParticleView.initialSize.height),
             numParticles: MemberParticleView.numParticles,
             colors: MemberParticleView.colors
         )
     }
     
+    // Override delegated init.
     private override init(width: UInt, height: UInt, numParticles: ParticleCount, colors: ParticleColorSpec) {
         super.init(width: width, height: height, numParticles: numParticles, colors: colors)
+        
+        // Apply initial gravity to start particles from a spinning state.
+        applyInitialGravity()
     }
     
     required init(coder: NSCoder) {
@@ -42,7 +51,7 @@ class MemberParticleView: ParticleView {
         var i = 0
 //
 //        if spin {
-//            particleView.setGravityWellProperties(
+//            setGravityWellProperties(
 //                gravityWellIndex: 0,
 //                normalisedPositionX: 0.5,
 //                normalisedPositionY: 0.5,

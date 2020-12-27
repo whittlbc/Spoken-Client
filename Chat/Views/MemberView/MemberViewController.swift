@@ -10,20 +10,18 @@ import Cocoa
 
 class MemberViewController: NSViewController, ParticleViewDelegate {
     
-    // Workspace member asso.ciated with this view.
-    private var member = Member()
+    // Workspace member associated with this view.
+    private var member: Member!
     
     // Initial member view frame -- provided from window.
-    private var initialFrame = NSRect()
+    private var initialFrame: NSRect!
     
     // Avatar subview.
-    private var avatarView = MemberAvatarView()
+    private var avatarView: MemberAvatarView!
     
     // Member particle view for audio animation.
     private var particleView: MemberParticleView!
         
-    var spin = false
-
     // Proper initializer to use when rendering member.
     convenience init(member: Member, initialFrame: NSRect) {
         self.init()
@@ -73,6 +71,7 @@ class MemberViewController: NSViewController, ParticleViewDelegate {
         // Assign avatar URL string.
         avatarView.avatar = member.user.avatar
         
+        // Make avatar view layer-based and allow overflow.
         avatarView.wantsLayer = true
         avatarView.layer?.masksToBounds = false
 
@@ -119,14 +118,18 @@ class MemberViewController: NSViewController, ParticleViewDelegate {
         ])
     }
     
+    // Create particle view and set self as delegate.
     func createParticleView() {
         particleView = MemberParticleView()
         particleView.particleViewDelegate = self
     }
     
+    // Add particle view as subview.
     func addParticleView() {
+        // Update frame size of particle view to match member view.
         updateParticleViewSize()
         
+        // Add particle view below avatar view.
         view.addSubview(
             particleView,
             positioned: NSWindow.OrderingMode.below,
@@ -134,11 +137,13 @@ class MemberViewController: NSViewController, ParticleViewDelegate {
         )
     }
     
+    // Update particle view frame to match that of member view and update corner radius to 50%.
     func updateParticleViewSize() {
         particleView.frame = view.frame
         particleView.layer?.cornerRadius = view.frame.size.height / 2
     }
     
+    // Remove particle view as a subview.
     func removeParticleView() {
         particleView.removeFromSuperview()
     }
@@ -147,6 +152,7 @@ class MemberViewController: NSViewController, ParticleViewDelegate {
         // handle metal unavailable here
     }
     
+    // Handle each frame of particle view (should be running at 60fps).
     func particleViewDidUpdate() {
         particleView.resetGravityWells()
         particleView.handleParticleStep()
