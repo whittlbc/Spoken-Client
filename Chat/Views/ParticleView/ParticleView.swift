@@ -15,30 +15,43 @@ import MetalKit
 class ParticleView: MTKView {
     
     let imageWidth: UInt
+    
     let imageHeight: UInt
     
     private var imageWidthFloatBuffer: MTLBuffer!
+    
     private var imageHeightFloatBuffer: MTLBuffer!
     
     let bytesPerRow: UInt
+    
     let region: MTLRegion
+    
     let blankBitmapRawData : [UInt8]
     
     private var kernelFunction: MTLFunction!
+    
     private var pipelineState: MTLComputePipelineState!
+    
     private var defaultLibrary: MTLLibrary! = nil
+    
     private var commandQueue: MTLCommandQueue! = nil
     
     private var threadsPerThreadgroup: MTLSize!
+    
     private var threadgroupsPerGrid: MTLSize!
     
     let particleCount: Int
+    
     let alignment:Int = 0x4000
+    
     let particlesMemoryByteSize:Int
     
     private var particlesMemory: UnsafeMutableRawPointer? = nil
+    
     private var particlesVoidPtr: OpaquePointer!
+    
     private var particlesParticlePtr: UnsafeMutablePointer<Particle>!
+    
     private var particlesParticleBufferPtr: UnsafeMutableBufferPointer<Particle>!
     
     private var gravityWellParticle = Particle()
@@ -62,6 +75,8 @@ class ParticleView: MTKView {
     private let initialGravitySteps: Int = 30
     
     private var initialGravityTimer: Timer?
+
+    private let shader = "particleShader"
     
     init(width: UInt, height: UInt, numParticles: ParticleCount, colors: ParticleColorSpec) {
         imageWidth = width
@@ -81,19 +96,14 @@ class ParticleView: MTKView {
         super.init(frame: CGRect(x: 0, y: 0, width: intWidth, height: intHeight), device: MTLCreateSystemDefaultDevice())
         
         framebufferOnly = false
-        drawableSize = CGSize(width: CGFloat(imageWidth), height: CGFloat(imageHeight));
+        
+        drawableSize = CGSize(width: CGFloat(imageWidth), height: CGFloat(imageHeight))
 
-        wantsLayer = true
-        layer?.backgroundColor = CGColor.clear
-        layer?.isOpaque = false
-        layer?.masksToBounds = true
-        layer?.cornerRadius = frame.size.height / 2
+        setupLayer()
         
         setUpParticles()
         
         setUpMetal()
-        
-        resetParticles()
     }
 
     required init(coder: NSCoder) {
@@ -102,6 +112,15 @@ class ParticleView: MTKView {
     
     deinit {
         free(particlesMemory)
+    }
+    
+    // Make view layer-based, transparent, and round.
+    private func setupLayer() {
+        wantsLayer = true
+        layer?.backgroundColor = CGColor.clear
+        layer?.isOpaque = false
+        layer?.masksToBounds = true
+        layer?.cornerRadius = frame.size.height / 2
     }
 
     private func setUpParticles() {
@@ -114,17 +133,19 @@ class ParticleView: MTKView {
         resetParticles()
     }
     
+    // Reset properties of all gravity wells.
     func resetGravityWells() {
-        setGravityWellProperties(gravityWell: .One)
-        setGravityWellProperties(gravityWell: .Two)
-        setGravityWellProperties(gravityWell: .Three)
-        setGravityWellProperties(gravityWell: .Four)
+        for well in GravityWell.allCases {
+            setGravityWellProperties(gravityWell: well)
+        }
     }
     
+    // Reset gravity well properties for gravity well at provided index.
     func resetGravityWell(atIndex index: Int) {
         setGravityWellProperties(gravityWellIndex: index)
     }
     
+    // Create new particles across the entire drawing area.
     func resetParticles() {
         for i in particlesParticleBufferPtr.startIndex ..< particlesParticleBufferPtr.endIndex {
             particlesParticleBufferPtr[i] = newParticle()
@@ -161,7 +182,7 @@ class ParticleView: MTKView {
         commandQueue = device.makeCommandQueue()
         
         // Get kernal renderer function from metal file ParticleShader.metal
-        kernelFunction = defaultLibrary.makeFunction(name: "particleShader")
+        kernelFunction = defaultLibrary.makeFunction(name: shader)
         
         do {
             try pipelineState = device.makeComputePipelineState(function: kernelFunction!)
@@ -180,7 +201,6 @@ class ParticleView: MTKView {
         imageWidthFloatBuffer =  device.makeBuffer(bytes: &imageWidthFloat, length: MemoryLayout<Float>.size, options: [])
         imageHeightFloatBuffer = device.makeBuffer(bytes: &imageHeightFloat, length: MemoryLayout<Float>.size, options: [])
     }
-    
     
     func applyInitialGravity() {
         if initialGravityTimer != nil {
@@ -205,7 +225,7 @@ class ParticleView: MTKView {
         initialGravityTimer = nil
     }
 
-    @objc func applyInitialGravityStep() {
+    @objc private func applyInitialGravityStep() {
         var j = 0
         
         if initialGravityStep % 30 == 0 {
@@ -308,7 +328,7 @@ class ParticleView: MTKView {
     }
     
     // Get the GravityWell at the specified index.
-    func getGravityWell(atIndex index: Int) -> GravityWell {
+    private func getGravityWell(atIndex index: Int) -> GravityWell {
         switch index {
         case 1:
             return .Two
@@ -322,7 +342,7 @@ class ParticleView: MTKView {
     }
     
     // Get the associated gravity well particle vector component for the type of gravity well provided.
-    func getGravityParticleVectorForWell(gravityWell: GravityWell) -> Vector4 {
+    private func getGravityParticleVectorForWell(gravityWell: GravityWell) -> Vector4 {
         switch gravityWell {
         case .One:
             return gravityWellParticle.A
