@@ -7,7 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		09074D7D2599222700E72F93 /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09074D7C2599222700E72F93 /* Color.swift */; };
 		0949C897259686E800B61D1F /* NSView+Subviews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0949C896259686E800B61D1F /* NSView+Subviews.swift */; };
+		0949C8B2259908E900B61D1F /* ParticleViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0949C8B1259908E900B61D1F /* ParticleViewDelegate.swift */; };
 		096862CA258202BB00B9B614 /* Networking in Frameworks */ = {isa = PBXBuildFile; productRef = 096862C9258202BB00B9B614 /* Networking */; };
 		096862CD25829C5A00B9B614 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 096862CC25829C5A00B9B614 /* User.swift */; };
 		096862D525829FE300B9B614 /* Arrow in Frameworks */ = {isa = PBXBuildFile; productRef = 096862D425829FE300B9B614 /* Arrow */; };
@@ -53,8 +55,8 @@
 		0995DE382581A9BC00DAA334 /* KeychainError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0995DE372581A9BC00DAA334 /* KeychainError.swift */; };
 		0995DE3B2581CA7500DAA334 /* InternalAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0995DE3A2581CA7500DAA334 /* InternalAPI.swift */; };
 		0995DE3D2581CF6A00DAA334 /* API.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0995DE3C2581CF6A00DAA334 /* API.swift */; };
-		0999974F25953600008E65FB /* Particles.metal in Sources */ = {isa = PBXBuildFile; fileRef = 0999974E25953600008E65FB /* Particles.metal */; };
-		099997522595371E008E65FB /* ParticleLab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 099997512595371E008E65FB /* ParticleLab.swift */; };
+		0999974F25953600008E65FB /* ParticleShader.metal in Sources */ = {isa = PBXBuildFile; fileRef = 0999974E25953600008E65FB /* ParticleShader.metal */; };
+		099997522595371E008E65FB /* ParticleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 099997512595371E008E65FB /* ParticleView.swift */; };
 		09F60AC6258BFD450020974A /* NSRect+Location.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F60AC5258BFD450020974A /* NSRect+Location.swift */; };
 		09F60AC9258C13680020974A /* Icon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F60AC8258C13680020974A /* Icon.swift */; };
 		09F60ACC258C2FD50020974A /* Style.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F60ACB258C2FD50020974A /* Style.swift */; };
@@ -64,7 +66,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		09074D7C2599222700E72F93 /* Color.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
 		0949C896259686E800B61D1F /* NSView+Subviews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSView+Subviews.swift"; sourceTree = "<group>"; };
+		0949C8B1259908E900B61D1F /* ParticleViewDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParticleViewDelegate.swift; sourceTree = "<group>"; };
 		096862CC25829C5A00B9B614 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		096862D72582A03F00B9B614 /* Arrow+Networking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Arrow+Networking.swift"; sourceTree = "<group>"; };
 		096862DD2582A2EB00B9B614 /* User+Arrow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "User+Arrow.swift"; sourceTree = "<group>"; };
@@ -111,8 +115,8 @@
 		0995DE372581A9BC00DAA334 /* KeychainError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainError.swift; sourceTree = "<group>"; };
 		0995DE3A2581CA7500DAA334 /* InternalAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InternalAPI.swift; sourceTree = "<group>"; };
 		0995DE3C2581CF6A00DAA334 /* API.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = API.swift; sourceTree = "<group>"; };
-		0999974E25953600008E65FB /* Particles.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Particles.metal; sourceTree = "<group>"; };
-		099997512595371E008E65FB /* ParticleLab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParticleLab.swift; sourceTree = "<group>"; };
+		0999974E25953600008E65FB /* ParticleShader.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = ParticleShader.metal; sourceTree = "<group>"; };
+		099997512595371E008E65FB /* ParticleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParticleView.swift; sourceTree = "<group>"; };
 		09F60AC5258BFD450020974A /* NSRect+Location.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSRect+Location.swift"; sourceTree = "<group>"; };
 		09F60AC8258C13680020974A /* Icon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Icon.swift; sourceTree = "<group>"; };
 		09F60ACB258C2FD50020974A /* Style.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Style.swift; sourceTree = "<group>"; };
@@ -136,6 +140,23 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0949C8A52598EB7000B61D1F /* MemberParticleView */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = MemberParticleView;
+			sourceTree = "<group>";
+		};
+		0949C8AD2598ED7700B61D1F /* ParticleView */ = {
+			isa = PBXGroup;
+			children = (
+				099997512595371E008E65FB /* ParticleView.swift */,
+				0949C8B1259908E900B61D1F /* ParticleViewDelegate.swift */,
+				0999974E25953600008E65FB /* ParticleShader.metal */,
+			);
+			path = ParticleView;
+			sourceTree = "<group>";
+		};
 		0968630D2583176B00B9B614 /* WorkspaceWindow */ = {
 			isa = PBXGroup;
 			children = (
@@ -195,7 +216,6 @@
 				0995DE152581610F00DAA334 /* Windows */,
 				0995DE162581611400DAA334 /* Views */,
 				0995DE172581611D00DAA334 /* Models */,
-				0999974D259535C0008E65FB /* Particles */,
 				0995DE1D2581698300DAA334 /* Networking */,
 				099087BB25799BA2001660D1 /* Utilities */,
 				0995DE1C2581695A00DAA334 /* Extensions */,
@@ -227,6 +247,7 @@
 				096862FA2582CF9500B9B614 /* Cache.swift */,
 				09F60AC8258C13680020974A /* Icon.swift */,
 				09F60ACB258C2FD50020974A /* Style.swift */,
+				09074D7C2599222700E72F93 /* Color.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -262,6 +283,8 @@
 		0995DE162581611400DAA334 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				0949C8AD2598ED7700B61D1F /* ParticleView */,
+				0949C8A52598EB7000B61D1F /* MemberParticleView */,
 				096863262584279600B9B614 /* MemberView */,
 				0968632F25859A0B00B9B614 /* MemberAvatarView */,
 				096863342586C2B000B9B614 /* RoundView.swift */,
@@ -337,15 +360,6 @@
 				096863092583103300B9B614 /* MemberRoutes.swift */,
 			);
 			path = InternalAPI;
-			sourceTree = "<group>";
-		};
-		0999974D259535C0008E65FB /* Particles */ = {
-			isa = PBXGroup;
-			children = (
-				0999974E25953600008E65FB /* Particles.metal */,
-				099997512595371E008E65FB /* ParticleLab.swift */,
-			);
-			path = Particles;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -437,12 +451,13 @@
 				096863382586C42B00B9B614 /* RoundShadowView.swift in Sources */,
 				0968631325831C2F00B9B614 /* User+API.swift in Sources */,
 				0968631C2583E80C00B9B614 /* Cache+Ids.swift in Sources */,
+				0949C8B2259908E900B61D1F /* ParticleViewDelegate.swift in Sources */,
 				096862EE2582ABCE00B9B614 /* Member.swift in Sources */,
 				0995DE382581A9BC00DAA334 /* KeychainError.swift in Sources */,
 				0968630425830A0200B9B614 /* WorkspaceRoutes.swift in Sources */,
 				0995DE3B2581CA7500DAA334 /* InternalAPI.swift in Sources */,
 				0990879525797561001660D1 /* AppDelegate.swift in Sources */,
-				099997522595371E008E65FB /* ParticleLab.swift in Sources */,
+				099997522595371E008E65FB /* ParticleView.swift in Sources */,
 				0968633125859A3000B9B614 /* MemberAvatarView.swift in Sources */,
 				0968632C2584299400B9B614 /* MemberView.swift in Sources */,
 				0968630A2583103300B9B614 /* MemberRoutes.swift in Sources */,
@@ -464,9 +479,10 @@
 				096862F12582ACE100B9B614 /* Member+Arrow.swift in Sources */,
 				09F60ADA2592CCF20020974A /* PulseView.swift in Sources */,
 				096862E52582A67F00B9B614 /* Name+Arrow.swift in Sources */,
-				0999974F25953600008E65FB /* Particles.metal in Sources */,
+				0999974F25953600008E65FB /* ParticleShader.metal in Sources */,
 				096862F42582B54F00B9B614 /* WorkspaceWindow.swift in Sources */,
 				09F60AC9258C13680020974A /* Icon.swift in Sources */,
+				09074D7D2599222700E72F93 /* Color.swift in Sources */,
 				096862FE2582FF4300B9B614 /* User+Cache.swift in Sources */,
 				09F60ACC258C2FD50020974A /* Style.swift in Sources */,
 				096863352586C2B000B9B614 /* RoundView.swift in Sources */,

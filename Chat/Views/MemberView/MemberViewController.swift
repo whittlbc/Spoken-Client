@@ -8,9 +8,9 @@
 
 import Cocoa
 
-class MemberViewController: NSViewController, ParticleLabDelegate {
-
-    // Workspace member associated with this view.
+class MemberViewController: NSViewController, ParticleViewDelegate {
+    
+    // Workspace member asso.ciated with this view.
     private var member = Member()
     
     // Initial member view frame -- provided from window.
@@ -19,8 +19,8 @@ class MemberViewController: NSViewController, ParticleLabDelegate {
     // Avatar subview.
     private var avatarView = MemberAvatarView()
     
-    //
-    private var particleLab: ParticleLab!
+    // 
+    private var particleView: ParticleView!
         
     private var steps: Int = 0
     
@@ -57,17 +57,23 @@ class MemberViewController: NSViewController, ParticleLabDelegate {
         // Add avatar view as subview.
         addAvatarView()
         
-        particleLab = ParticleLab(
+        particleView = ParticleView(
             width: UInt(120),
             height: UInt(120),
-            numParticles: ParticleCount.TwentyFourtyEight
+            numParticles: ParticleCount.TwentyFourtyEight,
+            colors: ParticleColorSpec(
+                A: Color.fromRGBA(95, 84, 194, 1),
+                B: Color.fromRGBA(95, 84, 194, 1),
+                C: Color.fromRGBA(33, 99, 240, 1),
+                D: Color.fromRGBA(51, 199, 224, 1)
+            )
         )
 
-        particleLab.particleLabDelegate = self
-        particleLab.dragFactor = 0.95
-        particleLab.clearOnStep = true
-        particleLab.respawnOutOfBoundsParticles = false
-        particleLab.resetParticles(edgesOnly: false)
+        particleView.particleViewDelegate = self
+        particleView.dragFactor = 0.95
+        particleView.clearOnStep = true
+        particleView.respawnOutOfBoundsParticles = false
+        particleView.resetParticles(edgesOnly: false)
         
         startTimer()
     }
@@ -102,7 +108,7 @@ class MemberViewController: NSViewController, ParticleLabDelegate {
         var j = 0
         
         if prepSteps % 30 == 0 {
-            particleLab.setGravityWellProperties(
+            particleView.setGravityWellProperties(
                 gravityWellIndex: 0,
                 normalisedPositionX: 0.5,
                 normalisedPositionY: prepSteps % 60 == 0 ? 0.4 : 0.6,
@@ -114,7 +120,7 @@ class MemberViewController: NSViewController, ParticleLabDelegate {
         }
         
         for index in j..<4 {
-            particleLab.setGravityWellProperties(
+            particleView.setGravityWellProperties(
                 gravityWellIndex: index,
                 normalisedPositionX: 0.5,
                 normalisedPositionY: 0.5,
@@ -123,7 +129,7 @@ class MemberViewController: NSViewController, ParticleLabDelegate {
             )
         }
         
-        particleLab.stepThrough()
+        particleView.stepThrough()
 
         prepSteps += 1
         
@@ -197,22 +203,22 @@ class MemberViewController: NSViewController, ParticleLabDelegate {
     }
     
     func addParticleLab() {
-        particleLab.frame = view.frame
-        particleLab.layer?.cornerRadius = view.frame.size.height / 2
+        particleView.frame = view.frame
+        particleView.layer?.cornerRadius = view.frame.size.height / 2
                 
-        view.addSubview(particleLab, positioned: NSWindow.OrderingMode.below, relativeTo: avatarView)
+        view.addSubview(particleView, positioned: NSWindow.OrderingMode.below, relativeTo: avatarView)
     }
     
     func removeParticleLab() {
-        particleLab.removeFromSuperview()
+        particleView.removeFromSuperview()
     }
     
-    func particleLabMetalUnavailable() {
+    func particleViewMetalUnavailable() {
         // handle metal unavailable here
     }
     
-    func particleLabDidUpdate(status: String) {
-        particleLab.resetGravityWells()
+    func particleViewDidUpdate() {
+        particleView.resetGravityWells()
         handleParticleStep()
         steps += 1
     }
@@ -221,7 +227,7 @@ class MemberViewController: NSViewController, ParticleLabDelegate {
         var i = 0
 
         if spin {
-            particleLab.setGravityWellProperties(
+            particleView.setGravityWellProperties(
                 gravityWellIndex: 0,
                 normalisedPositionX: 0.5,
                 normalisedPositionY: 0.5,
@@ -233,7 +239,7 @@ class MemberViewController: NSViewController, ParticleLabDelegate {
         }
         
         if !spin && steps % 80 == 0 {
-            particleLab.setGravityWellProperties(
+            particleView.setGravityWellProperties(
                 gravityWellIndex: 0,
                 normalisedPositionX: 0.5,
                 normalisedPositionY: 0.5,
@@ -245,7 +251,7 @@ class MemberViewController: NSViewController, ParticleLabDelegate {
         }
 
         for index in i..<4 {
-            particleLab.setGravityWellProperties(
+            particleView.setGravityWellProperties(
                 gravityWellIndex: index,
                 normalisedPositionX: 0.5,
                 normalisedPositionY: 0.5,

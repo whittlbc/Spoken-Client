@@ -1,5 +1,5 @@
 //
-//  ParticleLab.swift
+//  ParticleView.swift
 //  Chat
 //
 //  Created by Ben Whittle on 12/24/20.
@@ -11,7 +11,7 @@ import Metal
 import MetalPerformanceShaders
 import MetalKit
 
-class ParticleLab: MTKView {
+class ParticleView: MTKView {
     
     let imageWidth: UInt
     let imageHeight: UInt
@@ -28,14 +28,14 @@ class ParticleLab: MTKView {
     private var defaultLibrary: MTLLibrary! = nil
     private var commandQueue: MTLCommandQueue! = nil
     
-    private var threadsPerThreadgroup:MTLSize!
-    private var threadgroupsPerGrid:MTLSize!
+    private var threadsPerThreadgroup: MTLSize!
+    private var threadgroupsPerGrid: MTLSize!
     
     let particleCount: Int
     let alignment:Int = 0x4000
     let particlesMemoryByteSize:Int
     
-    private var particlesMemory:UnsafeMutableRawPointer? = nil
+    private var particlesMemory: UnsafeMutableRawPointer? = nil
     private var particlesVoidPtr: OpaquePointer!
     private var particlesParticlePtr: UnsafeMutablePointer<Particle>!
     private var particlesParticleBufferPtr: UnsafeMutableBufferPointer<Particle>!
@@ -47,52 +47,34 @@ class ParticleLab: MTKView {
         D: Vector4(x: 0, y: 0, z: 0, w: 0)
     )
     
-    private var frameStartTime: CFAbsoluteTime!
-    private var frameNumber = 0
     let particleSize = MemoryLayout<Particle>.size
-
-    weak var particleLabDelegate: ParticleLabDelegate?
     
-    var particleColor = ParticleColor(R: 0.1, G: 0.7, B: 0.6, A: 1)
+    var particleColors: ParticleColor!
+    
     var dragFactor: Float = 0.97
+    
     var respawnOutOfBoundsParticles = false
     
-    lazy var blur: MPSImageGaussianBlur =
-    {
-        [unowned self] in
-        return MPSImageGaussianBlur(device: self.device!, sigma: 3)
-    }()
-    
-    lazy var erode: MPSImageAreaMin =
-    {
-        [unowned self] in
-        return MPSImageAreaMin(device: self.device!, kernelWidth: 5, kernelHeight: 5)
-    }()
-    
+    weak var particleViewDelegate: ParticleViewDelegate?
+
     var clearOnStep = true
     
-    let statusPrefix: String
-    var statusPostix: String = ""
-    
-    init(width: UInt, height: UInt, numParticles: ParticleCount) {
-        particleCount = numParticles.rawValue
-        
+    init(width: UInt, height: UInt, numParticles: ParticleCount, colors: ParticleColorSpec) {
         imageWidth = width
         imageHeight = height
-        
+        particleCount = numParticles.rawValue
+        particleColors = colors.createParticleColor()
+                        
         bytesPerRow = 4 * imageWidth
         
-        region = MTLRegionMake2D(0, 0, Int(imageWidth), Int(imageHeight))
+        let intWidth = Int(imageWidth)
+        let intHeight = Int(imageHeight)
+        
+        region = MTLRegionMake2D(0, 0, intWidth, intHeight)
         blankBitmapRawData = [UInt8](unsafeUninitializedCapacity: Int(imageWidth * imageHeight * 4), initializingWith: {_, _ in})
         particlesMemoryByteSize = particleCount * MemoryLayout<Particle>.size
-    
-        let formatter = NumberFormatter()
-        formatter.usesGroupingSeparator = true
-        formatter.numberStyle = NumberFormatter.Style.decimal
-        
-        statusPrefix = formatter.string(from: NSNumber(value: numParticles.rawValue * 4))! + " Particles"
- 
-        super.init(frame: CGRect(x: 0, y: 0, width: Int(width), height: Int(height)), device:  MTLCreateSystemDefaultDevice())
+     
+        super.init(frame: CGRect(x: 0, y: 0, width: intWidth, height: intHeight), device: MTLCreateSystemDefaultDevice())
         
         framebufferOnly = false
         drawableSize = CGSize(width: CGFloat(imageWidth), height: CGFloat(imageHeight));
@@ -168,13 +150,13 @@ class ParticleLab: MTKView {
         device = MTLCreateSystemDefaultDevice()
         
         guard let device = device else {
-            particleLabDelegate?.particleLabMetalUnavailable()
+            particleViewDelegate?.particleViewMetalUnavailable()
             return
         }
         
         defaultLibrary = device.makeDefaultLibrary()
         commandQueue = device.makeCommandQueue()
-        kernelFunction = defaultLibrary.makeFunction(name: "particleRendererShader")
+        kernelFunction = defaultLibrary.makeFunction(name: "particleShader")
         
         do {
             try pipelineState = device.makeComputePipelineState(function: kernelFunction!)
@@ -187,8 +169,6 @@ class ParticleLab: MTKView {
         threadsPerThreadgroup = MTLSize(width:threadExecutionWidth,height:1,depth:1)
         threadgroupsPerGrid = MTLSize(width:particleCount / threadExecutionWidth, height:1, depth:1)
         
-        frameStartTime = CFAbsoluteTimeGetCurrent()
-
         var imageWidthFloat = Float(imageWidth)
         var imageHeightFloat = Float(imageHeight)
         
@@ -198,7 +178,7 @@ class ParticleLab: MTKView {
     
     func stepThrough() {
         guard let device = device else {
-            particleLabDelegate?.particleLabMetalUnavailable()
+            particleViewDelegate?.particleViewMetalUnavailable()
             return
         }
 
@@ -220,7 +200,7 @@ class ParticleLab: MTKView {
         let inGravityWell = device.makeBuffer(bytes: &gravityWellParticle, length: particleSize, options: [])
         commandEncoder!.setBuffer(inGravityWell, offset: 0, index: 2)
         
-        let colorBuffer = device.makeBuffer(bytes: &particleColor, length: MemoryLayout<ParticleColor>.size, options: [])
+        let colorBuffer = device.makeBuffer(bytes: &particleColors, length: MemoryLayout<ParticleColor>.size, options: [])
         commandEncoder!.setBuffer(colorBuffer, offset: 0, index: 3)
         
         commandEncoder!.setBuffer(imageWidthFloatBuffer, offset: 0, index: 4)
@@ -258,20 +238,8 @@ class ParticleLab: MTKView {
     
     override func draw(_ dirtyRect: CGRect) {
         guard let device = device else {
-            particleLabDelegate?.particleLabMetalUnavailable()
+            particleViewDelegate?.particleViewMetalUnavailable()
             return
-        }
-        
-        frameNumber += 1
-        
-        if frameNumber == 100 {
-            let frametime = (CFAbsoluteTimeGetCurrent() - frameStartTime) / 100
-           
-            statusPostix = String(format: " at %.1f fps", 1 / frametime)
-   
-            frameStartTime = CFAbsoluteTimeGetCurrent()
-            
-            frameNumber = 0
         }
         
         let commandBuffer = commandQueue.makeCommandBuffer()
@@ -288,7 +256,7 @@ class ParticleLab: MTKView {
         let inGravityWell = device.makeBuffer(bytes: &gravityWellParticle, length: particleSize, options: [])
         commandEncoder!.setBuffer(inGravityWell, offset: 0, index: 2)
         
-        let colorBuffer = device.makeBuffer(bytes: &particleColor, length: MemoryLayout<ParticleColor>.size, options: [])
+        let colorBuffer = device.makeBuffer(bytes: &particleColors, length: MemoryLayout<ParticleColor>.size, options: [])
         commandEncoder!.setBuffer(colorBuffer, offset: 0, index: 3)
         
         commandEncoder!.setBuffer(imageWidthFloatBuffer, offset: 0, index: 4)
@@ -325,7 +293,7 @@ class ParticleLab: MTKView {
         
         drawable.present()
 
-        particleLabDelegate?.particleLabDidUpdate(status: statusPrefix + statusPostix)
+        particleViewDelegate?.particleViewDidUpdate()
     }
     
     final func getGravityWellNormalisedPosition(gravityWell: GravityWell) -> (x: Float, y: Float) {
@@ -403,14 +371,7 @@ class ParticleLab: MTKView {
     }
 }
 
-protocol ParticleLabDelegate: NSObjectProtocol
-{
-    func particleLabDidUpdate(status: String)
-    func particleLabMetalUnavailable()
-}
-
-enum GravityWell
-{
+enum GravityWell {
     case One
     case Two
     case Three
@@ -420,45 +381,67 @@ enum GravityWell
 //  Since each Particle instance defines four particles, the visible particle count
 //  in the API is four times the number we need to create.
 enum ParticleCount: Int {
-    case FifteenThirtySix = 1_536
     case TwentyFourtyEight = 2_048
-    case FourtyNinetySix = 4_096
-    case EigthMillion = 32_768
-    case QtrMillion = 65_536
-    case HalfMillion = 131_072
-    case OneMillion =  262_144
-    case TwoMillion =  524_288
-    case FourMillion = 1_048_576
-    case EightMillion = 2_097_152
-    case SixteenMillion = 4_194_304
 }
 
-//  Paticles are split into three classes. The supplied particle color defines one
-//  third of the rendererd particles, the other two thirds use the supplied particle
-//  color components but shifted to BRG and GBR
-struct ParticleColor
-{
-    var R: Float32 = 0
-    var G: Float32 = 0
-    var B: Float32 = 0
-    var A: Float32 = 1
-}
-
-struct Particle // Matrix4x4
-{
+// Matrix4x4 - Particle colors
+struct ParticleColor {
     var A: Vector4 = Vector4(x: 0, y: 0, z: 0, w: 0)
     var B: Vector4 = Vector4(x: 0, y: 0, z: 0, w: 0)
     var C: Vector4 = Vector4(x: 0, y: 0, z: 0, w: 0)
     var D: Vector4 = Vector4(x: 0, y: 0, z: 0, w: 0)
 }
 
-// Regular particles use x and y for position and z and w for velocity
-// gravity wells use x and y for position and z for mass and w for spin
-struct Vector4
-{
+struct ParticleColorSpec {
+    var A: NSColor
+    var B: NSColor
+    var C: NSColor
+    var D: NSColor
+    
+    func createParticleColor() -> ParticleColor {
+        ParticleColor(
+            A: Vector4(
+                x: Float32(self.A.redComponent),
+                y: Float32(self.A.greenComponent),
+                z: Float32(self.A.blueComponent),
+                w: Float32(self.A.alphaComponent)
+            ),
+            B: Vector4(
+                x: Float32(self.B.redComponent),
+                y: Float32(self.B.greenComponent),
+                z: Float32(self.B.blueComponent),
+                w: Float32(self.B.alphaComponent)
+            ),
+            C: Vector4(
+                x: Float32(self.C.redComponent),
+                y: Float32(self.C.greenComponent),
+                z: Float32(self.C.blueComponent),
+                w: Float32(self.C.alphaComponent)
+            ),
+            D: Vector4(
+                x: Float32(self.D.redComponent),
+                y: Float32(self.D.greenComponent),
+                z: Float32(self.D.blueComponent),
+                w: Float32(self.D.alphaComponent)
+            )
+        )
+    }
+}
+
+// Matrix4x4 - Particle positions and velocity.
+struct Particle {
+    var A: Vector4 = Vector4(x: 0, y: 0, z: 0, w: 0)
+    var B: Vector4 = Vector4(x: 0, y: 0, z: 0, w: 0)
+    var C: Vector4 = Vector4(x: 0, y: 0, z: 0, w: 0)
+    var D: Vector4 = Vector4(x: 0, y: 0, z: 0, w: 0)
+}
+
+// Regular particles use x and y for position and z and w for velocity.
+// Gravity wells use x and y for position and z for mass and w for spin.
+// ParticleColor uses x,y,z,w as rgba.
+struct Vector4 {
     var x: Float32 = 0
     var y: Float32 = 0
     var z: Float32 = 0
     var w: Float32 = 0
 }
-
