@@ -9,25 +9,18 @@
 #include <metal_stdlib>
 using namespace metal;
 
-kernel void particleShader(texture2d<float, access::write> outTexture [[texture(0)]],
-                                   // texture2d<float, access::read> inTexture [[texture(1)]],
-                                   
-                                   const device float4x4 *inParticles [[ buffer(0) ]],
-                                   device float4x4 *outParticles [[ buffer(1) ]],
-                                   
-                                   constant float4x4 &inGravityWell [[ buffer(2) ]],
-                                   
-                                   constant float4x4 &particleColor [[ buffer(3) ]],
-                                   
-                                   constant float &imageWidth [[ buffer(4) ]],
-                                   constant float &imageHeight [[ buffer(5) ]],
-                                   
-                                   constant float &dragFactor [[ buffer(6) ]],
-                                   
-                                   constant bool &respawnOutOfBoundsParticles [[ buffer(7) ]],
-                                   
-                                   uint id [[thread_position_in_grid]])
-{
+kernel void particleShader(
+    texture2d<float, access::write> outTexture [[texture(0)]],
+    const device float4x4 *inParticles [[ buffer(0) ]],
+    device float4x4 *outParticles [[ buffer(1) ]],
+    constant float4x4 &inGravityWell [[ buffer(2) ]],
+    constant float4x4 &particleColor [[ buffer(3) ]],
+    constant float &imageWidth [[ buffer(4) ]],
+    constant float &imageHeight [[ buffer(5) ]],
+    constant float &dragFactor [[ buffer(6) ]],
+    constant bool &respawnOutOfBoundsParticles [[ buffer(7) ]],
+    uint id [[thread_position_in_grid]]) {
+    
     float4x4 inParticle = inParticles[id];
     
     const float spawnSpeedMultipler = 2.0;
