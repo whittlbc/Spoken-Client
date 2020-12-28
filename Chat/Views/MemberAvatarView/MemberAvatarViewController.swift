@@ -108,6 +108,9 @@ class MemberAvatarViewController: NSViewController {
             static let timingFunctionName = WorkspaceWindow.AnimationConfig.MemberWindows.timingFunctionName
         }
     }
+    
+    // Workspace member associated with this view.
+    private var member: Member!
 
     // Container view of avatar.
     private var containerView: RoundShadowView!
@@ -124,7 +127,7 @@ class MemberAvatarViewController: NSViewController {
     // Proper initializer to use when rendering member.
     convenience init(member: Member) {
         self.init(nibName: nil, bundle: nil)
-        view = MemberAvatarView(avatar: member.user.avatar)
+        self.member = member
     }
     
     // Override delegated init.
@@ -134,6 +137,11 @@ class MemberAvatarViewController: NSViewController {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    // Use MemberView as primary view for this controller.
+    override func loadView() {
+        view = MemberAvatarView(avatar: member.user.avatar)
     }
     
     override func viewDidLoad() {
