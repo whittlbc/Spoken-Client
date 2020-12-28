@@ -68,11 +68,6 @@ class MemberAvatarView: NSView {
             logger.error("Both height and width constraints required to animate member avatar view size...")
             return
         }
-
-        // Ensure size isn't already this diameter.
-        if heightConstraint.constant == diameter && widthConstraint.constant == diameter {
-            return
-        }
         
         // Animate avatar to new size.
         heightConstraint.animator().constant = diameter
