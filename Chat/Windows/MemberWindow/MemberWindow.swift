@@ -156,8 +156,8 @@ class MemberWindow: FloatingWindow {
         
         // TODO: Actually start a recording...
         
-        // Render recording as having started.
-        showRecordingHasStarted()
+        // Show recording as started.
+        showStartedRecording()
     }
     
     // Cancel recording and switch back to idle state.
@@ -167,14 +167,19 @@ class MemberWindow: FloatingWindow {
         
         // TODO: Actually cancel the recording...
 
-        // Remove styling animations that were added during recording.
-        removeRecordingHasStarted()
+        // Show recording as cancelled.
+        showCancellingRecording()
     }
     
     // Send the active audio message to this member.
     func sendRecording() {
-        // Update state to recording-sending.
-        setState(.recording(.sending))
+        // Disable key event listners.
+        toggleRecordingKeyEventListeners(enable: false)
+
+        // Render state to recording-sending.
+        showSendingRecording()
+        
+        // TODO: Actually send the recording...
     }
     
     // Tell parent workspace window to toggle on/off the key-event listeners tied to recording.
@@ -242,38 +247,6 @@ class MemberWindow: FloatingWindow {
     // Get window size for the current state.
     func getSizeForCurrentState() -> NSSize {
         calculateSize(forState: state)
-    }
-    
-    // Update state to recording has started and manually render without animation.
-    func showRecordingHasStarted() {
-        // Update state to started recording.
-        setState(.recording(.started))
-        
-        // Get the size for the new state.
-        let newSize = getSizeForCurrentState()
-        
-        // Render to new frame (without animation) and propagate render down-chain.
-        render(
-            size: newSize,
-            position: getRecordingStyleWindowPosition(newSize: newSize),
-            propagate: true
-        )
-    }
-        
-    // Revert size/position updates added during recording.
-    func removeRecordingHasStarted() {
-        // Update state to cancelling recording.
-        setState(.recording(.cancelling))
-                
-        // Render to new frame (without animation) and propagate render down-chain.
-        render(
-            size: getSizeForCurrentState(),
-            position: destination!,
-            propagate: true
-        )
-        
-        // Update state to idle now so that an animation is triggered.
-        setState(.idle)
     }
     
     // Create new position for window based on size of recording style.
@@ -408,6 +381,44 @@ class MemberWindow: FloatingWindow {
         }
         
         return false
+    }
+    
+    func showStartedRecording() {
+        // Update state to started recording.
+        setState(.recording(.started))
+        
+        // Get the size for the new state.
+        let newSize = getSizeForCurrentState()
+        
+        // Render to new frame (without animation) and propagate render down-chain.
+        render(
+            size: newSize,
+            position: getRecordingStyleWindowPosition(newSize: newSize),
+            propagate: true
+        )
+    }
+        
+    func showCancellingRecording() {
+        // Update state to cancelling recording.
+        setState(.recording(.cancelling))
+                
+        // Render to new frame (without animation) and propagate render down-chain.
+        render(
+            size: getSizeForCurrentState(),
+            position: destination!,
+            propagate: true
+        )
+        
+        // Update state to idle now so that an animation is triggered.
+        setState(.idle)
+    }
+    
+    func showSendingRecording() {
+        // Update state to sending recording.
+        setState(.recording(.sending))
+        
+        // Propagage a render down-chain.
+        render(propagate: true)
     }
     
     // Render member view -- this windows primary content view.

@@ -25,6 +25,8 @@ class MemberParticleView: ParticleView {
     // Total number of particles to render.
     static let numParticles = ParticleCount.TwentyFourtyEight
 
+    private var exploding = false
+    
     // Proper initializer to use when creating this view.
     convenience init() {
         self.init(
@@ -47,21 +49,24 @@ class MemberParticleView: ParticleView {
         fatalError("init(coder:) has not been implemented")
     }
     
+    func explode() {
+        exploding = true
+    }
+    
     func handleParticleStep() {
         var i = 0
-//
-//        if spin {
-//            setGravityWellProperties(
-//                gravityWellIndex: 0,
-//                normalisedPositionX: 0.5,
-//                normalisedPositionY: 0.5,
-//                mass: 70,
-//                spin: 70
-//            )
-//
-//            i = 1
-//        }
-//
+
+        if exploding {
+            setGravityWellProperties(
+                gravityWellIndex: 0,
+                normalisedPositionX: 0.5,
+                normalisedPositionY: 0.5,
+                mass: 70,
+                spin: 70
+            )
+
+            i = 1
+        }
         
         if frameCount % 80 == 0 {
             setGravityWellProperties(
@@ -79,5 +84,4 @@ class MemberParticleView: ParticleView {
             resetGravityWell(atIndex: index)
         }
     }
-
 }

@@ -180,6 +180,11 @@ class MemberViewController: NSViewController, ParticleViewDelegate {
         removeParticleView()
     }
     
+    private func renderSendingRecording() {
+        // Explode the particle view.
+        particleView.explode()
+    }
+    
     // Render recording-specific view updates.
     private func renderRecordingStateChange(recordingStatus: RecordingStatus) {
         switch recordingStatus {
@@ -187,6 +192,8 @@ class MemberViewController: NSViewController, ParticleViewDelegate {
             renderStartedRecording()
         case .cancelling:
             renderCancellingRecording()
+        case .sending:
+            renderSendingRecording()
         default:
             break
         }

@@ -149,7 +149,7 @@ class WorkspaceWindow: FloatingWindow {
     func findActiveRecordingMember() -> MemberWindow? {
         getOrderedMemberWindows().first(where: { $0.isRecording() })
     }
-    
+        
     // Load current workspace with all its members.
     func loadCurrentWorkspace() {
         // Render loading view.
