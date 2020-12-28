@@ -20,7 +20,7 @@ class MemberParticleView: ParticleView {
     )
     
     // Initial size of this view.
-    static let initialSize = MemberWindow.RecordingStyle.size
+    static let initialSize = MemberWindow.defaultSizeForState(.recording(true))
     
     // Total number of particles to render.
     static let numParticles = ParticleCount.TwentyFourtyEight
@@ -75,10 +75,9 @@ class MemberParticleView: ParticleView {
             i = 1
         }
 
-        for index in i..<4 {
+        for index in i..<GravityWell.allCases.count {
             resetGravityWell(atIndex: index)
         }
-    
     }
 
 }

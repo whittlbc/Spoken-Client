@@ -8,17 +8,34 @@
 
 import Cocoa
 
+// Controller for MemberView to manage all of its subviews and their interactions.
 class MemberViewController: NSViewController, ParticleViewDelegate {
+    
+    // View styling info.
+    enum Style {
+        
+        // MemberView styling info.
+        enum MemberView {
+            // Opacity of view when disabled.
+            static let disabledOpacity: CGFloat = 0.25
+        }
+    }
     
     // Workspace member associated with this view.
     private var member: Member!
     
     // Initial member view frame -- provided from window.
     private var initialFrame: NSRect!
+
+    // Controller for avatar view subview.
+    private var avatarViewController: MemberAvatarViewController!
     
-    // Avatar subview.
-    private var avatarView: MemberAvatarView!
-    
+    // Right auto-layout constraint of avatar view.
+    private var avatarViewRightConstraint: NSLayoutConstraint!
+
+    // Center-X auto-layout constraint of avatar view.
+    private var avatarViewCenterXConstraint: NSLayoutConstraint!
+
     // Member particle view for audio animation.
     private var particleView: MemberParticleView!
         
@@ -54,51 +71,33 @@ class MemberViewController: NSViewController, ParticleViewDelegate {
     }
     
     private func addAvatarView() {
-        // Create avatar view.
-        createAvatarView()
+        // Create avatar view controller.
+        avatarViewController = MemberAvatarViewController(member: member)
         
-        // Constrain avatar view.
+        // Add avatar view as a subview.
+        view.addSubview(avatarViewController.view)
+        
+        // Constrain avatar view with auto-layout.
         constrainAvatarView()
-        
-        // Render avatar view.
-        avatarView.render()
-    }
-    
-    // Create new avatar view subview.
-    private func createAvatarView() {
-        avatarView = MemberAvatarView()
-        
-        // Assign avatar URL string.
-        avatarView.avatar = member.user.avatar
-        
-        // Make avatar view layer-based and allow overflow.
-        avatarView.wantsLayer = true
-        avatarView.layer?.masksToBounds = false
-
-        // Add it as a subview.
-        view.addSubview(avatarView)
     }
     
     // Add auto-layout constraints to avatar view.
     private func constrainAvatarView() {
         // Set up auto-layout for sizing/positioning.
-        avatarView.translatesAutoresizingMaskIntoConstraints = false
+        avatarViewController.view.translatesAutoresizingMaskIntoConstraints = false
         
         // Get default idle height for member window.
         let initialAvatarDiameter = MemberWindow.defaultSizeForState(.idle).height
         
         // Create height and width constraints for avatar view.
-        let heightConstraint = avatarView.heightAnchor.constraint(equalToConstant: initialAvatarDiameter)
-        let widthConstraint = avatarView.widthAnchor.constraint(equalToConstant: initialAvatarDiameter)
-        
-        // Get member view.
-        let memberView = view as! MemberView
+        let heightConstraint = avatarViewController.view.heightAnchor.constraint(equalToConstant: initialAvatarDiameter)
+        let widthConstraint = avatarViewController.view.widthAnchor.constraint(equalToConstant: initialAvatarDiameter)
         
         // Create right constraint to be activated.
-        memberView.avatarViewRightConstraint = avatarView.rightAnchor.constraint(equalTo: view.rightAnchor)
+        avatarViewRightConstraint = avatarViewController.view.rightAnchor.constraint(equalTo: view.rightAnchor)
         
         // Create center-x constraint to be activated later.
-        memberView.avatarViewCenterXConstraint = avatarView.centerXAnchor.constraint(equalTo: view.centerXAnchor)
+        avatarViewCenterXConstraint = avatarViewController.view.centerXAnchor.constraint(equalTo: view.centerXAnchor)
         
         // Identify constraints so you can query for them later.
         heightConstraint.identifier = MemberAvatarView.ConstraintKeys.height
@@ -111,10 +110,10 @@ class MemberViewController: NSViewController, ParticleViewDelegate {
             widthConstraint,
 
             // Align right sides.
-            memberView.avatarViewRightConstraint,
+            avatarViewRightConstraint,
 
             // Align horizontal axes.
-            avatarView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            avatarViewController.view.centerYAnchor.constraint(equalTo: view.centerYAnchor),
         ])
     }
     
@@ -133,7 +132,7 @@ class MemberViewController: NSViewController, ParticleViewDelegate {
         view.addSubview(
             particleView,
             positioned: NSWindow.OrderingMode.below,
-            relativeTo: avatarView
+            relativeTo: avatarViewController.view
         )
     }
     
@@ -145,6 +144,10 @@ class MemberViewController: NSViewController, ParticleViewDelegate {
     
     // Remove particle view as a subview.
     func removeParticleView() {
+        if view.firstSubview(ofType: ParticleView.self) == nil {
+            return
+        }
+        
         particleView.removeFromSuperview()
     }
     
@@ -156,5 +159,54 @@ class MemberViewController: NSViewController, ParticleViewDelegate {
     func particleViewDidUpdate() {
         particleView.resetGravityWells()
         particleView.handleParticleStep()
+    }
+    
+    // Animate disabled state.
+    private func animateDisability(_ isDisabled: Bool) {
+        view.animator().alphaValue = isDisabled ? Style.MemberView.disabledOpacity : 1.0
+    }
+    
+    private func renderRecordingHasStarted() {
+        // Flip avatar view x-alignment from right to center.
+        avatarViewRightConstraint.isActive = false
+        avatarViewCenterXConstraint.isActive = true
+        
+        // Add particle view as a subview.
+        addParticleView()
+    }
+    
+    private func renderRecordingNotStarted() {
+        // Flip avatar view x-alignment from right to center.
+        avatarViewCenterXConstraint.isActive = false
+        avatarViewRightConstraint.isActive = true
+        
+        // Remove particle view as a subview (if it is one).
+        removeParticleView()
+    }
+    
+    // Render state-specific view updates.
+    private func renderStateChanges(state: MemberState) {
+        switch state {
+        case .recording(let hasStarted):
+            hasStarted ? renderRecordingHasStarted() : renderRecordingNotStarted()
+        default:
+            break
+        }
+    }
+
+    private func renderAvatarView(state: MemberState, isDisabled: Bool? = nil) {
+        avatarViewController.render(state: state, isDisabled: isDisabled)
+    }
+    
+    // Render view and subviews with updated state and props.
+    func render(state: MemberState, isDisabled: Bool? = nil) {
+        // Animate disabled status if provided.
+        if let disabled = isDisabled {
+            animateDisability(disabled)
+        }
+        
+        renderStateChanges(state: state)
+        
+        renderAvatarView(state: state, isDisabled: isDisabled)
     }
 }

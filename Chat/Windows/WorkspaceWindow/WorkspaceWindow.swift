@@ -275,12 +275,7 @@ class WorkspaceWindow: FloatingWindow {
         // Find the index of the active member window.
         let activeIndex = memberWindows.firstIndex{ $0 === activeMemberWindow }
         let activeMemberIndex = activeIndex!
-        
-        // Check if active member is in a recording-based state.
-        let inRecordingBasedState = activeMemberWindow.isRecording() ||
-            activeMemberWindow.isRecordingSending() ||
-            activeMemberWindow.isRecordingSent()
-        
+                
         // Calculate new size and position destinations for all member windows.
         calculateMemberWindowDestinations(
             memberWindows: memberWindows,
@@ -291,8 +286,7 @@ class WorkspaceWindow: FloatingWindow {
         // Animate each member window to its new destination.
         animateMemberWindowsToDestinations(
             memberWindows: memberWindows,
-            activeMemberIndex: activeMemberIndex,
-            activeMemberInRecordingBasedState: inRecordingBasedState
+            activeMemberIndex: activeMemberIndex
         )
         
         // If active member's new state is previewing, ensure it is the only member window in a previewing state.
@@ -371,8 +365,17 @@ class WorkspaceWindow: FloatingWindow {
     // Animate each member window to its stored destination.
     private func animateMemberWindowsToDestinations(
         memberWindows: [MemberWindow],
-        activeMemberIndex: Int,
-        activeMemberInRecordingBasedState: Bool) {
+        activeMemberIndex: Int) {
+        
+        // Get active member window and id.
+        let activeMemberWindow = memberWindows[activeMemberIndex]
+        let activeMemberId = activeMemberWindow.member.id
+        
+        // Check to see if active member window should animate its frame.
+        let activeMemberWindowAnimatesFrame = MemberWindow.stateShouldAnimateFrame(activeMemberWindow.state)
+        
+        // Check to see if active member window should disable those around it.
+        let activeMemberWindowDisablesOthers = MemberWindow.stateShouldDisableOtherMembers(activeMemberWindow.state)
         
         NSAnimationContext.runAnimationGroup({ context in
             // Configure animation attributes.
@@ -381,51 +384,42 @@ class WorkspaceWindow: FloatingWindow {
             context.allowsImplicitAnimation = true
 
             // Vars for loop below.
-            var newSize: NSSize
-            var newPosition: NSPoint
-            var newFrame: NSRect
-            
+            var isActiveMember, isDisabled, ignoreFrameUpdate: Bool
+
+            // Re-render each member window to its new destination.
             for (i, memberWindow) in memberWindows.enumerated() {
-                // Ignore changes to active member window frame.
-                if activeMemberInRecordingBasedState && i == activeMemberIndex {
-                    memberWindow.updateViewState(isDisabled: false)
-                    continue
-                }
-                
-                // Get size and position to update the member window to.
-                newSize = memberWindow.getSizeForCurrentState()
-                newPosition = memberWindow.getDestination()
-                
-                // Create a new frame from the desired size and position.
-                newFrame = NSRect(x: newPosition.x, y: newPosition.y, width: newSize.width, height: newSize.height)
-                
-                // Animate the member window to its new frame.
-                memberWindow.animator().setFrame(newFrame, display: true)
-                
-                // Update the member window's content view to the latest state.
-                memberWindow.updateViewState(
-                    isDisabled: activeMemberInRecordingBasedState && i != activeMemberIndex
+                isActiveMember = i == activeMemberIndex
+                isDisabled = !isActiveMember && activeMemberWindowDisablesOthers
+                ignoreFrameUpdate = isActiveMember && !activeMemberWindowAnimatesFrame
+
+                memberWindow.render(
+                    size: ignoreFrameUpdate ? nil : memberWindow.getSizeForCurrentState(),
+                    position: ignoreFrameUpdate ? nil : memberWindow.getDestination(),
+                    isDisabled: isDisabled,
+                    propagate: true,
+                    animate: true
                 )
             }
-            
         }, completionHandler: { [weak self] in
-            // Get active member window.
-            let activeMemberWindow = memberWindows[activeMemberIndex]
-            
-            // Only proceed if active member window is in the recording state.
-            if !activeMemberWindow.isRecording() {
-                return
-            }
-            
-            // Move active member window in front of other member windows.
-            self?.moveChildWindowToFront(activeMemberWindow)
-        
-            // Add recording style to active member window.
-            activeMemberWindow.addRecordingStyle()
-            
-            // Start recording.
-            activeMemberWindow.startRecording()
+            self?.onMemberWindowAnimationsComplete(activeMemberId: activeMemberId)
         })
+    }
+    
+    private func onMemberWindowAnimationsComplete(activeMemberId: String) {
+        // Get active member window.
+        guard let activeMemberWindow = membersMap[activeMemberId] else {
+            logger.error("Unable to find active member window for id \(activeMemberId)...")
+            return
+        }
+
+        // If the recording is waiting to be started...
+        if activeMemberWindow.isRecordingNotStarted() {
+            // Move active window to front of other members.
+            self.moveChildWindowToFront(activeMemberWindow)
+            
+            // Start a new audio recording.
+            activeMemberWindow.startRecording()
+        }
     }
     
     // Force a "mouse-exited" event on any previewing member windows that aren't the active member window.

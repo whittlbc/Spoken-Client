@@ -8,15 +8,6 @@
 
 import Cocoa
 
-// Supported member states.
-enum MemberState {
-    case idle
-    case previewing
-    case recording
-    case recordingSending
-    case recordingSent
-}
-
 // Window representing a workspace member.
 class MemberWindow: FloatingWindow {
 
@@ -49,23 +40,42 @@ class MemberWindow: FloatingWindow {
     // Get the default window size for the provided member state.
     static func defaultSizeForState(_ state: MemberState) -> NSSize {
         switch state {
+        // Default idle size.
         case .idle:
             return NSSize(width: 32, height: 32)
+            
+        // Default previewing size.
         case .previewing:
             return NSSize(width: 50, height: 50)
-        case .recording:
-            return NSSize(width: 50, height: 50)
+            
+            
+        // TODO: Make recording take a recording status enum of its own rather than a bool.
+        
+            
+        // Recording size depends on if recording has started yet.
+        case .recording(let hasStarted):
+            return hasStarted ?
+                NSSize(width: 120, height: 120) :
+                NSSize(width: 50, height: 50)
+            
+        // Default recording-sending size.
         case .recordingSending:
-            return NSSize(width: 50, height: 50)
+            return NSSize(width: 120, height: 120)
+            
+        // Default recording-sent size.
         case .recordingSent:
-            return NSSize(width: 50, height: 50)
+            return NSSize(width: 120, height: 120)
         }
     }
     
-    enum RecordingStyle {
-        static let size = NSSize(width: 120, height: 120)
+    static func stateShouldAnimateFrame(_ state: MemberState) -> Bool {
+        !state.isRecordingBased()
     }
     
+    static func stateShouldDisableOtherMembers(_ state: MemberState) -> Bool {
+        state.isRecordingBased()
+    }
+
     // Proper initializer to use when rendering members.
     convenience init(member: Member, onStateUpdated: @escaping (String) -> Void) {
         self.init()
@@ -76,31 +86,6 @@ class MemberWindow: FloatingWindow {
     // Override delegated init
     private override init(contentRect: NSRect, styleMask style: NSWindow.StyleMask, backing backingStoreType: NSWindow.BackingStoreType, defer flag: Bool) {
         super.init(contentRect: contentRect, styleMask: style, backing: backingStoreType, defer: flag)
-    }
-    
-    // Check whether member window is currently in the idle state.
-    func isIdle() -> Bool {
-        state == .idle
-    }
-    
-    // Check whether member window is currently in the previewing state.
-    func isPreviewing() -> Bool {
-        state == .previewing
-    }
-    
-    // Check whether member window is currently in the recording state.
-    func isRecording() -> Bool {
-        state == .recording
-    }
-    
-    // Check whether member window is currently in the recording-sending state.
-    func isRecordingSending() -> Bool {
-        state == .recordingSending
-    }
-    
-    // Check whether member window is currently in the recording-sent state.
-    func isRecordingSent() -> Bool {
-        state == .recordingSent
     }
     
     // Get parent workspace window.
@@ -122,73 +107,116 @@ class MemberWindow: FloatingWindow {
         
         return memberViewController
     }
-
-    // Get MemberView --> this window's primary content view.
-    func getMemberView() -> MemberView? {
-        // Get this window's content view controller.
-        guard let viewController = getMemberViewController() else {
-            return nil
-        }
-        
-        // Get this window's content view.
-        guard let memberView = viewController.view as? MemberView else {
-            logger.error("Unable to find MemberViewController's MemberView...")
-            return nil
-        }
-        
-        return memberView
-    }
-    
-    // Update state of member view to match that of this window.
-    func updateViewState(isDisabled disabled: Bool? = nil) {
-        // Get member view.
-        guard let memberView = getMemberView() else {
-            return
-        }
-        
-        // Update disabled status if provided.
-        if let newDisabledStatus = disabled {
-            isDisabled = newDisabledStatus
-        }
-        
-        // Update member view's state if it differs from this window's state.
-        memberView.setState(state, isDisabled: disabled)
-    }
     
     // Promote previous state to current state.
     func promotePreviousState() {
         prevState = state
     }
     
+    // Check whether member window is currently in the idle state.
+    func isIdle() -> Bool {
+        return state == .idle
+    }
+    
+    // Check whether member window is currently in the previewing state.
+    func isPreviewing() -> Bool {
+        return state == .previewing
+    }
+    
+    // Check whether member window is currently in the recording state.
+    func isRecording() -> Bool {
+        return state == .recording(false) // associated value is ignored and irrelevant here.
+    }
+    
+    func isRecordingNotStarted() -> Bool {
+        return state === .recording(false)
+    }
+    
+    // Check whether member window is currently in the recording-sending state.
+    func isRecordingSending() -> Bool {
+        return state == .recordingSending
+    }
+    
+    // Check whether member window is currently in the recording-sent state.
+    func isRecordingSent() -> Bool {
+        return state == .recordingSent
+    }
+    
+    // Update this window's state.
+    func setState(_ newState: MemberState) {
+        // Promote previous state to current state.
+        promotePreviousState()
+        
+        // Update current state to provided new state.
+        state = newState
+        
+        // If the state changed cases, broadcast this update.
+        if state != prevState {
+            onStateUpdated(member.id)
+        }
+        
+        // Handle state-specific change.
+        switch state {
+        case .idle:
+            onIdle()
+        case .previewing:
+            onPreviewing()
+        case .recording(_):
+            onRecording()
+        case .recordingSending:
+            onRecordingSending()
+        case .recordingSent:
+            onRecordingSent()
+        }
+    }
+
+    // Handler called when state updates to idle.
+    private func onIdle() {
+        // Invalidate previewing timer if it exists.
+        cancelPreviewingTimer()
+    }
+    
+    // Handler called when state updates to previewing.
+    private func onPreviewing() {}
+    
+    // Handler called when state updates to recording.
+    private func onRecording() {
+        // Invalidate previewing timer if it exists.
+        cancelPreviewingTimer()
+    }
+    
+    // Handler called when state updates to recording-sending.
+    private func onRecordingSending() {}
+    
+    // Handler called when state updates to recording-sent.
+    private func onRecordingSent() {}
+        
     // Start a new audio message to send to this member.
     func startRecording() {
         // Enable key event listners.
         toggleRecordingKeyEventListeners(enable: true)
+        
+        // TODO: Actually start a recording...
+        
+        // Render recording as having started.
+        showRecordingHasStarted()
     }
     
     // Cancel recording and switch back to idle state.
     func cancelRecording() {
         // Disable key event listners.
         toggleRecordingKeyEventListeners(enable: false)
+        
+        // TODO: Actually cancel the recording...
 
         // Remove styling animations that were added during recording.
-        removeRecordingStyle()
-        
-        // Revert state to idle.
-        setState(.idle)
+        removeRecordingHasStarted()
     }
     
     // Send the active audio message to this member.
     func sendRecording() {
         // Update state to recording-sending.
         setState(.recordingSending)
-        
-//        // Get member view controller and view.
-//        guard let memberViewController = getMemberViewController() else {
-//            return
-//        }
-        
-//        memberViewController.spin = true
     }
     
     // Tell parent workspace window to toggle on/off the key-event listeners tied to recording.
@@ -221,8 +249,8 @@ class MemberWindow: FloatingWindow {
     }
     
     // TODO: Add member-specific sizes on top of this once notifications are added.
-    func getRecordingWindowSize() -> NSSize {
-        MemberWindow.defaultSizeForState(.recording)
+    func getRecordingWindowSize(recordingHasStarted: Bool) -> NSSize {
+        MemberWindow.defaultSizeForState(.recording(recordingHasStarted))
     }
     
     // TODO: Add member-specific sizes on top of this once notifications are added.
@@ -247,8 +275,8 @@ class MemberWindow: FloatingWindow {
             return getPreviewingWindowSize()
 
         // Recording window size.
-        case .recording:
-            return getRecordingWindowSize()
+        case .recording(let hasStarted):
+            return getRecordingWindowSize(recordingHasStarted: hasStarted)
             
         // Recording sending window size.
         case .recordingSending:
@@ -263,7 +291,7 @@ class MemberWindow: FloatingWindow {
     // Get the positional offset for this window due its latest state change.
     func getStateChangeSizeOffset() -> (Float, Float) {
         let prevSize = calculateSize(forState: prevState)
-        let currentSize = calculateSize(forState: state)
+        let currentSize = getSizeForCurrentState()
         
         return (
             Float(prevSize.height - currentSize.height) / 2,
@@ -276,55 +304,45 @@ class MemberWindow: FloatingWindow {
         calculateSize(forState: state)
     }
     
-    // Update size/position of window and contents to fit recording animations.
-    func addRecordingStyle() {
-        // Get member view controller and view.
-        guard let memberViewController = getMemberViewController(), let memberView = getMemberView() else {
-            return
-        }
-                
-        // Calculate new position of recording-style window.
-        let newPosition = getRecordingStyleWindowPosition()
-    
-        // Update window size and position.
-        resizeWindow(to: RecordingStyle.size)
-        repositionWindow(to: newPosition)
-    
-        // Add member view's recording style.
-        memberView.addRecordingStyle()
+    // Update state to recording has started and manually render without animation.
+    func showRecordingHasStarted() {
+        // Update state to where recording has started
+        setState(.recording(true))
         
-        // Add particle lab.
-        memberViewController.addParticleView()
+        // Get the size for the new state.
+        let newSize = getSizeForCurrentState()
+        
+        // Render to new frame (without animation) and propagate render down-chain.
+        render(
+            size: newSize,
+            position: getRecordingStyleWindowPosition(newSize: newSize),
+            propagate: true
+        )
     }
-    
+        
     // Revert size/position updates added during recording.
-    func removeRecordingStyle() {
-        // Get member view controller and view.
-        guard let memberViewController = getMemberViewController(), let memberView = getMemberView() else {
-            return
-        }
-
-        // Get previous size and position of window before recording style was added.
-        let prevSize = calculateSize(forState: prevState)
+    func removeRecordingHasStarted() {
+        // Update state back to where recording has NOT started.
+        setState(.recording(false))
+                
+        // Render to new frame (without animation) and propagate render down-chain.
+        render(
+            size: getSizeForCurrentState(),
+            position: destination!,
+            propagate: true
+        )
         
-        // Update window size and position.
-        resizeWindow(to: prevSize)
-        repositionWindow(to: destination!)
-        
-        // Remove member view's recording style.
-        memberView.removeRecordingStyle()
-        
-        // Remove particle lab.
-        memberViewController.removeParticleView()
+        // Update state to idle now so that an animation is triggered.
+        setState(.idle)
     }
     
     // Create new position for window based on size of recording style.
-    func getRecordingStyleWindowPosition() -> NSPoint {
+    func getRecordingStyleWindowPosition(newSize: NSSize) -> NSPoint {
         let currSize = frame.size
         let currPos = frame.origin
         
-        let widthOffset = (currSize.width - RecordingStyle.size.width) / 2
-        let heightOffset = (currSize.height - RecordingStyle.size.height) / 2
+        let widthOffset = (currSize.width - newSize.width) / 2
+        let heightOffset = (currSize.height - newSize.height) / 2
                 
         let newX = currPos.x + widthOffset
         let newY = currPos.y + heightOffset
@@ -432,62 +450,58 @@ class MemberWindow: FloatingWindow {
     
     // Handle avatar mouse-up events.
     func onAvatarClick() {
+        if isDisabled {
+            return
+        }
+        
         // Update state to recording if clicking avatar while previewing.
-        if state == .previewing {
-            setState(.recording)
+        if isPreviewing() {
+            setState(.recording(false)) // hasStarted = false
         }
     }
-    
-    // Update this window's state.
-    func setState(_ newState: MemberState) {
-        // Promote previous state to current state.
-        promotePreviousState()
         
-        // Update current state to provided new state.
-        state = newState
-        
-        // Tell parent window that state was updated.
-        onStateUpdated(member.id)
-        
-        // Handle state-specific change.
-        switch state {
-        case .idle:
-            onIdle()
-        case .previewing:
-            onPreviewing()
-        case .recording:
-            onRecording()
-        case .recordingSending:
-            onRecordingSending()
-        case .recordingSent:
-            onRecordingSent()
+    // Update isDisabled value (if different) and return if value was changed.
+    private func updateDisabled(disabled: Bool?) -> Bool {
+        if let newDisabledStatus = disabled, newDisabledStatus != isDisabled {
+            isDisabled = newDisabledStatus
+            return true
         }
-    }
-
-    // Handler called when state updates to idle.
-    private func onIdle() {
-        // Invalidate previewing timer if it exists.
-        cancelPreviewingTimer()
+        
+        return false
     }
     
-    // Handler called when state updates to previewing.
-    private func onPreviewing() {}
-    
-    // Handler called when state updates to recording.
-    private func onRecording() {
-        // Invalidate previewing timer if it exists.
-        cancelPreviewingTimer()
+    // Render member view -- this windows primary content view.
+    private func renderMemberView(disabledChanged: Bool = false) {
+        // Get member view controller.
+        guard let memberViewController = getMemberViewController() else {
+            return
+        }
+        
+        // Render member view and only provide isDisabled if it changed since last render.
+        memberViewController.render(state: state, isDisabled: disabledChanged ? isDisabled : nil)
     }
     
-    // Handler called when state updates to recording-sending.
-    private func onRecordingSending() {}
+    // Render this windows children.
+    private func renderChildren(disabledChanged: Bool = false) {
+        renderMemberView(disabledChanged: disabledChanged)
+    }
     
-    // Handler called when state updates to recording-sent.
-    private func onRecordingSent() {}
-    
-    // Render member window to a specific size and position.
-    func render(size: NSSize, position: NSPoint) {
-        resizeWindow(to: size)
-        repositionWindow(to: position)
+    func render(
+        size: NSSize? = nil,
+        position: NSPoint? = nil,
+        isDisabled disabled: Bool? = nil,
+        propagate: Bool = false,
+        animate: Bool = false) {
+        
+        // Update window frame.
+        updateFrame(size: size, position: position, animate: animate)
+        
+        // Update isDisabled and see if it changed at all.
+        let disabledChanged = updateDisabled(disabled: disabled)
+        
+        // Render children if desired.
+        if propagate {
+            renderChildren(disabledChanged: disabledChanged)
+        }
     }
 }

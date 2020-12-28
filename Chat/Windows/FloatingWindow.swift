@@ -74,4 +74,27 @@ class FloatingWindow: NSPanel {
         newFrame.size = size
         setFrame(newFrame, display: true)
     }
+    
+    // Update the windows frame for the given size and position (if provided) with an optional animation.
+    func updateFrame(size: NSSize? = nil, position: NSPoint? = nil, animate: Bool = false) {
+        if size == nil && position == nil {
+            return
+        }
+        
+        let newSize = size ?? frame.size
+        let newPosition = position ?? frame.origin
+
+        let newFrame = NSRect(
+            x: newPosition.x,
+            y: newPosition.y,
+            width: newSize.width,
+            height: newSize.height
+        )
+        
+        if animate {
+            animator().setFrame(newFrame, display: true)
+        } else {
+            setFrame(newFrame, display: true)
+        }
+    }
 }

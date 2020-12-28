@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		09074D7D2599222700E72F93 /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09074D7C2599222700E72F93 /* Color.swift */; };
 		09074D81259934B900E72F93 /* MemberParticleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09074D80259934B900E72F93 /* MemberParticleView.swift */; };
+		09074D84259982DE00E72F93 /* MemberAvatarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09074D83259982DE00E72F93 /* MemberAvatarViewController.swift */; };
+		09074D872599BD0500E72F93 /* MemberState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09074D862599BD0500E72F93 /* MemberState.swift */; };
 		0949C897259686E800B61D1F /* NSView+Subviews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0949C896259686E800B61D1F /* NSView+Subviews.swift */; };
 		0949C8B2259908E900B61D1F /* ParticleViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0949C8B1259908E900B61D1F /* ParticleViewDelegate.swift */; };
 		096862CA258202BB00B9B614 /* Networking in Frameworks */ = {isa = PBXBuildFile; productRef = 096862C9258202BB00B9B614 /* Networking */; };
@@ -69,6 +71,8 @@
 /* Begin PBXFileReference section */
 		09074D7C2599222700E72F93 /* Color.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
 		09074D80259934B900E72F93 /* MemberParticleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemberParticleView.swift; sourceTree = "<group>"; };
+		09074D83259982DE00E72F93 /* MemberAvatarViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemberAvatarViewController.swift; sourceTree = "<group>"; };
+		09074D862599BD0500E72F93 /* MemberState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemberState.swift; sourceTree = "<group>"; };
 		0949C896259686E800B61D1F /* NSView+Subviews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSView+Subviews.swift"; sourceTree = "<group>"; };
 		0949C8B1259908E900B61D1F /* ParticleViewDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParticleViewDelegate.swift; sourceTree = "<group>"; };
 		096862CC25829C5A00B9B614 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
@@ -173,6 +177,7 @@
 			isa = PBXGroup;
 			children = (
 				0968632225840AB500B9B614 /* MemberWindow.swift */,
+				09074D862599BD0500E72F93 /* MemberState.swift */,
 			);
 			path = MemberWindow;
 			sourceTree = "<group>";
@@ -190,6 +195,7 @@
 			isa = PBXGroup;
 			children = (
 				0968633025859A3000B9B614 /* MemberAvatarView.swift */,
+				09074D83259982DE00E72F93 /* MemberAvatarViewController.swift */,
 			);
 			path = MemberAvatarView;
 			sourceTree = "<group>";
@@ -286,10 +292,10 @@
 		0995DE162581611400DAA334 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				0949C8AD2598ED7700B61D1F /* ParticleView */,
-				0949C8A52598EB7000B61D1F /* MemberParticleView */,
 				096863262584279600B9B614 /* MemberView */,
 				0968632F25859A0B00B9B614 /* MemberAvatarView */,
+				0949C8A52598EB7000B61D1F /* MemberParticleView */,
+				0949C8AD2598ED7700B61D1F /* ParticleView */,
 				096863342586C2B000B9B614 /* RoundView.swift */,
 				096863372586C42B00B9B614 /* RoundShadowView.swift */,
 				09F60AD92592CCF20020974A /* PulseView.swift */,
@@ -458,6 +464,7 @@
 				0949C8B2259908E900B61D1F /* ParticleViewDelegate.swift in Sources */,
 				096862EE2582ABCE00B9B614 /* Member.swift in Sources */,
 				0995DE382581A9BC00DAA334 /* KeychainError.swift in Sources */,
+				09074D84259982DE00E72F93 /* MemberAvatarViewController.swift in Sources */,
 				0968630425830A0200B9B614 /* WorkspaceRoutes.swift in Sources */,
 				0995DE3B2581CA7500DAA334 /* InternalAPI.swift in Sources */,
 				0990879525797561001660D1 /* AppDelegate.swift in Sources */,
@@ -492,6 +499,7 @@
 				096863352586C2B000B9B614 /* RoundView.swift in Sources */,
 				0995DE2125816B5E00DAA334 /* Config.swift in Sources */,
 				096862FB2582CF9500B9B614 /* Cache.swift in Sources */,
+				09074D872599BD0500E72F93 /* MemberState.swift in Sources */,
 				0968632325840AB500B9B614 /* MemberWindow.swift in Sources */,
 				09686301258300A900B9B614 /* Workspace+Cache.swift in Sources */,
 				09686328258427A500B9B614 /* MemberViewController.swift in Sources */,
