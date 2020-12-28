@@ -20,7 +20,7 @@ class MemberParticleView: ParticleView {
     )
     
     // Initial size of this view.
-    static let initialSize = MemberWindow.defaultSizeForState(.recording(true))
+    static let initialSize = MemberWindow.defaultSizeForState(.recording(.started))
     
     // Total number of particles to render.
     static let numParticles = ParticleCount.TwentyFourtyEight

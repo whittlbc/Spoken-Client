@@ -12,41 +12,23 @@ import Cocoa
 enum MemberState {
     case idle
     case previewing
-    case recording(Bool) // (hasStarted)
-    case recordingSending
-    case recordingSent
+    case recording(RecordingStatus)
     
-    func isRecordingBased() -> Bool {
-        switch self {
-        case .recording(_):
-            return true
-            
-        case .recordingSending,
-             .recordingSent:
-            return true
-            
-        default:
-            return false
-        }
-    }
-    
+    // Case equality check + associated value equality checks
     static func ===(lhs: MemberState, rhs:MemberState) -> Bool {
         switch (lhs, rhs) {
         case (.idle, .idle):
             return true
         case (.previewing, .previewing):
             return true
-        case (.recording(let la), .recording(let ra)):
-            return la == ra
-        case (.recordingSending, .recordingSending):
-            return true
-        case (.recordingSent, .recordingSent):
-            return true
+        case (.recording(let lstatus), .recording(let rstatus)):
+            return lstatus == rstatus
         default:
             return false
         }
     }
     
+    // Case equality check
     static func ==(lhs: MemberState, rhs:MemberState) -> Bool {
         switch (lhs, rhs) {
         case (.idle, .idle):
@@ -55,17 +37,22 @@ enum MemberState {
             return true
         case (.recording, .recording):
             return true
-        case (.recordingSending, .recordingSending):
-            return true
-        case (.recordingSent, .recordingSent):
-            return true
         default:
             return false
         }
     }
     
+    // Case inequality check.
     static func !=(lhs: MemberState, rhs:MemberState) -> Bool {
         return (lhs == rhs) == false
     }
 }
 
+// Supported statuses of an active recording.
+enum RecordingStatus {
+    case starting
+    case started
+    case cancelling
+    case sending
+    case sent
+}

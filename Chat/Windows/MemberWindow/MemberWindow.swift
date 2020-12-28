@@ -40,40 +40,22 @@ class MemberWindow: FloatingWindow {
     // Get the default window size for the provided member state.
     static func defaultSizeForState(_ state: MemberState) -> NSSize {
         switch state {
-        // Default idle size.
         case .idle:
             return NSSize(width: 32, height: 32)
-            
-        // Default previewing size.
         case .previewing:
             return NSSize(width: 50, height: 50)
-            
-            
-        // TODO: Make recording take a recording status enum of its own rather than a bool.
-        
-            
-        // Recording size depends on if recording has started yet.
-        case .recording(let hasStarted):
-            return hasStarted ?
-                NSSize(width: 120, height: 120) :
-                NSSize(width: 50, height: 50)
-            
-        // Default recording-sending size.
-        case .recordingSending:
-            return NSSize(width: 120, height: 120)
-            
-        // Default recording-sent size.
-        case .recordingSent:
-            return NSSize(width: 120, height: 120)
+        case .recording(let recordingStatus):
+            return recordingStatus == .starting || recordingStatus == .cancelling ?
+                NSSize(width: 50, height: 50) : NSSize(width: 120, height: 120)
         }
     }
     
     static func stateShouldAnimateFrame(_ state: MemberState) -> Bool {
-        !state.isRecordingBased()
+        state != .recording(.starting) // recording status is ignored here
     }
     
     static func stateShouldDisableOtherMembers(_ state: MemberState) -> Bool {
-        state.isRecordingBased()
+        state == .recording(.starting) // recording status is ignored here
     }
 
     // Proper initializer to use when rendering members.
@@ -125,21 +107,7 @@ class MemberWindow: FloatingWindow {
     
     // Check whether member window is currently in the recording state.
     func isRecording() -> Bool {
-        return state == .recording(false) // associated value is ignored and irrelevant here.
-    }
-    
-    func isRecordingNotStarted() -> Bool {
-        return state === .recording(false)
-    }
-    
-    // Check whether member window is currently in the recording-sending state.
-    func isRecordingSending() -> Bool {
-        return state == .recordingSending
-    }
-    
-    // Check whether member window is currently in the recording-sent state.
-    func isRecordingSent() -> Bool {
-        return state == .recordingSent
+        return state == .recording(.starting) // recording status is ignored here
     }
     
     // Update this window's state.
@@ -163,10 +131,6 @@ class MemberWindow: FloatingWindow {
             onPreviewing()
         case .recording(_):
             onRecording()
-        case .recordingSending:
-            onRecordingSending()
-        case .recordingSent:
-            onRecordingSent()
         }
     }
 
@@ -184,13 +148,7 @@ class MemberWindow: FloatingWindow {
         // Invalidate previewing timer if it exists.
         cancelPreviewingTimer()
     }
-    
-    // Handler called when state updates to recording-sending.
-    private func onRecordingSending() {}
-    
-    // Handler called when state updates to recording-sent.
-    private func onRecordingSent() {}
-        
+
     // Start a new audio message to send to this member.
     func startRecording() {
         // Enable key event listners.
@@ -216,7 +174,7 @@ class MemberWindow: FloatingWindow {
     // Send the active audio message to this member.
     func sendRecording() {
         // Update state to recording-sending.
-        setState(.recordingSending)
+        setState(.recording(.sending))
     }
     
     // Tell parent workspace window to toggle on/off the key-event listeners tied to recording.
@@ -249,18 +207,8 @@ class MemberWindow: FloatingWindow {
     }
     
     // TODO: Add member-specific sizes on top of this once notifications are added.
-    func getRecordingWindowSize(recordingHasStarted: Bool) -> NSSize {
-        MemberWindow.defaultSizeForState(.recording(recordingHasStarted))
-    }
-    
-    // TODO: Add member-specific sizes on top of this once notifications are added.
-    func getRecordingSendingWindowSize() -> NSSize {
-        MemberWindow.defaultSizeForState(.recordingSending)
-    }
-    
-    // TODO: Add member-specific sizes on top of this once notifications are added.
-    func getRecordingSentWindowSize() -> NSSize {
-        MemberWindow.defaultSizeForState(.recordingSent)
+    func getRecordingWindowSize(recordingStatus: RecordingStatus) -> NSSize {
+        MemberWindow.defaultSizeForState(.recording(recordingStatus))
     }
     
     // Get the size of this window for the given state.
@@ -275,16 +223,8 @@ class MemberWindow: FloatingWindow {
             return getPreviewingWindowSize()
 
         // Recording window size.
-        case .recording(let hasStarted):
-            return getRecordingWindowSize(recordingHasStarted: hasStarted)
-            
-        // Recording sending window size.
-        case .recordingSending:
-            return getRecordingSendingWindowSize()
-            
-        // Recording sent window size.
-        case .recordingSent:
-            return getRecordingSentWindowSize()
+        case .recording(let recordingStatus):
+            return getRecordingWindowSize(recordingStatus: recordingStatus)
         }
     }
     
@@ -306,8 +246,8 @@ class MemberWindow: FloatingWindow {
     
     // Update state to recording has started and manually render without animation.
     func showRecordingHasStarted() {
-        // Update state to where recording has started
-        setState(.recording(true))
+        // Update state to started recording.
+        setState(.recording(.started))
         
         // Get the size for the new state.
         let newSize = getSizeForCurrentState()
@@ -322,8 +262,8 @@ class MemberWindow: FloatingWindow {
         
     // Revert size/position updates added during recording.
     func removeRecordingHasStarted() {
-        // Update state back to where recording has NOT started.
-        setState(.recording(false))
+        // Update state to cancelling recording.
+        setState(.recording(.cancelling))
                 
         // Render to new frame (without animation) and propagate render down-chain.
         render(
@@ -454,9 +394,9 @@ class MemberWindow: FloatingWindow {
             return
         }
         
-        // Update state to recording if clicking avatar while previewing.
+        // Update state to starting recording if clicking avatar while previewing.
         if isPreviewing() {
-            setState(.recording(false)) // hasStarted = false
+            setState(.recording(.starting))
         }
     }
         
@@ -499,7 +439,7 @@ class MemberWindow: FloatingWindow {
         // Update isDisabled and see if it changed at all.
         let disabledChanged = updateDisabled(disabled: disabled)
         
-        // Render children if desired.
+        // Propagate render down to children if specified.
         if propagate {
             renderChildren(disabledChanged: disabledChanged)
         }

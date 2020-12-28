@@ -67,7 +67,7 @@ class PulseView: NSView {
         // Add this pulse layer as a sublayer.
         layer?.addSublayer(pulseLayer)
         
-        let scale = Double((MemberWindow.defaultSizeForState(.recording(true)).width / diameter) - 0.5)
+        let scale = Double((MemberWindow.defaultSizeForState(.recording(.started)).width / diameter) - 0.5)
         
         animateAsGroup(
             values: [

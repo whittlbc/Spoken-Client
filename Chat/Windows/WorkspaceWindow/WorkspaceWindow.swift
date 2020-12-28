@@ -363,10 +363,7 @@ class WorkspaceWindow: FloatingWindow {
     }
 
     // Animate each member window to its stored destination.
-    private func animateMemberWindowsToDestinations(
-        memberWindows: [MemberWindow],
-        activeMemberIndex: Int) {
-        
+    private func animateMemberWindowsToDestinations(memberWindows: [MemberWindow], activeMemberIndex: Int) {
         // Get active member window and id.
         let activeMemberWindow = memberWindows[activeMemberIndex]
         let activeMemberId = activeMemberWindow.member.id
@@ -413,7 +410,7 @@ class WorkspaceWindow: FloatingWindow {
         }
 
         // If the recording is waiting to be started...
-        if activeMemberWindow.isRecordingNotStarted() {
+        if activeMemberWindow.state === .recording(.starting) {
             // Move active window to front of other members.
             self.moveChildWindowToFront(activeMemberWindow)
             
@@ -431,7 +428,7 @@ class WorkspaceWindow: FloatingWindow {
             
             // If a member that isn't the active member is found to be in
             // the previewing state, force it out of this state.
-            if memberWindow.state == .previewing {
+            if memberWindow.isPreviewing() {
                 memberWindow.registerMouseExited()
             }
         }

@@ -144,10 +144,6 @@ class MemberViewController: NSViewController, ParticleViewDelegate {
     
     // Remove particle view as a subview.
     func removeParticleView() {
-        if view.firstSubview(ofType: ParticleView.self) == nil {
-            return
-        }
-        
         particleView.removeFromSuperview()
     }
     
@@ -166,7 +162,7 @@ class MemberViewController: NSViewController, ParticleViewDelegate {
         view.animator().alphaValue = isDisabled ? Style.MemberView.disabledOpacity : 1.0
     }
     
-    private func renderRecordingHasStarted() {
+    private func renderStartedRecording() {
         // Flip avatar view x-alignment from right to center.
         avatarViewRightConstraint.isActive = false
         avatarViewCenterXConstraint.isActive = true
@@ -175,20 +171,32 @@ class MemberViewController: NSViewController, ParticleViewDelegate {
         addParticleView()
     }
     
-    private func renderRecordingNotStarted() {
+    private func renderCancellingRecording() {
         // Flip avatar view x-alignment from right to center.
         avatarViewCenterXConstraint.isActive = false
         avatarViewRightConstraint.isActive = true
         
-        // Remove particle view as a subview (if it is one).
+        // Remove particle view as a subview.
         removeParticleView()
+    }
+    
+    // Render recording-specific view updates.
+    private func renderRecordingStateChange(recordingStatus: RecordingStatus) {
+        switch recordingStatus {
+        case .started:
+            renderStartedRecording()
+        case .cancelling:
+            renderCancellingRecording()
+        default:
+            break
+        }
     }
     
     // Render state-specific view updates.
     private func renderStateChanges(state: MemberState) {
         switch state {
-        case .recording(let hasStarted):
-            hasStarted ? renderRecordingHasStarted() : renderRecordingNotStarted()
+        case .recording(let recordingStatus):
+            renderRecordingStateChange(recordingStatus: recordingStatus)
         default:
             break
         }

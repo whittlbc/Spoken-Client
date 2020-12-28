@@ -49,11 +49,9 @@ class MemberAvatarViewController: NSViewController {
                     switch state {
                     case .idle:
                         return grounded
-                        
-                    case .previewing,
-                         .recording,
-                         .recordingSending,
-                         .recordingSent:
+                    case .previewing:
+                        return raised
+                    case .recording(_):
                         return raised
                     }
                 }
@@ -351,12 +349,11 @@ class MemberAvatarViewController: NSViewController {
     // Determine whether a state change should cause a size change animation.
     private func stateShouldCauseAvatarSizeChange(_ state: MemberState) -> Bool {
         switch state {
-        case .idle, .previewing:
+        case .idle,
+             .previewing:
             return true
-        case .recording(let hasStarted):
-            return !hasStarted
-        default:
-            return false
+        case .recording(let recordingStatus):
+            return recordingStatus == .starting
         }
     }
     
