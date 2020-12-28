@@ -40,7 +40,7 @@ class ChasingTailSpinnerView: NSView {
         strokeEndDuration: Double? = 0.7,
         strokeTimingFunction: CAMediaTimingFunction? = CAMediaTimingFunction(controlPoints: 0.4, 0.0, 0.2, 1.0)) {
         
-        self.init(frame: NSRect())
+        self.init(frame: frameRect)
         
         // Assign configurable styling props.
         self.color = color
@@ -65,9 +65,14 @@ class ChasingTailSpinnerView: NSView {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    override func layout() {
+        frame = bounds
+    }
 
     private func setupLayer() {
         wantsLayer = true
+        layer?.masksToBounds = false
     }
     
     private func addSpinnerLayer() {
@@ -81,17 +86,10 @@ class ChasingTailSpinnerView: NSView {
     private func createSpinnerLayer() {
         // Create new layer for spinner with frame matching view's frame.
         spinnerLayer = CAShapeLayer()
-        spinnerLayer.frame = frame
-        
-        // Calculate circular radius for path.
-        let radius = frame.height / 2
-        
+        spinnerLayer.frame = bounds
+                        
         // Create circular path for layer.
-        spinnerLayer.path = NSBezierPath(
-            roundedRect: frame,
-            xRadius: radius,
-            yRadius: radius
-        ).cgPath
+        spinnerLayer.path = CGPath(ellipseIn: bounds, transform: nil)
     
         // Make layer's background and fill color transparent.
         spinnerLayer.backgroundColor = CGColor.clear

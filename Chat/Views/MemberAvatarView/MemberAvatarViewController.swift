@@ -11,6 +11,24 @@ import Cocoa
 // Controller for MemberAvatarView to manage all of its subviews and their interactions.
 class MemberAvatarViewController: NSViewController {
     
+    // Workspace member associated with this view.
+    private var member: Member!
+
+    // Container view of avatar.
+    private var containerView: RoundShadowView!
+    
+    // View with image content.
+    private var imageView: RoundView!
+    
+    // New recording indicator icon.
+    private var newRecordingIndicator: RoundShadowView?
+        
+    // Blur layer to fade-in when member is disabled.
+    private var blurLayer: CALayer?
+    
+    // Spinner view around avatar to show when sending a recording.
+    private var spinnerView: ChasingTailSpinnerView?
+
     // View styling information.
     enum Style {
         
@@ -107,21 +125,6 @@ class MemberAvatarViewController: NSViewController {
         }
     }
     
-    // Workspace member associated with this view.
-    private var member: Member!
-
-    // Container view of avatar.
-    private var containerView: RoundShadowView!
-    
-    // View with image content.
-    private var imageView: RoundView!
-    
-    // New recording indicator icon.
-    private var newRecordingIndicator: RoundShadowView?
-        
-    // Blur layer to fade-in when member is disabled.
-    private var blurLayer: CALayer?
-
     // Proper initializer to use when rendering member.
     convenience init(member: Member) {
         self.init(nibName: nil, bundle: nil)
@@ -346,6 +349,26 @@ class MemberAvatarViewController: NSViewController {
         return blur
     }
     
+    private func addSpinnerView() {
+        spinnerView = spinnerView ?? createSpinnerView()
+    }
+    
+    private func createSpinnerView() -> ChasingTailSpinnerView {
+        let spinner = ChasingTailSpinnerView(
+            frame: imageView.frame,
+            color: Color.fromRGBA(104, 116, 255, 0.8)
+        )
+        
+        // Add spinner as subview of container view.
+        containerView.addSubview(
+            spinner,
+            positioned: NSWindow.OrderingMode.above,
+            relativeTo: imageView
+        )
+        
+        return spinner
+    }
+    
     // Determine whether a state change should cause a size change animation.
     private func stateShouldCauseAvatarSizeChange(_ state: MemberState) -> Bool {
         switch state {
@@ -451,6 +474,19 @@ class MemberAvatarViewController: NSViewController {
         animateNewRecordingIndicatorVisibility(toState: state)
     }
     
+    private func renderSpinnerView(state: MemberState) {
+        // Only render spinner view when sending a recording.
+        if state !== .recording(.sending) {
+            return
+        }
+                
+        // Create and add spinner view as subview of container view.
+        addSpinnerView()
+        
+        // Start the spinner.
+        spinnerView!.spin()
+    }
+    
     // Render view and subviews with updated state and props.
     func render(state: MemberState, isDisabled: Bool? = nil) {
         
@@ -461,5 +497,7 @@ class MemberAvatarViewController: NSViewController {
         renderImageView(isDisabled: isDisabled)
         
         renderNewRecordingIndicator(state: state)
+        
+        renderSpinnerView(state: state)
     }
 }

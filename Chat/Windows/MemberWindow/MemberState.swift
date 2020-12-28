@@ -15,7 +15,7 @@ enum MemberState {
     case recording(RecordingStatus)
     
     // Case equality check + associated value equality checks
-    static func ===(lhs: MemberState, rhs:MemberState) -> Bool {
+    static func ===(lhs: MemberState, rhs: MemberState) -> Bool {
         switch (lhs, rhs) {
         case (.idle, .idle):
             return true
@@ -28,8 +28,13 @@ enum MemberState {
         }
     }
     
+    // Case inequality check + associated value inequality checks
+    static func !==(lhs: MemberState, rhs: MemberState) -> Bool {
+        return (lhs === rhs) == false
+    }
+    
     // Case equality check
-    static func ==(lhs: MemberState, rhs:MemberState) -> Bool {
+    static func ==(lhs: MemberState, rhs: MemberState) -> Bool {
         switch (lhs, rhs) {
         case (.idle, .idle):
             return true
@@ -43,7 +48,7 @@ enum MemberState {
     }
     
     // Case inequality check.
-    static func !=(lhs: MemberState, rhs:MemberState) -> Bool {
+    static func !=(lhs: MemberState, rhs: MemberState) -> Bool {
         return (lhs == rhs) == false
     }
 }

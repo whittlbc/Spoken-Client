@@ -43,16 +43,9 @@ class RoundShadowView: RoundView {
         layer?.shadowRadius = shadowConfig.radius
         layer?.shadowColor = shadowConfig.color
         layer?.shadowOpacity = shadowConfig.opacity
-        
-        // Make shadow round.
-        let roundRadius = bounds.height / 2
-        
+                
         // Create round shadow path from bezier path converted to CGPath.
-        layer?.shadowPath = NSBezierPath(
-            roundedRect: bounds,
-            xRadius: roundRadius,
-            yRadius: roundRadius
-        ).cgPath
+        layer?.shadowPath = CGPath(ellipseIn: bounds, transform: nil)
     }
 
     // Update shadow config property with optional animation to new values.
