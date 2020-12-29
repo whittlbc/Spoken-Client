@@ -354,8 +354,9 @@ class MemberAvatarViewController: NSViewController {
     }
     
     private func createSpinnerView() -> ChasingTailSpinnerView {
+        print(imageView.frame)
         let spinner = ChasingTailSpinnerView(
-            frame: imageView.frame,
+            frame: NSRect(x: -2, y: -2, width: 39, height: 39),
             color: Color.fromRGBA(104, 116, 255, 0.8)
         )
         

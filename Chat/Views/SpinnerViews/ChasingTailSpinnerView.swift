@@ -34,7 +34,7 @@ class ChasingTailSpinnerView: NSView {
     convenience init(
         frame frameRect: NSRect,
         color: NSColor? = NSColor.black,
-        lineWidth: CGFloat? = 2.0,
+        lineWidth: CGFloat? = 1.6,
         strokeBeginTime: Double? = 0.5,
         strokeStartDuration: Double? = 1.2,
         strokeEndDuration: Double? = 0.7,
@@ -64,10 +64,6 @@ class ChasingTailSpinnerView: NSView {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-    
-    override func layout() {
-        frame = bounds
     }
 
     private func setupLayer() {
