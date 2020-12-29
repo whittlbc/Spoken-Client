@@ -112,7 +112,7 @@ class MemberAvatarViewController: NSViewController {
         enum SpinnerView {
             
             // Spinner color.
-            static let color = Color.fromRGBA(104, 116, 255, 0.75)
+            static let color = Color.fromRGBA(104, 116, 255, 0.8)
             
             // Empty gap between avatar and spinner stroke.
             static let gap: CGFloat = 2.0
@@ -388,6 +388,21 @@ class MemberAvatarViewController: NSViewController {
         return spinner
     }
     
+    private func addSpinnerView() {
+        // Upsert spinner view.
+        spinnerView = spinnerView ?? createSpinnerView()
+        
+        // Start the spinner.
+        spinnerView!.spin()
+    }
+    
+    private func removeSpinnerView() {
+        if let spinner = spinnerView {
+            spinner.removeFromSuperview()
+            spinnerView = nil
+        }
+    }
+    
     // Determine whether a state change should cause a size change animation.
     private func stateShouldCauseAvatarSizeChange(_ state: MemberState) -> Bool {
         switch state {
@@ -494,16 +509,16 @@ class MemberAvatarViewController: NSViewController {
     }
     
     private func renderSpinnerView(state: MemberState) {
-        // Only render spinner view when sending a recording.
-        if state !== .recording(.sending) {
+        // If sending recording, add spinner view.
+        if state === .recording(.sending) {
+            addSpinnerView()
             return
         }
-                
-        // Upsert spinner view.
-        spinnerView = spinnerView ?? createSpinnerView()
         
-        // Start the spinner.
-        spinnerView!.spin()
+        // If recording was sent, remove the spinner view.
+        if state === .recording(.sent) {
+            removeSpinnerView()
+        }
     }
     
     // Render view and subviews with updated state and props.

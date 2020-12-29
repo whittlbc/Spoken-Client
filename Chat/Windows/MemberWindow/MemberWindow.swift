@@ -37,6 +37,17 @@ class MemberWindow: FloatingWindow {
     // State will be forced out of the previewing state if the mouse is not.
     private var previewingTimer: Timer?
     
+    // Window styling info.
+    enum Style {
+        
+        // Artificial timing used for better UX.
+        enum ArtificialTiming {
+        
+            // How long to show window in the recording-sent state before reverting back to idle.
+            static let showRecordingSentDuration = 1.0
+        }
+    }
+    
     // Get the default window size for the provided member state.
     static func defaultSizeForState(_ state: MemberState) -> NSSize {
         switch state {
@@ -180,8 +191,12 @@ class MemberWindow: FloatingWindow {
         showSendingRecording()
         
         // TODO: Actually send the recording...
+        // HACK to simulate network time.
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) { [weak self] in
+            self?.showSentRecording()
+        }
     }
-    
+
     // Tell parent workspace window to toggle on/off the key-event listeners tied to recording.
     func toggleRecordingKeyEventListeners(enable: Bool) {
         guard let workspaceWindow = getWorkspaceWindow() else {
@@ -419,6 +434,20 @@ class MemberWindow: FloatingWindow {
         
         // Propagage a render down-chain.
         render(propagate: true)
+    }
+    
+    func showSentRecording() {
+        // Update state to sent recording.
+        setState(.recording(.sent))
+        
+        // Propagage a render down-chain.
+        render(propagate: true)
+
+        // Show recording sent for specific amount of time and then revert to idle state.
+        DispatchQueue.main.asyncAfter(deadline: .now() + Style.ArtificialTiming.showRecordingSentDuration) { [weak self] in
+            // Follow the cancelling recording flow to get back to idle state.
+            self?.showCancellingRecording()
+        }
     }
     
     // Render member view -- this windows primary content view.
