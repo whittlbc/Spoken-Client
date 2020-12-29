@@ -51,14 +51,14 @@ class MemberAvatarViewController: NSViewController {
                 // Default, non-raised, shadow style.
                 static let grounded = Shadow(
                     offset: CGSize(width: 0, height: -1),
-                    radius: 3.0,
-                    opacity: 0.6
+                    radius: 2.5,
+                    opacity: 0.5
                 )
                 
                 // Raised shadow style.
                 static let raised = Shadow(
-                    offset: CGSize(width: 1, height: -2),
-                    radius: 5.0,
+                    offset: CGSize(width: 1.0, height: -2),
+                    radius: 4.5,
                     opacity: 0.5
                 )
                 
@@ -106,6 +106,16 @@ class MemberAvatarViewController: NSViewController {
             
             // Input radius of gaussian blur.
             static let blurRadius = 1.6
+        }
+        
+        // Spinner view styling.
+        enum SpinnerView {
+            
+            // Spinner color.
+            static let color = Color.fromRGBA(104, 116, 255, 0.75)
+            
+            // Empty gap between avatar and spinner stroke.
+            static let gap: CGFloat = 2.0
         }
     }
     
@@ -348,16 +358,24 @@ class MemberAvatarViewController: NSViewController {
 
         return blur
     }
-    
-    private func addSpinnerView() {
-        spinnerView = spinnerView ?? createSpinnerView()
-    }
-    
+        
+    // Create spinner view to spin around avatar during sending of recording.
     private func createSpinnerView() -> ChasingTailSpinnerView {
-        print(imageView.frame)
+        // Get size of image view frame.
+        let imageSize = imageView.frame.size
+        
+        // Create spinner frame using image size and the desired style gap of the spinner.
+        let spinnerFrame = NSRect(
+            x: -Style.SpinnerView.gap,
+            y: -Style.SpinnerView.gap,
+            width: imageSize.width + (2 * Style.SpinnerView.gap),
+            height: imageSize.height + (2 * Style.SpinnerView.gap)
+        )
+        
+        // Create new chasing tail spinner.
         let spinner = ChasingTailSpinnerView(
-            frame: NSRect(x: -2, y: -2, width: 39, height: 39),
-            color: Color.fromRGBA(104, 116, 255, 0.8)
+            frame: spinnerFrame,
+            color: Style.SpinnerView.color
         )
         
         // Add spinner as subview of container view.
@@ -481,8 +499,8 @@ class MemberAvatarViewController: NSViewController {
             return
         }
                 
-        // Create and add spinner view as subview of container view.
-        addSpinnerView()
+        // Upsert spinner view.
+        spinnerView = spinnerView ?? createSpinnerView()
         
         // Start the spinner.
         spinnerView!.spin()
