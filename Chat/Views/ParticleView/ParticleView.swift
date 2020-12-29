@@ -121,6 +121,16 @@ class ParticleView: MTKView {
         layer?.isOpaque = false
         layer?.masksToBounds = true
         layer?.cornerRadius = frame.size.height / 2
+        
+        // Add radial transparent gradient outwards from center, as a mask.
+        let gradient = CAGradientLayer()
+        gradient.frame = bounds
+        gradient.type = .radial
+        gradient.colors = [NSColor.black.cgColor, CGColor(red: 0, green: 0, blue: 0, alpha: 0.2)]
+        gradient.locations = [0.5, 1]
+        gradient.startPoint = NSPoint(x: 0.5, y: 0.5)
+        gradient.endPoint = NSPoint(x: 1, y: 1)
+        layer?.mask = gradient
     }
 
     private func setUpParticles() {
@@ -231,7 +241,7 @@ class ParticleView: MTKView {
         if initialGravityStep % 30 == 0 {
             setGravityWellProperties(
                 gravityWellIndex: 0,
-                normalisedPositionX: 0.5,
+                normalisedPositionX: initialGravityStep % 15 == 0 ? 0.4 : 0.6,
                 normalisedPositionY: initialGravityStep % 15 == 0 ? 0.4 : 0.6,
                 mass: 40,
                 spin: 25
