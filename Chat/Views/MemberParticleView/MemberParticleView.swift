@@ -61,8 +61,8 @@ class MemberParticleView: ParticleView {
                 gravityWellIndex: 0,
                 normalisedPositionX: 0.5,
                 normalisedPositionY: 0.5,
-                mass: 70,
-                spin: 70
+                mass: 80,
+                spin: 65
             )
 
             i = 1

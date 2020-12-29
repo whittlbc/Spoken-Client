@@ -34,11 +34,11 @@ class ChasingTailSpinnerView: NSView {
     convenience init(
         frame frameRect: NSRect,
         color: NSColor? = NSColor.black,
-        lineWidth: CGFloat? = 1.6,
-        strokeBeginTime: Double? = 0.5,
-        strokeStartDuration: Double? = 1.2,
-        strokeEndDuration: Double? = 0.7,
-        strokeTimingFunction: CAMediaTimingFunction? = CAMediaTimingFunction(controlPoints: 0.4, 0.0, 0.2, 1.0)) {
+        lineWidth: CGFloat? = 1.7,
+        strokeBeginTime: Double? = 0.45,
+        strokeStartDuration: Double? = 1.1,
+        strokeEndDuration: Double? = 0.65,
+        strokeTimingFunction: CAMediaTimingFunction? = CAMediaTimingFunction(controlPoints: 0.4, 0.0, 0.5, 1.0)) {
         
         self.init(frame: frameRect)
         
