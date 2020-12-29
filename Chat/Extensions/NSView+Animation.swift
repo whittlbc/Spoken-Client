@@ -28,6 +28,9 @@ extension NSView {
         
         // Transform keys.
         static let scale = "transform.scale"
+        
+        // Color keys.
+        static let backgroundColor = "backgroundColor"
     }
 
     func animateAsGroup(
@@ -105,7 +108,8 @@ extension NSView {
             }
 
         // CGColor values.
-        case AnimationKey.shadowColor:
+        case AnimationKey.shadowColor,
+             AnimationKey.backgroundColor:
             animation.toValue = value as! CGColor
             
         // Return no animation if key isn't supported.
@@ -128,7 +132,8 @@ extension NSView {
              AnimationKey.shadowOpacity,
              AnimationKey.opacity,
              AnimationKey.blurRadius,
-             AnimationKey.scale:
+             AnimationKey.scale,
+             AnimationKey.backgroundColor:
             toLayer.add(animation, forKey: key)
 
         default:

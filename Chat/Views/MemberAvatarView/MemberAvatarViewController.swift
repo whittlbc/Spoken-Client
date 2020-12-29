@@ -104,15 +104,21 @@ class MemberAvatarViewController: NSViewController {
         // Image blur layer styling.
         enum BlurLayer {
             
-            // Input radius of gaussian blur.
-            static let blurRadius = 1.6
+            // Gaussian blur input radius used when applying disabled effect.
+            static let disabledBlurRadius: Double = 1.6
+            
+            // Gaussian blur input radius used when bluring layer behind spinner.
+            static let spinBlurRadius: Double = 1.6
+            
+            // Opacity of black background color of blur layer.
+            static let spinAlpha: CGFloat = 0.3
         }
         
         // Spinner view styling.
         enum SpinnerView {
             
             // Spinner color.
-            static let color = Color.fromRGBA(104, 116, 255, 0.8)
+            static let color = Color.fromRGBA(104, 116, 255, 1)
             
             // Empty gap between avatar and spinner stroke.
             static let gap: CGFloat = 2.0
@@ -130,7 +136,17 @@ class MemberAvatarViewController: NSViewController {
         
         // Image blur layer animation config.
         enum BlurLayer {
-            static let duration = WorkspaceWindow.AnimationConfig.MemberWindows.duration
+            
+            // Duration used when applying disabled effect.
+            static let disabledDuration = WorkspaceWindow.AnimationConfig.MemberWindows.duration
+            
+            // Duration used when adding blur layer behind spinner.
+            static let spinEnterDuration: CFTimeInterval = 0.2
+            
+            // Duration used when removing blur layer behind spinner.
+            static let spinExitDuration: CFTimeInterval = 0.05
+            
+            // Timing function used when fading in/out blur layer.
             static let timingFunctionName = WorkspaceWindow.AnimationConfig.MemberWindows.timingFunctionName
         }
     }
@@ -342,7 +358,7 @@ class MemberAvatarViewController: NSViewController {
         blur.contentsGravity = .resizeAspectFill
 
         // Make it transparent and mask it.
-        blur.backgroundColor = NSColor.clear.cgColor
+        blur.backgroundColor = CGColor.clear
         blur.masksToBounds = true
         
         // Add a zero-value gaussian blur.
@@ -429,8 +445,8 @@ class MemberAvatarViewController: NSViewController {
     }
     
     // Toggle blur layer based on disabled status of member.
-    private func animateImageViewBlur(showBlur: Bool) {
-        showBlur ? fadeInBlurLayer() : fadeOutBlurLayer()
+    private func animateImageViewBlur(showBlur: Bool, blurRadius: Double, duration: CFTimeInterval) {
+        showBlur ? fadeInBlurLayer(blurRadius: blurRadius, duration: duration) : fadeOutBlurLayer(duration: duration)
     }
     
     // Toggle new recording indicator visibility based on state.
@@ -458,18 +474,22 @@ class MemberAvatarViewController: NSViewController {
         // Hide the indicator.
         indicator.animator().alphaValue = 0
     }
+    
     // Upsert and fade-in the gaussian blur layer.
-    private func fadeInBlurLayer() {
+    private func fadeInBlurLayer(blurRadius: Double, duration: CFTimeInterval, alpha: CGFloat? = 0) {
         view.animateAsGroup(
-            values: [NSView.AnimationKey.blurRadius: Style.BlurLayer.blurRadius],
-            duration: AnimationConfig.BlurLayer.duration,
+            values: [
+                NSView.AnimationKey.blurRadius: blurRadius,
+                NSView.AnimationKey.backgroundColor: Color.fromRGBA(0, 0, 0, alpha!).cgColor
+            ],
+            duration: duration,
             timingFunctionName: AnimationConfig.BlurLayer.timingFunctionName,
             onLayer: blurLayer ?? createBlurLayer()
         )
     }
 
     // Fade-out the gaussian blur layer and remove it.
-    private func fadeOutBlurLayer() {
+    private func fadeOutBlurLayer(duration: CFTimeInterval) {
         // Ensure blur layer exists.
         guard let blur = blurLayer else {
             return
@@ -477,13 +497,17 @@ class MemberAvatarViewController: NSViewController {
         
         // Fade out blur layer.
         view.animateAsGroup(
-            values: [NSView.AnimationKey.blurRadius: 0],
-            duration: AnimationConfig.BlurLayer.duration,
+            values: [
+                NSView.AnimationKey.blurRadius: 0,
+                NSView.AnimationKey.backgroundColor: CGColor.clear
+            ],
+            duration: duration,
             timingFunctionName: AnimationConfig.BlurLayer.timingFunctionName,
             onLayer: blur,
-            completionHandler: {
+            completionHandler: { [weak self] in
                 // Remove blur layer from image view layer after it's faded out.
-                blur.removeFromSuperlayer()
+                self?.blurLayer?.removeFromSuperlayer()
+                self?.blurLayer = nil
             }
         )
     }
@@ -498,9 +522,33 @@ class MemberAvatarViewController: NSViewController {
         animateContainerViewShadow(toState: state)
     }
     
-    private func renderImageView(isDisabled: Bool? = nil) {
+    private func renderBlurLayer(state: MemberState, isDisabled: Bool? = nil) {
+        if state === .recording(.sending) {
+            // Fade in blur layer to avatar image.
+            fadeInBlurLayer(
+                blurRadius: Style.BlurLayer.spinBlurRadius,
+                duration: AnimationConfig.BlurLayer.spinEnterDuration,
+                alpha: Style.BlurLayer.spinAlpha
+            )
+            
+            return
+        }
+        
+        if state === .recording(.sent) {
+            return
+        }
+        
+        if state === .recording(.cancelling) {
+            fadeOutBlurLayer(duration: AnimationConfig.BlurLayer.spinExitDuration)
+            return
+        }
+        
         if let disabled = isDisabled {
-            animateImageViewBlur(showBlur: disabled)
+            animateImageViewBlur(
+                showBlur: disabled,
+                blurRadius: Style.BlurLayer.disabledBlurRadius,
+                duration: AnimationConfig.BlurLayer.disabledDuration
+            )
         }
     }
     
@@ -511,12 +559,14 @@ class MemberAvatarViewController: NSViewController {
     private func renderSpinnerView(state: MemberState) {
         // If sending recording, add spinner view.
         if state === .recording(.sending) {
+            // Fade in spinner view.
             addSpinnerView()
             return
         }
         
         // If recording was sent, remove the spinner view.
         if state === .recording(.sent) {
+            // Fade out spinner view.
             removeSpinnerView()
         }
     }
@@ -528,7 +578,7 @@ class MemberAvatarViewController: NSViewController {
         
         renderContainerView(state: state)
     
-        renderImageView(isDisabled: isDisabled)
+        renderBlurLayer(state: state, isDisabled: isDisabled)
         
         renderNewRecordingIndicator(state: state)
         

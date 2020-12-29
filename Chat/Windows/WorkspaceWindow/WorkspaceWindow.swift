@@ -46,7 +46,7 @@ class WorkspaceWindow: FloatingWindow {
         // Configuration for member window animations.
         enum MemberWindows {
             // Time it takes for a member window to update size and position during a state change.
-            static let duration = 0.13
+            static let duration: CFTimeInterval = 0.13
             
             // Name of timing function to use for all member window animations.
             static let timingFunctionName = CAMediaTimingFunctionName.easeOut
