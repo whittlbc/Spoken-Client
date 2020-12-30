@@ -111,7 +111,7 @@ class MemberAvatarViewController: NSViewController {
             static let spinBlurRadius: Double = 1.6
             
             // Opacity of black background color of blur layer.
-            static let spinAlpha: CGFloat = 0.3
+            static let spinAlpha: CGFloat = 0.2
         }
         
         // Spinner view styling.
@@ -121,7 +121,7 @@ class MemberAvatarViewController: NSViewController {
             static let color = NSColor.white
             
             // Empty gap between avatar and spinner stroke.
-            static let gap: CGFloat = 8.5
+            static let gap: CGFloat = 7.5
         }
     }
     
@@ -144,7 +144,7 @@ class MemberAvatarViewController: NSViewController {
             static let spinEnterDuration: CFTimeInterval = 0.2
             
             // Duration used when removing blur layer behind spinner.
-            static let spinExitDuration: CFTimeInterval = 0.05
+            static let spinExitDuration: CFTimeInterval = 0.2
             
             // Timing function used when fading in/out blur layer.
             static let timingFunctionName = WorkspaceWindow.AnimationConfig.MemberWindows.timingFunctionName
