@@ -178,6 +178,9 @@ class MemberViewController: NSViewController, ParticleViewDelegate {
         
         // Remove particle view as a subview.
         removeParticleView()
+        
+        // Reset particle view.
+        particleView.reset()
     }
     
     private func renderSendingRecording() {

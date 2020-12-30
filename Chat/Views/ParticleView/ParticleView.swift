@@ -233,6 +233,8 @@ class ParticleView: MTKView {
         
         initialGravityTimer!.invalidate()
         initialGravityTimer = nil
+        
+        initialGravityStep = 0
     }
 
     @objc private func applyInitialGravityStep() {

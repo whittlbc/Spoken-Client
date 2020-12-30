@@ -49,6 +49,17 @@ class MemberParticleView: ParticleView {
         fatalError("init(coder:) has not been implemented")
     }
     
+    func reset() {
+        exploding = false
+        resetGravityWells()
+        resetParticles()
+        frameCount = 0
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { [weak self] in
+            self?.applyInitialGravity()
+        }
+    }
+    
     func explode() {
         exploding = true
     }

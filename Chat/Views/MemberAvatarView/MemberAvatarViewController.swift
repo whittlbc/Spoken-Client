@@ -22,7 +22,7 @@ class MemberAvatarViewController: NSViewController {
     
     // New recording indicator icon.
     private var newRecordingIndicator: RoundShadowView?
-        
+
     // Blur layer to fade-in when member is disabled.
     private var blurLayer: CALayer?
     
@@ -121,7 +121,7 @@ class MemberAvatarViewController: NSViewController {
             static let color = NSColor.white
             
             // Empty gap between avatar and spinner stroke.
-            static let gap: CGFloat = 8.0
+            static let gap: CGFloat = 8.5
         }
     }
     
