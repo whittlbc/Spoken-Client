@@ -55,7 +55,7 @@ class MemberParticleView: ParticleView {
         resetParticles()
         frameCount = 0
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { [weak self] in
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
             self?.applyInitialGravity()
         }
     }

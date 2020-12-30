@@ -233,7 +233,6 @@ class ParticleView: MTKView {
         
         initialGravityTimer!.invalidate()
         initialGravityTimer = nil
-        
         initialGravityStep = 0
     }
 
@@ -243,8 +242,8 @@ class ParticleView: MTKView {
         if initialGravityStep % 30 == 0 {
             setGravityWellProperties(
                 gravityWellIndex: 0,
-                normalisedPositionX: initialGravityStep % 15 == 0 ? 0.4 : 0.6,
-                normalisedPositionY: initialGravityStep % 15 == 0 ? 0.4 : 0.6,
+                normalisedPositionX: 0.5,
+                normalisedPositionY: 0.5,
                 mass: 40,
                 spin: 25
             )
