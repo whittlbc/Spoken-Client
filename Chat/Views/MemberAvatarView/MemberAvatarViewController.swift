@@ -118,10 +118,10 @@ class MemberAvatarViewController: NSViewController {
         enum SpinnerView {
             
             // Spinner color.
-            static let color = Color.fromRGBA(104, 116, 255, 1)
+            static let color = NSColor.white
             
             // Empty gap between avatar and spinner stroke.
-            static let gap: CGFloat = 2.0
+            static let gap: CGFloat = 8.0
         }
     }
     
@@ -382,10 +382,10 @@ class MemberAvatarViewController: NSViewController {
         
         // Create spinner frame using image size and the desired style gap of the spinner.
         let spinnerFrame = NSRect(
-            x: -Style.SpinnerView.gap,
-            y: -Style.SpinnerView.gap,
-            width: imageSize.width + (2 * Style.SpinnerView.gap),
-            height: imageSize.height + (2 * Style.SpinnerView.gap)
+            x: Style.SpinnerView.gap,
+            y: Style.SpinnerView.gap,
+            width: imageSize.width - (2 * Style.SpinnerView.gap),
+            height: imageSize.height - (2 * Style.SpinnerView.gap)
         )
         
         // Create new chasing tail spinner.

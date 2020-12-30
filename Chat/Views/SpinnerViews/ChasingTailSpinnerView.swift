@@ -34,7 +34,7 @@ class ChasingTailSpinnerView: NSView {
     convenience init(
         frame frameRect: NSRect,
         color: NSColor? = NSColor.black,
-        lineWidth: CGFloat? = 1.7,
+        lineWidth: CGFloat? = 1.5,
         strokeBeginTime: Double? = 0.45,
         strokeStartDuration: Double? = 1.1,
         strokeEndDuration: Double? = 0.65,
