@@ -28,6 +28,9 @@ class MemberAvatarViewController: NSViewController {
     
     // Spinner view around avatar to show when sending a recording.
     private var spinnerView: ChasingTailSpinnerView?
+    
+    // Self-drawn checkmark view to show when a recording is sent.
+    private var checkmarkView: SelfDrawnCheckmarkView?
 
     // View styling information.
     enum Style {
@@ -121,7 +124,17 @@ class MemberAvatarViewController: NSViewController {
             static let color = NSColor.white
             
             // Empty gap between avatar and spinner stroke.
-            static let gap: CGFloat = 7.5
+            static let diameter: CGFloat = 20.0
+        }
+        
+        // Checkmark view styling.
+        enum CheckmarkView {
+            
+            // Checkmark color.
+            static let color = NSColor.white
+            
+            // Length of side of checkmark view.
+            static let length: CGFloat = 15.0
         }
     }
     
@@ -140,14 +153,19 @@ class MemberAvatarViewController: NSViewController {
             // Duration used when applying disabled effect.
             static let disabledDuration = WorkspaceWindow.AnimationConfig.MemberWindows.duration
             
-            // Duration used when adding blur layer behind spinner.
-            static let spinEnterDuration: CFTimeInterval = 0.2
-            
-            // Duration used when removing blur layer behind spinner.
-            static let spinExitDuration: CFTimeInterval = 0.2
-            
             // Timing function used when fading in/out blur layer.
             static let timingFunctionName = WorkspaceWindow.AnimationConfig.MemberWindows.timingFunctionName
+        }
+        
+        // Spinner view animation config.
+        enum SpinnerView {
+            static let enterDuration: CFTimeInterval = 0.2
+        }
+        
+        // Checkmark view animation config.
+        enum CheckmarkView {
+            static let enterDuration: CFTimeInterval = 0.2
+            static let exitDuration: CFTimeInterval = 0.2
         }
     }
     
@@ -380,12 +398,12 @@ class MemberAvatarViewController: NSViewController {
         // Get size of image view frame.
         let imageSize = imageView.frame.size
         
-        // Create spinner frame using image size and the desired style gap of the spinner.
+        // Create spinner frame in center of image view frame.
         let spinnerFrame = NSRect(
-            x: Style.SpinnerView.gap,
-            y: Style.SpinnerView.gap,
-            width: imageSize.width - (2 * Style.SpinnerView.gap),
-            height: imageSize.height - (2 * Style.SpinnerView.gap)
+            x: (imageSize.width - Style.SpinnerView.diameter) / 2,
+            y: (imageSize.height - Style.SpinnerView.diameter) / 2,
+            width: Style.SpinnerView.diameter,
+            height: Style.SpinnerView.diameter
         )
         
         // Create new chasing tail spinner.
@@ -404,19 +422,33 @@ class MemberAvatarViewController: NSViewController {
         return spinner
     }
     
-    private func addSpinnerView() {
-        // Upsert spinner view.
-        spinnerView = spinnerView ?? createSpinnerView()
+    // Create self-drawing checkmark view to show when recording is successfully sent.
+    private func createCheckmarkView() -> SelfDrawnCheckmarkView {
+        // Get size of image view frame.
+        let imageSize = imageView.frame.size
         
-        // Start the spinner.
-        spinnerView!.spin()
-    }
-    
-    private func removeSpinnerView() {
-        if let spinner = spinnerView {
-            spinner.removeFromSuperview()
-            spinnerView = nil
-        }
+        // Create checkmark frame.
+        let checkmarkFrame = NSRect(
+            x: (imageSize.width - Style.CheckmarkView.length) / 2,
+            y: (imageSize.height - Style.CheckmarkView.length) / 2,
+            width: Style.CheckmarkView.length,
+            height: Style.CheckmarkView.length
+        )
+        
+        // Create new self-drawn checkmark view.
+        let checkmark = SelfDrawnCheckmarkView(
+            frame: checkmarkFrame,
+            color: Style.CheckmarkView.color
+        )
+        
+        // Add checkmark as subview of container view.
+        containerView.addSubview(
+            checkmark,
+            positioned: NSWindow.OrderingMode.above,
+            relativeTo: imageView
+        )
+        
+        return checkmark
     }
     
     // Determine whether a state change should cause a size change animation.
@@ -512,6 +544,66 @@ class MemberAvatarViewController: NSViewController {
         )
     }
     
+    private func fadeInSpinnerView() {
+        // Upsert spinner view.
+        spinnerView = spinnerView ?? createSpinnerView()
+        
+        // Hide spinner layer with opacity.
+        spinnerView!.layer?.opacity = 0.0
+        
+        // Start spinner.
+        spinnerView!.spin()
+
+        // Fade in opacity.
+        spinnerView!.animateAsGroup(
+            values: [NSView.AnimationKey.opacity: 1.0],
+            duration: AnimationConfig.SpinnerView.enterDuration,
+            timingFunctionName: AnimationConfig.BlurLayer.timingFunctionName
+        )
+    }
+
+    // Fade out spinner view and remove it when animation finishes.
+    private func fadeOutSpinnerView() {
+        if spinnerView == nil {
+            return
+        }
+        
+        spinnerView!.animateAsGroup(
+            values: [NSView.AnimationKey.opacity: 0.0],
+            duration: AnimationConfig.CheckmarkView.enterDuration,
+            timingFunctionName: AnimationConfig.BlurLayer.timingFunctionName,
+            completionHandler: { [weak self] in
+                self?.spinnerView?.removeFromSuperview()
+                self?.spinnerView = nil
+            }
+        )
+    }
+    
+    private func addCheckmarkView() {
+        // Upsert checkmark view.
+        checkmarkView = checkmarkView ?? createCheckmarkView()
+        
+        // Draw the checkmark.
+        checkmarkView!.drawStroke()
+    }
+
+    // Fade out spinner view and remove it when animation finishes.
+    private func fadeOutCheckmarkView() {
+        if checkmarkView == nil {
+            return
+        }
+        
+        checkmarkView!.animateAsGroup(
+            values: [NSView.AnimationKey.opacity: 0.0],
+            duration: AnimationConfig.CheckmarkView.exitDuration,
+            timingFunctionName: AnimationConfig.BlurLayer.timingFunctionName,
+            completionHandler: { [weak self] in
+                self?.checkmarkView?.removeFromSuperview()
+                self?.checkmarkView = nil
+            }
+        )
+    }
+    
     private func renderAvatarView(state: MemberState) {
         if stateShouldCauseAvatarSizeChange(state) {
             animateAvatarViewSize(toState: state)
@@ -527,7 +619,7 @@ class MemberAvatarViewController: NSViewController {
             // Fade in blur layer to avatar image.
             fadeInBlurLayer(
                 blurRadius: Style.BlurLayer.spinBlurRadius,
-                duration: AnimationConfig.BlurLayer.spinEnterDuration,
+                duration: AnimationConfig.SpinnerView.enterDuration,
                 alpha: Style.BlurLayer.spinAlpha
             )
             
@@ -539,7 +631,10 @@ class MemberAvatarViewController: NSViewController {
         }
         
         if state === .recording(.cancelling) {
-            fadeOutBlurLayer(duration: AnimationConfig.BlurLayer.spinExitDuration)
+            fadeOutBlurLayer(
+                duration: AnimationConfig.CheckmarkView.exitDuration
+            )
+            
             return
         }
         
@@ -557,20 +652,31 @@ class MemberAvatarViewController: NSViewController {
     }
     
     private func renderSpinnerView(state: MemberState) {
-        // If sending recording, add spinner view.
+        // If sending recording, fade in the spinner view.
         if state === .recording(.sending) {
-            // Fade in spinner view.
-            addSpinnerView()
+            fadeInSpinnerView()
             return
         }
         
-        // If recording was sent, remove the spinner view.
+        // If recording was sent, fade out the spinner view.
         if state === .recording(.sent) {
-            // Fade out spinner view.
-            removeSpinnerView()
+            fadeOutSpinnerView()
         }
     }
     
+    private func renderCheckmarkView(state: MemberState) {
+        // If recording was sent, add the checkmark view.
+        if state === .recording(.sent) {
+            addCheckmarkView()
+            return
+        }
+        
+        // If recording is complete, fade out the checkmark view.
+        if state === .recording(.cancelling) {
+            fadeOutCheckmarkView()
+        }
+    }
+
     // Render view and subviews with updated state and props.
     func render(state: MemberState, isDisabled: Bool? = nil) {
         
@@ -583,5 +689,7 @@ class MemberAvatarViewController: NSViewController {
         renderNewRecordingIndicator(state: state)
         
         renderSpinnerView(state: state)
+        
+        renderCheckmarkView(state: state)
     }
 }

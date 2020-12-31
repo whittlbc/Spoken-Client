@@ -14,6 +14,7 @@
 		0949C897259686E800B61D1F /* NSView+Subviews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0949C896259686E800B61D1F /* NSView+Subviews.swift */; };
 		0949C8B2259908E900B61D1F /* ParticleViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0949C8B1259908E900B61D1F /* ParticleViewDelegate.swift */; };
 		095C6765259A6A8800729845 /* ChasingTailSpinnerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 095C6764259A6A8800729845 /* ChasingTailSpinnerView.swift */; };
+		095C676C259E706000729845 /* SelfDrawnCheckmarkView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 095C676B259E706000729845 /* SelfDrawnCheckmarkView.swift */; };
 		096862CA258202BB00B9B614 /* Networking in Frameworks */ = {isa = PBXBuildFile; productRef = 096862C9258202BB00B9B614 /* Networking */; };
 		096862CD25829C5A00B9B614 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 096862CC25829C5A00B9B614 /* User.swift */; };
 		096862D525829FE300B9B614 /* Arrow in Frameworks */ = {isa = PBXBuildFile; productRef = 096862D425829FE300B9B614 /* Arrow */; };
@@ -77,6 +78,7 @@
 		0949C896259686E800B61D1F /* NSView+Subviews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSView+Subviews.swift"; sourceTree = "<group>"; };
 		0949C8B1259908E900B61D1F /* ParticleViewDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParticleViewDelegate.swift; sourceTree = "<group>"; };
 		095C6764259A6A8800729845 /* ChasingTailSpinnerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChasingTailSpinnerView.swift; sourceTree = "<group>"; };
+		095C676B259E706000729845 /* SelfDrawnCheckmarkView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelfDrawnCheckmarkView.swift; sourceTree = "<group>"; };
 		096862CC25829C5A00B9B614 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		096862D72582A03F00B9B614 /* Arrow+Networking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Arrow+Networking.swift"; sourceTree = "<group>"; };
 		096862DD2582A2EB00B9B614 /* User+Arrow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "User+Arrow.swift"; sourceTree = "<group>"; };
@@ -172,6 +174,14 @@
 				095C6764259A6A8800729845 /* ChasingTailSpinnerView.swift */,
 			);
 			path = SpinnerViews;
+			sourceTree = "<group>";
+		};
+		095C676A259E704100729845 /* SelfDrawnCheckmarkView */ = {
+			isa = PBXGroup;
+			children = (
+				095C676B259E706000729845 /* SelfDrawnCheckmarkView.swift */,
+			);
+			path = SelfDrawnCheckmarkView;
 			sourceTree = "<group>";
 		};
 		0968630D2583176B00B9B614 /* WorkspaceWindow */ = {
@@ -307,6 +317,7 @@
 				0949C8A52598EB7000B61D1F /* MemberParticleView */,
 				0949C8AD2598ED7700B61D1F /* ParticleView */,
 				095C6763259A69A500729845 /* SpinnerViews */,
+				095C676A259E704100729845 /* SelfDrawnCheckmarkView */,
 				096863342586C2B000B9B614 /* RoundView.swift */,
 				096863372586C42B00B9B614 /* RoundShadowView.swift */,
 				09F60AD92592CCF20020974A /* PulseView.swift */,
@@ -500,6 +511,7 @@
 				0995DE3D2581CF6A00DAA334 /* API.swift in Sources */,
 				096862F12582ACE100B9B614 /* Member+Arrow.swift in Sources */,
 				09F60ADA2592CCF20020974A /* PulseView.swift in Sources */,
+				095C676C259E706000729845 /* SelfDrawnCheckmarkView.swift in Sources */,
 				095C6765259A6A8800729845 /* ChasingTailSpinnerView.swift in Sources */,
 				096862E52582A67F00B9B614 /* Name+Arrow.swift in Sources */,
 				0999974F25953600008E65FB /* ParticleShader.metal in Sources */,

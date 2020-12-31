@@ -192,7 +192,7 @@ class MemberWindow: FloatingWindow {
         
         // TODO: Actually send the recording...
         // HACK to simulate network time.
-        DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) { [weak self] in
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { [weak self] in
             self?.showSentRecording()
         }
     }
