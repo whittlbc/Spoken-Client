@@ -1,5 +1,5 @@
 //
-//  MemberAvatarViewController.swift
+//  ChannelAvatarViewController.swift
 //  Chat
 //
 //  Created by Ben Whittle on 12/27/20.
@@ -8,11 +8,11 @@
 
 import Cocoa
 
-// Controller for MemberAvatarView to manage all of its subviews and their interactions.
-class MemberAvatarViewController: NSViewController {
+// Controller for ChannelAvatarView to manage all of its subviews and their interactions.
+class ChannelAvatarViewController: NSViewController {
     
-    // Workspace member associated with this view.
-    private var member: Member!
+    // Workspace channel associated with this view.
+    private var channel: Channel!
 
     // Container view of avatar.
     private var containerView: RoundShadowView!
@@ -23,7 +23,7 @@ class MemberAvatarViewController: NSViewController {
     // New recording indicator icon.
     private var newRecordingIndicator: RoundShadowView?
 
-    // Blur layer to fade-in when member is disabled.
+    // Blur layer to fade-in when channel is disabled.
     private var blurLayer: CALayer?
     
     // Spinner view around avatar to show when sending a recording.
@@ -41,10 +41,10 @@ class MemberAvatarViewController: NSViewController {
             // Positional styling for container view.
             enum PositionStyle {
                 
-                // Height of avatar relative to parent member view.
+                // Height of avatar relative to parent channel view.
                 static let relativeHeight: CGFloat = 0.7
                 
-                // Absolute shift left of avatar view relative to parent member view.
+                // Absolute shift left of avatar view relative to parent channel view.
                 static let leftOffset: CGFloat = -5.0
             }
             
@@ -65,8 +65,8 @@ class MemberAvatarViewController: NSViewController {
                     opacity: 0.5
                 )
                 
-                // Get shadow style config for member state.
-                static func getShadow(forState state: MemberState) -> Shadow {
+                // Get shadow style config for channel state.
+                static func getShadow(forState state: ChannelState) -> Shadow {
                     switch state {
                     case .idle:
                         return grounded
@@ -85,10 +85,10 @@ class MemberAvatarViewController: NSViewController {
             // Positional styling for new recording indicator.
             enum PositionStyle {
                 
-                // Height of indicator relative to parent member view.
+                // Height of indicator relative to parent channel view.
                 static let relativeHeight: CGFloat = 0.25
                                 
-                // Absolute shift of indicator relative to parent member view.
+                // Absolute shift of indicator relative to parent channel view.
                 static let edgeOffset: CGFloat = -8.0
             }
             
@@ -143,18 +143,18 @@ class MemberAvatarViewController: NSViewController {
         
         // Container view animation config.
         enum ContainerView {
-            static let duration = WorkspaceWindow.AnimationConfig.MemberWindows.duration
-            static let timingFunctionName = WorkspaceWindow.AnimationConfig.MemberWindows.timingFunctionName
+            static let duration = WorkspaceWindow.AnimationConfig.ChannelWindows.duration
+            static let timingFunctionName = WorkspaceWindow.AnimationConfig.ChannelWindows.timingFunctionName
         }
         
         // Image blur layer animation config.
         enum BlurLayer {
             
             // Duration used when applying disabled effect.
-            static let disabledDuration = WorkspaceWindow.AnimationConfig.MemberWindows.duration
+            static let disabledDuration = WorkspaceWindow.AnimationConfig.ChannelWindows.duration
             
             // Timing function used when fading in/out blur layer.
-            static let timingFunctionName = WorkspaceWindow.AnimationConfig.MemberWindows.timingFunctionName
+            static let timingFunctionName = WorkspaceWindow.AnimationConfig.ChannelWindows.timingFunctionName
         }
         
         // Spinner view animation config.
@@ -169,10 +169,10 @@ class MemberAvatarViewController: NSViewController {
         }
     }
     
-    // Proper initializer to use when rendering member.
-    convenience init(member: Member) {
+    // Proper initializer to use when rendering channel.
+    convenience init(channel: Channel) {
         self.init(nibName: nil, bundle: nil)
-        self.member = member
+        self.channel = channel
     }
     
     // Override delegated init.
@@ -184,9 +184,9 @@ class MemberAvatarViewController: NSViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
-    // Use MemberView as primary view for this controller.
+    // Use ChannelView as primary view for this controller.
     override func loadView() {
-        view = MemberAvatarView(avatar: member.user.avatar)
+        view = ChannelAvatarView()
     }
     
     override func viewDidLoad() {
@@ -199,8 +199,8 @@ class MemberAvatarViewController: NSViewController {
         addImageView()
     }
     
-    private func getAvatarView() -> MemberAvatarView {
-        view as! MemberAvatarView
+    private func getAvatarView() -> ChannelAvatarView {
+        view as! ChannelAvatarView
     }
     
     private func setupViewLayer() {
@@ -291,7 +291,7 @@ class MemberAvatarViewController: NSViewController {
         ])
         
         // Create image from avatar URL.
-        let image = NSImage(byReferencing: URL(string: getAvatarView().avatar)!)
+        let image = NSImage(byReferencing: URL(string: channel.recipient.user.avatar)!)
                 
         // Set image to contents of view.
         imageView.layer?.contents = image
@@ -452,7 +452,7 @@ class MemberAvatarViewController: NSViewController {
     }
     
     // Determine whether a state change should cause a size change animation.
-    private func stateShouldCauseAvatarSizeChange(_ state: MemberState) -> Bool {
+    private func stateShouldCauseAvatarSizeChange(_ state: ChannelState) -> Bool {
         switch state {
         case .idle,
              .previewing:
@@ -462,12 +462,12 @@ class MemberAvatarViewController: NSViewController {
         }
     }
     
-    private func animateAvatarViewSize(toState state: MemberState) {
-        getAvatarView().animateSize(toDiameter: MemberWindow.defaultSizeForState(state).height)
+    private func animateAvatarViewSize(toState state: ChannelState) {
+        getAvatarView().animateSize(toDiameter: ChannelWindow.defaultSizeForState(state).height)
     }
     
     // Toggle the amount of drop shadow for container view based on state.
-    private func animateContainerViewShadow(toState state: MemberState) {
+    private func animateContainerViewShadow(toState state: ChannelState) {
         containerView.updateShadow(
             toConfig: Style.ContainerView.ShadowStyle.getShadow(forState: state),
             animate: true,
@@ -476,13 +476,13 @@ class MemberAvatarViewController: NSViewController {
         )
     }
     
-    // Toggle blur layer based on disabled status of member.
+    // Toggle blur layer based on disabled status of channel.
     private func animateImageViewBlur(showBlur: Bool, blurRadius: Double, duration: CFTimeInterval) {
         showBlur ? fadeInBlurLayer(blurRadius: blurRadius, duration: duration) : fadeOutBlurLayer(duration: duration)
     }
     
     // Toggle new recording indicator visibility based on state.
-    private func animateNewRecordingIndicatorVisibility(toState state: MemberState) {
+    private func animateNewRecordingIndicatorVisibility(toState state: ChannelState) {
         // Only show new recording indicator when previewing.
         state == .previewing ? fadeInNewRecordingIndicator() : fadeOutNewRecordingIndicator()
     }
@@ -604,17 +604,17 @@ class MemberAvatarViewController: NSViewController {
         )
     }
     
-    private func renderAvatarView(state: MemberState) {
+    private func renderAvatarView(state: ChannelState) {
         if stateShouldCauseAvatarSizeChange(state) {
             animateAvatarViewSize(toState: state)
         }
     }
     
-    private func renderContainerView(state: MemberState) {
+    private func renderContainerView(state: ChannelState) {
         animateContainerViewShadow(toState: state)
     }
     
-    private func renderBlurLayer(state: MemberState, isDisabled: Bool? = nil) {
+    private func renderBlurLayer(state: ChannelState, isDisabled: Bool? = nil) {
         if state === .recording(.sending) {
             // Fade in blur layer to avatar image.
             fadeInBlurLayer(
@@ -647,11 +647,11 @@ class MemberAvatarViewController: NSViewController {
         }
     }
     
-    private func renderNewRecordingIndicator(state: MemberState) {
+    private func renderNewRecordingIndicator(state: ChannelState) {
         animateNewRecordingIndicatorVisibility(toState: state)
     }
     
-    private func renderSpinnerView(state: MemberState) {
+    private func renderSpinnerView(state: ChannelState) {
         // If sending recording, fade in the spinner view.
         if state === .recording(.sending) {
             fadeInSpinnerView()
@@ -664,7 +664,7 @@ class MemberAvatarViewController: NSViewController {
         }
     }
     
-    private func renderCheckmarkView(state: MemberState) {
+    private func renderCheckmarkView(state: ChannelState) {
         // If recording was sent, add the checkmark view.
         if state === .recording(.sent) {
             addCheckmarkView()
@@ -678,7 +678,7 @@ class MemberAvatarViewController: NSViewController {
     }
 
     // Render view and subviews with updated state and props.
-    func render(state: MemberState, isDisabled: Bool? = nil) {
+    func render(state: ChannelState, isDisabled: Bool? = nil) {
         
         renderAvatarView(state: state)
         

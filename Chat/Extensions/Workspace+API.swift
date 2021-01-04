@@ -11,8 +11,8 @@ import Combine
 
 extension Workspace {
     
-    // Fetch a workspace's members.
-    func fetchMembers() -> AnyPublisher<[Member], Error> {
-        api.fetchMembers(forWorkspace: self)
+    // Fetch a workspace's channels.
+    func fetchChannels() -> AnyPublisher<[Channel], Error> {
+        api.fetchChannels(forWorkspace: self)
     }
 }

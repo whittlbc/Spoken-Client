@@ -21,13 +21,13 @@ class WorkspaceLogicController {
     // Array of API requests in case any need to be cancelled.
     private var requests = [AnyCancellable]()
     
-    // Load current workspace with all of its members.
+    // Load current workspace with all of its channels.
     func load(then handler: @escaping Handler) {
         // Get current workspace -- either its already been set or pull it from cache.
         currentWorkspace = currentWorkspace ?? Workspace.current
         
-        // If current workspace alredy exists, refetch its members. Otherwise, fetch user workspces first.
-        currentWorkspace == nil ? fetchUserWorkspaces(then: handler) : fetchWorkspaceMembers(then: handler)
+        // If current workspace alredy exists, refetch its channels. Otherwise, fetch user workspaces first.
+        currentWorkspace == nil ? fetchUserWorkspaces(then: handler) : fetchWorkspaceChannels(then: handler)
     }
     
     // Fetch all workspaces for the current user.
@@ -57,25 +57,25 @@ class WorkspaceLogicController {
             self.currentWorkspace = response[0]
             Cache.Workspaces.setCurrent(self.currentWorkspace!)
             
-            // Fetch members now that current workspace has been determined.
-            self.fetchWorkspaceMembers(then: handler)
+            // Fetch channels now that current workspace has been determined.
+            self.fetchWorkspaceChannels(then: handler)
             
         }.store(in: &requests)
     }
     
-    // Fetch all members for the current workspace.
-    private func fetchWorkspaceMembers(then handler: @escaping Handler) {
-//        // Fetch current workspace's members and handle networking response.
-//        currentWorkspace!.fetchMembers().sink(receiveCompletion: { status in
+    // Fetch all channels for the current workspace.
+    private func fetchWorkspaceChannels(then handler: @escaping Handler) {
+//        // Fetch current workspace's channels and handle networking response.
+//        currentWorkspace!.fetchChannels().sink(receiveCompletion: { status in
 //            switch status {
 //            case .failure(let error):
 //                handler(.failed(error))
 //            default:
 //                break
 //            }
-//        }) { (response: [Member]) in
-//            // Set members on current workspace.
-//            self.currentWorkspace!.members = response
+//        }) { (response: [Channel]) in
+//            // Set channels on current workspace.
+//            self.currentWorkspace!.channels = response
 //
 //            // Tell workspace window that all has been loaded.
 //            handler(.loaded(self.currentWorkspace))
@@ -84,8 +84,8 @@ class WorkspaceLogicController {
         
         // ----- Mock logic below ------
         
-        // Set members on current workspace.
-        self.currentWorkspace!.members = Mocks.Members.all
+        // Set channels on current workspace.
+        self.currentWorkspace!.channels = Mocks.Channels.all
 
         // Tell workspace window that all has been loaded.
         handler(.loaded(self.currentWorkspace))

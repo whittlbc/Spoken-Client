@@ -1,5 +1,5 @@
 //
-//  MemberViewController.swift
+//  ChannelViewController.swift
 //  Chat
 //
 //  Created by Ben Whittle on 12/11/20.
@@ -8,27 +8,27 @@
 
 import Cocoa
 
-// Controller for MemberView to manage all of its subviews and their interactions.
-class MemberViewController: NSViewController, ParticleViewDelegate {
+// Controller for ChannelView to manage all of its subviews and their interactions.
+class ChannelViewController: NSViewController, ParticleViewDelegate {
     
     // View styling info.
     enum Style {
         
-        // MemberView styling info.
-        enum MemberView {
+        // ChannelView styling info.
+        enum ChannelView {
             // Opacity of view when disabled.
             static let disabledOpacity: CGFloat = 0.25
         }
     }
     
-    // Workspace member associated with this view.
-    private var member: Member!
+    // Workspace channel associated with this view.
+    private var channel: Channel!
     
-    // Initial member view frame -- provided from window.
+    // Initial channel view frame -- provided from window.
     private var initialFrame: NSRect!
 
     // Controller for avatar view subview.
-    private var avatarViewController: MemberAvatarViewController!
+    private var avatarViewController: ChannelAvatarViewController!
     
     // Right auto-layout constraint of avatar view.
     private var avatarViewRightConstraint: NSLayoutConstraint!
@@ -36,13 +36,13 @@ class MemberViewController: NSViewController, ParticleViewDelegate {
     // Center-X auto-layout constraint of avatar view.
     private var avatarViewCenterXConstraint: NSLayoutConstraint!
 
-    // Member particle view for audio animation.
-    private var particleView: MemberParticleView!
+    // Channel particle view for audio animation.
+    private var particleView: ChannelParticleView!
         
-    // Proper initializer to use when rendering member.
-    convenience init(member: Member, initialFrame: NSRect) {
+    // Proper initializer to use when rendering channel.
+    convenience init(channel: Channel, initialFrame: NSRect) {
         self.init()
-        self.member = member
+        self.channel = channel
         self.initialFrame = initialFrame
     }
     
@@ -55,9 +55,9 @@ class MemberViewController: NSViewController, ParticleViewDelegate {
         fatalError("init(coder:) has not been implemented")
     }
 
-    // Use MemberView as primary view for this controller.
+    // Use ChannelView as primary view for this controller.
     override func loadView() {
-        view = MemberView(frame: initialFrame)
+        view = ChannelView(frame: initialFrame)
     }
     
     override func viewDidLoad() {
@@ -72,7 +72,7 @@ class MemberViewController: NSViewController, ParticleViewDelegate {
     
     private func addAvatarView() {
         // Create avatar view controller.
-        avatarViewController = MemberAvatarViewController(member: member)
+        avatarViewController = ChannelAvatarViewController(channel: channel)
         
         // Add avatar view as a subview.
         view.addSubview(avatarViewController.view)
@@ -86,8 +86,8 @@ class MemberViewController: NSViewController, ParticleViewDelegate {
         // Set up auto-layout for sizing/positioning.
         avatarViewController.view.translatesAutoresizingMaskIntoConstraints = false
         
-        // Get default idle height for member window.
-        let initialAvatarDiameter = MemberWindow.defaultSizeForState(.idle).height
+        // Get default idle height for channel window.
+        let initialAvatarDiameter = ChannelWindow.defaultSizeForState(.idle).height
         
         // Create height and width constraints for avatar view.
         let heightConstraint = avatarViewController.view.heightAnchor.constraint(equalToConstant: initialAvatarDiameter)
@@ -100,12 +100,12 @@ class MemberViewController: NSViewController, ParticleViewDelegate {
         avatarViewCenterXConstraint = avatarViewController.view.centerXAnchor.constraint(equalTo: view.centerXAnchor)
         
         // Identify constraints so you can query for them later.
-        heightConstraint.identifier = MemberAvatarView.ConstraintKeys.height
-        widthConstraint.identifier = MemberAvatarView.ConstraintKeys.width
+        heightConstraint.identifier = ChannelAvatarView.ConstraintKeys.height
+        widthConstraint.identifier = ChannelAvatarView.ConstraintKeys.width
         
         // Add auto-layout constraints.
         NSLayoutConstraint.activate([
-            // Set initial diameter to that of the "idle" member window height.
+            // Set initial diameter to that of the "idle" channel window height.
             heightConstraint,
             widthConstraint,
 
@@ -119,13 +119,13 @@ class MemberViewController: NSViewController, ParticleViewDelegate {
     
     // Create particle view and set self as delegate.
     func createParticleView() {
-        particleView = MemberParticleView()
+        particleView = ChannelParticleView()
         particleView.particleViewDelegate = self
     }
     
     // Add particle view as subview.
     func addParticleView() {
-        // Update frame size of particle view to match member view.
+        // Update frame size of particle view to match channel view.
         updateParticleViewSize()
         
         // Add particle view below avatar view.
@@ -136,7 +136,7 @@ class MemberViewController: NSViewController, ParticleViewDelegate {
         )
     }
     
-    // Update particle view frame to match that of member view and update corner radius to 50%.
+    // Update particle view frame to match that of channel view and update corner radius to 50%.
     func updateParticleViewSize() {
         particleView.frame = view.frame
         particleView.layer?.cornerRadius = view.frame.size.height / 2
@@ -159,7 +159,7 @@ class MemberViewController: NSViewController, ParticleViewDelegate {
     
     // Animate disabled state.
     private func animateDisability(_ isDisabled: Bool) {
-        view.animator().alphaValue = isDisabled ? Style.MemberView.disabledOpacity : 1.0
+        view.animator().alphaValue = isDisabled ? Style.ChannelView.disabledOpacity : 1.0
     }
     
     private func renderStartedRecording() {
@@ -203,7 +203,7 @@ class MemberViewController: NSViewController, ParticleViewDelegate {
     }
     
     // Render state-specific view updates.
-    private func renderStateChanges(state: MemberState) {
+    private func renderStateChanges(state: ChannelState) {
         switch state {
         case .recording(let recordingStatus):
             renderRecordingStateChange(recordingStatus: recordingStatus)
@@ -212,12 +212,12 @@ class MemberViewController: NSViewController, ParticleViewDelegate {
         }
     }
 
-    private func renderAvatarView(state: MemberState, isDisabled: Bool? = nil) {
+    private func renderAvatarView(state: ChannelState, isDisabled: Bool? = nil) {
         avatarViewController.render(state: state, isDisabled: isDisabled)
     }
     
     // Render view and subviews with updated state and props.
-    func render(state: MemberState, isDisabled: Bool? = nil) {
+    func render(state: ChannelState, isDisabled: Bool? = nil) {
         // Animate disabled status if provided.
         if let disabled = isDisabled {
             animateDisability(disabled)

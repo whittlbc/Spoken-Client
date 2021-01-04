@@ -8,9 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		09074D7D2599222700E72F93 /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09074D7C2599222700E72F93 /* Color.swift */; };
-		09074D81259934B900E72F93 /* MemberParticleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09074D80259934B900E72F93 /* MemberParticleView.swift */; };
-		09074D84259982DE00E72F93 /* MemberAvatarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09074D83259982DE00E72F93 /* MemberAvatarViewController.swift */; };
-		09074D872599BD0500E72F93 /* MemberState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09074D862599BD0500E72F93 /* MemberState.swift */; };
+		09074D81259934B900E72F93 /* ChannelParticleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09074D80259934B900E72F93 /* ChannelParticleView.swift */; };
+		09074D84259982DE00E72F93 /* ChannelAvatarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09074D83259982DE00E72F93 /* ChannelAvatarViewController.swift */; };
+		09074D872599BD0500E72F93 /* ChannelState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09074D862599BD0500E72F93 /* ChannelState.swift */; };
 		0949C897259686E800B61D1F /* NSView+Subviews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0949C896259686E800B61D1F /* NSView+Subviews.swift */; };
 		0949C8B2259908E900B61D1F /* ParticleViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0949C8B1259908E900B61D1F /* ParticleViewDelegate.swift */; };
 		095C6765259A6A8800729845 /* ChasingTailSpinnerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 095C6764259A6A8800729845 /* ChasingTailSpinnerView.swift */; };
@@ -36,16 +36,16 @@
 		096862FE2582FF4300B9B614 /* User+Cache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 096862FD2582FF4300B9B614 /* User+Cache.swift */; };
 		09686301258300A900B9B614 /* Workspace+Cache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09686300258300A900B9B614 /* Workspace+Cache.swift */; };
 		0968630425830A0200B9B614 /* WorkspaceRoutes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0968630325830A0200B9B614 /* WorkspaceRoutes.swift */; };
-		0968630A2583103300B9B614 /* MemberRoutes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 096863092583103300B9B614 /* MemberRoutes.swift */; };
+		0968630A2583103300B9B614 /* ChannelRoutes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 096863092583103300B9B614 /* ChannelRoutes.swift */; };
 		0968630F2583178C00B9B614 /* WorkspaceLogicController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0968630E2583178C00B9B614 /* WorkspaceLogicController.swift */; };
 		0968631325831C2F00B9B614 /* User+API.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0968631225831C2F00B9B614 /* User+API.swift */; };
 		096863192583206500B9B614 /* Workspace+API.swift in Sources */ = {isa = PBXBuildFile; fileRef = 096863182583206500B9B614 /* Workspace+API.swift */; };
 		0968631C2583E80C00B9B614 /* Cache+Ids.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0968631B2583E80C00B9B614 /* Cache+Ids.swift */; };
 		0968631F2583FB2A00B9B614 /* mocks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0968631E2583FB2A00B9B614 /* mocks.swift */; };
-		0968632325840AB500B9B614 /* MemberWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0968632225840AB500B9B614 /* MemberWindow.swift */; };
-		09686328258427A500B9B614 /* MemberViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09686327258427A500B9B614 /* MemberViewController.swift */; };
-		0968632C2584299400B9B614 /* MemberView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0968632B2584299400B9B614 /* MemberView.swift */; };
-		0968633125859A3000B9B614 /* MemberAvatarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0968633025859A3000B9B614 /* MemberAvatarView.swift */; };
+		0968632325840AB500B9B614 /* ChannelWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0968632225840AB500B9B614 /* ChannelWindow.swift */; };
+		09686328258427A500B9B614 /* ChannelViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09686327258427A500B9B614 /* ChannelViewController.swift */; };
+		0968632C2584299400B9B614 /* ChannelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0968632B2584299400B9B614 /* ChannelView.swift */; };
+		0968633125859A3000B9B614 /* ChannelAvatarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0968633025859A3000B9B614 /* ChannelAvatarView.swift */; };
 		096863352586C2B000B9B614 /* RoundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 096863342586C2B000B9B614 /* RoundView.swift */; };
 		096863382586C42B00B9B614 /* RoundShadowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 096863372586C42B00B9B614 /* RoundShadowView.swift */; };
 		0990879525797561001660D1 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0990879425797561001660D1 /* AppDelegate.swift */; };
@@ -76,9 +76,9 @@
 
 /* Begin PBXFileReference section */
 		09074D7C2599222700E72F93 /* Color.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
-		09074D80259934B900E72F93 /* MemberParticleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemberParticleView.swift; sourceTree = "<group>"; };
-		09074D83259982DE00E72F93 /* MemberAvatarViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemberAvatarViewController.swift; sourceTree = "<group>"; };
-		09074D862599BD0500E72F93 /* MemberState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemberState.swift; sourceTree = "<group>"; };
+		09074D80259934B900E72F93 /* ChannelParticleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelParticleView.swift; sourceTree = "<group>"; };
+		09074D83259982DE00E72F93 /* ChannelAvatarViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelAvatarViewController.swift; sourceTree = "<group>"; };
+		09074D862599BD0500E72F93 /* ChannelState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelState.swift; sourceTree = "<group>"; };
 		0949C896259686E800B61D1F /* NSView+Subviews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSView+Subviews.swift"; sourceTree = "<group>"; };
 		0949C8B1259908E900B61D1F /* ParticleViewDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParticleViewDelegate.swift; sourceTree = "<group>"; };
 		095C6764259A6A8800729845 /* ChasingTailSpinnerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChasingTailSpinnerView.swift; sourceTree = "<group>"; };
@@ -101,16 +101,16 @@
 		096862FD2582FF4300B9B614 /* User+Cache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "User+Cache.swift"; sourceTree = "<group>"; };
 		09686300258300A900B9B614 /* Workspace+Cache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Workspace+Cache.swift"; sourceTree = "<group>"; };
 		0968630325830A0200B9B614 /* WorkspaceRoutes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkspaceRoutes.swift; sourceTree = "<group>"; };
-		096863092583103300B9B614 /* MemberRoutes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemberRoutes.swift; sourceTree = "<group>"; };
+		096863092583103300B9B614 /* ChannelRoutes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelRoutes.swift; sourceTree = "<group>"; };
 		0968630E2583178C00B9B614 /* WorkspaceLogicController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkspaceLogicController.swift; sourceTree = "<group>"; };
 		0968631225831C2F00B9B614 /* User+API.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "User+API.swift"; sourceTree = "<group>"; };
 		096863182583206500B9B614 /* Workspace+API.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Workspace+API.swift"; sourceTree = "<group>"; };
 		0968631B2583E80C00B9B614 /* Cache+Ids.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Cache+Ids.swift"; sourceTree = "<group>"; };
 		0968631E2583FB2A00B9B614 /* mocks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = mocks.swift; sourceTree = "<group>"; };
-		0968632225840AB500B9B614 /* MemberWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemberWindow.swift; sourceTree = "<group>"; };
-		09686327258427A500B9B614 /* MemberViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemberViewController.swift; sourceTree = "<group>"; };
-		0968632B2584299400B9B614 /* MemberView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemberView.swift; sourceTree = "<group>"; };
-		0968633025859A3000B9B614 /* MemberAvatarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemberAvatarView.swift; sourceTree = "<group>"; };
+		0968632225840AB500B9B614 /* ChannelWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelWindow.swift; sourceTree = "<group>"; };
+		09686327258427A500B9B614 /* ChannelViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelViewController.swift; sourceTree = "<group>"; };
+		0968632B2584299400B9B614 /* ChannelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelView.swift; sourceTree = "<group>"; };
+		0968633025859A3000B9B614 /* ChannelAvatarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelAvatarView.swift; sourceTree = "<group>"; };
 		096863342586C2B000B9B614 /* RoundView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundView.swift; sourceTree = "<group>"; };
 		096863372586C42B00B9B614 /* RoundShadowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundShadowView.swift; sourceTree = "<group>"; };
 		0990879125797561001660D1 /* Chat.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Chat.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -158,12 +158,12 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		0949C8A52598EB7000B61D1F /* MemberParticleView */ = {
+		0949C8A52598EB7000B61D1F /* ChannelParticleView */ = {
 			isa = PBXGroup;
 			children = (
-				09074D80259934B900E72F93 /* MemberParticleView.swift */,
+				09074D80259934B900E72F93 /* ChannelParticleView.swift */,
 			);
-			path = MemberParticleView;
+			path = ChannelParticleView;
 			sourceTree = "<group>";
 		};
 		0949C8AD2598ED7700B61D1F /* ParticleView */ = {
@@ -198,8 +198,8 @@
 				096862DD2582A2EB00B9B614 /* User+Arrow.swift */,
 				096862E42582A67F00B9B614 /* Name+Arrow.swift */,
 				096862EA2582A8D000B9B614 /* Workspace+Arrow.swift */,
-				096862F02582ACE100B9B614 /* Member+Arrow.swift */,
 				095C677525A29C6700729845 /* Channel+Arrow.swift */,
+				096862F02582ACE100B9B614 /* Member+Arrow.swift */,
 				095C677925A29CC300729845 /* Message+Arrow.swift */,
 			);
 			path = "Models+Arrow";
@@ -214,31 +214,31 @@
 			path = WorkspaceWindow;
 			sourceTree = "<group>";
 		};
-		0968632125840AA900B9B614 /* MemberWindow */ = {
+		0968632125840AA900B9B614 /* ChannelWindow */ = {
 			isa = PBXGroup;
 			children = (
-				0968632225840AB500B9B614 /* MemberWindow.swift */,
-				09074D862599BD0500E72F93 /* MemberState.swift */,
+				0968632225840AB500B9B614 /* ChannelWindow.swift */,
+				09074D862599BD0500E72F93 /* ChannelState.swift */,
 			);
-			path = MemberWindow;
+			path = ChannelWindow;
 			sourceTree = "<group>";
 		};
-		096863262584279600B9B614 /* MemberView */ = {
+		096863262584279600B9B614 /* ChannelView */ = {
 			isa = PBXGroup;
 			children = (
-				09686327258427A500B9B614 /* MemberViewController.swift */,
-				0968632B2584299400B9B614 /* MemberView.swift */,
+				09686327258427A500B9B614 /* ChannelViewController.swift */,
+				0968632B2584299400B9B614 /* ChannelView.swift */,
 			);
-			path = MemberView;
+			path = ChannelView;
 			sourceTree = "<group>";
 		};
-		0968632F25859A0B00B9B614 /* MemberAvatarView */ = {
+		0968632F25859A0B00B9B614 /* ChannelAvatarView */ = {
 			isa = PBXGroup;
 			children = (
-				0968633025859A3000B9B614 /* MemberAvatarView.swift */,
-				09074D83259982DE00E72F93 /* MemberAvatarViewController.swift */,
+				09074D83259982DE00E72F93 /* ChannelAvatarViewController.swift */,
+				0968633025859A3000B9B614 /* ChannelAvatarView.swift */,
 			);
-			path = MemberAvatarView;
+			path = ChannelAvatarView;
 			sourceTree = "<group>";
 		};
 		0990878825797561001660D1 = {
@@ -324,7 +324,7 @@
 			children = (
 				0995DDFD257AED9D00DAA334 /* SidebarWindow */,
 				0968630D2583176B00B9B614 /* WorkspaceWindow */,
-				0968632125840AA900B9B614 /* MemberWindow */,
+				0968632125840AA900B9B614 /* ChannelWindow */,
 				0995DDFB257AED6400DAA334 /* FloatingWindow.swift */,
 			);
 			path = Windows;
@@ -333,9 +333,9 @@
 		0995DE162581611400DAA334 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				096863262584279600B9B614 /* MemberView */,
-				0968632F25859A0B00B9B614 /* MemberAvatarView */,
-				0949C8A52598EB7000B61D1F /* MemberParticleView */,
+				096863262584279600B9B614 /* ChannelView */,
+				0968632F25859A0B00B9B614 /* ChannelAvatarView */,
+				0949C8A52598EB7000B61D1F /* ChannelParticleView */,
 				0949C8AD2598ED7700B61D1F /* ParticleView */,
 				095C6763259A69A500729845 /* SpinnerViews */,
 				095C676A259E704100729845 /* SelfDrawnCheckmarkView */,
@@ -352,8 +352,8 @@
 				096862CC25829C5A00B9B614 /* User.swift */,
 				096862E12582A61C00B9B614 /* Name.swift */,
 				096862E72582A88600B9B614 /* Workspace.swift */,
-				096862ED2582ABCE00B9B614 /* Member.swift */,
 				095C676F25A29AA200729845 /* Channel.swift */,
+				096862ED2582ABCE00B9B614 /* Member.swift */,
 				095C677225A29B7300729845 /* Message.swift */,
 			);
 			path = Models;
@@ -408,7 +408,7 @@
 			children = (
 				0995DE3A2581CA7500DAA334 /* InternalAPI.swift */,
 				0968630325830A0200B9B614 /* WorkspaceRoutes.swift */,
-				096863092583103300B9B614 /* MemberRoutes.swift */,
+				096863092583103300B9B614 /* ChannelRoutes.swift */,
 			);
 			path = InternalAPI;
 			sourceTree = "<group>";
@@ -496,7 +496,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				09074D81259934B900E72F93 /* MemberParticleView.swift in Sources */,
+				09074D81259934B900E72F93 /* ChannelParticleView.swift in Sources */,
 				099087BD25799BC2001660D1 /* Screen.swift in Sources */,
 				096862EB2582A8D000B9B614 /* Workspace+Arrow.swift in Sources */,
 				096863192583206500B9B614 /* Workspace+API.swift in Sources */,
@@ -506,15 +506,15 @@
 				0949C8B2259908E900B61D1F /* ParticleViewDelegate.swift in Sources */,
 				096862EE2582ABCE00B9B614 /* Member.swift in Sources */,
 				0995DE382581A9BC00DAA334 /* KeychainError.swift in Sources */,
-				09074D84259982DE00E72F93 /* MemberAvatarViewController.swift in Sources */,
+				09074D84259982DE00E72F93 /* ChannelAvatarViewController.swift in Sources */,
 				0968630425830A0200B9B614 /* WorkspaceRoutes.swift in Sources */,
 				095C677A25A29CC300729845 /* Message+Arrow.swift in Sources */,
 				0995DE3B2581CA7500DAA334 /* InternalAPI.swift in Sources */,
 				0990879525797561001660D1 /* AppDelegate.swift in Sources */,
 				099997522595371E008E65FB /* ParticleView.swift in Sources */,
-				0968633125859A3000B9B614 /* MemberAvatarView.swift in Sources */,
-				0968632C2584299400B9B614 /* MemberView.swift in Sources */,
-				0968630A2583103300B9B614 /* MemberRoutes.swift in Sources */,
+				0968633125859A3000B9B614 /* ChannelAvatarView.swift in Sources */,
+				0968632C2584299400B9B614 /* ChannelView.swift in Sources */,
+				0968630A2583103300B9B614 /* ChannelRoutes.swift in Sources */,
 				0949C897259686E800B61D1F /* NSView+Subviews.swift in Sources */,
 				0995DE01257AEDEC00DAA334 /* SidebarWindowController.swift in Sources */,
 				09F60AC6258BFD450020974A /* NSRect+Location.swift in Sources */,
@@ -545,11 +545,11 @@
 				095C677325A29B7300729845 /* Message.swift in Sources */,
 				0995DE2125816B5E00DAA334 /* Config.swift in Sources */,
 				096862FB2582CF9500B9B614 /* Cache.swift in Sources */,
-				09074D872599BD0500E72F93 /* MemberState.swift in Sources */,
-				0968632325840AB500B9B614 /* MemberWindow.swift in Sources */,
+				09074D872599BD0500E72F93 /* ChannelState.swift in Sources */,
+				0968632325840AB500B9B614 /* ChannelWindow.swift in Sources */,
 				095C677025A29AA200729845 /* Channel.swift in Sources */,
 				09686301258300A900B9B614 /* Workspace+Cache.swift in Sources */,
-				09686328258427A500B9B614 /* MemberViewController.swift in Sources */,
+				09686328258427A500B9B614 /* ChannelViewController.swift in Sources */,
 				095C677625A29C6700729845 /* Channel+Arrow.swift in Sources */,
 				099087A8257976BF001660D1 /* WindowControllerManager.swift in Sources */,
 				096862CD25829C5A00B9B614 /* User.swift in Sources */,

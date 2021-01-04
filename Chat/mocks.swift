@@ -65,12 +65,18 @@ enum Mocks {
     }
     
     enum Members {
+        static let ben = Member(id: "ben", user: Users.ben)
+        static let tyler = Member(id: "tyler", user: Users.tyler)
+        static let andrea = Member(id: "andrea", user: Users.andrea)
+        static let josh = Member(id: "josh", user: Users.josh)
+    }
+    
+    enum Channels {
         
-        static let all: [Member] = [
-            Member(id: "ben", user: Users.ben),
-            Member(id: "tyler", user: Users.tyler),
-            Member(id: "andrea", user: Users.andrea),
-            Member(id: "josh", user: Users.josh),
+        static let all: [Channel] = [
+            Channel(id: "a", members: [Members.ben, Members.tyler]),
+            Channel(id: "b", members: [Members.ben, Members.andrea]),
+            Channel(id: "c", members: [Members.ben, Members.josh])
         ]
     }
 }

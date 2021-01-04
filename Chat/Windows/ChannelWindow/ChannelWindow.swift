@@ -1,5 +1,5 @@
 //
-//  MemberWindow.swift
+//  ChannelWindow.swift
 //  Chat
 //
 //  Created by Ben Whittle on 12/11/20.
@@ -8,22 +8,22 @@
 
 import Cocoa
 
-// Window representing a workspace member.
-class MemberWindow: FloatingWindow {
+// Window representing a workspace channel.
+class ChannelWindow: FloatingWindow {
 
-    // Workspace member associated with window.
-    var member = Member()
+    // Workspace channel associated with window.
+    var channel = Channel()
     
-    // The member's state on screen at any given time.
-    var state = MemberState.idle
+    // The channel's state on screen at any given time.
+    var state = ChannelState.idle
     
-    // The last state a member was in.
-    var prevState = MemberState.idle
+    // The last state a channel was in.
+    var prevState = ChannelState.idle
     
     // Flag indicating whether mouse is inside window.
     var isMouseInside = false
     
-    // Whether member is able to be interacted with by the user.
+    // Whether channel is able to be interacted with by the user.
     var isDisabled = false
         
     // Closure provided by parent window to be called every time state updates.
@@ -48,8 +48,8 @@ class MemberWindow: FloatingWindow {
         }
     }
     
-    // Get the default window size for the provided member state.
-    static func defaultSizeForState(_ state: MemberState) -> NSSize {
+    // Get the default window size for the provided channel state.
+    static func defaultSizeForState(_ state: ChannelState) -> NSSize {
         switch state {
         case .idle:
             return NSSize(width: 32, height: 32)
@@ -61,18 +61,18 @@ class MemberWindow: FloatingWindow {
         }
     }
     
-    static func stateShouldAnimateFrame(_ state: MemberState) -> Bool {
+    static func stateShouldAnimateFrame(_ state: ChannelState) -> Bool {
         state != .recording(.starting) // recording status is ignored here
     }
     
-    static func stateShouldDisableOtherMembers(_ state: MemberState) -> Bool {
+    static func stateShouldDisableOtherChannels(_ state: ChannelState) -> Bool {
         state == .recording(.starting) // recording status is ignored here
     }
 
-    // Proper initializer to use when rendering members.
-    convenience init(member: Member, onStateUpdated: @escaping (String) -> Void) {
+    // Proper initializer to use when rendering channels.
+    convenience init(channel: Channel, onStateUpdated: @escaping (String) -> Void) {
         self.init()
-        self.member = member
+        self.channel = channel
         self.onStateUpdated = onStateUpdated
     }
     
@@ -84,21 +84,21 @@ class MemberWindow: FloatingWindow {
     // Get parent workspace window.
     func getWorkspaceWindow() -> WorkspaceWindow? {
         guard let workspaceWindow = parent as? WorkspaceWindow else {
-            logger.error("Unable to find MemberWindow's parent Workspace window...")
+            logger.error("Unable to find ChannelWindow's parent Workspace window...")
             return nil
         }
         
         return workspaceWindow
     }
     
-    // Get MemberViewController --> this window's primary content view controller.
-    func getMemberViewController() -> MemberViewController? {
-        guard let memberViewController = contentViewController as? MemberViewController else {
-            logger.error("Unable to find MemberWindow's contentViewController...")
+    // Get ChannelViewController --> this window's primary content view controller.
+    func getChannelViewController() -> ChannelViewController? {
+        guard let channelViewController = contentViewController as? ChannelViewController else {
+            logger.error("Unable to find ChannelWindow's contentViewController...")
             return nil
         }
         
-        return memberViewController
+        return channelViewController
     }
     
     // Promote previous state to current state.
@@ -106,23 +106,23 @@ class MemberWindow: FloatingWindow {
         prevState = state
     }
     
-    // Check whether member window is currently in the idle state.
+    // Check whether channel window is currently in the idle state.
     func isIdle() -> Bool {
         return state == .idle
     }
     
-    // Check whether member window is currently in the previewing state.
+    // Check whether channel window is currently in the previewing state.
     func isPreviewing() -> Bool {
         return state == .previewing
     }
     
-    // Check whether member window is currently in the recording state.
+    // Check whether channel window is currently in the recording state.
     func isRecording() -> Bool {
         return state == .recording(.starting) // recording status is ignored here
     }
     
     // Update this window's state.
-    func setState(_ newState: MemberState) {
+    func setState(_ newState: ChannelState) {
         // Promote previous state to current state.
         promotePreviousState()
         
@@ -131,7 +131,7 @@ class MemberWindow: FloatingWindow {
         
         // If the state changed cases, broadcast this update.
         if state != prevState {
-            onStateUpdated(member.id)
+            onStateUpdated(channel.id)
         }
         
         // Handle state-specific change.
@@ -160,7 +160,7 @@ class MemberWindow: FloatingWindow {
         cancelPreviewingTimer()
     }
 
-    // Start a new audio message to send to this member.
+    // Start a new audio message to send to this channel.
     func startRecording() {
         // Enable key event listners.
         toggleRecordingKeyEventListeners(enable: true)
@@ -182,7 +182,7 @@ class MemberWindow: FloatingWindow {
         showCancellingRecording()
     }
     
-    // Send the active audio message to this member.
+    // Send the active audio message to this channel.
     func sendRecording() {
         // Disable key event listners.
         toggleRecordingKeyEventListeners(enable: false)
@@ -216,24 +216,24 @@ class MemberWindow: FloatingWindow {
         destination = origin
     }
     
-    // TODO: Add member-specific sizes on top of this once notifications are added.
+    // TODO: Add channel-specific sizes on top of this once notifications are added.
     func getIdleWindowSize() -> NSSize {
-        MemberWindow.defaultSizeForState(.idle)
+        ChannelWindow.defaultSizeForState(.idle)
     }
     
-    // TODO: Add member-specific sizes on top of this once notifications are added.
+    // TODO: Add channel-specific sizes on top of this once notifications are added.
     func getPreviewingWindowSize() -> NSSize {
-        MemberWindow.defaultSizeForState(.previewing)
+        ChannelWindow.defaultSizeForState(.previewing)
     }
     
-    // TODO: Add member-specific sizes on top of this once notifications are added.
+    // TODO: Add channel-specific sizes on top of this once notifications are added.
     func getRecordingWindowSize(recordingStatus: RecordingStatus) -> NSSize {
-        MemberWindow.defaultSizeForState(.recording(recordingStatus))
+        ChannelWindow.defaultSizeForState(.recording(recordingStatus))
     }
     
     // Get the size of this window for the given state.
-    func calculateSize(forState memberState: MemberState) -> NSSize {
-        switch memberState {
+    func calculateSize(forState channelState: ChannelState) -> NSSize {
+        switch channelState {
         // Idle window size.
         case .idle:
             return getIdleWindowSize()
@@ -450,20 +450,20 @@ class MemberWindow: FloatingWindow {
         }
     }
     
-    // Render member view -- this windows primary content view.
-    private func renderMemberView(disabledChanged: Bool = false) {
-        // Get member view controller.
-        guard let memberViewController = getMemberViewController() else {
+    // Render channel view -- this windows primary content view.
+    private func renderChannelView(disabledChanged: Bool = false) {
+        // Get channel view controller.
+        guard let channelViewController = getChannelViewController() else {
             return
         }
         
-        // Render member view and only provide isDisabled if it changed since last render.
-        memberViewController.render(state: state, isDisabled: disabledChanged ? isDisabled : nil)
+        // Render channel view and only provide isDisabled if it changed since last render.
+        channelViewController.render(state: state, isDisabled: disabledChanged ? isDisabled : nil)
     }
     
     // Render this windows children.
     private func renderChildren(disabledChanged: Bool = false) {
-        renderMemberView(disabledChanged: disabledChanged)
+        renderChannelView(disabledChanged: disabledChanged)
     }
     
     func render(

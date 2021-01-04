@@ -11,4 +11,8 @@ import Foundation
 struct Channel: Identifiable, Codable {
     var id = ""
     var members = [Member]()
+    
+    var recipient: Member {
+        members.first(where: { $0.user.id != User.current!.id })!
+    }
 }

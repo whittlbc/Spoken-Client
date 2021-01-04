@@ -28,27 +28,27 @@ class WorkspaceWindow: FloatingWindow {
     // Right padding of workspace window as it pertains to its content.
     static let paddingRight: Float = 6
     
-    // Style information for group of member windows.
-    enum MembersStyle {
-        // X-position of the right edge of members.
+    // Style information for group of channel windows.
+    enum ChannelsStyle {
+        // X-position of the right edge of channels.
         static let rightEdge = Float(WorkspaceWindow.origin.x + WorkspaceWindow.size.width) - WorkspaceWindow.paddingRight
         
-        // Distance between top of workspace window and top-most member window.
+        // Distance between top of workspace window and top-most channel window.
         static let topOffset: Float = 240
         
-        // Vertical spacing between members.
+        // Vertical spacing between channels.
         static let gutterSpacing: Float = 0
     }
     
     // Animation configuration for all child windows that this workspace window controls.
     enum AnimationConfig {
         
-        // Configuration for member window animations.
-        enum MemberWindows {
-            // Time it takes for a member window to update size and position during a state change.
+        // Configuration for channel window animations.
+        enum ChannelWindows {
+            // Time it takes for a channel window to update size and position during a state change.
             static let duration: CFTimeInterval = 0.13
             
-            // Name of timing function to use for all member window animations.
+            // Name of timing function to use for all channel window animations.
             static let timingFunctionName = CAMediaTimingFunctionName.easeOut
         }
     }
@@ -56,11 +56,11 @@ class WorkspaceWindow: FloatingWindow {
     // Controller for all actions that can be performed in this window.
     private let logicController = WorkspaceLogicController()
     
-    // Dictionary mapping a member's id to its respective window.
-    private var membersMap = [String:MemberWindow]()
+    // Dictionary mapping a channel's id to its respective window.
+    private var channelsMap = [String: ChannelWindow]()
     
-    // Ordered list of members.
-    private var members = [Member]()
+    // Ordered list of channels.
+    private var channels = [Channel]()
     
     // Create global hotkey for escape key.
     private var escKeyListener: HotKey!
@@ -80,7 +80,7 @@ class WorkspaceWindow: FloatingWindow {
         createKeyListeners()
     }
     
-    // Load current workspace with all its members.
+    // Load current workspace with all its channels.
     func loadCurrentWorkspace() {
         // Render loading view.
         render(.loading)
@@ -143,71 +143,71 @@ class WorkspaceWindow: FloatingWindow {
     // Cancel the active recording if one exists.
     func findAndCancelActiveRecording() {
         // See if there's an active recording taking place and cancel it if so.
-        if let activeRecordingMember = findActiveRecordingMember() {
-            activeRecordingMember.cancelRecording()
+        if let activeRecordingChannel = findActiveRecordingChannel() {
+            activeRecordingChannel.cancelRecording()
         }
     }
     
     // Send the active recording if one exists.
     func findAndSendActiveRecording() {
         // See if there's an active recording taking place and send it if so.
-        if let activeRecordingMember = findActiveRecordingMember() {
-            activeRecordingMember.sendRecording()
+        if let activeRecordingChannel = findActiveRecordingChannel() {
+            activeRecordingChannel.sendRecording()
         }
     }
     
-    // Find the first member with a recording state.
-    func findActiveRecordingMember() -> MemberWindow? {
-        getOrderedMemberWindows().first(where: { $0.isRecording() })
+    // Find the first channel with a recording state.
+    func findActiveRecordingChannel() -> ChannelWindow? {
+        getOrderedChannelWindows().first(where: { $0.isRecording() })
     }
     
-    // Handle individual member window state updates as a group.
-    func onMemberStateUpdate(activeMemberId: String) {
-        // Promote previous state to current state for all adjacent member windows.
-        for (memberId, memberWindow) in membersMap {
-            if memberId != activeMemberId {
-                memberWindow.promotePreviousState()
+    // Handle individual channel window state updates as a group.
+    func onChannelStateUpdate(activeChannelId: String) {
+        // Promote previous state to current state for all adjacent channel windows.
+        for (channelId, channelWindow) in channelsMap {
+            if channelId != activeChannelId {
+                channelWindow.promotePreviousState()
             }
         }
-                
-        // Animate all member windows to new sizes/positions based on state change.
-        updateMemberSizesAndPositions(activeMemberId: activeMemberId)
+
+        // Animate all channel windows to new sizes/positions based on state change.
+        updateChannelSizesAndPositions(activeChannelId: activeChannelId)
     }
     
-    // Create a new member window for a given member.
-    private func createMemberWindow(forMember member: Member) {
-        // Create member window.
-        let memberWindow = MemberWindow(member: member, onStateUpdated: { [weak self] memberId in
-            self?.onMemberStateUpdate(activeMemberId: memberId)
+    // Create a new channel window for a given channel.
+    private func createChannelWindow(forChannel channel: Channel) {
+        // Create channel window.
+        let channelWindow = ChannelWindow(channel: channel, onStateUpdated: { [weak self] channelId in
+            self?.onChannelStateUpdate(activeChannelId: channelId)
         })
 
-        // Get initial member window size.
-        let initialSize = memberWindow.getSizeForCurrentState()
+        // Get initial channel window size.
+        let initialSize = channelWindow.getSizeForCurrentState()
         
-        // Create member view controller and attach to window.
-        let memberController = MemberViewController(
-            member: member,
+        // Create channel view controller and attach to window.
+        let channelController = ChannelViewController(
+            channel: channel,
             initialFrame: NSRect(x: 0, y: 0, width: initialSize.width, height: initialSize.height)
         )
         
-        // Set MemberViewController as primary content view controller for member window.
-        memberWindow.contentViewController = memberController
+        // Set ChannelViewController as primary content view controller for channel window.
+        channelWindow.contentViewController = channelController
 
-        // Bind member window events to controller.
-        memberWindow.bind(.title, to: memberController, withKeyPath: "title", options: nil)
+        // Bind channel window events to controller.
+        channelWindow.bind(.title, to: channelController, withKeyPath: "title", options: nil)
  
-        // Make each member view the first responder inside the window.
-        memberWindow.makeFirstResponder(memberController.view)
+        // Make each channel view the first responder inside the window.
+        channelWindow.makeFirstResponder(channelController.view)
                 
-        // Add window to members map.
-        membersMap[member.id] = memberWindow
+        // Add window to channels map.
+        channelsMap[channel.id] = channelWindow
     }
     
-    // Add all member windows as child windows.
-    private func addMemberWindows() {
-        for member in members {
-            if let memberWindow = membersMap[member.id] {
-                addChildWindow(memberWindow, ordered: NSWindow.OrderingMode.above)
+    // Add all channel windows as child windows.
+    private func addChannelWindows() {
+        for channel in channels {
+            if let channelWindow = channelsMap[channel.id] {
+                addChildWindow(channelWindow, ordered: NSWindow.OrderingMode.above)
             }
         }
     }
@@ -218,218 +218,218 @@ class WorkspaceWindow: FloatingWindow {
         addChildWindow(win, ordered: NSWindow.OrderingMode.above)
     }
     
-    // Set initial size and position of each member.
-    private func setInitialMemberSizesAndPositions() {
-        var specs = [(MemberWindow, NSSize, NSPoint)]()
+    // Set initial size and position of each channel.
+    private func setInitialChannelSizesAndPositions() {
+        var specs = [(ChannelWindow, NSSize, NSPoint)]()
         var size: NSSize
         var position: NSPoint
         
-        // First calculate updates across all members.
-        for (i, memberWindow) in getOrderedMemberWindows().enumerated() {
-            // Calculate member size.
-            size = memberWindow.getSizeForCurrentState()
+        // First calculate updates across all channels.
+        for (i, channelWindow) in getOrderedChannelWindows().enumerated() {
+            // Calculate channel size.
+            size = channelWindow.getSizeForCurrentState()
             
-            // Calculate member position.
+            // Calculate channel position.
             position = NSPoint(
-                x: getMemberXPosition(forMemberSize: size),
-                y: getInitialMemberYPosition(memberWindow: memberWindow, atIndex: i)
+                x: getChannelXPosition(forChannelSize: size),
+                y: getInitialChannelYPosition(channelWindow: channelWindow, atIndex: i)
             )
             
             // Add updates to list.
-            specs.append((memberWindow, size, position))
+            specs.append((channelWindow, size, position))
         }
         
         // Apply all updates.
-        for (memberWindow, size, position) in specs {
-            memberWindow.render(size: size, position: position)
+        for (channelWindow, size, position) in specs {
+            channelWindow.render(size: size, position: position)
         }
     }
     
-    // Get x-position of member window for its given size.
-    private func getMemberXPosition(forMemberSize size: NSSize) -> CGFloat {
-        CGFloat(MembersStyle.rightEdge) - size.width
+    // Get x-position of channel window for its given size.
+    private func getChannelXPosition(forChannelSize size: NSSize) -> CGFloat {
+        CGFloat(ChannelsStyle.rightEdge) - size.width
     }
     
-    // Get the initial y-position of the member window at the provided index.
-    private func getInitialMemberYPosition(memberWindow: MemberWindow, atIndex index: Int) -> CGFloat {
-        // Get the idle member window height + any configured gutter spacing between members.
-        let heightWithGutter = Float(memberWindow.getIdleWindowSize().height) + MembersStyle.gutterSpacing
+    // Get the initial y-position of the channel window at the provided index.
+    private func getInitialChannelYPosition(channelWindow: ChannelWindow, atIndex index: Int) -> CGFloat {
+        // Get the idle channel window height + any configured gutter spacing between channels.
+        let heightWithGutter = Float(channelWindow.getIdleWindowSize().height) + ChannelsStyle.gutterSpacing
         
-        // Calculate the absolute position of this members window.
-        return CGFloat(Float(Screen.getHeight()) - MembersStyle.topOffset - (heightWithGutter * Float(index)))
+        // Calculate the absolute position of this channels window.
+        return CGFloat(Float(Screen.getHeight()) - ChannelsStyle.topOffset - (heightWithGutter * Float(index)))
     }
 
-    // Update size and position of each member.
-    private func updateMemberSizesAndPositions(activeMemberId: String) {
-        // Get the active member window's size change due to its latest state change.
-        let (activeWindow, activeHeightOffset, _) = getActiveMemberSizeChange(activeMemberId: activeMemberId)
+    // Update size and position of each channel.
+    private func updateChannelSizesAndPositions(activeChannelId: String) {
+        // Get the active channel window's size change due to its latest state change.
+        let (activeWindow, activeHeightOffset, _) = getActiveChannelSizeChange(activeChannelId: activeChannelId)
 
-        // Only proceed if the active member window and its height offset were successfully found.
-        guard let activeMemberWindow = activeWindow, let activeMemberHeightOffset = activeHeightOffset else {
+        // Only proceed if the active channel window and its height offset were successfully found.
+        guard let activeChannelWindow = activeWindow, let activeChannelHeightOffset = activeHeightOffset else {
             return
         }
 
-        // Get ordered list of existing member windows.
-        let memberWindows = getOrderedMemberWindows()
+        // Get ordered list of existing channel windows.
+        let channelWindows = getOrderedChannelWindows()
         
-        // Find the index of the active member window.
-        let activeIndex = memberWindows.firstIndex{ $0 === activeMemberWindow }
-        let activeMemberIndex = activeIndex!
+        // Find the index of the active channel window.
+        let activeIndex = channelWindows.firstIndex{ $0 === activeChannelWindow }
+        let activeChannelIndex = activeIndex!
                 
-        // Calculate new size and position destinations for all member windows.
-        calculateMemberWindowDestinations(
-            memberWindows: memberWindows,
-            activeMemberIndex: activeMemberIndex,
-            activeMemberHeightOffset: activeMemberHeightOffset
+        // Calculate new size and position destinations for all channel windows.
+        calculateChannelWindowDestinations(
+            channelWindows: channelWindows,
+            activeChannelIndex: activeChannelIndex,
+            activeChannelHeightOffset: activeChannelHeightOffset
         )
         
-        // Animate each member window to its new destination.
-        animateMemberWindowsToDestinations(
-            memberWindows: memberWindows,
-            activeMemberIndex: activeMemberIndex
+        // Animate each channel window to its new destination.
+        animateChannelWindowsToDestinations(
+            channelWindows: channelWindows,
+            activeChannelIndex: activeChannelIndex
         )
         
-        // If active member's new state is previewing, ensure it is the only member window in a previewing state.
-        if activeMemberWindow.isPreviewing() {
-            ensureOnlyOneMemberIsPreviewing(memberWindows: memberWindows, activeMemberIndex: activeMemberIndex)
+        // If active channel's new state is previewing, ensure it is the only channel window in a previewing state.
+        if activeChannelWindow.isPreviewing() {
+            ensureOnlyOneChannelIsPreviewing(channelWindows: channelWindows, activeChannelIndex: activeChannelIndex)
             
-            // Add a timer to check the mouse position in relation to the active member window, and force
-            // it out of the previewing state if the mouse isn't inside of the active member window anymore.
-            activeMemberWindow.startPreviewingTimer()
+            // Add a timer to check the mouse position in relation to the active channel window, and force
+            // it out of the previewing state if the mouse isn't inside of the active channel window anymore.
+            activeChannelWindow.startPreviewingTimer()
         }
     }
         
-    // Determine how much (if any) the active member window will change due to its latest state change.
-    private func getActiveMemberSizeChange(activeMemberId: String) -> (MemberWindow?, Float?, Float?) {
-        // Get active member window (the window that triggered the update).
-        guard let activeMemberWindow = membersMap[activeMemberId] else {
+    // Determine how much (if any) the active channel window will change due to its latest state change.
+    private func getActiveChannelSizeChange(activeChannelId: String) -> (ChannelWindow?, Float?, Float?) {
+        // Get active channel window (the window that triggered the update).
+        guard let activeChannelWindow = channelsMap[activeChannelId] else {
             logger.error("Unable to find active window that triggered size update...")
             return (nil, nil, nil)
         }
         
-        // Get the size offsets due to the active member window's size change.
-        let (activeMemberHeightOffset, activeMemberWidthOffset) = activeMemberWindow.getStateChangeSizeOffset()
+        // Get the size offsets due to the active channel window's size change.
+        let (activeChannelHeightOffset, activeChannelWidthOffset) = activeChannelWindow.getStateChangeSizeOffset()
         
-        // Return active member window with its size offset parameters.
-        return (activeMemberWindow, activeMemberHeightOffset, activeMemberWidthOffset)
+        // Return active channel window with its size offset parameters.
+        return (activeChannelWindow, activeChannelHeightOffset, activeChannelWidthOffset)
     }
 
-    // Get an array of member windows, top-to-bottom.
-    private func getOrderedMemberWindows() -> [MemberWindow] {
-        var memberWindows = [MemberWindow]()
+    // Get an array of channel windows, top-to-bottom.
+    private func getOrderedChannelWindows() -> [ChannelWindow] {
+        var channelWindows = [ChannelWindow]()
                 
-        // Create an array of all workspace members with existing windows, top-to-bottom.
-        for member in members {
-            guard let memberWindow = membersMap[member.id] else {
+        // Create an array of all workspace channels with existing windows, top-to-bottom.
+        for channel in channels {
+            guard let channelWindow = channelsMap[channel.id] else {
                 continue
             }
             
-            memberWindows.append(memberWindow)
+            channelWindows.append(channelWindow)
         }
         
-        return memberWindows
+        return channelWindows
     }
     
-    // Calculate new animation destinations for each member window.
-    private func calculateMemberWindowDestinations(
-        memberWindows: [MemberWindow],
-        activeMemberIndex: Int,
-        activeMemberHeightOffset: Float) {
+    // Calculate new animation destinations for each channel window.
+    private func calculateChannelWindowDestinations(
+        channelWindows: [ChannelWindow],
+        activeChannelIndex: Int,
+        activeChannelHeightOffset: Float) {
         
-        var memberWindow: MemberWindow
+        var channelWindow: ChannelWindow
         var newSize: NSSize
         var newPosition: NSPoint
         var destination: NSPoint
         
-        // Calculate new size and position of all member windows.
-        for i in 0..<memberWindows.count {
-            memberWindow = memberWindows[i]
+        // Calculate new size and position of all channel windows.
+        for i in 0..<channelWindows.count {
+            channelWindow = channelWindows[i]
             
-            // Get current animation destination of member.
-            destination = memberWindow.getDestination()
+            // Get current animation destination of channel.
+            destination = channelWindow.getDestination()
             
-            // Get size of member window for its current state.
-            newSize = memberWindow.getSizeForCurrentState()
+            // Get size of channel window for its current state.
+            newSize = channelWindow.getSizeForCurrentState()
             
-            // Calculate new member window position.
+            // Calculate new channel window position.
             newPosition = NSPoint(
-                x: getMemberXPosition(forMemberSize: newSize),
-                y: CGFloat(Float(destination.y) + (i < activeMemberIndex ? -activeMemberHeightOffset : activeMemberHeightOffset))
+                x: getChannelXPosition(forChannelSize: newSize),
+                y: CGFloat(Float(destination.y) + (i < activeChannelIndex ? -activeChannelHeightOffset : activeChannelHeightOffset))
             )
             
-            // Set newly calculated destination on member window, itself.
-            memberWindow.setDestination(newPosition)
+            // Set newly calculated destination on channel window, itself.
+            channelWindow.setDestination(newPosition)
         }
     }
 
-    // Animate each member window to its stored destination.
-    private func animateMemberWindowsToDestinations(memberWindows: [MemberWindow], activeMemberIndex: Int) {
-        // Get active member window and id.
-        let activeMemberWindow = memberWindows[activeMemberIndex]
-        let activeMemberId = activeMemberWindow.member.id
+    // Animate each channel window to its stored destination.
+    private func animateChannelWindowsToDestinations(channelWindows: [ChannelWindow], activeChannelIndex: Int) {
+        // Get active channel window and id.
+        let activeChannelWindow = channelWindows[activeChannelIndex]
+        let activeChannelId = activeChannelWindow.channel.id
         
-        // Check to see if active member window should animate its frame.
-        let activeMemberWindowAnimatesFrame = MemberWindow.stateShouldAnimateFrame(activeMemberWindow.state)
+        // Check to see if active channel window should animate its frame.
+        let activeChannelWindowAnimatesFrame = ChannelWindow.stateShouldAnimateFrame(activeChannelWindow.state)
         
-        // Check to see if active member window should disable those around it.
-        let activeMemberWindowDisablesOthers = MemberWindow.stateShouldDisableOtherMembers(activeMemberWindow.state)
+        // Check to see if active channel window should disable those around it.
+        let activeChannelWindowDisablesOthers = ChannelWindow.stateShouldDisableOtherChannels(activeChannelWindow.state)
         
         NSAnimationContext.runAnimationGroup({ context in
             // Configure animation attributes.
-            context.duration = AnimationConfig.MemberWindows.duration
-            context.timingFunction = CAMediaTimingFunction(name: AnimationConfig.MemberWindows.timingFunctionName)
+            context.duration = AnimationConfig.ChannelWindows.duration
+            context.timingFunction = CAMediaTimingFunction(name: AnimationConfig.ChannelWindows.timingFunctionName)
             context.allowsImplicitAnimation = true
 
             // Vars for loop below.
-            var isActiveMember, isDisabled, ignoreFrameUpdate: Bool
+            var isActiveChannel, isDisabled, ignoreFrameUpdate: Bool
 
-            // Re-render each member window to its new destination.
-            for (i, memberWindow) in memberWindows.enumerated() {
-                isActiveMember = i == activeMemberIndex
-                isDisabled = !isActiveMember && activeMemberWindowDisablesOthers
-                ignoreFrameUpdate = isActiveMember && !activeMemberWindowAnimatesFrame
+            // Re-render each channel window to its new destination.
+            for (i, channelWindow) in channelWindows.enumerated() {
+                isActiveChannel = i == activeChannelIndex
+                isDisabled = !isActiveChannel && activeChannelWindowDisablesOthers
+                ignoreFrameUpdate = isActiveChannel && !activeChannelWindowAnimatesFrame
 
-                memberWindow.render(
-                    size: ignoreFrameUpdate ? nil : memberWindow.getSizeForCurrentState(),
-                    position: ignoreFrameUpdate ? nil : memberWindow.getDestination(),
+                channelWindow.render(
+                    size: ignoreFrameUpdate ? nil : channelWindow.getSizeForCurrentState(),
+                    position: ignoreFrameUpdate ? nil : channelWindow.getDestination(),
                     isDisabled: isDisabled,
                     propagate: true,
                     animate: true
                 )
             }
         }, completionHandler: { [weak self] in
-            self?.onMemberWindowAnimationsComplete(activeMemberId: activeMemberId)
+            self?.onChannelWindowAnimationsComplete(activeChannelId: activeChannelId)
         })
     }
     
-    private func onMemberWindowAnimationsComplete(activeMemberId: String) {
-        // Get active member window.
-        guard let activeMemberWindow = membersMap[activeMemberId] else {
-            logger.error("Unable to find active member window for id \(activeMemberId)...")
+    private func onChannelWindowAnimationsComplete(activeChannelId: String) {
+        // Get active channel window.
+        guard let activeChannelWindow = channelsMap[activeChannelId] else {
+            logger.error("Unable to find active channel window for id \(activeChannelId)...")
             return
         }
 
         // If the recording is waiting to be started...
-        if activeMemberWindow.state === .recording(.starting) {
-            // Move active window to front of other members.
-            self.moveChildWindowToFront(activeMemberWindow)
+        if activeChannelWindow.state === .recording(.starting) {
+            // Move active window to front of other channels.
+            self.moveChildWindowToFront(activeChannelWindow)
             
             // Start a new audio recording.
-            activeMemberWindow.startRecording()
+            activeChannelWindow.startRecording()
         }
     }
     
-    // Force a "mouse-exited" event on any previewing member windows that aren't the active member window.
-    private func ensureOnlyOneMemberIsPreviewing(memberWindows: [MemberWindow], activeMemberIndex: Int) {
-        for (i, memberWindow) in memberWindows.enumerated() {
-            if i == activeMemberIndex {
+    // Force a "mouse-exited" event on any previewing channel windows that aren't the active channel window.
+    private func ensureOnlyOneChannelIsPreviewing(channelWindows: [ChannelWindow], activeChannelIndex: Int) {
+        for (i, channelWindow) in channelWindows.enumerated() {
+            if i == activeChannelIndex {
                 continue
             }
             
-            // If a member that isn't the active member is found to be in
+            // If a channel that isn't the active channel is found to be in
             // the previewing state, force it out of this state.
-            if memberWindow.isPreviewing() {
-                memberWindow.registerMouseExited()
+            if channelWindow.isPreviewing() {
+                channelWindow.registerMouseExited()
             }
         }
     }
@@ -460,28 +460,28 @@ class WorkspaceWindow: FloatingWindow {
     
     // Current workspace view
     private func renderWorkspace(_ workspace: Workspace) {
-        // Update members list.
-        members = workspace.members
+        // Update channels list.
+        channels = workspace.channels
         
-        // Render all members of workspace.
-        renderMembers()
+        // Render all channels of workspace.
+        renderChannels()
     }
     
-    // Render all workspace members on screen in separate windows.
-    private func renderMembers() {
-        // Clear out members map.
-        membersMap.removeAll()
+    // Render all workspace channels on screen in separate windows.
+    private func renderChannels() {
+        // Clear out channels map.
+        channelsMap.removeAll()
         
-        // Create each member window and add them to the membersMap.
-        for member in members {
-            createMemberWindow(forMember: member)
+        // Create each channel window and add them to the channelsMap.
+        for channel in channels {
+            createChannelWindow(forChannel: channel)
         }
         
-        // Size and position member windows.
-        setInitialMemberSizesAndPositions()
+        // Size and position channel windows.
+        setInitialChannelSizesAndPositions()
 
-        // Add all member windows as child windows.
-        addMemberWindows()
+        // Add all channel windows as child windows.
+        addChannelWindows()
     }
     
     // Render workspace window contents based on current state.

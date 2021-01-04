@@ -1,5 +1,5 @@
 //
-//  MemberAvatarView.swift
+//  ChannelAvatarView.swift
 //  Chat
 //
 //  Created by Ben Whittle on 12/12/20.
@@ -8,42 +8,26 @@
 
 import Cocoa
 
-// View representing a workspace member's avatar.
-class MemberAvatarView: NSView {
+// View representing a channel's recipient avatar.
+class ChannelAvatarView: NSView {
     
     // Auto-layout contraint identifiers.
     enum ConstraintKeys {
         static let height = "height"
         static let width = "width"
     }
-    
-    // URL string to avatar.
-    var avatar: String!
-    
-    convenience init(avatar: String) {
-        self.init(frame: NSRect())
-        self.avatar = avatar
-    }
-    
-    private override init(frame frameRect: NSRect) {
-        super.init(frame: frameRect)
-    }
-        
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
+
     // Handle mouse up event.
     override func mouseUp(with event: NSEvent) {
-        // Bubble up event to parent member view.
-        if let parent = getMemberView() {
+        // Bubble up event to parent channel view.
+        if let parent = getChannelView() {
             parent.onAvatarClick()
         }
     }
     
-    // Get parent MemberView.
-    private func getMemberView() -> MemberView? {
-        superview as? MemberView
+    // Get parent ChannelView.
+    private func getChannelView() -> ChannelView? {
+        superview as? ChannelView
     }
     
     // Get an auto-layout constraint for a given identifier.
@@ -65,7 +49,7 @@ class MemberAvatarView: NSView {
     func animateSize(toDiameter diameter: CGFloat) {
         // Ensure avatar view has both a height and width constraint.
         guard let heightConstraint = getHeightConstraint(), let widthConstraint = getWidthConstraint() else {
-            logger.error("Both height and width constraints required to animate member avatar view size...")
+            logger.error("Both height and width constraints required to animate channel avatar view size...")
             return
         }
         

@@ -1,5 +1,5 @@
 //
-//  MemberState.swift
+//  ChannelState.swift
 //  Chat
 //
 //  Created by Ben Whittle on 12/28/20.
@@ -8,14 +8,14 @@
 
 import Cocoa
 
-// Supported member states.
-enum MemberState {
+// Supported channel states.
+enum ChannelState {
     case idle
     case previewing
     case recording(RecordingStatus)
     
     // Case equality check + associated value equality checks
-    static func ===(lhs: MemberState, rhs: MemberState) -> Bool {
+    static func ===(lhs: ChannelState, rhs: ChannelState) -> Bool {
         switch (lhs, rhs) {
         case (.idle, .idle):
             return true
@@ -29,12 +29,12 @@ enum MemberState {
     }
     
     // Case inequality check + associated value inequality checks
-    static func !==(lhs: MemberState, rhs: MemberState) -> Bool {
+    static func !==(lhs: ChannelState, rhs: ChannelState) -> Bool {
         return (lhs === rhs) == false
     }
     
     // Case equality check
-    static func ==(lhs: MemberState, rhs: MemberState) -> Bool {
+    static func ==(lhs: ChannelState, rhs: ChannelState) -> Bool {
         switch (lhs, rhs) {
         case (.idle, .idle):
             return true
@@ -48,7 +48,7 @@ enum MemberState {
     }
     
     // Case inequality check.
-    static func !=(lhs: MemberState, rhs: MemberState) -> Bool {
+    static func !=(lhs: ChannelState, rhs: ChannelState) -> Bool {
         return (lhs == rhs) == false
     }
 }

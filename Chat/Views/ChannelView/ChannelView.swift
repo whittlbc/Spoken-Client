@@ -1,5 +1,5 @@
 //
-//  MemberView.swift
+//  ChannelView.swift
 //  Chat
 //
 //  Created by Ben Whittle on 12/11/20.
@@ -8,9 +8,9 @@
 
 import Cocoa
 
-// Primary content view of MemberWindow -- will always take up entire window size.
-class MemberView: NSView {
-        
+// Primary content view of ChannelWindow -- will always take up entire window size.
+class ChannelView: NSView {
+
     // Allow this view to be the first responder in the chain to key events.
     override var acceptsFirstResponder: Bool { true }
     
@@ -42,15 +42,15 @@ class MemberView: NSView {
         addTrackingArea(trackingArea)
     }
     
-    // Get parent MemberWindow.
-    func getMemberWindow() -> MemberWindow? {
-        window as? MemberWindow
+    // Get parent ChannelWindow.
+    func getChannelWindow() -> ChannelWindow? {
+        window as? ChannelWindow
     }
     
     // Handle when avatar view is clicked on.
     func onAvatarClick() {
-        // Bubble up event to parent member window.
-        if let parent = getMemberWindow() {
+        // Bubble up event to parent channel window.
+        if let parent = getChannelWindow() {
             parent.onAvatarClick()
         }
     }

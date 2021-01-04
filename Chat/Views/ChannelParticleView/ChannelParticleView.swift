@@ -1,5 +1,5 @@
 //
-//  MemberParticleView.swift
+//  ChannelParticleView.swift
 //  Chat
 //
 //  Created by Ben Whittle on 12/27/20.
@@ -8,8 +8,8 @@
 
 import Cocoa
 
-// Particle view used for voice audio animations behind member view.
-class MemberParticleView: ParticleView {
+// Particle view used for voice audio animations behind channel view.
+class ChannelParticleView: ParticleView {
     
     // Colors to use for each of the 4 particle groups.
     static let colors = ParticleColorSpec(
@@ -20,7 +20,7 @@ class MemberParticleView: ParticleView {
     )
     
     // Initial size of this view.
-    static let initialSize = MemberWindow.defaultSizeForState(.recording(.started))
+    static let initialSize = ChannelWindow.defaultSizeForState(.recording(.started))
     
     // Total number of particles to render.
     static let numParticles = ParticleCount.TwentyFourtyEight
@@ -30,10 +30,10 @@ class MemberParticleView: ParticleView {
     // Proper initializer to use when creating this view.
     convenience init() {
         self.init(
-            width: UInt(MemberParticleView.initialSize.width),
-            height: UInt(MemberParticleView.initialSize.height),
-            numParticles: MemberParticleView.numParticles,
-            colors: MemberParticleView.colors
+            width: UInt(ChannelParticleView.initialSize.width),
+            height: UInt(ChannelParticleView.initialSize.height),
+            numParticles: ChannelParticleView.numParticles,
+            colors: ChannelParticleView.colors
         )
     }
     
