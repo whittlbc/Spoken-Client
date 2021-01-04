@@ -12,6 +12,7 @@ struct Workspace: Identifiable, Codable {
     var id = ""
     var name = ""
     var members = [Member]()
+    var channels = [Channel]()
     
     // Get current workspace from cache.
     static var current: Workspace? {

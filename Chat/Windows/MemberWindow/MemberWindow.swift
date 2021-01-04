@@ -44,7 +44,7 @@ class MemberWindow: FloatingWindow {
         enum ArtificialTiming {
         
             // How long to show window in the recording-sent state before reverting back to idle.
-            static let showRecordingSentDuration = 1.0
+            static let showRecordingSentDuration = 0.9
         }
     }
     

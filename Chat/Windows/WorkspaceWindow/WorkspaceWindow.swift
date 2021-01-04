@@ -79,6 +79,17 @@ class WorkspaceWindow: FloatingWindow {
         // Create global keypress listeners.
         createKeyListeners()
     }
+    
+    // Load current workspace with all its members.
+    func loadCurrentWorkspace() {
+        // Render loading view.
+        render(.loading)
+
+        // Load current workspace and render the returned state.
+        logicController.load { [weak self] state in
+            self?.render(state)
+        }
+    }
 
     // Create listeners for all global key-bindings.
     func createKeyListeners() {
@@ -148,17 +159,6 @@ class WorkspaceWindow: FloatingWindow {
     // Find the first member with a recording state.
     func findActiveRecordingMember() -> MemberWindow? {
         getOrderedMemberWindows().first(where: { $0.isRecording() })
-    }
-        
-    // Load current workspace with all its members.
-    func loadCurrentWorkspace() {
-        // Render loading view.
-        render(.loading)
-
-        // Load current workspace and render the returned state.
-        logicController.load { [weak self] state in
-            self?.render(state)
-        }
     }
     
     // Handle individual member window state updates as a group.

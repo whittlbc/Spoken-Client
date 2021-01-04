@@ -86,7 +86,7 @@ class SelfDrawnCheckmarkView: NSView {
     }
     
     private func createCheckmarkPath() -> CGPath {
-        let scale = frame.size.width / 75
+        let scale = frame.size.width / 70
         let centerX = frame.size.width / 2
         let centerY = frame.size.height / 2
 

@@ -15,6 +15,10 @@
 		0949C8B2259908E900B61D1F /* ParticleViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0949C8B1259908E900B61D1F /* ParticleViewDelegate.swift */; };
 		095C6765259A6A8800729845 /* ChasingTailSpinnerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 095C6764259A6A8800729845 /* ChasingTailSpinnerView.swift */; };
 		095C676C259E706000729845 /* SelfDrawnCheckmarkView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 095C676B259E706000729845 /* SelfDrawnCheckmarkView.swift */; };
+		095C677025A29AA200729845 /* Channel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 095C676F25A29AA200729845 /* Channel.swift */; };
+		095C677325A29B7300729845 /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = 095C677225A29B7300729845 /* Message.swift */; };
+		095C677625A29C6700729845 /* Channel+Arrow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 095C677525A29C6700729845 /* Channel+Arrow.swift */; };
+		095C677A25A29CC300729845 /* Message+Arrow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 095C677925A29CC300729845 /* Message+Arrow.swift */; };
 		096862CA258202BB00B9B614 /* Networking in Frameworks */ = {isa = PBXBuildFile; productRef = 096862C9258202BB00B9B614 /* Networking */; };
 		096862CD25829C5A00B9B614 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 096862CC25829C5A00B9B614 /* User.swift */; };
 		096862D525829FE300B9B614 /* Arrow in Frameworks */ = {isa = PBXBuildFile; productRef = 096862D425829FE300B9B614 /* Arrow */; };
@@ -79,6 +83,10 @@
 		0949C8B1259908E900B61D1F /* ParticleViewDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParticleViewDelegate.swift; sourceTree = "<group>"; };
 		095C6764259A6A8800729845 /* ChasingTailSpinnerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChasingTailSpinnerView.swift; sourceTree = "<group>"; };
 		095C676B259E706000729845 /* SelfDrawnCheckmarkView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelfDrawnCheckmarkView.swift; sourceTree = "<group>"; };
+		095C676F25A29AA200729845 /* Channel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Channel.swift; sourceTree = "<group>"; };
+		095C677225A29B7300729845 /* Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
+		095C677525A29C6700729845 /* Channel+Arrow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Channel+Arrow.swift"; sourceTree = "<group>"; };
+		095C677925A29CC300729845 /* Message+Arrow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Message+Arrow.swift"; sourceTree = "<group>"; };
 		096862CC25829C5A00B9B614 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		096862D72582A03F00B9B614 /* Arrow+Networking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Arrow+Networking.swift"; sourceTree = "<group>"; };
 		096862DD2582A2EB00B9B614 /* User+Arrow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "User+Arrow.swift"; sourceTree = "<group>"; };
@@ -182,6 +190,19 @@
 				095C676B259E706000729845 /* SelfDrawnCheckmarkView.swift */,
 			);
 			path = SelfDrawnCheckmarkView;
+			sourceTree = "<group>";
+		};
+		095C677825A29C6C00729845 /* Models+Arrow */ = {
+			isa = PBXGroup;
+			children = (
+				096862DD2582A2EB00B9B614 /* User+Arrow.swift */,
+				096862E42582A67F00B9B614 /* Name+Arrow.swift */,
+				096862EA2582A8D000B9B614 /* Workspace+Arrow.swift */,
+				096862F02582ACE100B9B614 /* Member+Arrow.swift */,
+				095C677525A29C6700729845 /* Channel+Arrow.swift */,
+				095C677925A29CC300729845 /* Message+Arrow.swift */,
+			);
+			path = "Models+Arrow";
 			sourceTree = "<group>";
 		};
 		0968630D2583176B00B9B614 /* WorkspaceWindow */ = {
@@ -332,6 +353,8 @@
 				096862E12582A61C00B9B614 /* Name.swift */,
 				096862E72582A88600B9B614 /* Workspace.swift */,
 				096862ED2582ABCE00B9B614 /* Member.swift */,
+				095C676F25A29AA200729845 /* Channel.swift */,
+				095C677225A29B7300729845 /* Message.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -339,12 +362,9 @@
 		0995DE1C2581695A00DAA334 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
+				095C677825A29C6C00729845 /* Models+Arrow */,
 				0995DE12257B388500DAA334 /* NSBezierPath+CGPath.swift */,
 				096862D72582A03F00B9B614 /* Arrow+Networking.swift */,
-				096862DD2582A2EB00B9B614 /* User+Arrow.swift */,
-				096862E42582A67F00B9B614 /* Name+Arrow.swift */,
-				096862EA2582A8D000B9B614 /* Workspace+Arrow.swift */,
-				096862F02582ACE100B9B614 /* Member+Arrow.swift */,
 				096862FD2582FF4300B9B614 /* User+Cache.swift */,
 				09686300258300A900B9B614 /* Workspace+Cache.swift */,
 				0968631225831C2F00B9B614 /* User+API.swift */,
@@ -488,6 +508,7 @@
 				0995DE382581A9BC00DAA334 /* KeychainError.swift in Sources */,
 				09074D84259982DE00E72F93 /* MemberAvatarViewController.swift in Sources */,
 				0968630425830A0200B9B614 /* WorkspaceRoutes.swift in Sources */,
+				095C677A25A29CC300729845 /* Message+Arrow.swift in Sources */,
 				0995DE3B2581CA7500DAA334 /* InternalAPI.swift in Sources */,
 				0990879525797561001660D1 /* AppDelegate.swift in Sources */,
 				099997522595371E008E65FB /* ParticleView.swift in Sources */,
@@ -521,12 +542,15 @@
 				096862FE2582FF4300B9B614 /* User+Cache.swift in Sources */,
 				09F60ACC258C2FD50020974A /* Style.swift in Sources */,
 				096863352586C2B000B9B614 /* RoundView.swift in Sources */,
+				095C677325A29B7300729845 /* Message.swift in Sources */,
 				0995DE2125816B5E00DAA334 /* Config.swift in Sources */,
 				096862FB2582CF9500B9B614 /* Cache.swift in Sources */,
 				09074D872599BD0500E72F93 /* MemberState.swift in Sources */,
 				0968632325840AB500B9B614 /* MemberWindow.swift in Sources */,
+				095C677025A29AA200729845 /* Channel.swift in Sources */,
 				09686301258300A900B9B614 /* Workspace+Cache.swift in Sources */,
 				09686328258427A500B9B614 /* MemberViewController.swift in Sources */,
+				095C677625A29C6700729845 /* Channel+Arrow.swift in Sources */,
 				099087A8257976BF001660D1 /* WindowControllerManager.swift in Sources */,
 				096862CD25829C5A00B9B614 /* User.swift in Sources */,
 				096862E22582A61C00B9B614 /* Name.swift in Sources */,
