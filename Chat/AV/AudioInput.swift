@@ -15,7 +15,7 @@ public enum AudioInput {
     
     static let bufferSize: AVAudioFrameCount = 1024
     
-    static let locale = "en-US"
+    static let locale = Locale(identifier: "en-US")
     
     // Check if speech recognition permissions have been granted for this app.
     static func speechRecognitionIsAuthorized() -> Bool {

@@ -36,14 +36,6 @@ class ChannelSpeechRecognizer: SFSpeechRecognizer {
         audioEngine.inputNode.outputFormat(forBus: AudioInput.bus)
     }
     
-    convenience init(localeID: String? = AudioInput.locale) {
-        self.init(locale: Locale(identifier: localeID!))
-    }
-    
-    private override init(locale: Locale) {
-        super.init(locale: locale)!
-    }
-    
     func startListening() {
         // Reset all audio resources to base state.
         stopListening()
@@ -127,6 +119,13 @@ class ChannelSpeechRecognizer: SFSpeechRecognizer {
         channelDelegate?.onChannelSpeechRecognized(channelId: channelId)
     }
     
+    private func onTranscriptionError(_ error: Error) {
+        if error._domain == "EARErrorDomain" {
+            logger.warning("Restarting recognition due to length of silence...")
+            self.startListening()
+        }
+    }
+    
     private func startAudioEngine() {
         // Prep audio engine for start.
         audioEngine.prepare()
@@ -160,20 +159,13 @@ class ChannelSpeechRecognizer: SFSpeechRecognizer {
     
     private func createTranscriber() {
         transcriber = recognitionTask(with: recognitionRequest!) { [weak self] result, error in
-            let errorFound = error != nil
-            var isFinal = false
+            if let err = error {
+                self?.onTranscriptionError(err)
+                return
+            }
             
             if let result = result, self?.isListening == true {
-                isFinal = result.isFinal
                 self?.onTranscription(result.bestTranscription)
-            }
-            
-            if errorFound {
-                logger.error("Error occurred during recognition task: \(error!)")
-            }
-            
-            if errorFound || isFinal {
-                self?.startListening()
             }
         }
     }
@@ -188,7 +180,7 @@ class ChannelSpeechRecognizer: SFSpeechRecognizer {
         guard let request = recognitionRequest else {
             fatalError("Buffer recognition request failed to be created.")
         }
-        
+                
         request.shouldReportPartialResults = true
         request.contextualStrings = [String](channelPrompts.keys)
         request.requiresOnDeviceRecognition = true

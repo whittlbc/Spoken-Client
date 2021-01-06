@@ -445,13 +445,8 @@ class WorkspaceWindow: FloatingWindow, ChannelDelegate, ChannelSpeechRecognizerD
             // Stop channel speech recognizer from listening to prompts.
             stopChannelSpeechRecognizer()
         
+            // Start a new recording.
             activeChannelWindow.startRecording()
-
-//            let delay: CFTimeInterval = activeChannelWindow.prevState == .previewing ? 0 : 0.1
-//
-//            DispatchQueue.main.asyncAfter(deadline: .now() + delay ) {
-//                activeChannelWindow.startRecording()
-//            }
         }
     }
     
@@ -472,8 +467,8 @@ class WorkspaceWindow: FloatingWindow, ChannelDelegate, ChannelSpeechRecognizerD
         
     private func upsertChannelSpeechRecognizer() {
         // Upsert speech recognizer instance.
-        channelSpeechRecognizer = channelSpeechRecognizer ?? ChannelSpeechRecognizer()
-        
+        channelSpeechRecognizer = channelSpeechRecognizer ?? ChannelSpeechRecognizer(locale: AudioInput.locale)
+                
         // Use workspace window as delegate.
         channelSpeechRecognizer!.channelDelegate = self
         
@@ -484,7 +479,7 @@ class WorkspaceWindow: FloatingWindow, ChannelDelegate, ChannelSpeechRecognizerD
     
     // Request access to mic, speech recognition service, and start listening for prompts.
     private func startChannelSpeechRecognizer() {
-        guard let speechRecognizer = channelSpeechRecognizer else {
+        guard let speechRecognizer = channelSpeechRecognizer, speechRecognizer.isAvailable else {
             return
         }
         
@@ -494,7 +489,7 @@ class WorkspaceWindow: FloatingWindow, ChannelDelegate, ChannelSpeechRecognizerD
         })
     }
     
-    // Stop channel speech recognizer if it's currently running.
+    // Stop channel speech recognizer if it's currently listening.
     private func stopChannelSpeechRecognizer() {
         guard let speechRecognizer = channelSpeechRecognizer, speechRecognizer.isListening else {
             return
@@ -523,7 +518,7 @@ class WorkspaceWindow: FloatingWindow, ChannelDelegate, ChannelSpeechRecognizerD
         }
     }
     
-    // Create new workspace view
+    // Create new workspace viewe
     private func renderCreateFirstWorkspace() {
         // TODO
     }
