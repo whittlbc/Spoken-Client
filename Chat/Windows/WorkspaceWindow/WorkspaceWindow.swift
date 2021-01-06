@@ -9,15 +9,8 @@
 import Cocoa
 import HotKey
 
-// Workspace window state.
-enum WorkspaceState {
-    case loading
-    case loaded(Workspace?)
-    case failed(Error)
-}
-
 // Window housing all sidebar app functionality as it relates to a given workspace.
-class WorkspaceWindow: FloatingWindow {
+class WorkspaceWindow: FloatingWindow, ChannelDelegate, ChannelSpeechRecognizerDelegate {
     
     // Size of workspace window -- same as Sidebar.
     static let size = SidebarWindow.size
@@ -67,6 +60,9 @@ class WorkspaceWindow: FloatingWindow {
     
     // Create global hotkey for return key.
     private var returnKeyListener: HotKey!
+    
+    // Audio input listener allowing speech-to-text to prompt new channel recordings.
+    private var channelSpeechRecognizer: ChannelSpeechRecognizer?
     
     // Override delegated init, size/position window on screen, and fetch workspaces.
     override init(contentRect: NSRect, styleMask style: NSWindow.StyleMask, backing backingStoreType: NSWindow.BackingStoreType, defer flag: Bool) {
@@ -140,6 +136,50 @@ class WorkspaceWindow: FloatingWindow {
         findAndSendActiveRecording()
     }
     
+    // Handle individual channel window state updates as a group.
+    func onChannelsRequireGroupUpdate(activeChannelId: String) {
+        // Promote previous state to current state for all adjacent channel windows.
+        for (channelId, channelWindow) in channelsMap {
+            if channelId != activeChannelId {
+                channelWindow.promotePreviousState()
+            }
+        }
+
+        // Animate all channel windows to new sizes/positions based on state change.
+        updateChannelSizesAndPositions(activeChannelId: activeChannelId)
+    }
+    
+    // Start listening for channel speech prompts again when a recording is cancelled.
+    func onRecordingCancelled(activeChannelId: String) {
+        channelSpeechRecognizer?.startListening()
+    }
+    
+    func onChannelSpeechRecognized(channelId: String) {
+        // Get ordered list of existing channel windows.
+        let channelWindows = getOrderedChannelWindows()
+
+        // Find the index of the active channel window.
+        let activeIndex = channelWindows.firstIndex{ $0.channel.id == channelId }
+        
+        // Ensure channel window index was found.
+        guard let activeChannelIndex = activeIndex else {
+            logger.error("Speech recognizer prompted channel that couldn't be found: \(channelId)")
+            return
+        }
+                
+        // Switch any channel windows currently in the previewing state to back to idle.
+        unpreviewNonActiveChannelWindows(
+            channelWindows: channelWindows,
+            activeChannelIndex: activeChannelIndex
+        )
+    
+        // Get the active window by index.
+        let activeChannelWindow = channelWindows[activeChannelIndex]
+
+        // Trigger channel window speech prompted handler.
+        activeChannelWindow.onSpeechPrompted()
+    }
+    
     // Cancel the active recording if one exists.
     func findAndCancelActiveRecording() {
         // See if there's an active recording taking place and cancel it if so.
@@ -160,27 +200,15 @@ class WorkspaceWindow: FloatingWindow {
     func findActiveRecordingChannel() -> ChannelWindow? {
         getOrderedChannelWindows().first(where: { $0.isRecording() })
     }
-    
-    // Handle individual channel window state updates as a group.
-    func onChannelStateUpdate(activeChannelId: String) {
-        // Promote previous state to current state for all adjacent channel windows.
-        for (channelId, channelWindow) in channelsMap {
-            if channelId != activeChannelId {
-                channelWindow.promotePreviousState()
-            }
-        }
-
-        // Animate all channel windows to new sizes/positions based on state change.
-        updateChannelSizesAndPositions(activeChannelId: activeChannelId)
-    }
-    
+        
     // Create a new channel window for a given channel.
     private func createChannelWindow(forChannel channel: Channel) {
         // Create channel window.
-        let channelWindow = ChannelWindow(channel: channel, onStateUpdated: { [weak self] channelId in
-            self?.onChannelStateUpdate(activeChannelId: channelId)
-        })
+        let channelWindow = ChannelWindow(channel: channel)
 
+        // Set workspace window as delegate.
+        channelWindow.channelDelegate = self
+        
         // Get initial channel window size.
         let initialSize = channelWindow.getSizeForCurrentState()
         
@@ -291,7 +319,7 @@ class WorkspaceWindow: FloatingWindow {
         
         // If active channel's new state is previewing, ensure it is the only channel window in a previewing state.
         if activeChannelWindow.isPreviewing() {
-            ensureOnlyOneChannelIsPreviewing(channelWindows: channelWindows, activeChannelIndex: activeChannelIndex)
+            unpreviewNonActiveChannelWindows(channelWindows: channelWindows, activeChannelIndex: activeChannelIndex)
             
             // Add a timer to check the mouse position in relation to the active channel window, and force
             // it out of the previewing state if the mouse isn't inside of the active channel window anymore.
@@ -412,15 +440,23 @@ class WorkspaceWindow: FloatingWindow {
         // If the recording is waiting to be started...
         if activeChannelWindow.state === .recording(.starting) {
             // Move active window to front of other channels.
-            self.moveChildWindowToFront(activeChannelWindow)
+            moveChildWindowToFront(activeChannelWindow)
             
-            // Start a new audio recording.
+            // Stop channel speech recognizer from listening to prompts.
+            stopChannelSpeechRecognizer()
+        
             activeChannelWindow.startRecording()
+
+//            let delay: CFTimeInterval = activeChannelWindow.prevState == .previewing ? 0 : 0.1
+//
+//            DispatchQueue.main.asyncAfter(deadline: .now() + delay ) {
+//                activeChannelWindow.startRecording()
+//            }
         }
     }
     
     // Force a "mouse-exited" event on any previewing channel windows that aren't the active channel window.
-    private func ensureOnlyOneChannelIsPreviewing(channelWindows: [ChannelWindow], activeChannelIndex: Int) {
+    private func unpreviewNonActiveChannelWindows(channelWindows: [ChannelWindow], activeChannelIndex: Int) {
         for (i, channelWindow) in channelWindows.enumerated() {
             if i == activeChannelIndex {
                 continue
@@ -433,7 +469,40 @@ class WorkspaceWindow: FloatingWindow {
             }
         }
     }
+        
+    private func upsertChannelSpeechRecognizer() {
+        // Upsert speech recognizer instance.
+        channelSpeechRecognizer = channelSpeechRecognizer ?? ChannelSpeechRecognizer()
+        
+        // Use workspace window as delegate.
+        channelSpeechRecognizer!.channelDelegate = self
+        
+        // Provide the speech recognizer with the current list of channels.
+        // These channels' members will be used to curate the speech-to-text prompts.
+        channelSpeechRecognizer!.channels = channels
+    }
     
+    // Request access to mic, speech recognition service, and start listening for prompts.
+    private func startChannelSpeechRecognizer() {
+        guard let speechRecognizer = channelSpeechRecognizer else {
+            return
+        }
+        
+        // Start listening for prompts once all access permissions have been granted.
+        AudioInput.requestSpeechRecognitionPermission(onAccepted: { [weak speechRecognizer] in
+            speechRecognizer?.startListening()
+        })
+    }
+    
+    // Stop channel speech recognizer if it's currently running.
+    private func stopChannelSpeechRecognizer() {
+        guard let speechRecognizer = channelSpeechRecognizer, speechRecognizer.isListening else {
+            return
+        }
+        
+        speechRecognizer.stopListening()
+    }
+
     // Loading view
     private func renderLoading() {
         // TODO
@@ -442,6 +511,7 @@ class WorkspaceWindow: FloatingWindow {
     // Error view
     private func renderError(_ error: Error) {
         // TODO
+        
     }
     
     // Render workspace if exists; Otherwise, show the view to create a new workspace.
@@ -465,6 +535,12 @@ class WorkspaceWindow: FloatingWindow {
         
         // Render all channels of workspace.
         renderChannels()
+        
+        // Upsert channel speech recognizer with list of channels.
+        upsertChannelSpeechRecognizer()
+        
+        // Start listening for channel prompts.
+        startChannelSpeechRecognizer()
     }
     
     // Render all workspace channels on screen in separate windows.

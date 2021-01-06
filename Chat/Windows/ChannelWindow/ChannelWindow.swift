@@ -25,9 +25,9 @@ class ChannelWindow: FloatingWindow {
     
     // Whether channel is able to be interacted with by the user.
     var isDisabled = false
-        
-    // Closure provided by parent window to be called every time state updates.
-    private var onStateUpdated: ((String) -> Void)!
+    
+    // Delegate that handles channel-related event updates.
+    weak var channelDelegate: ChannelDelegate?
     
     // TODO: Switch to non-private computed property
     // The latest origin this window will-animate/has-animated to.
@@ -62,7 +62,8 @@ class ChannelWindow: FloatingWindow {
     }
     
     static func stateShouldAnimateFrame(_ state: ChannelState) -> Bool {
-        state != .recording(.starting) // recording status is ignored here
+//        state != .recording(.starting) // recording status is ignored here
+        return true
     }
     
     static func stateShouldDisableOtherChannels(_ state: ChannelState) -> Bool {
@@ -70,10 +71,9 @@ class ChannelWindow: FloatingWindow {
     }
 
     // Proper initializer to use when rendering channels.
-    convenience init(channel: Channel, onStateUpdated: @escaping (String) -> Void) {
+    convenience init(channel: Channel) {
         self.init()
         self.channel = channel
-        self.onStateUpdated = onStateUpdated
     }
     
     // Override delegated init
@@ -129,9 +129,9 @@ class ChannelWindow: FloatingWindow {
         // Update current state to provided new state.
         state = newState
         
-        // If the state changed cases, broadcast this update.
+        // If the state changed cases, inform the channel delegate.
         if state != prevState {
-            onStateUpdated(channel.id)
+            channelDelegate?.onChannelsRequireGroupUpdate(activeChannelId: channel.id)
         }
         
         // Handle state-specific change.
@@ -387,6 +387,14 @@ class ChannelWindow: FloatingWindow {
             setState(.recording(.starting))
         }
     }
+    
+    func onSpeechPrompted() {
+        if isDisabled {
+            return
+        }
+        
+        setState(.recording(.starting))
+    }
         
     // Update isDisabled value (if different) and return if value was changed.
     private func updateDisabled(disabled: Bool?) -> Bool {
@@ -426,6 +434,9 @@ class ChannelWindow: FloatingWindow {
         
         // Update state to idle now so that an animation is triggered.
         setState(.idle)
+        
+        // Inform the channel delegate a recording was cancelled.
+        channelDelegate?.onRecordingCancelled(activeChannelId: channel.id)
     }
     
     func showSendingRecording() {
