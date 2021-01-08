@@ -434,9 +434,6 @@ class ChannelWindow: FloatingWindow {
         
         // Update state to idle now so that an animation is triggered.
         setState(.idle)
-        
-        // Inform the channel delegate a recording was cancelled.
-        channelDelegate?.onRecordingCancelled(activeChannelId: channel.id)
     }
     
     func showSendingRecording() {

@@ -8,9 +8,10 @@
 
 import Cocoa
 import HotKey
+import Carbon
 
 // Window housing all sidebar app functionality as it relates to a given workspace.
-class WorkspaceWindow: FloatingWindow, ChannelDelegate, ChannelSpeechRecognizerDelegate {
+class WorkspaceWindow: FloatingWindow, ChannelDelegate {
     
     // Size of workspace window -- same as Sidebar.
     static let size = SidebarWindow.size
@@ -60,9 +61,11 @@ class WorkspaceWindow: FloatingWindow, ChannelDelegate, ChannelSpeechRecognizerD
     
     // Create global hotkey for return key.
     private var returnKeyListener: HotKey!
+
+    // Create global hotkey for command key.
+    private var commandKeyListener: HotKey!
     
-    // Audio input listener allowing speech-to-text to prompt new channel recordings.
-    private var channelSpeechRecognizer: ChannelSpeechRecognizer?
+    private var commandKeyPressed = false
     
     // Override delegated init, size/position window on screen, and fetch workspaces.
     override init(contentRect: NSRect, styleMask style: NSWindow.StyleMask, backing backingStoreType: NSWindow.BackingStoreType, defer flag: Bool) {
@@ -71,6 +74,9 @@ class WorkspaceWindow: FloatingWindow, ChannelDelegate, ChannelSpeechRecognizerD
         // Position and size window on screen.
         repositionWindow(to: SidebarWindow.origin)
         resizeWindow(to: SidebarWindow.size)
+                
+        // Configure app permissions associated with this window.
+        configurePermisssions()
         
         // Create global keypress listeners.
         createKeyListeners()
@@ -86,18 +92,6 @@ class WorkspaceWindow: FloatingWindow, ChannelDelegate, ChannelSpeechRecognizerD
             self?.render(state)
         }
     }
-
-    // Create listeners for all global key-bindings.
-    func createKeyListeners() {
-        // Create escape key-down event handler.
-        createEscKeyListener()
-        
-        // Create return key-down event handler.
-        createReturnKeyListener()
-        
-        // Turn off all key listeners to start.
-        toggleRecordingKeyEventListeners(enable: false)
-    }
     
     // Toggle on/off the key-event listeners active during recordings.
     func toggleRecordingKeyEventListeners(enable: Bool) {
@@ -106,8 +100,28 @@ class WorkspaceWindow: FloatingWindow, ChannelDelegate, ChannelSpeechRecognizerD
         returnKeyListener.isPaused = isPaused
     }
     
+    // Seek permissions this app requries within this window.
+    private func configurePermisssions() {
+        AV.seekPermissions()
+    }
+    
+    // Create listeners for all global key-bindings.
+    private func createKeyListeners() {
+        // Create escape key-down event handler.
+        createEscKeyListener()
+        
+        // Create return key-down event handler.
+        createReturnKeyListener()
+        
+        // Turn off all recording key listeners to start.
+        toggleRecordingKeyEventListeners(enable: false)
+        
+        // Create command key event handlers.
+        createCommandKeyListener()
+    }
+    
     // Create escape key listener.
-    func createEscKeyListener() {
+    private func createEscKeyListener() {
         escKeyListener = HotKey(key: .escape, modifiers: [])
         
         // Listen for escape key-down event.
@@ -117,7 +131,7 @@ class WorkspaceWindow: FloatingWindow, ChannelDelegate, ChannelSpeechRecognizerD
     }
     
     // Create return key listener.
-    func createReturnKeyListener() {
+    private func createReturnKeyListener() {
         returnKeyListener = HotKey(key: .return, modifiers: [])
         
         // Listen for escape key-down event.
@@ -125,17 +139,43 @@ class WorkspaceWindow: FloatingWindow, ChannelDelegate, ChannelSpeechRecognizerD
             self?.onReturnPress()
         }
     }
-
+    
+    private func createCommandKeyListener() {
+        NSEvent.addGlobalMonitorForEvents(matching: .flagsChanged) { [weak self] in
+            let key = $0.modifierFlags.intersection(.deviceIndependentFlagsMask)
+            
+            if self?.commandKeyPressed == false && key == .command {
+                self?.commandKeyPressed = true
+                self?.onCommandKeyDown()
+            }
+            
+            else if self?.commandKeyPressed == true && key != .command {
+                self?.commandKeyPressed = false
+                self?.onCommandKeyUp()
+            }
+        }
+    }
+    
     // Handle escape button key-down event.
-    func onEscPress() {
+    private func onEscPress() {
         findAndCancelActiveRecording()
     }
     
     // Handle return button key-down event.
-    func onReturnPress() {
+    private func onReturnPress() {
         findAndSendActiveRecording()
     }
     
+    // Handle command button key-down event.
+    private func onCommandKeyDown() {
+        startChannelPromptSpeechRecognizer()
+    }
+    
+    // Handle command button key-up event.
+    private func onCommandKeyUp() {
+        stopSpeechRecognition()
+    }
+
     // Handle individual channel window state updates as a group.
     func onChannelsRequireGroupUpdate(activeChannelId: String) {
         // Promote previous state to current state for all adjacent channel windows.
@@ -149,12 +189,19 @@ class WorkspaceWindow: FloatingWindow, ChannelDelegate, ChannelSpeechRecognizerD
         updateChannelSizesAndPositions(activeChannelId: activeChannelId)
     }
     
-    // Start listening for channel speech prompts again when a recording is cancelled.
-    func onRecordingCancelled(activeChannelId: String) {
-        channelSpeechRecognizer?.startListening()
+    private func startChannelPromptSpeechRecognizer() {
+        AV.mic.startChannelPromptAnalyzer(channels: channels, onChannelPrompted: { [weak self] result in
+            if let channelId = result as? String {
+                self?.onChannelPromptedBySpeech(channelId: channelId)
+            }
+        })
     }
     
-    func onChannelSpeechRecognized(channelId: String) {
+    private func stopSpeechRecognition() {
+        AV.mic.stopSpeechRecognition()
+    }
+    
+    func onChannelPromptedBySpeech(channelId: String) {
         // Get ordered list of existing channel windows.
         let channelWindows = getOrderedChannelWindows()
 
@@ -181,7 +228,7 @@ class WorkspaceWindow: FloatingWindow, ChannelDelegate, ChannelSpeechRecognizerD
     }
     
     // Cancel the active recording if one exists.
-    func findAndCancelActiveRecording() {
+    private func findAndCancelActiveRecording() {
         // See if there's an active recording taking place and cancel it if so.
         if let activeRecordingChannel = findActiveRecordingChannel() {
             activeRecordingChannel.cancelRecording()
@@ -189,7 +236,7 @@ class WorkspaceWindow: FloatingWindow, ChannelDelegate, ChannelSpeechRecognizerD
     }
     
     // Send the active recording if one exists.
-    func findAndSendActiveRecording() {
+    private func findAndSendActiveRecording() {
         // See if there's an active recording taking place and send it if so.
         if let activeRecordingChannel = findActiveRecordingChannel() {
             activeRecordingChannel.sendRecording()
@@ -197,7 +244,7 @@ class WorkspaceWindow: FloatingWindow, ChannelDelegate, ChannelSpeechRecognizerD
     }
     
     // Find the first channel with a recording state.
-    func findActiveRecordingChannel() -> ChannelWindow? {
+    private func findActiveRecordingChannel() -> ChannelWindow? {
         getOrderedChannelWindows().first(where: { $0.isRecording() })
     }
         
@@ -441,10 +488,7 @@ class WorkspaceWindow: FloatingWindow, ChannelDelegate, ChannelSpeechRecognizerD
         if activeChannelWindow.state === .recording(.starting) {
             // Move active window to front of other channels.
             moveChildWindowToFront(activeChannelWindow)
-            
-            // Stop channel speech recognizer from listening to prompts.
-            stopChannelSpeechRecognizer()
-        
+                    
             // Start a new recording.
             activeChannelWindow.startRecording()
         }
@@ -464,39 +508,6 @@ class WorkspaceWindow: FloatingWindow, ChannelDelegate, ChannelSpeechRecognizerD
             }
         }
     }
-        
-    private func upsertChannelSpeechRecognizer() {
-        // Upsert speech recognizer instance.
-        channelSpeechRecognizer = channelSpeechRecognizer ?? ChannelSpeechRecognizer(locale: AudioInput.locale)
-                
-        // Use workspace window as delegate.
-        channelSpeechRecognizer!.channelDelegate = self
-        
-        // Provide the speech recognizer with the current list of channels.
-        // These channels' members will be used to curate the speech-to-text prompts.
-        channelSpeechRecognizer!.channels = channels
-    }
-    
-    // Request access to mic, speech recognition service, and start listening for prompts.
-    private func startChannelSpeechRecognizer() {
-        guard let speechRecognizer = channelSpeechRecognizer, speechRecognizer.isAvailable else {
-            return
-        }
-        
-        // Start listening for prompts once all access permissions have been granted.
-        AudioInput.requestSpeechRecognitionPermission(onAccepted: { [weak speechRecognizer] in
-            speechRecognizer?.startListening()
-        })
-    }
-    
-    // Stop channel speech recognizer if it's currently listening.
-    private func stopChannelSpeechRecognizer() {
-        guard let speechRecognizer = channelSpeechRecognizer, speechRecognizer.isListening else {
-            return
-        }
-        
-        speechRecognizer.stopListening()
-    }
 
     // Loading view
     private func renderLoading() {
@@ -506,7 +517,6 @@ class WorkspaceWindow: FloatingWindow, ChannelDelegate, ChannelSpeechRecognizerD
     // Error view
     private func renderError(_ error: Error) {
         // TODO
-        
     }
     
     // Render workspace if exists; Otherwise, show the view to create a new workspace.
@@ -530,12 +540,6 @@ class WorkspaceWindow: FloatingWindow, ChannelDelegate, ChannelSpeechRecognizerD
         
         // Render all channels of workspace.
         renderChannels()
-        
-        // Upsert channel speech recognizer with list of channels.
-        upsertChannelSpeechRecognizer()
-        
-        // Start listening for channel prompts.
-        startChannelSpeechRecognizer()
     }
     
     // Render all workspace channels on screen in separate windows.

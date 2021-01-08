@@ -11,7 +11,5 @@ import Cocoa
 protocol ChannelDelegate: NSObjectProtocol {
     
     func onChannelsRequireGroupUpdate(activeChannelId: String)
-    
-    func onRecordingCancelled(activeChannelId: String)
 }
 
