@@ -142,16 +142,22 @@ class WorkspaceWindow: FloatingWindow, ChannelDelegate {
     
     private func createCommandKeyListener() {
         NSEvent.addGlobalMonitorForEvents(matching: .flagsChanged) { [weak self] in
-            let key = $0.modifierFlags.intersection(.deviceIndependentFlagsMask)
+            let keys = $0.modifierFlags.intersection(.deviceIndependentFlagsMask)
             
-            if self?.commandKeyPressed == false && key == .command {
-                self?.commandKeyPressed = true
-                self?.onCommandKeyDown()
-            }
-            
-            else if self?.commandKeyPressed == true && key != .command {
-                self?.commandKeyPressed = false
-                self?.onCommandKeyUp()
+            switch keys {
+            // Handle command key-down event.
+            case [.command], [.command, .capsLock]:
+                if self?.commandKeyPressed == false {
+                    self?.commandKeyPressed = true
+                    self?.onCommandKeyDown()
+                }
+                
+            // Handle command key-up event.
+            default:
+                if self?.commandKeyPressed == true && !keys.contains(.command) {
+                    self?.commandKeyPressed = false
+                    self?.onCommandKeyUp()
+                }
             }
         }
     }
