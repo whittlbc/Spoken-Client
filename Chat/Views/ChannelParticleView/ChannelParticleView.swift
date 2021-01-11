@@ -16,7 +16,7 @@ class ChannelParticleView: ParticleView {
         
         static let framePeriod = 3
         
-        static let amplitudeScaleFactor: Float = 9
+        static let amplitudeScaleFactor: Float = 8
         
         static let fftScaleFactor: Float = 0.002
         

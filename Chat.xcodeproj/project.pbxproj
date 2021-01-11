@@ -72,7 +72,6 @@
 		0996443625A8F4A6004473B7 /* AudioRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0996443525A8F4A6004473B7 /* AudioRecorder.swift */; };
 		0996443A25A8F6B5004473B7 /* AudioRecording.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0996443925A8F6B5004473B7 /* AudioRecording.swift */; };
 		0996443D25A91755004473B7 /* SpeechRecognizerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0996443C25A91755004473B7 /* SpeechRecognizerDelegate.swift */; };
-		0996444125ABA792004473B7 /* AudioKit in Frameworks */ = {isa = PBXBuildFile; productRef = 0996444025ABA792004473B7 /* AudioKit */; };
 		0996444425ABAB43004473B7 /* AudioAnalysis.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0996444325ABAB43004473B7 /* AudioAnalysis.swift */; };
 		0996444825ABD34D004473B7 /* AudioSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0996444725ABD34D004473B7 /* AudioSnapshot.swift */; };
 		0999974F25953600008E65FB /* ParticleShader.metal in Sources */ = {isa = PBXBuildFile; fileRef = 0999974E25953600008E65FB /* ParticleShader.metal */; };
@@ -182,7 +181,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0996444125ABA792004473B7 /* AudioKit in Frameworks */,
 				09F60AD72592B7CE0020974A /* HotKey in Frameworks */,
 				096862D525829FE300B9B614 /* Arrow in Frameworks */,
 				096862F82582CF6700B9B614 /* Cache in Frameworks */,
@@ -560,7 +558,6 @@
 				096862D425829FE300B9B614 /* Arrow */,
 				096862F72582CF6700B9B614 /* Cache */,
 				09F60AD62592B7CE0020974A /* HotKey */,
-				0996444025ABA792004473B7 /* AudioKit */,
 			);
 			productName = Chat;
 			productReference = 0990879125797561001660D1 /* Chat.app */;
@@ -596,7 +593,6 @@
 				096862D325829FE300B9B614 /* XCRemoteSwiftPackageReference "Arrow" */,
 				096862F62582CF6700B9B614 /* XCRemoteSwiftPackageReference "Cache" */,
 				09F60AD52592B7CD0020974A /* XCRemoteSwiftPackageReference "HotKey" */,
-				0996443F25ABA792004473B7 /* XCRemoteSwiftPackageReference "AudioKit" */,
 			);
 			productRefGroup = 0990879225797561001660D1 /* Products */;
 			projectDirPath = "";
@@ -1071,14 +1067,6 @@
 				minimumVersion = 1.4.0;
 			};
 		};
-		0996443F25ABA792004473B7 /* XCRemoteSwiftPackageReference "AudioKit" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/AudioKit/AudioKit";
-			requirement = {
-				branch = "v5-main";
-				kind = branch;
-			};
-		};
 		09F60AD52592B7CD0020974A /* XCRemoteSwiftPackageReference "HotKey" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/soffes/HotKey";
@@ -1109,11 +1097,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 0995DE2B25818AF000DAA334 /* XCRemoteSwiftPackageReference "swift-log" */;
 			productName = Logging;
-		};
-		0996444025ABA792004473B7 /* AudioKit */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 0996443F25ABA792004473B7 /* XCRemoteSwiftPackageReference "AudioKit" */;
-			productName = AudioKit;
 		};
 		09F60AD62592B7CE0020974A /* HotKey */ = {
 			isa = XCSwiftPackageProductDependency;
