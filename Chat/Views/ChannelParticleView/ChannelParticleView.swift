@@ -86,11 +86,11 @@ class ChannelParticleView: ParticleView {
         resetParticles()
         frameCount = 0
         globalRotation = 0
-        respawnOutOfBoundsParticles = true
         untapMic()
         audioSnapshot = AudioSnapshot()
 
         DispatchQueue.main.asyncAfter(deadline: .now() + ChannelParticleView.initialGravityTimeout) { [weak self] in
+            self?.respawnOutOfBoundsParticles = true
             self?.applyInitialGravity()
         }
     }
