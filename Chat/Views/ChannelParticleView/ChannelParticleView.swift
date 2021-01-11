@@ -86,6 +86,7 @@ class ChannelParticleView: ParticleView {
         resetParticles()
         frameCount = 0
         globalRotation = 0
+        respawnOutOfBoundsParticles = true
         untapMic()
         audioSnapshot = AudioSnapshot()
 
@@ -95,8 +96,8 @@ class ChannelParticleView: ParticleView {
     }
     
     func explode() {
-        exploded = true
         respawnOutOfBoundsParticles = false
+        exploded = true
     }
     
     func tapMic() {
