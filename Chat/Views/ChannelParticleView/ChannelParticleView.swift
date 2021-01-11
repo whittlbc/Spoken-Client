@@ -16,7 +16,7 @@ class ChannelParticleView: ParticleView {
         
         static let framePeriod = 3
         
-        static let amplitudeScaleFactor: Float = 7.0
+        static let amplitudeScaleFactor: Float = 9
         
         static let fftScaleFactor: Float = 0.002
         
@@ -85,7 +85,9 @@ class ChannelParticleView: ParticleView {
         resetGravityWells()
         resetParticles()
         frameCount = 0
+        globalRotation = 0
         untapMic()
+        audioSnapshot = AudioSnapshot()
 
         DispatchQueue.main.asyncAfter(deadline: .now() + ChannelParticleView.initialGravityTimeout) { [weak self] in
             self?.applyInitialGravity()
