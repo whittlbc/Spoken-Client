@@ -69,6 +69,12 @@
 		0995DE382581A9BC00DAA334 /* KeychainError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0995DE372581A9BC00DAA334 /* KeychainError.swift */; };
 		0995DE3B2581CA7500DAA334 /* InternalAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0995DE3A2581CA7500DAA334 /* InternalAPI.swift */; };
 		0995DE3D2581CF6A00DAA334 /* API.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0995DE3C2581CF6A00DAA334 /* API.swift */; };
+		0996443625A8F4A6004473B7 /* AudioRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0996443525A8F4A6004473B7 /* AudioRecorder.swift */; };
+		0996443A25A8F6B5004473B7 /* AudioRecording.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0996443925A8F6B5004473B7 /* AudioRecording.swift */; };
+		0996443D25A91755004473B7 /* SpeechRecognizerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0996443C25A91755004473B7 /* SpeechRecognizerDelegate.swift */; };
+		0996444125ABA792004473B7 /* AudioKit in Frameworks */ = {isa = PBXBuildFile; productRef = 0996444025ABA792004473B7 /* AudioKit */; };
+		0996444425ABAB43004473B7 /* AudioAnalysis.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0996444325ABAB43004473B7 /* AudioAnalysis.swift */; };
+		0996444825ABD34D004473B7 /* AudioSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0996444725ABD34D004473B7 /* AudioSnapshot.swift */; };
 		0999974F25953600008E65FB /* ParticleShader.metal in Sources */ = {isa = PBXBuildFile; fileRef = 0999974E25953600008E65FB /* ParticleShader.metal */; };
 		099997522595371E008E65FB /* ParticleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 099997512595371E008E65FB /* ParticleView.swift */; };
 		09C1328125A7C3AC00FB1D90 /* SFSpeechRecognizer+AuthStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09C1328025A7C3AC00FB1D90 /* SFSpeechRecognizer+AuthStatus.swift */; };
@@ -150,6 +156,11 @@
 		0995DE372581A9BC00DAA334 /* KeychainError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainError.swift; sourceTree = "<group>"; };
 		0995DE3A2581CA7500DAA334 /* InternalAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InternalAPI.swift; sourceTree = "<group>"; };
 		0995DE3C2581CF6A00DAA334 /* API.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = API.swift; sourceTree = "<group>"; };
+		0996443525A8F4A6004473B7 /* AudioRecorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioRecorder.swift; sourceTree = "<group>"; };
+		0996443925A8F6B5004473B7 /* AudioRecording.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioRecording.swift; sourceTree = "<group>"; };
+		0996443C25A91755004473B7 /* SpeechRecognizerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechRecognizerDelegate.swift; sourceTree = "<group>"; };
+		0996444325ABAB43004473B7 /* AudioAnalysis.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioAnalysis.swift; sourceTree = "<group>"; };
+		0996444725ABD34D004473B7 /* AudioSnapshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioSnapshot.swift; sourceTree = "<group>"; };
 		0999974E25953600008E65FB /* ParticleShader.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = ParticleShader.metal; sourceTree = "<group>"; };
 		099997512595371E008E65FB /* ParticleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParticleView.swift; sourceTree = "<group>"; };
 		09C1328025A7C3AC00FB1D90 /* SFSpeechRecognizer+AuthStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SFSpeechRecognizer+AuthStatus.swift"; sourceTree = "<group>"; };
@@ -171,6 +182,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0996444125ABA792004473B7 /* AudioKit in Frameworks */,
 				09F60AD72592B7CE0020974A /* HotKey in Frameworks */,
 				096862D525829FE300B9B614 /* Arrow in Frameworks */,
 				096862F82582CF6700B9B614 /* Cache in Frameworks */,
@@ -241,8 +253,10 @@
 			isa = PBXGroup;
 			children = (
 				0940E06D25A4D946006184D7 /* AV.swift */,
-				09C1328A25A7C9FF00FB1D90 /* Speech */,
 				09C1328925A7C9F200FB1D90 /* Inputs */,
+				0996443425A8F44F004473B7 /* Recorders */,
+				0996444625ABD32D004473B7 /* Analysis */,
+				09C1328A25A7C9FF00FB1D90 /* Speech */,
 			);
 			path = AV;
 			sourceTree = "<group>";
@@ -460,6 +474,24 @@
 			path = InternalAPI;
 			sourceTree = "<group>";
 		};
+		0996443425A8F44F004473B7 /* Recorders */ = {
+			isa = PBXGroup;
+			children = (
+				0996443525A8F4A6004473B7 /* AudioRecorder.swift */,
+				0996443925A8F6B5004473B7 /* AudioRecording.swift */,
+			);
+			path = Recorders;
+			sourceTree = "<group>";
+		};
+		0996444625ABD32D004473B7 /* Analysis */ = {
+			isa = PBXGroup;
+			children = (
+				0996444325ABAB43004473B7 /* AudioAnalysis.swift */,
+				0996444725ABD34D004473B7 /* AudioSnapshot.swift */,
+			);
+			path = Analysis;
+			sourceTree = "<group>";
+		};
 		09C1328925A7C9F200FB1D90 /* Inputs */ = {
 			isa = PBXGroup;
 			children = (
@@ -473,6 +505,7 @@
 			children = (
 				09C1328B25A7CA0800FB1D90 /* SpeechAnalyzers */,
 				09C1328325A7C6A500FB1D90 /* SpeechRecognizer.swift */,
+				0996443C25A91755004473B7 /* SpeechRecognizerDelegate.swift */,
 			);
 			path = Speech;
 			sourceTree = "<group>";
@@ -527,6 +560,7 @@
 				096862D425829FE300B9B614 /* Arrow */,
 				096862F72582CF6700B9B614 /* Cache */,
 				09F60AD62592B7CE0020974A /* HotKey */,
+				0996444025ABA792004473B7 /* AudioKit */,
 			);
 			productName = Chat;
 			productReference = 0990879125797561001660D1 /* Chat.app */;
@@ -562,6 +596,7 @@
 				096862D325829FE300B9B614 /* XCRemoteSwiftPackageReference "Arrow" */,
 				096862F62582CF6700B9B614 /* XCRemoteSwiftPackageReference "Cache" */,
 				09F60AD52592B7CD0020974A /* XCRemoteSwiftPackageReference "HotKey" */,
+				0996443F25ABA792004473B7 /* XCRemoteSwiftPackageReference "AudioKit" */,
 			);
 			productRefGroup = 0990879225797561001660D1 /* Products */;
 			projectDirPath = "";
@@ -602,6 +637,7 @@
 				09074D84259982DE00E72F93 /* ChannelAvatarViewController.swift in Sources */,
 				095C678825A3D66B00729845 /* WorkspaceState.swift in Sources */,
 				0968630425830A0200B9B614 /* WorkspaceRoutes.swift in Sources */,
+				0996443D25A91755004473B7 /* SpeechRecognizerDelegate.swift in Sources */,
 				095C677A25A29CC300729845 /* Message+Arrow.swift in Sources */,
 				0995DE3B2581CA7500DAA334 /* InternalAPI.swift in Sources */,
 				0990879525797561001660D1 /* AppDelegate.swift in Sources */,
@@ -639,9 +675,11 @@
 				096862F42582B54F00B9B614 /* WorkspaceWindow.swift in Sources */,
 				09F60AC9258C13680020974A /* Icon.swift in Sources */,
 				09074D7D2599222700E72F93 /* Color.swift in Sources */,
+				0996444825ABD34D004473B7 /* AudioSnapshot.swift in Sources */,
 				096862FE2582FF4300B9B614 /* User+Cache.swift in Sources */,
 				09F60ACC258C2FD50020974A /* Style.swift in Sources */,
 				096863352586C2B000B9B614 /* RoundView.swift in Sources */,
+				0996443625A8F4A6004473B7 /* AudioRecorder.swift in Sources */,
 				095C677325A29B7300729845 /* Message.swift in Sources */,
 				0995DE2125816B5E00DAA334 /* Config.swift in Sources */,
 				096862FB2582CF9500B9B614 /* Cache.swift in Sources */,
@@ -651,6 +689,7 @@
 				09686301258300A900B9B614 /* Workspace+Cache.swift in Sources */,
 				09686328258427A500B9B614 /* ChannelViewController.swift in Sources */,
 				095C677625A29C6700729845 /* Channel+Arrow.swift in Sources */,
+				0996443A25A8F6B5004473B7 /* AudioRecording.swift in Sources */,
 				09C1328D25A7CA3600FB1D90 /* ChannelPromptSpeechAnalyzer.swift in Sources */,
 				099087A8257976BF001660D1 /* WindowControllerManager.swift in Sources */,
 				09C1328725A7C9C600FB1D90 /* SpeechAnalyzer.swift in Sources */,
@@ -658,6 +697,7 @@
 				0940E08025A7B6AB006184D7 /* Mic.swift in Sources */,
 				09F534E725A7F76D001B4FF6 /* SpeechAnalyzerDelegate.swift in Sources */,
 				096862E22582A61C00B9B614 /* Name.swift in Sources */,
+				0996444425ABAB43004473B7 /* AudioAnalysis.swift in Sources */,
 				0968630F2583178C00B9B614 /* WorkspaceLogicController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1031,6 +1071,14 @@
 				minimumVersion = 1.4.0;
 			};
 		};
+		0996443F25ABA792004473B7 /* XCRemoteSwiftPackageReference "AudioKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/AudioKit/AudioKit";
+			requirement = {
+				branch = "v5-main";
+				kind = branch;
+			};
+		};
 		09F60AD52592B7CD0020974A /* XCRemoteSwiftPackageReference "HotKey" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/soffes/HotKey";
@@ -1061,6 +1109,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 0995DE2B25818AF000DAA334 /* XCRemoteSwiftPackageReference "swift-log" */;
 			productName = Logging;
+		};
+		0996444025ABA792004473B7 /* AudioKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 0996443F25ABA792004473B7 /* XCRemoteSwiftPackageReference "AudioKit" */;
+			productName = AudioKit;
 		};
 		09F60AD62592B7CE0020974A /* HotKey */ = {
 			isa = XCSwiftPackageProductDependency;

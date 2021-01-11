@@ -8,8 +8,9 @@
 
 import Cocoa
 import AVFoundation
+import AudioKit
 
-class Mic {
+class Mic: SpeechRecognizerDelegate {
     
     let bus: AVAudioNodeBus = 0
     
@@ -21,13 +22,22 @@ class Mic {
     
     private var audioEngine: AVAudioEngine!
     
+    private var audioRecorder = AudioRecorder()
+    
     private var speechRecognizer = SpeechRecognizer(locale: AV.locale)!
+    
+    typealias Pipe = (AVAudioPCMBuffer) -> Void
+    
+    private var pipes = [String:Pipe]()
     
     func configure() {
         // No need to do anything if already configured.
         if isConfigured {
             return
         }
+        
+        // Set self as delegate to speech recognizer.
+        speechRecognizer.speechDelegate = self
         
         // Create audio engine.
         createAudioEngine()
@@ -39,11 +49,21 @@ class Mic {
         isConfigured = true
     }
     
+    func addPipe(forKey key: String, pipe: @escaping Pipe) {
+        pipes[key] = pipe
+    }
+    
+    func removePipe(forKey key: String) {
+        pipes.removeValue(forKey: key)
+    }
+    
     func startChannelPromptAnalyzer(channels: [Channel], onChannelPrompted: @escaping (Any) -> Void) {
-        // TODO: Will need to ensure there isn't an active recording as well in the below clause.
-        
-        // Ensure class is configured and speech recognition is allowed/not-running.
-        guard isConfigured && speechRecognizer.isConfigured() && !speechRecognizer.isRunning else {
+        // Ensure class is configured, speech recognition is allowed/not-running, and no active recording exists.
+        guard isConfigured &&
+            speechRecognizer.isConfigured() &&
+            !speechRecognizer.isRunning &&
+            audioRecorder.audioRecording == nil &&
+            !audioRecorder.isRecording else {
             return
         }
 
@@ -59,21 +79,55 @@ class Mic {
         speechRecognizer.onKeySpeechResult = onChannelPrompted
 
         // Start speech recognition.
-        speechRecognizer.start()
+        startSpeechRecognition()
         
-        // Install mic tap.
-        tapMic()
+        // Start recording.
+        startRecording()
     }
-
+    
+    // Start speech recognition.
+    func startSpeechRecognition() {
+        speechRecognizer.start()
+    }
+    
     // Stop speech recognition.
     func stopSpeechRecognition() {
         speechRecognizer.stop()
     }
     
+    func onSpeechRecognitionStopped(keyResultSeen: Bool) {
+        // Stop and clear recording if no key result was seen.
+        if !keyResultSeen {
+            stopRecording()
+            clearRecording()
+        }
+    }
+    
+    func startRecording() {
+        // Create new audio recording to receive mic input.
+        audioRecorder.start()
+        
+        // Install mic tap.
+        tapMic()
+    }
+    
+    func stopRecording() {
+        // Stop active audio recording.
+        audioRecorder.stop()
+                
+        // Untap the mic.
+        untapMic()
+    }
+
+    // Wipe active audio recording.
+    func clearRecording() {
+        audioRecorder.clear()
+    }
+    
     private func createAudioEngine() {
         // Create audio engine.
         audioEngine = AVAudioEngine()
-        
+                
         // Access input node to force it's creation.
         let _ = audioEngine.inputNode
     }
@@ -96,7 +150,7 @@ class Mic {
         }
         
         isMicTapped = true
-        
+
         audioEngine.inputNode.installTap(
             onBus: bus,
             bufferSize: bufferSize,
@@ -118,6 +172,15 @@ class Mic {
     }
     
     private func handleMicInput(buffer: AVAudioPCMBuffer, when: AVAudioTime) {
+        // Pipe mic input to speech recognizer.
         speechRecognizer.handleMicInput(buffer: buffer)
+        
+        // Pipe mic input to audio recorder.
+        audioRecorder.handleMicInput(buffer: buffer)
+        
+        // Pipe mic input to any custom pipes.
+        for pipe in pipes.values {
+            pipe(buffer)
+        }
     }
 }

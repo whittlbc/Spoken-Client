@@ -128,6 +128,9 @@ class ChannelViewController: NSViewController, ParticleViewDelegate {
         // Update frame size of particle view to match channel view.
         updateParticleViewSize()
         
+        // Pipe mic input into particle view.
+        particleView.tapMic()
+        
         // Add particle view below avatar view.
         view.addSubview(
             particleView,

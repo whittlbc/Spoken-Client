@@ -165,7 +165,8 @@ class ChannelWindow: FloatingWindow {
         // Enable key event listners.
         toggleRecordingKeyEventListeners(enable: true)
         
-        // TODO: Actually start a recording...
+        // Upsert an active recording.
+        AV.mic.startRecording()
         
         // Show recording as started.
         showStartedRecording()
@@ -176,7 +177,9 @@ class ChannelWindow: FloatingWindow {
         // Disable key event listners.
         toggleRecordingKeyEventListeners(enable: false)
         
-        // TODO: Actually cancel the recording...
+        // Stop and cler the active recording.
+        AV.mic.stopRecording()
+        AV.mic.clearRecording()
 
         // Show recording as cancelled.
         showCancellingRecording()
@@ -190,7 +193,11 @@ class ChannelWindow: FloatingWindow {
         // Render state to recording-sending.
         showSendingRecording()
         
-        // TODO: Actually send the recording...
+        // Stop active recording.
+        AV.mic.stopRecording()
+
+        // TODO: Actually send recording...this will include a lot of steps...
+        
         // HACK to simulate network time.
         DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { [weak self] in
             self?.showSentRecording()
@@ -455,6 +462,9 @@ class ChannelWindow: FloatingWindow {
         DispatchQueue.main.asyncAfter(deadline: .now() + Style.ArtificialTiming.showRecordingSentDuration) { [weak self] in
             // Follow the cancelling recording flow to get back to idle state.
             self?.showCancellingRecording()
+            
+            // HACK: Move somewhere else once you're actually uploading recordings...?
+            AV.mic.clearRecording()
         }
     }
     

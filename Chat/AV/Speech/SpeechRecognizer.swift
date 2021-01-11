@@ -16,6 +16,10 @@ class SpeechRecognizer: SFSpeechRecognizer, SpeechAnalyzerDelegate {
     var analyzer: SpeechAnalyzerProtocol?
     
     var onKeySpeechResult: ((Any) -> Void)?
+    
+    var keyResultSeen = false
+    
+    var speechDelegate: SpeechRecognizerDelegate?
 
     private var request: SFSpeechAudioBufferRecognitionRequest?
 
@@ -33,7 +37,7 @@ class SpeechRecognizer: SFSpeechRecognizer, SpeechAnalyzerDelegate {
         
         // Set analyzer to new instance of type.
         analyzer = type.newAnalyzer()
-        
+                
         // Take role of analyzer delegate.
         analyzer?.delegate = self
     }
@@ -43,6 +47,8 @@ class SpeechRecognizer: SFSpeechRecognizer, SpeechAnalyzerDelegate {
         if isRunning {
             return
         }
+        
+        keyResultSeen = false
         
         // Create speech recognition request.
         createRequest()
@@ -65,7 +71,7 @@ class SpeechRecognizer: SFSpeechRecognizer, SpeechAnalyzerDelegate {
         
         // Cancel speech recognition task.
         cancelTask()
-        
+                
         // Register self as stopped.
         isRunning = false
     }
@@ -75,6 +81,8 @@ class SpeechRecognizer: SFSpeechRecognizer, SpeechAnalyzerDelegate {
     }
     
     func handleKeySpeechResult(result: Any, shouldStop: Bool) {
+        keyResultSeen = true
+        
         // Bubble up key result.
         onKeySpeechResult?(result)
         
@@ -108,11 +116,14 @@ class SpeechRecognizer: SFSpeechRecognizer, SpeechAnalyzerDelegate {
         task = recognitionTask(with: request!) { [weak self] result, error in
             if let err = error {
                 self?.handleRecognitionError(err)
-                return
             }
             
             if let res = result {
                 self?.analyze(result: res)
+            }
+            
+            if result == nil || result!.isFinal {
+                self?.onStopped()
             }
         }
     }
@@ -123,6 +134,10 @@ class SpeechRecognizer: SFSpeechRecognizer, SpeechAnalyzerDelegate {
     
     private func analyze(result: SFSpeechRecognitionResult) {
         analyzer?.analyzeResult(result: result)
+    }
+    
+    private func onStopped() {
+        speechDelegate?.onSpeechRecognitionStopped(keyResultSeen: keyResultSeen)
     }
     
     private func handleRecognitionError(_ error: Error) {
