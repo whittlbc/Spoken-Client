@@ -62,7 +62,7 @@ class ParticleView: MTKView {
     
     var dragFactor: Float = 0.95
     
-    var respawnOutOfBoundsParticles = false
+    var respawnOutOfBoundsParticles = true
     
     weak var particleViewDelegate: ParticleViewDelegate?
 
@@ -444,7 +444,7 @@ enum GravityWell: CaseIterable {
 //  Since each Particle instance defines four particles, the visible particle count
 //  in the API is four times the number we need to create.
 enum ParticleCount: Int {
-    case TwentyFourtyEight = 2_048
+    case TwentyFourtyEight = 3_072
 }
 
 // Matrix4x4 - Particle colors

@@ -25,9 +25,9 @@ class ChannelWindow: FloatingWindow {
     
     // Whether channel is able to be interacted with by the user.
     var isDisabled = false
-        
-    // Closure provided by parent window to be called every time state updates.
-    private var onStateUpdated: ((String) -> Void)!
+    
+    // Delegate that handles channel-related event updates.
+    weak var channelDelegate: ChannelDelegate?
     
     // TODO: Switch to non-private computed property
     // The latest origin this window will-animate/has-animated to.
@@ -62,7 +62,8 @@ class ChannelWindow: FloatingWindow {
     }
     
     static func stateShouldAnimateFrame(_ state: ChannelState) -> Bool {
-        state != .recording(.starting) // recording status is ignored here
+//        state != .recording(.starting) // recording status is ignored here
+        return true
     }
     
     static func stateShouldDisableOtherChannels(_ state: ChannelState) -> Bool {
@@ -70,10 +71,9 @@ class ChannelWindow: FloatingWindow {
     }
 
     // Proper initializer to use when rendering channels.
-    convenience init(channel: Channel, onStateUpdated: @escaping (String) -> Void) {
+    convenience init(channel: Channel) {
         self.init()
         self.channel = channel
-        self.onStateUpdated = onStateUpdated
     }
     
     // Override delegated init
@@ -129,9 +129,9 @@ class ChannelWindow: FloatingWindow {
         // Update current state to provided new state.
         state = newState
         
-        // If the state changed cases, broadcast this update.
+        // If the state changed cases, inform the channel delegate.
         if state != prevState {
-            onStateUpdated(channel.id)
+            channelDelegate?.onChannelsRequireGroupUpdate(activeChannelId: channel.id)
         }
         
         // Handle state-specific change.
@@ -165,7 +165,8 @@ class ChannelWindow: FloatingWindow {
         // Enable key event listners.
         toggleRecordingKeyEventListeners(enable: true)
         
-        // TODO: Actually start a recording...
+        // Upsert an active recording.
+        AV.mic.startRecording()
         
         // Show recording as started.
         showStartedRecording()
@@ -176,7 +177,9 @@ class ChannelWindow: FloatingWindow {
         // Disable key event listners.
         toggleRecordingKeyEventListeners(enable: false)
         
-        // TODO: Actually cancel the recording...
+        // Stop and cler the active recording.
+        AV.mic.stopRecording()
+        AV.mic.clearRecording()
 
         // Show recording as cancelled.
         showCancellingRecording()
@@ -190,7 +193,11 @@ class ChannelWindow: FloatingWindow {
         // Render state to recording-sending.
         showSendingRecording()
         
-        // TODO: Actually send the recording...
+        // Stop active recording.
+        AV.mic.stopRecording()
+
+        // TODO: Actually send recording...this will include a lot of steps...
+        
         // HACK to simulate network time.
         DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { [weak self] in
             self?.showSentRecording()
@@ -387,6 +394,14 @@ class ChannelWindow: FloatingWindow {
             setState(.recording(.starting))
         }
     }
+    
+    func onSpeechPrompted() {
+        if isDisabled {
+            return
+        }
+        
+        setState(.recording(.starting))
+    }
         
     // Update isDisabled value (if different) and return if value was changed.
     private func updateDisabled(disabled: Bool?) -> Bool {
@@ -447,6 +462,9 @@ class ChannelWindow: FloatingWindow {
         DispatchQueue.main.asyncAfter(deadline: .now() + Style.ArtificialTiming.showRecordingSentDuration) { [weak self] in
             // Follow the cancelling recording flow to get back to idle state.
             self?.showCancellingRecording()
+            
+            // HACK: Move somewhere else once you're actually uploading recordings...?
+            AV.mic.clearRecording()
         }
     }
     

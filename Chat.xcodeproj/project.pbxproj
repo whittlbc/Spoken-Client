@@ -11,6 +11,10 @@
 		09074D81259934B900E72F93 /* ChannelParticleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09074D80259934B900E72F93 /* ChannelParticleView.swift */; };
 		09074D84259982DE00E72F93 /* ChannelAvatarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09074D83259982DE00E72F93 /* ChannelAvatarViewController.swift */; };
 		09074D872599BD0500E72F93 /* ChannelState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09074D862599BD0500E72F93 /* ChannelState.swift */; };
+		0940E06E25A4D946006184D7 /* AV.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0940E06D25A4D946006184D7 /* AV.swift */; };
+		0940E07625A58935006184D7 /* ChannelDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0940E07525A58935006184D7 /* ChannelDelegate.swift */; };
+		0940E07B25A7ACF1006184D7 /* UserSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0940E07A25A7ACF1006184D7 /* UserSettings.swift */; };
+		0940E08025A7B6AB006184D7 /* Mic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0940E07F25A7B6AB006184D7 /* Mic.swift */; };
 		0949C897259686E800B61D1F /* NSView+Subviews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0949C896259686E800B61D1F /* NSView+Subviews.swift */; };
 		0949C8B2259908E900B61D1F /* ParticleViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0949C8B1259908E900B61D1F /* ParticleViewDelegate.swift */; };
 		095C6765259A6A8800729845 /* ChasingTailSpinnerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 095C6764259A6A8800729845 /* ChasingTailSpinnerView.swift */; };
@@ -19,6 +23,7 @@
 		095C677325A29B7300729845 /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = 095C677225A29B7300729845 /* Message.swift */; };
 		095C677625A29C6700729845 /* Channel+Arrow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 095C677525A29C6700729845 /* Channel+Arrow.swift */; };
 		095C677A25A29CC300729845 /* Message+Arrow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 095C677925A29CC300729845 /* Message+Arrow.swift */; };
+		095C678825A3D66B00729845 /* WorkspaceState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 095C678725A3D66B00729845 /* WorkspaceState.swift */; };
 		096862CA258202BB00B9B614 /* Networking in Frameworks */ = {isa = PBXBuildFile; productRef = 096862C9258202BB00B9B614 /* Networking */; };
 		096862CD25829C5A00B9B614 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 096862CC25829C5A00B9B614 /* User.swift */; };
 		096862D525829FE300B9B614 /* Arrow in Frameworks */ = {isa = PBXBuildFile; productRef = 096862D425829FE300B9B614 /* Arrow */; };
@@ -64,8 +69,20 @@
 		0995DE382581A9BC00DAA334 /* KeychainError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0995DE372581A9BC00DAA334 /* KeychainError.swift */; };
 		0995DE3B2581CA7500DAA334 /* InternalAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0995DE3A2581CA7500DAA334 /* InternalAPI.swift */; };
 		0995DE3D2581CF6A00DAA334 /* API.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0995DE3C2581CF6A00DAA334 /* API.swift */; };
+		0996443625A8F4A6004473B7 /* AudioRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0996443525A8F4A6004473B7 /* AudioRecorder.swift */; };
+		0996443A25A8F6B5004473B7 /* AudioRecording.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0996443925A8F6B5004473B7 /* AudioRecording.swift */; };
+		0996443D25A91755004473B7 /* SpeechRecognizerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0996443C25A91755004473B7 /* SpeechRecognizerDelegate.swift */; };
+		0996444425ABAB43004473B7 /* AudioAnalysis.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0996444325ABAB43004473B7 /* AudioAnalysis.swift */; };
+		0996444825ABD34D004473B7 /* AudioSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0996444725ABD34D004473B7 /* AudioSnapshot.swift */; };
 		0999974F25953600008E65FB /* ParticleShader.metal in Sources */ = {isa = PBXBuildFile; fileRef = 0999974E25953600008E65FB /* ParticleShader.metal */; };
 		099997522595371E008E65FB /* ParticleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 099997512595371E008E65FB /* ParticleView.swift */; };
+		09C1328125A7C3AC00FB1D90 /* SFSpeechRecognizer+AuthStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09C1328025A7C3AC00FB1D90 /* SFSpeechRecognizer+AuthStatus.swift */; };
+		09C1328425A7C6A500FB1D90 /* SpeechRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09C1328325A7C6A500FB1D90 /* SpeechRecognizer.swift */; };
+		09C1328725A7C9C600FB1D90 /* SpeechAnalyzer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09C1328625A7C9C600FB1D90 /* SpeechAnalyzer.swift */; };
+		09C1328D25A7CA3600FB1D90 /* ChannelPromptSpeechAnalyzer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09C1328C25A7CA3600FB1D90 /* ChannelPromptSpeechAnalyzer.swift */; };
+		09C1329125A7D19E00FB1D90 /* SpeechAnalyzerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09C1329025A7D19E00FB1D90 /* SpeechAnalyzerProtocol.swift */; };
+		09C1329425A7D59800FB1D90 /* SpeechAnalyzerType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09C1329325A7D59800FB1D90 /* SpeechAnalyzerType.swift */; };
+		09F534E725A7F76D001B4FF6 /* SpeechAnalyzerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F534E625A7F76D001B4FF6 /* SpeechAnalyzerDelegate.swift */; };
 		09F60AC6258BFD450020974A /* NSRect+Location.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F60AC5258BFD450020974A /* NSRect+Location.swift */; };
 		09F60AC9258C13680020974A /* Icon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F60AC8258C13680020974A /* Icon.swift */; };
 		09F60ACC258C2FD50020974A /* Style.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F60ACB258C2FD50020974A /* Style.swift */; };
@@ -79,6 +96,10 @@
 		09074D80259934B900E72F93 /* ChannelParticleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelParticleView.swift; sourceTree = "<group>"; };
 		09074D83259982DE00E72F93 /* ChannelAvatarViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelAvatarViewController.swift; sourceTree = "<group>"; };
 		09074D862599BD0500E72F93 /* ChannelState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelState.swift; sourceTree = "<group>"; };
+		0940E06D25A4D946006184D7 /* AV.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AV.swift; sourceTree = "<group>"; };
+		0940E07525A58935006184D7 /* ChannelDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelDelegate.swift; sourceTree = "<group>"; };
+		0940E07A25A7ACF1006184D7 /* UserSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSettings.swift; sourceTree = "<group>"; };
+		0940E07F25A7B6AB006184D7 /* Mic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Mic.swift; sourceTree = "<group>"; };
 		0949C896259686E800B61D1F /* NSView+Subviews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSView+Subviews.swift"; sourceTree = "<group>"; };
 		0949C8B1259908E900B61D1F /* ParticleViewDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParticleViewDelegate.swift; sourceTree = "<group>"; };
 		095C6764259A6A8800729845 /* ChasingTailSpinnerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChasingTailSpinnerView.swift; sourceTree = "<group>"; };
@@ -87,6 +108,7 @@
 		095C677225A29B7300729845 /* Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
 		095C677525A29C6700729845 /* Channel+Arrow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Channel+Arrow.swift"; sourceTree = "<group>"; };
 		095C677925A29CC300729845 /* Message+Arrow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Message+Arrow.swift"; sourceTree = "<group>"; };
+		095C678725A3D66B00729845 /* WorkspaceState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkspaceState.swift; sourceTree = "<group>"; };
 		096862CC25829C5A00B9B614 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		096862D72582A03F00B9B614 /* Arrow+Networking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Arrow+Networking.swift"; sourceTree = "<group>"; };
 		096862DD2582A2EB00B9B614 /* User+Arrow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "User+Arrow.swift"; sourceTree = "<group>"; };
@@ -133,8 +155,20 @@
 		0995DE372581A9BC00DAA334 /* KeychainError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainError.swift; sourceTree = "<group>"; };
 		0995DE3A2581CA7500DAA334 /* InternalAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InternalAPI.swift; sourceTree = "<group>"; };
 		0995DE3C2581CF6A00DAA334 /* API.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = API.swift; sourceTree = "<group>"; };
+		0996443525A8F4A6004473B7 /* AudioRecorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioRecorder.swift; sourceTree = "<group>"; };
+		0996443925A8F6B5004473B7 /* AudioRecording.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioRecording.swift; sourceTree = "<group>"; };
+		0996443C25A91755004473B7 /* SpeechRecognizerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechRecognizerDelegate.swift; sourceTree = "<group>"; };
+		0996444325ABAB43004473B7 /* AudioAnalysis.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioAnalysis.swift; sourceTree = "<group>"; };
+		0996444725ABD34D004473B7 /* AudioSnapshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioSnapshot.swift; sourceTree = "<group>"; };
 		0999974E25953600008E65FB /* ParticleShader.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = ParticleShader.metal; sourceTree = "<group>"; };
 		099997512595371E008E65FB /* ParticleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParticleView.swift; sourceTree = "<group>"; };
+		09C1328025A7C3AC00FB1D90 /* SFSpeechRecognizer+AuthStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SFSpeechRecognizer+AuthStatus.swift"; sourceTree = "<group>"; };
+		09C1328325A7C6A500FB1D90 /* SpeechRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechRecognizer.swift; sourceTree = "<group>"; };
+		09C1328625A7C9C600FB1D90 /* SpeechAnalyzer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechAnalyzer.swift; sourceTree = "<group>"; };
+		09C1328C25A7CA3600FB1D90 /* ChannelPromptSpeechAnalyzer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelPromptSpeechAnalyzer.swift; sourceTree = "<group>"; };
+		09C1329025A7D19E00FB1D90 /* SpeechAnalyzerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechAnalyzerProtocol.swift; sourceTree = "<group>"; };
+		09C1329325A7D59800FB1D90 /* SpeechAnalyzerType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechAnalyzerType.swift; sourceTree = "<group>"; };
+		09F534E625A7F76D001B4FF6 /* SpeechAnalyzerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechAnalyzerDelegate.swift; sourceTree = "<group>"; };
 		09F60AC5258BFD450020974A /* NSRect+Location.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSRect+Location.swift"; sourceTree = "<group>"; };
 		09F60AC8258C13680020974A /* Icon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Icon.swift; sourceTree = "<group>"; };
 		09F60ACB258C2FD50020974A /* Style.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Style.swift; sourceTree = "<group>"; };
@@ -158,6 +192,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0940E07925A7ACD6006184D7 /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				0940E07A25A7ACF1006184D7 /* UserSettings.swift */,
+			);
+			path = Settings;
+			sourceTree = "<group>";
+		};
 		0949C8A52598EB7000B61D1F /* ChannelParticleView */ = {
 			isa = PBXGroup;
 			children = (
@@ -205,11 +247,24 @@
 			path = "Models+Arrow";
 			sourceTree = "<group>";
 		};
+		095C678A25A3D8EB00729845 /* AV */ = {
+			isa = PBXGroup;
+			children = (
+				0940E06D25A4D946006184D7 /* AV.swift */,
+				09C1328925A7C9F200FB1D90 /* Inputs */,
+				0996443425A8F44F004473B7 /* Recorders */,
+				0996444625ABD32D004473B7 /* Analysis */,
+				09C1328A25A7C9FF00FB1D90 /* Speech */,
+			);
+			path = AV;
+			sourceTree = "<group>";
+		};
 		0968630D2583176B00B9B614 /* WorkspaceWindow */ = {
 			isa = PBXGroup;
 			children = (
 				096862F32582B54F00B9B614 /* WorkspaceWindow.swift */,
 				0968630E2583178C00B9B614 /* WorkspaceLogicController.swift */,
+				095C678725A3D66B00729845 /* WorkspaceState.swift */,
 			);
 			path = WorkspaceWindow;
 			sourceTree = "<group>";
@@ -219,6 +274,7 @@
 			children = (
 				0968632225840AB500B9B614 /* ChannelWindow.swift */,
 				09074D862599BD0500E72F93 /* ChannelState.swift */,
+				0940E07525A58935006184D7 /* ChannelDelegate.swift */,
 			);
 			path = ChannelWindow;
 			sourceTree = "<group>";
@@ -267,7 +323,9 @@
 				0995DE162581611400DAA334 /* Views */,
 				0995DE172581611D00DAA334 /* Models */,
 				0995DE1D2581698300DAA334 /* Networking */,
+				095C678A25A3D8EB00729845 /* AV */,
 				099087BB25799BA2001660D1 /* Utilities */,
+				0940E07925A7ACD6006184D7 /* Settings */,
 				0995DE1C2581695A00DAA334 /* Extensions */,
 				0995DE362581A9A300DAA334 /* Errors */,
 				0995DE262581758200DAA334 /* Configs */,
@@ -373,6 +431,7 @@
 				09F60AC5258BFD450020974A /* NSRect+Location.swift */,
 				09F60ACE258C37AC0020974A /* NSView+Animation.swift */,
 				0949C896259686E800B61D1F /* NSView+Subviews.swift */,
+				09C1328025A7C3AC00FB1D90 /* SFSpeechRecognizer+AuthStatus.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -411,6 +470,70 @@
 				096863092583103300B9B614 /* ChannelRoutes.swift */,
 			);
 			path = InternalAPI;
+			sourceTree = "<group>";
+		};
+		0996443425A8F44F004473B7 /* Recorders */ = {
+			isa = PBXGroup;
+			children = (
+				0996443525A8F4A6004473B7 /* AudioRecorder.swift */,
+				0996443925A8F6B5004473B7 /* AudioRecording.swift */,
+			);
+			path = Recorders;
+			sourceTree = "<group>";
+		};
+		0996444625ABD32D004473B7 /* Analysis */ = {
+			isa = PBXGroup;
+			children = (
+				0996444325ABAB43004473B7 /* AudioAnalysis.swift */,
+				0996444725ABD34D004473B7 /* AudioSnapshot.swift */,
+			);
+			path = Analysis;
+			sourceTree = "<group>";
+		};
+		09C1328925A7C9F200FB1D90 /* Inputs */ = {
+			isa = PBXGroup;
+			children = (
+				0940E07F25A7B6AB006184D7 /* Mic.swift */,
+			);
+			path = Inputs;
+			sourceTree = "<group>";
+		};
+		09C1328A25A7C9FF00FB1D90 /* Speech */ = {
+			isa = PBXGroup;
+			children = (
+				09C1328B25A7CA0800FB1D90 /* SpeechAnalyzers */,
+				09C1328325A7C6A500FB1D90 /* SpeechRecognizer.swift */,
+				0996443C25A91755004473B7 /* SpeechRecognizerDelegate.swift */,
+			);
+			path = Speech;
+			sourceTree = "<group>";
+		};
+		09C1328B25A7CA0800FB1D90 /* SpeechAnalyzers */ = {
+			isa = PBXGroup;
+			children = (
+				09F534EA25A7F776001B4FF6 /* SpeechAnalyzer */,
+				09F534E525A7F506001B4FF6 /* ChannelPromptSpeechAnalyzer */,
+			);
+			path = SpeechAnalyzers;
+			sourceTree = "<group>";
+		};
+		09F534E525A7F506001B4FF6 /* ChannelPromptSpeechAnalyzer */ = {
+			isa = PBXGroup;
+			children = (
+				09C1328C25A7CA3600FB1D90 /* ChannelPromptSpeechAnalyzer.swift */,
+			);
+			path = ChannelPromptSpeechAnalyzer;
+			sourceTree = "<group>";
+		};
+		09F534EA25A7F776001B4FF6 /* SpeechAnalyzer */ = {
+			isa = PBXGroup;
+			children = (
+				09C1328625A7C9C600FB1D90 /* SpeechAnalyzer.swift */,
+				09C1329325A7D59800FB1D90 /* SpeechAnalyzerType.swift */,
+				09C1329025A7D19E00FB1D90 /* SpeechAnalyzerProtocol.swift */,
+				09F534E625A7F76D001B4FF6 /* SpeechAnalyzerDelegate.swift */,
+			);
+			path = SpeechAnalyzer;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -500,6 +623,7 @@
 				099087BD25799BC2001660D1 /* Screen.swift in Sources */,
 				096862EB2582A8D000B9B614 /* Workspace+Arrow.swift in Sources */,
 				096863192583206500B9B614 /* Workspace+API.swift in Sources */,
+				0940E07625A58935006184D7 /* ChannelDelegate.swift in Sources */,
 				096863382586C42B00B9B614 /* RoundShadowView.swift in Sources */,
 				0968631325831C2F00B9B614 /* User+API.swift in Sources */,
 				0968631C2583E80C00B9B614 /* Cache+Ids.swift in Sources */,
@@ -507,27 +631,34 @@
 				096862EE2582ABCE00B9B614 /* Member.swift in Sources */,
 				0995DE382581A9BC00DAA334 /* KeychainError.swift in Sources */,
 				09074D84259982DE00E72F93 /* ChannelAvatarViewController.swift in Sources */,
+				095C678825A3D66B00729845 /* WorkspaceState.swift in Sources */,
 				0968630425830A0200B9B614 /* WorkspaceRoutes.swift in Sources */,
+				0996443D25A91755004473B7 /* SpeechRecognizerDelegate.swift in Sources */,
 				095C677A25A29CC300729845 /* Message+Arrow.swift in Sources */,
 				0995DE3B2581CA7500DAA334 /* InternalAPI.swift in Sources */,
 				0990879525797561001660D1 /* AppDelegate.swift in Sources */,
 				099997522595371E008E65FB /* ParticleView.swift in Sources */,
 				0968633125859A3000B9B614 /* ChannelAvatarView.swift in Sources */,
+				09C1329125A7D19E00FB1D90 /* SpeechAnalyzerProtocol.swift in Sources */,
 				0968632C2584299400B9B614 /* ChannelView.swift in Sources */,
+				0940E06E25A4D946006184D7 /* AV.swift in Sources */,
 				0968630A2583103300B9B614 /* ChannelRoutes.swift in Sources */,
 				0949C897259686E800B61D1F /* NSView+Subviews.swift in Sources */,
 				0995DE01257AEDEC00DAA334 /* SidebarWindowController.swift in Sources */,
 				09F60AC6258BFD450020974A /* NSRect+Location.swift in Sources */,
 				096862DE2582A2EB00B9B614 /* User+Arrow.swift in Sources */,
+				09C1329425A7D59800FB1D90 /* SpeechAnalyzerType.swift in Sources */,
 				0995DDFF257AEDE000DAA334 /* SidebarWindow.swift in Sources */,
 				0995DE2F25818B3E00DAA334 /* Logger.swift in Sources */,
 				096862D82582A03F00B9B614 /* Arrow+Networking.swift in Sources */,
+				09C1328125A7C3AC00FB1D90 /* SFSpeechRecognizer+AuthStatus.swift in Sources */,
 				0968631F2583FB2A00B9B614 /* mocks.swift in Sources */,
 				099087A625797645001660D1 /* main.swift in Sources */,
 				0995DE13257B388500DAA334 /* NSBezierPath+CGPath.swift in Sources */,
 				0995DDFC257AED6400DAA334 /* FloatingWindow.swift in Sources */,
 				09F60ACF258C37AC0020974A /* NSView+Animation.swift in Sources */,
 				096862E82582A88600B9B614 /* Workspace.swift in Sources */,
+				09C1328425A7C6A500FB1D90 /* SpeechRecognizer.swift in Sources */,
 				0995DE352581A51F00DAA334 /* Keychain.swift in Sources */,
 				0995DE3D2581CF6A00DAA334 /* API.swift in Sources */,
 				096862F12582ACE100B9B614 /* Member+Arrow.swift in Sources */,
@@ -535,13 +666,16 @@
 				095C676C259E706000729845 /* SelfDrawnCheckmarkView.swift in Sources */,
 				095C6765259A6A8800729845 /* ChasingTailSpinnerView.swift in Sources */,
 				096862E52582A67F00B9B614 /* Name+Arrow.swift in Sources */,
+				0940E07B25A7ACF1006184D7 /* UserSettings.swift in Sources */,
 				0999974F25953600008E65FB /* ParticleShader.metal in Sources */,
 				096862F42582B54F00B9B614 /* WorkspaceWindow.swift in Sources */,
 				09F60AC9258C13680020974A /* Icon.swift in Sources */,
 				09074D7D2599222700E72F93 /* Color.swift in Sources */,
+				0996444825ABD34D004473B7 /* AudioSnapshot.swift in Sources */,
 				096862FE2582FF4300B9B614 /* User+Cache.swift in Sources */,
 				09F60ACC258C2FD50020974A /* Style.swift in Sources */,
 				096863352586C2B000B9B614 /* RoundView.swift in Sources */,
+				0996443625A8F4A6004473B7 /* AudioRecorder.swift in Sources */,
 				095C677325A29B7300729845 /* Message.swift in Sources */,
 				0995DE2125816B5E00DAA334 /* Config.swift in Sources */,
 				096862FB2582CF9500B9B614 /* Cache.swift in Sources */,
@@ -551,9 +685,15 @@
 				09686301258300A900B9B614 /* Workspace+Cache.swift in Sources */,
 				09686328258427A500B9B614 /* ChannelViewController.swift in Sources */,
 				095C677625A29C6700729845 /* Channel+Arrow.swift in Sources */,
+				0996443A25A8F6B5004473B7 /* AudioRecording.swift in Sources */,
+				09C1328D25A7CA3600FB1D90 /* ChannelPromptSpeechAnalyzer.swift in Sources */,
 				099087A8257976BF001660D1 /* WindowControllerManager.swift in Sources */,
+				09C1328725A7C9C600FB1D90 /* SpeechAnalyzer.swift in Sources */,
 				096862CD25829C5A00B9B614 /* User.swift in Sources */,
+				0940E08025A7B6AB006184D7 /* Mic.swift in Sources */,
+				09F534E725A7F76D001B4FF6 /* SpeechAnalyzerDelegate.swift in Sources */,
 				096862E22582A61C00B9B614 /* Name.swift in Sources */,
+				0996444425ABAB43004473B7 /* AudioAnalysis.swift in Sources */,
 				0968630F2583178C00B9B614 /* WorkspaceLogicController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

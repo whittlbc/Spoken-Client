@@ -8,16 +8,10 @@
 
 import Cocoa
 import HotKey
-
-// Workspace window state.
-enum WorkspaceState {
-    case loading
-    case loaded(Workspace?)
-    case failed(Error)
-}
+import Carbon
 
 // Window housing all sidebar app functionality as it relates to a given workspace.
-class WorkspaceWindow: FloatingWindow {
+class WorkspaceWindow: FloatingWindow, ChannelDelegate {
     
     // Size of workspace window -- same as Sidebar.
     static let size = SidebarWindow.size
@@ -67,6 +61,11 @@ class WorkspaceWindow: FloatingWindow {
     
     // Create global hotkey for return key.
     private var returnKeyListener: HotKey!
+
+    // Create global hotkey for command key.
+    private var commandKeyListener: HotKey!
+    
+    private var commandKeyPressed = false
     
     // Override delegated init, size/position window on screen, and fetch workspaces.
     override init(contentRect: NSRect, styleMask style: NSWindow.StyleMask, backing backingStoreType: NSWindow.BackingStoreType, defer flag: Bool) {
@@ -75,6 +74,9 @@ class WorkspaceWindow: FloatingWindow {
         // Position and size window on screen.
         repositionWindow(to: SidebarWindow.origin)
         resizeWindow(to: SidebarWindow.size)
+                
+        // Configure app permissions associated with this window.
+        configurePermisssions()
         
         // Create global keypress listeners.
         createKeyListeners()
@@ -90,18 +92,6 @@ class WorkspaceWindow: FloatingWindow {
             self?.render(state)
         }
     }
-
-    // Create listeners for all global key-bindings.
-    func createKeyListeners() {
-        // Create escape key-down event handler.
-        createEscKeyListener()
-        
-        // Create return key-down event handler.
-        createReturnKeyListener()
-        
-        // Turn off all key listeners to start.
-        toggleRecordingKeyEventListeners(enable: false)
-    }
     
     // Toggle on/off the key-event listeners active during recordings.
     func toggleRecordingKeyEventListeners(enable: Bool) {
@@ -110,8 +100,28 @@ class WorkspaceWindow: FloatingWindow {
         returnKeyListener.isPaused = isPaused
     }
     
+    // Seek permissions this app requries within this window.
+    private func configurePermisssions() {
+        AV.seekPermissions()
+    }
+    
+    // Create listeners for all global key-bindings.
+    private func createKeyListeners() {
+        // Create escape key-down event handler.
+        createEscKeyListener()
+        
+        // Create return key-down event handler.
+        createReturnKeyListener()
+        
+        // Turn off all recording key listeners to start.
+        toggleRecordingKeyEventListeners(enable: false)
+        
+        // Create command key event handlers.
+        createCommandKeyListener()
+    }
+    
     // Create escape key listener.
-    func createEscKeyListener() {
+    private func createEscKeyListener() {
         escKeyListener = HotKey(key: .escape, modifiers: [])
         
         // Listen for escape key-down event.
@@ -121,7 +131,7 @@ class WorkspaceWindow: FloatingWindow {
     }
     
     // Create return key listener.
-    func createReturnKeyListener() {
+    private func createReturnKeyListener() {
         returnKeyListener = HotKey(key: .return, modifiers: [])
         
         // Listen for escape key-down event.
@@ -129,40 +139,51 @@ class WorkspaceWindow: FloatingWindow {
             self?.onReturnPress()
         }
     }
-
+    
+    private func createCommandKeyListener() {
+        NSEvent.addGlobalMonitorForEvents(matching: .flagsChanged) { [weak self] in
+            let keys = $0.modifierFlags.intersection(.deviceIndependentFlagsMask)
+            
+            switch keys {
+            // Handle command key-down event.
+            case [.command], [.command, .capsLock]:
+                if self?.commandKeyPressed == false {
+                    self?.commandKeyPressed = true
+                    self?.onCommandKeyDown()
+                }
+                
+            // Handle command key-up event.
+            default:
+                if self?.commandKeyPressed == true && !keys.contains(.command) {
+                    self?.commandKeyPressed = false
+                    self?.onCommandKeyUp()
+                }
+            }
+        }
+    }
+    
     // Handle escape button key-down event.
-    func onEscPress() {
+    private func onEscPress() {
         findAndCancelActiveRecording()
     }
     
     // Handle return button key-down event.
-    func onReturnPress() {
+    private func onReturnPress() {
         findAndSendActiveRecording()
     }
     
-    // Cancel the active recording if one exists.
-    func findAndCancelActiveRecording() {
-        // See if there's an active recording taking place and cancel it if so.
-        if let activeRecordingChannel = findActiveRecordingChannel() {
-            activeRecordingChannel.cancelRecording()
-        }
+    // Handle command button key-down event.
+    private func onCommandKeyDown() {
+        startChannelPromptSpeechRecognizer()
     }
     
-    // Send the active recording if one exists.
-    func findAndSendActiveRecording() {
-        // See if there's an active recording taking place and send it if so.
-        if let activeRecordingChannel = findActiveRecordingChannel() {
-            activeRecordingChannel.sendRecording()
-        }
+    // Handle command button key-up event.
+    private func onCommandKeyUp() {
+        stopSpeechRecognition()
     }
-    
-    // Find the first channel with a recording state.
-    func findActiveRecordingChannel() -> ChannelWindow? {
-        getOrderedChannelWindows().first(where: { $0.isRecording() })
-    }
-    
+
     // Handle individual channel window state updates as a group.
-    func onChannelStateUpdate(activeChannelId: String) {
+    func onChannelsRequireGroupUpdate(activeChannelId: String) {
         // Promote previous state to current state for all adjacent channel windows.
         for (channelId, channelWindow) in channelsMap {
             if channelId != activeChannelId {
@@ -174,13 +195,73 @@ class WorkspaceWindow: FloatingWindow {
         updateChannelSizesAndPositions(activeChannelId: activeChannelId)
     }
     
+    private func startChannelPromptSpeechRecognizer() {
+        AV.mic.startChannelPromptAnalyzer(channels: channels, onChannelPrompted: { [weak self] result in
+            if let channelId = result as? String {
+                self?.onChannelPromptedBySpeech(channelId: channelId)
+            }
+        })
+    }
+    
+    private func stopSpeechRecognition() {
+        AV.mic.stopSpeechRecognition()
+    }
+    
+    func onChannelPromptedBySpeech(channelId: String) {
+        // Get ordered list of existing channel windows.
+        let channelWindows = getOrderedChannelWindows()
+
+        // Find the index of the active channel window.
+        let activeIndex = channelWindows.firstIndex{ $0.channel.id == channelId }
+        
+        // Ensure channel window index was found.
+        guard let activeChannelIndex = activeIndex else {
+            logger.error("Speech recognizer prompted channel that couldn't be found: \(channelId)")
+            return
+        }
+                
+        // Switch any channel windows currently in the previewing state to back to idle.
+        unpreviewNonActiveChannelWindows(
+            channelWindows: channelWindows,
+            activeChannelIndex: activeChannelIndex
+        )
+    
+        // Get the active window by index.
+        let activeChannelWindow = channelWindows[activeChannelIndex]
+
+        // Trigger channel window speech prompted handler.
+        activeChannelWindow.onSpeechPrompted()
+    }
+    
+    // Cancel the active recording if one exists.
+    private func findAndCancelActiveRecording() {
+        // See if there's an active recording taking place and cancel it if so.
+        if let activeRecordingChannel = findActiveRecordingChannel() {
+            activeRecordingChannel.cancelRecording()
+        }
+    }
+    
+    // Send the active recording if one exists.
+    private func findAndSendActiveRecording() {
+        // See if there's an active recording taking place and send it if so.
+        if let activeRecordingChannel = findActiveRecordingChannel() {
+            activeRecordingChannel.sendRecording()
+        }
+    }
+    
+    // Find the first channel with a recording state.
+    private func findActiveRecordingChannel() -> ChannelWindow? {
+        getOrderedChannelWindows().first(where: { $0.isRecording() })
+    }
+        
     // Create a new channel window for a given channel.
     private func createChannelWindow(forChannel channel: Channel) {
         // Create channel window.
-        let channelWindow = ChannelWindow(channel: channel, onStateUpdated: { [weak self] channelId in
-            self?.onChannelStateUpdate(activeChannelId: channelId)
-        })
+        let channelWindow = ChannelWindow(channel: channel)
 
+        // Set workspace window as delegate.
+        channelWindow.channelDelegate = self
+        
         // Get initial channel window size.
         let initialSize = channelWindow.getSizeForCurrentState()
         
@@ -291,7 +372,7 @@ class WorkspaceWindow: FloatingWindow {
         
         // If active channel's new state is previewing, ensure it is the only channel window in a previewing state.
         if activeChannelWindow.isPreviewing() {
-            ensureOnlyOneChannelIsPreviewing(channelWindows: channelWindows, activeChannelIndex: activeChannelIndex)
+            unpreviewNonActiveChannelWindows(channelWindows: channelWindows, activeChannelIndex: activeChannelIndex)
             
             // Add a timer to check the mouse position in relation to the active channel window, and force
             // it out of the previewing state if the mouse isn't inside of the active channel window anymore.
@@ -412,15 +493,15 @@ class WorkspaceWindow: FloatingWindow {
         // If the recording is waiting to be started...
         if activeChannelWindow.state === .recording(.starting) {
             // Move active window to front of other channels.
-            self.moveChildWindowToFront(activeChannelWindow)
-            
-            // Start a new audio recording.
+            moveChildWindowToFront(activeChannelWindow)
+                    
+            // Start a new recording.
             activeChannelWindow.startRecording()
         }
     }
     
     // Force a "mouse-exited" event on any previewing channel windows that aren't the active channel window.
-    private func ensureOnlyOneChannelIsPreviewing(channelWindows: [ChannelWindow], activeChannelIndex: Int) {
+    private func unpreviewNonActiveChannelWindows(channelWindows: [ChannelWindow], activeChannelIndex: Int) {
         for (i, channelWindow) in channelWindows.enumerated() {
             if i == activeChannelIndex {
                 continue
@@ -433,7 +514,7 @@ class WorkspaceWindow: FloatingWindow {
             }
         }
     }
-    
+
     // Loading view
     private func renderLoading() {
         // TODO
@@ -453,7 +534,7 @@ class WorkspaceWindow: FloatingWindow {
         }
     }
     
-    // Create new workspace view
+    // Create new workspace viewe
     private func renderCreateFirstWorkspace() {
         // TODO
     }
