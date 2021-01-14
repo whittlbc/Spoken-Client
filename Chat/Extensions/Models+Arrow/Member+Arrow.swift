@@ -14,6 +14,6 @@ extension Member: ArrowParsable {
     
     public mutating func deserialize(_ json: JSON) {
         id <-- json["id"]
-        user <-- json["user"]
+        userId <-- json["user_id"]
     }
 }

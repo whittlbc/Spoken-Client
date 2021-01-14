@@ -13,7 +13,12 @@ class ChannelAvatarViewController: NSViewController {
     
     // Workspace channel associated with this view.
     private var channel: Channel!
-
+    
+    // Id of member in this channel not associated with the current user.
+    private var recipientId: String? {
+        channel.memberIds.first(where: { $0 != Session.currentUserId! })
+    }
+    
     // Container view of avatar.
     private var containerView: RoundShadowView!
     
@@ -192,10 +197,13 @@ class ChannelAvatarViewController: NSViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        // Make view layer-based.
         setupViewLayer()
-        
+    
+        // Add container to avatar.
         addContainerView()
 
+        // Add avatar image view.
         addImageView()
     }
     
@@ -220,13 +228,46 @@ class ChannelAvatarViewController: NSViewController {
     
     // Render image view.
     private func addImageView() {
-        // Create image view.
-        createImageView()
-        
-        // Constrain image view.
-        constrainImageView()
+        loadAvatarImage { [weak self] image in
+            guard let img = image else {
+                return
+            }
+            
+            // Create image view.
+            self?.createImageView()
+            
+            // Constrain image view.
+            self?.constrainImageView(image: img)
+        }
     }
+    
+    private func loadAvatarImage(then handler: @escaping (NSImage?) -> Void) {
+        // Get id of member in this channel that doesn't belong to the current user.
+        guard let memberId = recipientId else {
+            handler(nil)
+            return
+        }
 
+        // Get member for id.
+        dataProvider.member.get(id: memberId) { member, error in
+            guard error == nil, let mem = member else {
+                handler(nil)
+                return
+            }
+
+            // Get user avatar for user id.
+            dataProvider.user.avatar(id: mem.userId) { image in
+                guard let img = image else {
+                    handler(nil)
+                    return
+                }
+                
+                // Respond with the user avatar image.
+                handler(img)
+            }
+        }
+    }
+    
     // Create new container view.
     private func createContainerView() {
         // Create new round view with with drop shadow.
@@ -278,7 +319,7 @@ class ChannelAvatarViewController: NSViewController {
     }
     
     // Set up image view auto-layout.
-    private func constrainImageView() {
+    private func constrainImageView(image: NSImage) {
         // Set up auto-layout for sizing/positioning.
         imageView.translatesAutoresizingMaskIntoConstraints = false
         
@@ -290,9 +331,6 @@ class ChannelAvatarViewController: NSViewController {
             imageView.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),
         ])
         
-        // Create image from avatar URL.
-        let image = NSImage(byReferencing: URL(string: channel.recipient.user.avatar)!)
-                
         // Set image to contents of view.
         imageView.layer?.contents = image
         

@@ -14,5 +14,6 @@ extension Channel: ArrowParsable {
     
     public mutating func deserialize(_ json: JSON) {
         id <-- json["id"]
+        memberIds <-- json["member_ids"]
     }
 }

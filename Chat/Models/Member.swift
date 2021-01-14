@@ -8,7 +8,10 @@
 
 import Foundation
 
-struct Member: Identifiable, Codable {
+struct Member: Model {
+    
+    static var modelName = "member"
+
     var id = ""
-    var user = User()
+    var userId = ""
 }

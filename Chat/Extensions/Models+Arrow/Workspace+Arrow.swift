@@ -15,5 +15,7 @@ extension Workspace: ArrowParsable {
     public mutating func deserialize(_ json: JSON) {
         id <-- json["id"]
         name <-- json["name"]
+        memberIds <-- json["member_ids"]
+        channelIds <-- json["channel_ids"]
     }
 }

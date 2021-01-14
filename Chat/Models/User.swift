@@ -8,20 +8,18 @@
 
 import Foundation
 
-struct User: Identifiable, Codable {
+struct User: Model {
+
+    static var modelName = "user"
+
     var id = ""
     var email = ""
     var name = Name()
     var avatar = ""
-    
+    var workspaceIds = [String]()
+        
     func fullName() -> String {
         let full = name.first + " " + name.last
         return full.trimmingCharacters(in: .whitespaces)
-    }
-    
-    // Get current user from cache.
-    static var current: User? {
-        // Cache.Users.getCurrent()
-        Mocks.Users.current
     }
 }

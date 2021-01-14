@@ -17,5 +17,6 @@ extension User: ArrowParsable {
         email <-- json["email"]
         name <-- json["name"]
         avatar <-- json["avatar"]
+        workspaceIds <-- json["workspace_ids"]
     }
 }

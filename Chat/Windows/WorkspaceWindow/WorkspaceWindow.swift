@@ -47,14 +47,14 @@ class WorkspaceWindow: FloatingWindow, ChannelDelegate {
         }
     }
     
-    // Controller for all actions that can be performed in this window.
-    private let logicController = WorkspaceLogicController()
-    
-    // Dictionary mapping a channel's id to its respective window.
-    private var channelsMap = [String: ChannelWindow]()
+    // Current workspace represented in window.
+    private var workspace: Workspace?
     
     // Ordered list of channels.
     private var channels = [Channel]()
+    
+    // Dictionary mapping a channel's id to its respective window.
+    private var channelsMap = [String: ChannelWindow]()
     
     // Create global hotkey for escape key.
     private var escKeyListener: HotKey!
@@ -74,7 +74,7 @@ class WorkspaceWindow: FloatingWindow, ChannelDelegate {
         // Position and size window on screen.
         repositionWindow(to: SidebarWindow.origin)
         resizeWindow(to: SidebarWindow.size)
-                
+
         // Configure app permissions associated with this window.
         configurePermisssions()
         
@@ -82,14 +82,72 @@ class WorkspaceWindow: FloatingWindow, ChannelDelegate {
         createKeyListeners()
     }
     
-    // Load current workspace with all its channels.
+    // Load the current workspace.
     func loadCurrentWorkspace() {
         // Render loading view.
         render(.loading)
-
-        // Load current workspace and render the returned state.
-        logicController.load { [weak self] state in
-            self?.render(state)
+        
+        // HACK -- local testing
+        workspace = Mocks.Workspaces.current
+        channels = Mocks.Channels.all
+        render(.loaded)
+        
+//        // Get current workspace.
+//        dataProvider.workspace.current { [weak self] workspace, error in
+//            // Handle any errors.
+//            if let err = error {
+//                self?.render(.failed(err))
+//                return
+//            }
+//
+//            // Handle no workspaces exist.
+//            guard let ws = workspace else {
+//                self?.render(.noWorkspacesExist)
+//                return
+//            }
+//
+//            // Set current workspace.
+//            self?.workspace = ws
+//
+//            // Load current workspace members.
+//            self?.loadWorkspaceMembers()
+//        }
+    }
+    
+    // Load the current workspace's members.
+    func loadWorkspaceMembers() {
+        // Ensure current workspace exists.
+        guard let ws = workspace else {
+            return
+        }
+        
+        // Load list of members in current workspace.
+        dataProvider.member.list(ids: ws.memberIds) { [weak self] _, error in
+            // Load current workspace channels on success.
+            error == nil ? self?.loadWorkspaceChannels() : self?.render(.failed(error!))
+        }
+    }
+    
+    // Load the current workspace's channels.
+    func loadWorkspaceChannels() {
+        // Ensure current workspace exists.
+        guard let ws = workspace else {
+            return
+        }
+        
+        // Get list of channels in current workspace.
+        dataProvider.channel.list(ids: ws.channelIds) { [weak self] channels, error in
+            // Handle any errors.
+            if let err = error {
+                self?.render(.failed(err))
+                return
+            }
+            
+            // Set current channels.
+            self?.channels = channels ?? [Channel]()
+            
+            // Render window as loaded.
+            self?.render(.loaded)
         }
     }
     
@@ -196,7 +254,7 @@ class WorkspaceWindow: FloatingWindow, ChannelDelegate {
     }
     
     private func startChannelPromptSpeechRecognizer() {
-        AV.mic.startChannelPromptAnalyzer(channels: channels, onChannelPrompted: { [weak self] result in
+        AV.mic.startChannelPromptAnalyzer(onChannelPrompted: { [weak self] result in
             if let channelId = result as? String {
                 self?.onChannelPromptedBySpeech(channelId: channelId)
             }
@@ -255,7 +313,7 @@ class WorkspaceWindow: FloatingWindow, ChannelDelegate {
     }
         
     // Create a new channel window for a given channel.
-    private func createChannelWindow(forChannel channel: Channel) {
+    private func createChannelWindow(forChannel channel: Channel) -> ChannelWindow {
         // Create channel window.
         let channelWindow = ChannelWindow(channel: channel)
 
@@ -279,9 +337,8 @@ class WorkspaceWindow: FloatingWindow, ChannelDelegate {
  
         // Make each channel view the first responder inside the window.
         channelWindow.makeFirstResponder(channelController.view)
-                
-        // Add window to channels map.
-        channelsMap[channel.id] = channelWindow
+
+        return channelWindow
     }
     
     // Add all channel windows as child windows.
@@ -514,38 +571,25 @@ class WorkspaceWindow: FloatingWindow, ChannelDelegate {
             }
         }
     }
+    
+    // Error view.
+    private func renderError(_ error: Error) {
+        // TODO
+    }
 
-    // Loading view
+    // Loading view.
     private func renderLoading() {
         // TODO
     }
     
-    // Error view
-    private func renderError(_ error: Error) {
-        // TODO
-    }
-    
-    // Render workspace if exists; Otherwise, show the view to create a new workspace.
-    private func renderLoaded(_ workspace: Workspace?) {
-        if let ws = workspace {
-            renderWorkspace(ws)
-        } else {
-            renderCreateFirstWorkspace()
-        }
-    }
-    
-    // Create new workspace viewe
+    // No workspaces exist yet view.
     private func renderCreateFirstWorkspace() {
         // TODO
     }
     
-    // Current workspace view
-    private func renderWorkspace(_ workspace: Workspace) {
-        // Update channels list.
-        channels = workspace.channels
-        
-        // Render all channels of workspace.
-        renderChannels()
+    // No channels exist yet in the current workspace.
+    private func renderCreateFirstChannel() {
+        // TODO
     }
     
     // Render all workspace channels on screen in separate windows.
@@ -553,9 +597,15 @@ class WorkspaceWindow: FloatingWindow, ChannelDelegate {
         // Clear out channels map.
         channelsMap.removeAll()
         
+        // Render a separate view if no channels exist yet.
+        if channels.isEmpty {
+            renderCreateFirstChannel()
+            return
+        }
+        
         // Create each channel window and add them to the channelsMap.
         for channel in channels {
-            createChannelWindow(forChannel: channel)
+            channelsMap[channel.id] = createChannelWindow(forChannel: channel)
         }
         
         // Size and position channel windows.
@@ -564,19 +614,29 @@ class WorkspaceWindow: FloatingWindow, ChannelDelegate {
         // Add all channel windows as child windows.
         addChannelWindows()
     }
-    
+
+    // Loaded view.
+    private func renderLoaded() {
+        // Render all channels of workspace.
+        renderChannels()
+    }
+            
     // Render workspace window contents based on current state.
     func render(_ state: WorkspaceState) {
         switch state {
-        // Loading view
+        // Loading current workspace.
         case .loading:
             renderLoading()
             
-        // Loaded view
-        case .loaded(let workspace):
-            renderLoaded(workspace)
+        // No workspaces exist yet.
+        case .noWorkspacesExist:
+            renderCreateFirstWorkspace()
+            
+        // Workspace successfully loaded.
+        case .loaded:
+            renderLoaded()
         
-        // Error view
+        // Loading workspace failed.
         case .failed(let error):
             renderError(error)
         }

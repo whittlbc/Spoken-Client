@@ -8,7 +8,11 @@
 
 import Foundation
 
-struct Name: Codable {
+struct Name: Model {
+
+    static var modelName = "name"
+
+    var id = ""
     var first = ""
     var last = ""
 }

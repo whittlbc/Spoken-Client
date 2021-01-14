@@ -56,7 +56,7 @@ class Mic: SpeechRecognizerDelegate {
         pipes.removeValue(forKey: key)
     }
     
-    func startChannelPromptAnalyzer(channels: [Channel], onChannelPrompted: @escaping (Any) -> Void) {
+    func startChannelPromptAnalyzer(onChannelPrompted: @escaping (Any) -> Void) {
         // Ensure class is configured, speech recognition is allowed/not-running, and no active recording exists.
         guard isConfigured &&
             speechRecognizer.isConfigured() &&
@@ -69,11 +69,6 @@ class Mic: SpeechRecognizerDelegate {
         // Configure speech analysis to look for channel prompts.
         speechRecognizer.setAnalyzer(toType: .channelPrompt)
                 
-        // Pass channels to analyzer so it knows which ones to listen for.
-        if let analyzer = speechRecognizer.analyzer as? ChannelPromptSpeechAnalyzer {
-            analyzer.channels = channels
-        }
-
         // Set up callback to handle when a channel has been successfully prompted.
         speechRecognizer.onKeySpeechResult = onChannelPrompted
 

@@ -16,11 +16,11 @@ class ChannelParticleView: ParticleView {
         
         static let framePeriod = 3
         
-        static let amplitudeScaleFactor: Float = 8
+        static let amplitudeScaleFactor: Float = 7
         
         static let fftScaleFactor: Float = 0.002
         
-        static let spinToMassRatio: Float = 0.8
+        static let spinToMassRatio: Float = 0.6
         
         static let globalRotationStep: Float = 0.04
     }

@@ -61,10 +61,7 @@ class ChannelWindow: FloatingWindow {
         }
     }
     
-    static func stateShouldAnimateFrame(_ state: ChannelState) -> Bool {
-//        state != .recording(.starting) // recording status is ignored here
-        return true
-    }
+    static func stateShouldAnimateFrame(_ state: ChannelState) -> Bool { true }
     
     static func stateShouldDisableOtherChannels(_ state: ChannelState) -> Bool {
         state == .recording(.starting) // recording status is ignored here

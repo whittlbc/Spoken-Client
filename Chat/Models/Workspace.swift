@@ -8,15 +8,12 @@
 
 import Foundation
 
-struct Workspace: Identifiable, Codable {
+struct Workspace: Model {
+    
+    static var modelName = "workspace"
+
     var id = ""
     var name = ""
-    var members = [Member]()
-    var channels = [Channel]()
-    
-    // Get current workspace from cache.
-    static var current: Workspace? {
-        // Cache.Workspaces.getCurrent()
-        Mocks.Workspaces.current
-    }
+    var memberIds = [String]()
+    var channelIds = [String]()
 }

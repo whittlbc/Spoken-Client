@@ -13,11 +13,12 @@ class ChannelPromptSpeechAnalyzer: SpeechAnalyzer {
     
     static let promptLeadPhrases = ["hey", "yo"]
 
-    var channels: [Channel]! {
-        didSet { self.populateChannelPrompts() }
-    }
-
     private var channelPrompts = [String: String]()
+    
+    override init() {
+        super.init()
+        populateChannelPrompts()
+    }
 
     override func getType() -> SpeechAnalyzerType { .channelPrompt }
     
@@ -47,32 +48,115 @@ class ChannelPromptSpeechAnalyzer: SpeechAnalyzer {
     private func populateChannelPrompts() {
         // Empty out channel prompts map.
         channelPrompts.removeAll()
-
-        // Create map of names already seen.
-        var namesSeen = Set<String>()
-
-        // Add prompts for each channel.
-        for channel in channels {
-            // Get first name of recipient in channel.
-            let name = channel.recipient.user.name.first
-            let lcName = name.lowercased()
-
-            // Register name as seen if it hasn't been seen yet.
-            if namesSeen.contains(lcName) {
-                continue
-            } else {
-                namesSeen.insert(lcName)
+        
+        // Get an ordered list of channel recipient names.
+        getChannelRecipientNames { [weak self] result in
+            guard let res = result else {
+                return
             }
 
-            // Register each lead phrase + name combination as a channel prompt.
-            for leadPhrase in ChannelPromptSpeechAnalyzer.promptLeadPhrases {
-                channelPrompts[formatPrompt(leadPhrase: leadPhrase, name: name)] = channel.id
+            // Create map of names already seen.
+            var namesSeen = Set<String>()
+
+            for (channelId, name) in res {
+                // Get first name of recipient in channel.
+                let firstName = name.first.lowercased()
+
+                // Register name as seen if it hasn't been seen yet.
+                if namesSeen.contains(firstName) {
+                    continue
+                } else {
+                    namesSeen.insert(firstName)
+                }
+
+                // Register each lead phrase + name combination as a channel prompt.
+                for leadPhrase in ChannelPromptSpeechAnalyzer.promptLeadPhrases {
+                    if let prompt = self?.formatPrompt(leadPhrase: leadPhrase, name: firstName) {
+                        self?.channelPrompts[prompt] = channelId
+                    }
+                }
             }
         }
     }
 
     private func formatPrompt(leadPhrase: String, name: String) -> String {
         (leadPhrase + " " + name).lowercased()
+    }
+    
+    private func getChannelRecipientNames(then handler: @escaping ([(String, Name)]?) -> Void) {
+        dataProvider.workspace.current { [weak self] workspace, error in
+            guard error == nil, let ws = workspace else {
+                handler(nil)
+                return
+            }
+
+            dataProvider.channel.list(ids: ws.channelIds) { [weak self] channels, error in
+                guard error == nil, let channelsList = channels, !channelsList.isEmpty else {
+                    handler(nil)
+                    return
+                }
+                
+                var result = [(String, Name)]()
+                
+                // TODO: Figure out how to iterate over this
+                for channel in channelsList {
+                    guard let recipientId = channel.memberIds.first(where: { $0 != Session.currentUserId! }) else {
+                        continue
+                    }
+                    
+                    dataProvider.member.get(id: recipientId) { member, error in
+                        guard error == nil, let mem = member else {
+                            return
+                        }
+                        
+
+                        // Get user avatar for user id.
+                        dataProvider.user.get(id: mem.userId) { user, error in
+                            guard error == nil, let name = user?.name else {
+                                return
+                            }
+                            
+                            result.append((channel.id, name))
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    // Load the current workspace.
+    func getChannelRecipientNames() {
+        // Get current workspace.
+        dataProvider.workspace.current { [weak self] workspace, error in
+            // Handle any errors.
+            guard error == nil, let ws = workspace else {
+                return
+            }
+
+            dataProvider
+        }
+    }
+    // Load the current workspace's channels.
+    private func loadWorkspaceChannels() {
+        // Ensure current workspace exists.
+        guard let ws = workspace else {
+            return
+        }
+        
+        // Get list of channels in current workspace.
+        dataProvider.channel.list(ids: ws.channelIds) { [weak self] channels, error in
+            // Handle any errors.
+            if let err = error {
+                self?.render(.failed(err))
+                return
+            }
+            
+            // Set current channels.
+            self?.channels = channels ?? [Channel]()
+            
+            // Render window as loaded.
+            self?.render(.loaded)
+        }
     }
 }
 

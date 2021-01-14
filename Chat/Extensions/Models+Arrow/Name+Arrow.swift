@@ -13,6 +13,7 @@ import Networking
 extension Name: ArrowParsable {
     
     public mutating func deserialize(_ json: JSON) {
+        id <-- json["id"]
         first <-- json["first"]
         last <-- json["last"]
     }

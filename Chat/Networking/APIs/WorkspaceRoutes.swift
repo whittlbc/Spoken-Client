@@ -9,6 +9,7 @@
 import Foundation
 import Combine
 
+
 // Workspace resource.
 extension InternalAPI.Resources {
     static let workspace = "/workspace"

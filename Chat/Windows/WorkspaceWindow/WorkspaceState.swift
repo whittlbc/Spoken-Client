@@ -11,6 +11,7 @@ import Cocoa
 // Workspace window state.
 enum WorkspaceState {
     case loading
-    case loaded(Workspace?)
-    case failed(Error)
+    case noWorkspacesExist
+    case loaded
+    case failed(DataProviderError)
 }

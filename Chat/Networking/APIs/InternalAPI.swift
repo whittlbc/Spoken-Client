@@ -14,9 +14,6 @@ public class InternalAPI: API {
     // Static version of the auth header name
     static let authTokenName = "Chat-Api-Token"
     
-    // Model endpoint resources
-    enum Resources {}
-    
     // Init an InternalAPI instance with a baseURL from env vars and the auth header as its only header.
     convenience init() {
         self.init(baseURL: Config.apiURL, authHeaderName: InternalAPI.authTokenName)
