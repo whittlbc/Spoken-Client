@@ -247,25 +247,27 @@ class ChannelAvatarViewController: NSViewController {
             handler(nil)
             return
         }
-
-        // Get member for id.
-        dataProvider.member.get(id: memberId) { member, error in
-            guard error == nil, let mem = member else {
-                handler(nil)
-                return
-            }
-
-            // Get user avatar for user id.
-            dataProvider.user.avatar(id: mem.userId) { image in
-                guard let img = image else {
-                    handler(nil)
-                    return
-                }
-                
-                // Respond with the user avatar image.
-                handler(img)
-            }
-        }
+        
+        handler(nil)
+//
+//        // Get member for id.
+//        dataProvider.member.get(id: memberId) { member, error in
+//            guard error == nil, let mem = member else {
+//                handler(nil)
+//                return
+//            }
+//
+//            // Get user avatar for user id.
+//            dataProvider.user.avatar(id: mem.userId) { image in
+//                guard let img = image else {
+//                    handler(nil)
+//                    return
+//                }
+//
+//                // Respond with the user avatar image.
+//                handler(img)
+//            }
+//        }
     }
     
     // Create new container view.

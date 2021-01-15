@@ -9,6 +9,7 @@
 import Cocoa
 import HotKey
 import Carbon
+import Combine
 
 // Window housing all sidebar app functionality as it relates to a given workspace.
 class WorkspaceWindow: FloatingWindow, ChannelDelegate {
@@ -47,14 +48,8 @@ class WorkspaceWindow: FloatingWindow, ChannelDelegate {
         }
     }
     
-    // Current workspace represented in window.
-    private var workspace: Workspace?
-    
-    // Ordered list of channels.
-    private var channels = [Channel]()
-    
     // Dictionary mapping a channel's id to its respective window.
-    private var channelsMap = [String: ChannelWindow]()
+    private var channelWindowRefs = [String: ChannelWindow]()
     
     // Create global hotkey for escape key.
     private var escKeyListener: HotKey!
@@ -67,6 +62,10 @@ class WorkspaceWindow: FloatingWindow, ChannelDelegate {
     
     private var commandKeyPressed = false
     
+    private var windowModel: WorkspaceWindowModel!
+    
+    private var cancellable: AnyCancellable?
+    
     // Override delegated init, size/position window on screen, and fetch workspaces.
     override init(contentRect: NSRect, styleMask style: NSWindow.StyleMask, backing backingStoreType: NSWindow.BackingStoreType, defer flag: Bool) {
         super.init(contentRect: contentRect, styleMask: style, backing: backingStoreType, defer: flag)
@@ -74,6 +73,12 @@ class WorkspaceWindow: FloatingWindow, ChannelDelegate {
         // Position and size window on screen.
         repositionWindow(to: SidebarWindow.origin)
         resizeWindow(to: SidebarWindow.size)
+        
+        // Create window model.
+        windowModel = WorkspaceWindowModel()
+        
+        // Configure window model subscription.
+        subscribeToWindowModel()
 
         // Configure app permissions associated with this window.
         configurePermisssions()
@@ -84,78 +89,20 @@ class WorkspaceWindow: FloatingWindow, ChannelDelegate {
     
     // Load the current workspace.
     func loadCurrentWorkspace() {
-        // Render loading view.
-        render(.loading)
-        
-        // HACK -- local testing
-        workspace = Mocks.Workspaces.current
-        channels = Mocks.Channels.all
-        render(.loaded)
-        
-//        // Get current workspace.
-//        dataProvider.workspace.current { [weak self] workspace, error in
-//            // Handle any errors.
-//            if let err = error {
-//                self?.render(.failed(err))
-//                return
-//            }
-//
-//            // Handle no workspaces exist.
-//            guard let ws = workspace else {
-//                self?.render(.noWorkspacesExist)
-//                return
-//            }
-//
-//            // Set current workspace.
-//            self?.workspace = ws
-//
-//            // Load current workspace members.
-//            self?.loadWorkspaceMembers()
-//        }
+        windowModel.loadWorkspace()
     }
-    
-    // Load the current workspace's members.
-    func loadWorkspaceMembers() {
-        // Ensure current workspace exists.
-        guard let ws = workspace else {
-            return
-        }
-        
-        // Load list of members in current workspace.
-        dataProvider.member.list(ids: ws.memberIds) { [weak self] _, error in
-            // Load current workspace channels on success.
-            error == nil ? self?.loadWorkspaceChannels() : self?.render(.failed(error!))
-        }
-    }
-    
-    // Load the current workspace's channels.
-    func loadWorkspaceChannels() {
-        // Ensure current workspace exists.
-        guard let ws = workspace else {
-            return
-        }
-        
-        // Get list of channels in current workspace.
-        dataProvider.channel.list(ids: ws.channelIds) { [weak self] channels, error in
-            // Handle any errors.
-            if let err = error {
-                self?.render(.failed(err))
-                return
-            }
-            
-            // Set current channels.
-            self?.channels = channels ?? [Channel]()
-            
-            // Render window as loaded.
-            self?.render(.loaded)
-        }
-    }
-    
+
     // Toggle on/off the key-event listeners active during recordings.
     func toggleRecordingKeyEventListeners(enable: Bool) {
         let isPaused = !enable
         escKeyListener.isPaused = isPaused
         returnKeyListener.isPaused = isPaused
+    }
+    
+    private func subscribeToWindowModel() {
+        cancellable = windowModel.$state.sink { [weak self] state in
+            self?.render(state)
+        }
     }
     
     // Seek permissions this app requries within this window.
@@ -243,7 +190,7 @@ class WorkspaceWindow: FloatingWindow, ChannelDelegate {
     // Handle individual channel window state updates as a group.
     func onChannelsRequireGroupUpdate(activeChannelId: String) {
         // Promote previous state to current state for all adjacent channel windows.
-        for (channelId, channelWindow) in channelsMap {
+        for (channelId, channelWindow) in channelWindowRefs {
             if channelId != activeChannelId {
                 channelWindow.promotePreviousState()
             }
@@ -343,8 +290,8 @@ class WorkspaceWindow: FloatingWindow, ChannelDelegate {
     
     // Add all channel windows as child windows.
     private func addChannelWindows() {
-        for channel in channels {
-            if let channelWindow = channelsMap[channel.id] {
+        for channel in windowModel.channels {
+            if let channelWindow = channelWindowRefs[channel.id] {
                 addChildWindow(channelWindow, ordered: NSWindow.OrderingMode.above)
             }
         }
@@ -440,7 +387,7 @@ class WorkspaceWindow: FloatingWindow, ChannelDelegate {
     // Determine how much (if any) the active channel window will change due to its latest state change.
     private func getActiveChannelSizeChange(activeChannelId: String) -> (ChannelWindow?, Float?, Float?) {
         // Get active channel window (the window that triggered the update).
-        guard let activeChannelWindow = channelsMap[activeChannelId] else {
+        guard let activeChannelWindow = channelWindowRefs[activeChannelId] else {
             logger.error("Unable to find active window that triggered size update...")
             return (nil, nil, nil)
         }
@@ -457,8 +404,8 @@ class WorkspaceWindow: FloatingWindow, ChannelDelegate {
         var channelWindows = [ChannelWindow]()
                 
         // Create an array of all workspace channels with existing windows, top-to-bottom.
-        for channel in channels {
-            guard let channelWindow = channelsMap[channel.id] else {
+        for channel in windowModel.channels {
+            guard let channelWindow = channelWindowRefs[channel.id] else {
                 continue
             }
             
@@ -542,7 +489,7 @@ class WorkspaceWindow: FloatingWindow, ChannelDelegate {
     
     private func onChannelWindowAnimationsComplete(activeChannelId: String) {
         // Get active channel window.
-        guard let activeChannelWindow = channelsMap[activeChannelId] else {
+        guard let activeChannelWindow = channelWindowRefs[activeChannelId] else {
             logger.error("Unable to find active channel window for id \(activeChannelId)...")
             return
         }
@@ -571,7 +518,7 @@ class WorkspaceWindow: FloatingWindow, ChannelDelegate {
             }
         }
     }
-    
+        
     // Error view.
     private func renderError(_ error: Error) {
         // TODO
@@ -593,9 +540,13 @@ class WorkspaceWindow: FloatingWindow, ChannelDelegate {
     }
     
     // Render all workspace channels on screen in separate windows.
+    // TODO: Will need to only create new channel windows for ones that don't exist yet so that render can be called repeatedly
     private func renderChannels() {
-        // Clear out channels map.
-        channelsMap.removeAll()
+        // Reset channel window refs.
+        channelWindowRefs.removeAll()
+        
+        // Get current channels.
+        let channels = windowModel.channels
         
         // Render a separate view if no channels exist yet.
         if channels.isEmpty {
@@ -603,9 +554,9 @@ class WorkspaceWindow: FloatingWindow, ChannelDelegate {
             return
         }
         
-        // Create each channel window and add them to the channelsMap.
+        // Create each channel window and add them to the channelWindowRefs.
         for channel in channels {
-            channelsMap[channel.id] = createChannelWindow(forChannel: channel)
+            channelWindowRefs[channel.id] = createChannelWindow(forChannel: channel)
         }
         
         // Size and position channel windows.
@@ -617,23 +568,18 @@ class WorkspaceWindow: FloatingWindow, ChannelDelegate {
 
     // Loaded view.
     private func renderLoaded() {
-        // Render all channels of workspace.
-        renderChannels()
+        windowModel.workspace == nil ? renderCreateFirstWorkspace() : renderChannels()
     }
-            
+        
     // Render workspace window contents based on current state.
-    func render(_ state: WorkspaceState) {
+    func render(_ state: WorkspaceWindowModel.State) {
         switch state {
         // Loading current workspace.
         case .loading:
             renderLoading()
-            
-        // No workspaces exist yet.
-        case .noWorkspacesExist:
-            renderCreateFirstWorkspace()
-            
+
         // Workspace successfully loaded.
-        case .loaded:
+        case .loaded(_):
             renderLoaded()
         
         // Loading workspace failed.

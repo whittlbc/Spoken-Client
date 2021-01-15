@@ -16,4 +16,6 @@ struct Workspace: Model {
     var name = ""
     var memberIds = [String]()
     var channelIds = [String]()
+    
+    var channels: [Channel]?
 }

@@ -27,6 +27,8 @@
 		094DAB1125AFD72900CFC2EC /* Session.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094DAB1025AFD72900CFC2EC /* Session.swift */; };
 		094DAB1425AFE70500CFC2EC /* NSImage+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094DAB1325AFE70500CFC2EC /* NSImage+Helpers.swift */; };
 		094DAB1825AFEB0900CFC2EC /* ImageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094DAB1725AFEB0900CFC2EC /* ImageCache.swift */; };
+		094DAB1C25B11F0A00CFC2EC /* WorkspaceWindowModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094DAB1B25B11F0A00CFC2EC /* WorkspaceWindowModel.swift */; };
+		094DAB1F25B1335E00CFC2EC /* Publisher+Operators.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094DAB1E25B1335E00CFC2EC /* Publisher+Operators.swift */; };
 		095C6765259A6A8800729845 /* ChasingTailSpinnerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 095C6764259A6A8800729845 /* ChasingTailSpinnerView.swift */; };
 		095C676C259E706000729845 /* SelfDrawnCheckmarkView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 095C676B259E706000729845 /* SelfDrawnCheckmarkView.swift */; };
 		095C677025A29AA200729845 /* Channel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 095C676F25A29AA200729845 /* Channel.swift */; };
@@ -117,6 +119,8 @@
 		094DAB1025AFD72900CFC2EC /* Session.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Session.swift; sourceTree = "<group>"; };
 		094DAB1325AFE70500CFC2EC /* NSImage+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSImage+Helpers.swift"; sourceTree = "<group>"; };
 		094DAB1725AFEB0900CFC2EC /* ImageCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCache.swift; sourceTree = "<group>"; };
+		094DAB1B25B11F0A00CFC2EC /* WorkspaceWindowModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkspaceWindowModel.swift; sourceTree = "<group>"; };
+		094DAB1E25B1335E00CFC2EC /* Publisher+Operators.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Publisher+Operators.swift"; sourceTree = "<group>"; };
 		095C6764259A6A8800729845 /* ChasingTailSpinnerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChasingTailSpinnerView.swift; sourceTree = "<group>"; };
 		095C676B259E706000729845 /* SelfDrawnCheckmarkView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelfDrawnCheckmarkView.swift; sourceTree = "<group>"; };
 		095C676F25A29AA200729845 /* Channel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Channel.swift; sourceTree = "<group>"; };
@@ -274,6 +278,7 @@
 			children = (
 				096862F32582B54F00B9B614 /* WorkspaceWindow.swift */,
 				095C678725A3D66B00729845 /* WorkspaceState.swift */,
+				094DAB1B25B11F0A00CFC2EC /* WorkspaceWindowModel.swift */,
 			);
 			path = WorkspaceWindow;
 			sourceTree = "<group>";
@@ -435,6 +440,7 @@
 				094DAB0925AFB98600CFC2EC /* Dictionary+Helpers.swift */,
 				094DAB0D25AFBB8F00CFC2EC /* String+Helpers.swift */,
 				094DAB1325AFE70500CFC2EC /* NSImage+Helpers.swift */,
+				094DAB1E25B1335E00CFC2EC /* Publisher+Operators.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -649,6 +655,7 @@
 				0940E07625A58935006184D7 /* ChannelDelegate.swift in Sources */,
 				096863382586C42B00B9B614 /* RoundShadowView.swift in Sources */,
 				0949C8B2259908E900B61D1F /* ParticleViewDelegate.swift in Sources */,
+				094DAB1C25B11F0A00CFC2EC /* WorkspaceWindowModel.swift in Sources */,
 				096862EE2582ABCE00B9B614 /* Member.swift in Sources */,
 				0995DE382581A9BC00DAA334 /* KeychainError.swift in Sources */,
 				09074D84259982DE00E72F93 /* ChannelAvatarViewController.swift in Sources */,
@@ -660,6 +667,7 @@
 				0995DE3B2581CA7500DAA334 /* InternalAPI.swift in Sources */,
 				0990879525797561001660D1 /* AppDelegate.swift in Sources */,
 				099997522595371E008E65FB /* ParticleView.swift in Sources */,
+				094DAB1F25B1335E00CFC2EC /* Publisher+Operators.swift in Sources */,
 				094DAB0A25AFB98600CFC2EC /* Dictionary+Helpers.swift in Sources */,
 				0968633125859A3000B9B614 /* ChannelAvatarView.swift in Sources */,
 				09C1329125A7D19E00FB1D90 /* SpeechAnalyzerProtocol.swift in Sources */,
