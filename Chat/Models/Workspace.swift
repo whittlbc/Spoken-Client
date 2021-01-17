@@ -17,5 +17,13 @@ struct Workspace: Model {
     var memberIds = [String]()
     var channelIds = [String]()
     
-    var channels: [Channel]?
+    var members = [Member]()
+    var channels = [Channel]()
+    
+    func forCache() -> Workspace {
+        var workspace = self
+        workspace.members = []
+        workspace.channels = []
+        return workspace
+    }
 }

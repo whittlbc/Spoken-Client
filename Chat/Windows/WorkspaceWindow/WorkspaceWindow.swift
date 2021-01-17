@@ -521,17 +521,15 @@ class WorkspaceWindow: FloatingWindow, ChannelDelegate {
         
     // Error view.
     private func renderError(_ error: Error) {
-        // TODO
+        print("render error: \(error)")
     }
 
     // Loading view.
     private func renderLoading() {
-        // TODO
     }
     
     // No workspaces exist yet view.
     private func renderCreateFirstWorkspace() {
-        // TODO
     }
     
     // No channels exist yet in the current workspace.
@@ -542,35 +540,37 @@ class WorkspaceWindow: FloatingWindow, ChannelDelegate {
     // Render all workspace channels on screen in separate windows.
     // TODO: Will need to only create new channel windows for ones that don't exist yet so that render can be called repeatedly
     private func renderChannels() {
-        // Reset channel window refs.
-        channelWindowRefs.removeAll()
-        
-        // Get current channels.
-        let channels = windowModel.channels
-        
-        // Render a separate view if no channels exist yet.
-        if channels.isEmpty {
-            renderCreateFirstChannel()
-            return
-        }
-        
-        // Create each channel window and add them to the channelWindowRefs.
-        for channel in channels {
-            channelWindowRefs[channel.id] = createChannelWindow(forChannel: channel)
-        }
-        
-        // Size and position channel windows.
-        setInitialChannelSizesAndPositions()
-
-        // Add all channel windows as child windows.
-        addChannelWindows()
+//        let workspace = windowModel.workspace!
+                
+//        // Reset channel window refs.
+//        channelWindowRefs.removeAll()
+//
+//        // Get current channels.
+//        let channels = windowModel.channels
+//
+//        // Render a separate view if no channels exist yet.
+//        if channels.isEmpty {
+//            renderCreateFirstChannel()
+//            return
+//        }
+//
+//        // Create each channel window and add them to the channelWindowRefs.
+//        for channel in channels {
+//            channelWindowRefs[channel.id] = createChannelWindow(forChannel: channel)
+//        }
+//
+//        // Size and position channel windows.
+//        setInitialChannelSizesAndPositions()
+//
+//        // Add all channel windows as child windows.
+//        addChannelWindows()
     }
 
     // Loaded view.
     private func renderLoaded() {
         windowModel.workspace == nil ? renderCreateFirstWorkspace() : renderChannels()
     }
-        
+
     // Render workspace window contents based on current state.
     func render(_ state: WorkspaceWindowModel.State) {
         switch state {

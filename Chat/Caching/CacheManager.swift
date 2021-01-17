@@ -12,18 +12,23 @@ import Cache
 // Cache manager and creator.
 public enum CacheManager {
 
+    enum CacheName {
+        static let string = "string"
+        static let image = "image"
+    }
+    
     // On-Disk storage configuration
     private static let diskConfig = DiskConfig(name: Config.appBundleID)
 
     // In-memory storage configuration.
-    private static let memoryConfig = MemoryConfig(countLimit: 0, totalCostLimit: 0)
+    private static let memoryConfig = MemoryConfig()
 
     // Create a new codable cache.
-    static func newCodableCache<T: Codable>(_ value: T.Type) -> CodableCache<T> {
+    static func newCodableCache<T: Codable>(_ value: T.Type, name: String) -> CodableCache<T> {
         do {
             let storage: Storage<String, T> = try Storage(
-                diskConfig: diskConfig,
-                memoryConfig: memoryConfig,
+                diskConfig: DiskConfig(name: name),
+                memoryConfig: MemoryConfig(),
                 transformer: TransformerFactory.forCodable(ofType: value)
             )
             
@@ -37,8 +42,8 @@ public enum CacheManager {
     static func newImageCache() -> ImageCache {
         do {
             let storage: Storage<String, Image> = try Storage(
-                diskConfig: diskConfig,
-                memoryConfig: memoryConfig,
+                diskConfig: DiskConfig(name: CacheName.image),
+                memoryConfig: MemoryConfig(),
                 transformer: TransformerFactory.forImage()
             )
             
@@ -49,7 +54,7 @@ public enum CacheManager {
     }
 
     // Global String:String cache.
-    static let stringCache: CodableCache<String> = CacheManager.newCodableCache(String.self)
+    static let stringCache: CodableCache<String> = CacheManager.newCodableCache(String.self, name: CacheName.string)
     
     // Global String:Image cache.
     static let imageCache: ImageCache = CacheManager.newImageCache()

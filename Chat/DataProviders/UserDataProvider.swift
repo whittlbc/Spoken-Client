@@ -17,16 +17,27 @@ class UserDataProvider<T: Model & NetworkingJSONDecodable>: DataProvider<T> {
     func avatarImageKey(id: String) -> String { "\(T.modelName):avatar:\(id)" }
     
     func current() -> AnyPublisher<T, Error> {
-        // Get current user id from string cache.
+        // Ensure current user id exists in the string cache
         guard let currentUserId = CacheManager.stringCache.get(forKey: currentKey) else {
-            return Fail(error: DataProviderError.cacheObjectNotFound(key: currentKey))
+            // This should only fail if the user isn't logged in.
+            return Fail(error: DataProviderError.unauthorized)
                 .eraseToAnyPublisher()
         }
         
         // Get user for current user id.
         return get(id: currentUserId)
     }
-        
+    
+    func setCurrent(id: String) {
+        do {
+            try CacheManager.stringCache.set(id, forKey: currentKey)
+        } catch CacheError.writeFailed(_) {
+            logger.error("Writing current \(T.modelName) id in string cache failed.")
+        } catch {
+            logger.error("Unknown error while caching current \(T.modelName) id in string cache: \(error)")
+        }
+    }
+
     func avatar(id: String, then handler: @escaping (NSImage?) -> Void) {
         handler(nil)
 //        get(id: id) { [weak self] result, error in

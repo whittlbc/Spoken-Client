@@ -15,4 +15,8 @@ struct Name: Model {
     var id = ""
     var first = ""
     var last = ""
+    
+    func forCache() -> Name {
+        self
+    }
 }

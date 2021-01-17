@@ -31,7 +31,8 @@ enum Mocks {
                 first: "Tyler",
                 last: "Whittle"
             ),
-            avatar: "https://dacxe0nzqx93t.cloudfront.net/team/tyler-whittle/tyler.jpg"
+            avatar: "https://dacxe0nzqx93t.cloudfront.net/team/tyler-whittle/tyler.jpg",
+            workspaceIds: ["a"]
         )
         
         static let andrea = User(
@@ -41,7 +42,8 @@ enum Mocks {
                 first: "Andrea",
                 last: "Salazar"
             ),
-            avatar: "https://dacxe0nzqx93t.cloudfront.net/team/andrea-salazar/color-avatar.jpg"
+            avatar: "https://dacxe0nzqx93t.cloudfront.net/team/andrea-salazar/color-avatar.jpg",
+            workspaceIds: ["a"]
         )
         
         static let josh = User(
@@ -51,7 +53,8 @@ enum Mocks {
                 first: "Josh",
                 last: "Jeans"
             ),
-            avatar: "https://dacxe0nzqx93t.cloudfront.net/team/josh-jeans/color-avatar.jpg"
+            avatar: "https://dacxe0nzqx93t.cloudfront.net/team/josh-jeans/color-avatar.jpg",
+            workspaceIds: ["a"]
         )
         
         static let benTaylor = User(
@@ -61,7 +64,8 @@ enum Mocks {
                 first: "Ben",
                 last: "Taylor"
             ),
-            avatar: "https://dacxe0nzqx93t.cloudfront.net/random/ben-taylor-avatar.jpg"
+            avatar: "https://dacxe0nzqx93t.cloudfront.net/random/ben-taylor-avatar.jpg",
+            workspaceIds: ["a"]
         )
 
         static let current = ben
@@ -79,7 +83,7 @@ enum Mocks {
                 Members.josh.id,
                 Members.benTaylor.id
             ],
-            channelIds: Channels.all.map { $0.id }
+            channelIds: Channels.all.map({ $0.id })
         )
     }
     

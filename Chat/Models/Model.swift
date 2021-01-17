@@ -9,8 +9,12 @@
 import Foundation
 
 protocol Model: Codable, Identifiable {
+    
     // Name of model represented as a lowercased string.
     static var modelName: String { get }
     
+    func forCache() -> Self
+    
+    // Public model identifier.
     var id: String { get set }
 }

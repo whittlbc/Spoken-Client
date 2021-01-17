@@ -20,54 +20,52 @@ class WorkspaceWindowModel {
     }
     
     @Published private(set) var state = State.loading
+    
+    var workspace: Workspace?
 
     private var workspaceResult = WorkspaceResult.success(Workspace()) {
-        didSet { updateStateWithWorkspaceResult() }
+        didSet {
+            switch workspaceResult {
+            case .success(let workspace):
+                self.workspace = workspace
+                state = .loaded(workspace)
+            case .failure(let error):
+                state = .failed(error)
+            }
+        }
     }
 
     private var cancellable: AnyCancellable?
 
-    var workspace: Workspace? { getCurrentWorkspace() }
+    var channels: [Channel] { workspace?.channels ?? [] }
     
-    var channels: [Channel] { getCurrentChannels() }
+    func isLoading() -> Bool {
+        switch state {
+        case .loading:
+            return true
+        default:
+            return false
+        }
+    }
     
-    func loadWorkspace() {
-        // Set state to loading.
-        state = State.loading
+    func showLoading() {
+        if !isLoading() {
+            state = .loading
+        }
+    }
+    
+    func loadWorkspace(silently: Bool = false) {
+        if !silently {
+            showLoading()
+        }
         
         // Get current workspace.
         cancellable = dataProvider.workspace
-            .current()
+            .current(withChannels: true, withMembers: true, withUsers: true)
             .asResult()
             .receive(on: DispatchQueue.main)
             .sink { [weak self] result in
                 self?.workspaceResult = result
             }
-    }
-    
-    private func updateStateWithWorkspaceResult() {
-        switch workspaceResult {
-        case .success(let workspace):
-            state = .loaded(workspace)
-        case .failure(let error):
-            state = .failed(error)
-        }
-    }
-    
-    private func getCurrentWorkspace() -> Workspace? {
-        switch state {
-        case .loaded(let workspace):
-            return workspace
-        default:
-            return nil
-        }
-    }
-    
-    private func getCurrentChannels() -> [Channel] {
-        guard let ws = workspace else {
-            return []
-        }
-        
-        return ws.channels ?? []
     }
 }

@@ -9,8 +9,11 @@
 import Foundation
 
 public enum DataProviderError: Error {
-    case cacheObjectNotFound(key: String)
-    case cachingFailed(key: String)
-    case vendingFailed
-    case unknownError
+    case notFound
+    case invalidInput
+    case unauthorized
+    case forbidden
+    case internalServerError
+    case assignmentFailed
+    case unknown
 }

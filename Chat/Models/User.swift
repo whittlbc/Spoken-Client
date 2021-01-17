@@ -17,9 +17,17 @@ struct User: Model {
     var name = Name()
     var avatar = ""
     var workspaceIds = [String]()
-        
+    
+    var workspaces = [Workspace]()
+
     func fullName() -> String {
         let full = name.first + " " + name.last
         return full.trimmingCharacters(in: .whitespaces)
+    }
+    
+    func forCache() -> User {
+        var user = self
+        user.workspaces = []
+        return user
     }
 }

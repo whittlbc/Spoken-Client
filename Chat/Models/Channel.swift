@@ -14,4 +14,12 @@ struct Channel: Model {
 
     var id = ""
     var memberIds = [String]()
+    
+    var members = [Member]()
+    
+    func forCache() -> Channel {
+        var channel = self
+        channel.members = []
+        return channel
+    }
 }

@@ -14,4 +14,12 @@ struct Member: Model {
 
     var id = ""
     var userId = ""
+    
+    var user: User?
+    
+    func forCache() -> Member {
+        var member = self
+        member.user = nil
+        return member
+    }
 }

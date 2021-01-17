@@ -12,8 +12,8 @@ import Networking
 import Combine
 
 class DataProvider<T: Model & NetworkingJSONDecodable> {
-            
-    private let cache: CodableCache<T> = CacheManager.newCodableCache(T.self)
+
+    let cache: CodableCache<T> = CacheManager.newCodableCache(T.self, name: T.modelName)
     
     func get(id: String) -> AnyPublisher<T, Error> {
         // Get result from cache if it exists.
@@ -22,23 +22,62 @@ class DataProvider<T: Model & NetworkingJSONDecodable> {
                 .setFailureType(to: Error.self)
                 .eraseToAnyPublisher()
         }
-        
-        // Create a new vendor request for the result.
-        let request: AnyPublisher<T, Error> = api.get(getNsp(), params: ["id": id])
                 
+        // Create a new vendor request to get this resource by id.
+        let request: AnyPublisher<T, Error> = api.get(getNsp(), params: ["id": id])
+
         // Vend, cache, and publish the result.
         return request
+            .mapError(vendorErrorToDataProviderError)
             .handleEvents(receiveOutput: { [weak self] result in
                 self?.cacheResult(result)
             })
             .eraseToAnyPublisher()
     }
-    
-    func getFor(for id: String) -> AnyPublisher<T, Error> { get(id: id) }
+        
+    func list(ids: [String]) -> AnyPublisher<[T], Error> {
+        var itemsFromCache = [T]()
+        var idsToVend = [String]()
+
+       // Get cached items and populate a list of ids for items needing vending.
+        for id in ids {
+            if let result = cache.get(forKey: id) {
+                itemsFromCache.append(result)
+            } else {
+                idsToVend.append(id)
+            }
+        }
+
+        // Just return items from cache if all were found there.
+        if idsToVend.isEmpty {
+            return Just(itemsFromCache)
+                .setFailureType(to: Error.self)
+                .eraseToAnyPublisher()
+        }
+
+        let idsToVendSet = Set(idsToVend)
+                
+        // Create a new vendor request to get list of resources for ids.
+        let request: AnyPublisher<[T], Error> = api.get(getNsp(plural: true), params: ["ids": idsToVend.joined(separator: ",")])
+            
+        // TODO: Sort them after calling .append() below --> you'll need a map of id to index
+        
+        // Vend, cache, and publish the results.
+        return request
+            .mapError(vendorErrorToDataProviderError)
+            .append(itemsFromCache)
+            .handleEvents(receiveOutput: { [weak self] results in
+                for result in results where idsToVendSet.contains(result.id) {
+                    self?.cacheResult(result)
+                }
+            })
+            .eraseToAnyPublisher()
+    }
     
     func cacheResult(_ result: T) {
         do {
-            try cache.set(result, forKey: result.id)
+            print("Caching \(T.modelName) with id: \(result.id)")
+            try cache.set(result.forCache(), forKey: result.id)
         } catch CacheError.writeFailed(key: let key) {
             logger.error("Error caching \(T.modelName) at key \(key).")
         } catch {
@@ -50,117 +89,35 @@ class DataProvider<T: Model & NetworkingJSONDecodable> {
         Path.join([plural ? T.modelName.asPlural() : T.modelName], addRoot: true)
     }
     
-//    func get(id: String, then provide: @escaping ProvideOne) {
-//        if let result = cache.get(forKey: id) {
-//            provide(result, nil)
-//            return
-//        }
-//
-//        vendOne(params: ["id": id]) { [weak self] result, error in
-//            // Handle any vending errors.
-//            if let err = error {
-//                provide(nil, err)
-//                return
-//            }
-//
-//            // If no result is returned, just return empty.
-//            guard let res = result else {
-//                provide(nil, nil)
-//                return
-//            }
-//
-//            // Cache result.
-////            self?.cacheResult(res, forKey: id)
-//
-//            // Provide result.
-//            provide(res, nil)
-//        }
-//    }
-//
-//    func list(ids: [String], then provide: @escaping ProvideMultiple) {
-//        var itemsById = [String: T]()
-//        var idsToVend = [String]()
-//
-//        // Get cached items and populate a list of ids for items needing vending.
-//        for id in ids {
-//            if let result = cache.get(forKey: id) {
-//                itemsById[id] = result
-//            } else {
-//                idsToVend.append(id)
-//            }
-//        }
-//
-//        // If no items need vending, provide items returned from cache in order of given ids.
-//        if idsToVend.isEmpty {
-//            provide(itemsById.listValues(forKeys: ids), nil)
-//            return
-//        }
-//
-//        // Vend items that weren't found in cache.
-//        vendMultiple(params: ["ids": idsToVend]) { [weak self] result, error in
-//            // Handle any vending errors.
-//            if let err = error {
-//                provide(nil, err)
-//                return
-//            }
-//
-//            // If no result is returned, just return empty.
-//            guard let res = result else {
-//                provide(nil, nil)
-//                return
-//            }
-//
-//            // For each item returned...
-//            for item in res {
-//                // Cache item by id.
-////                self?.cacheResult(item, forKey: item.id)
-//
-//                // Add item to map by id.
-//                itemsById[item.id] = item
-//            }
-//
-//            // Provide list of items in order of ids originally given.
-//            provide(itemsById.listValues(forKeys: ids), nil)
-//        }
-//    }
-//
-
-//
-//    private func vendOne(params: Params, then handler: @escaping ProvideOne) {
-//        let request: AnyPublisher<T, Error> = api.get(vendorNamespace, params: params)
-//
-//        request.sink(receiveCompletion: { status in
-//            switch status {
-//
-//            case .failure(let error):
-//                logger.error("\(error)")
-//                handler(nil, .vendingFailed)
-//
-//            default:
-//                break
-//            }
-//        }, receiveValue: { result in
-//            handler(result, nil)
-//        }).store(in: &vendorRequests)
-//    }
-//
-//    private func vendMultiple(params: Params, then handler: @escaping ProvideMultiple) {
-//        let request: AnyPublisher<[T], Error> = api.get(pluralVendorNamespace, params: params)
-//
-//        request.sink(receiveCompletion: { status in
-//            switch status {
-//
-//            case .failure(let error):
-//                logger.error("\(error)")
-//                handler(nil, .vendingFailed)
-//
-//            default:
-//                break
-//            }
-//        }, receiveValue: { result in
-//            handler(result, nil)
-//        }).store(in: &vendorRequests)
-//    }
+    private func vendorErrorToDataProviderError(for error: Error) -> Error {
+        guard let err = error as? NetworkingError else {
+            logger.error("Vendor returned unknown error: \(error).")
+            return DataProviderError.unknown
+        }
+        
+        logger.error("Vendor returned error: status=\(err.status), code=\(err.code)")
+        
+        switch err.status {
+        
+        case .notFound:
+            return DataProviderError.notFound
+            
+        case .badRequest:
+            return DataProviderError.invalidInput
+            
+        case .unauthorized:
+            return DataProviderError.unauthorized
+            
+        case .forbidden:
+            return DataProviderError.forbidden
+            
+        case .internalServerError:
+            return DataProviderError.internalServerError
+            
+        default:
+            return DataProviderError.unknown
+        }
+    }
 }
 
 public enum dataProvider {
@@ -169,14 +126,7 @@ public enum dataProvider {
     
     static let workspace = WorkspaceDataProvider<Workspace>()
     
-    static let channel = DataProvider<Channel>()
+    static let channel = ChannelDataProvider<Channel>()
     
-    static let member = DataProvider<Member>()
+    static let member = MemberDataProvider<Member>()
 }
-
-//dataProvider.user.publisher.get(id: "a").sink { user, error
-//
-//}
-
-
-//dataProvider.user.get(id: "a").workspaces()

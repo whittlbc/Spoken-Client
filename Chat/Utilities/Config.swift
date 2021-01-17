@@ -21,7 +21,8 @@ public enum Config {
 
     // App environment options
     enum Env: String {
-        case dev, prod
+        case dev
+        case prod
     }
     
     // Info.plist as dictionary
