@@ -15,7 +15,7 @@ class WorkspaceDataProvider<T: Model & NetworkingJSONDecodable>: DataProvider<T>
     var currentKey: String { "\(T.modelName):current" }
     
     func get(id: String, withChannels: Bool = false, withMembers: Bool = false, withUsers: Bool = false) -> AnyPublisher<T, Error> {
-        guard withChannels else {
+        if !withChannels {
             return get(id: id)
         }
         
@@ -56,7 +56,7 @@ class WorkspaceDataProvider<T: Model & NetworkingJSONDecodable>: DataProvider<T>
             logger.error("Unknown error while caching current \(T.modelName) id in string cache: \(error)")
         }
     }
-        
+
     private func loadChannels(for model: T, withMembers: Bool = false, withUsers: Bool = false) -> AnyPublisher<T, Error> {
         var workspace = model as! Workspace
         

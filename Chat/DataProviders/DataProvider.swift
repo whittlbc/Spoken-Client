@@ -57,15 +57,17 @@ class DataProvider<T: Model & NetworkingJSONDecodable> {
 
         let idsToVendSet = Set(idsToVend)
                 
-        // Create a new vendor request to get list of resources for ids.
-        let request: AnyPublisher<[T], Error> = api.get(getNsp(plural: true), params: ["ids": idsToVend.joined(separator: ",")])
-            
-        // TODO: Sort them after calling .append() below --> you'll need a map of id to index
-        
+        // Create a new vendor request to get list of resources by ids.
+        let request: AnyPublisher<[T], Error> = api.get(
+            getNsp(plural: true),
+            params: ["ids": idsToVend.joined(separator: ",")]
+        )
+                    
         // Vend, cache, and publish the results.
         return request
             .mapError(vendorErrorToDataProviderError)
             .append(itemsFromCache)
+            .sortBy(ids: ids)
             .handleEvents(receiveOutput: { [weak self] results in
                 for result in results where idsToVendSet.contains(result.id) {
                     self?.cacheResult(result)
@@ -76,7 +78,6 @@ class DataProvider<T: Model & NetworkingJSONDecodable> {
     
     func cacheResult(_ result: T) {
         do {
-            print("Caching \(T.modelName) with id: \(result.id)")
             try cache.set(result.forCache(), forKey: result.id)
         } catch CacheError.writeFailed(key: let key) {
             logger.error("Error caching \(T.modelName) at key \(key).")

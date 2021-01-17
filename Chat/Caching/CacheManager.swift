@@ -24,7 +24,7 @@ public enum CacheManager {
     private static let memoryConfig = MemoryConfig()
 
     // Create a new codable cache.
-    static func newCodableCache<T: Codable>(_ value: T.Type, name: String) -> CodableCache<T> {
+    static func newCodableCache<T: Codable>(_ value: T.Type, name: String = "default") -> CodableCache<T> {
         do {
             let storage: Storage<String, T> = try Storage(
                 diskConfig: DiskConfig(name: name),
@@ -39,7 +39,7 @@ public enum CacheManager {
     }
     
     // Create a new image cache.
-    static func newImageCache() -> ImageCache {
+    static func newImageCache(name: String = CacheName.image) -> ImageCache {
         do {
             let storage: Storage<String, Image> = try Storage(
                 diskConfig: DiskConfig(name: CacheName.image),

@@ -12,8 +12,18 @@ import Combine
 
 class MemberDataProvider<T: Model & NetworkingJSONDecodable>: DataProvider<T> {
     
+    func get(id: String, withUser: Bool = false) -> AnyPublisher<T, Error> {
+        if !withUser {
+            return get(id: id)
+        }
+        
+        return get(id: id)
+            .flatMap({ self.loadUser(for: $0) })
+            .eraseToAnyPublisher()
+    }
+    
     func list(ids: [String], withUsers: Bool = false) -> AnyPublisher<[T], Error> {
-        guard withUsers else {
+        if !withUsers {
             return list(ids: ids)
         }
         
@@ -22,7 +32,19 @@ class MemberDataProvider<T: Model & NetworkingJSONDecodable>: DataProvider<T> {
             .eraseToAnyPublisher()
     }
     
-    private func loadUsers(for models: [T], withUser: Bool = false) -> AnyPublisher<[T], Error> {
+    private func loadUser(for model: T) -> AnyPublisher<T, Error> {
+        var member = model as! Member
+                
+        return dataProvider.user
+            .get(id: member.userId)
+            .map { user in
+                member.user = user
+                return member as! T
+            }
+            .eraseToAnyPublisher()
+    }
+    
+    private func loadUsers(for models: [T]) -> AnyPublisher<[T], Error> {
         let members = models as! [Member]
                 
         return dataProvider.user

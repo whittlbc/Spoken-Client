@@ -19,3 +19,21 @@ extension Publisher {
             .eraseToAnyPublisher()
     }
 }
+
+extension Publisher where Output: Sequence, Output.Element: Model {
+    
+    func sortBy<T: Model>(ids: [String]) -> Publishers.Map<Self, [T]>  {
+        map { sequence in
+            let elementsMap = sequence.reduce(into: [String: T]()) { $0[$1.id] = $1 as? T }
+            var sortedSequence = [T]()
+            
+            for id in ids {
+                if let element = elementsMap[id] {
+                    sortedSequence.append(element)
+                }
+            }
+            
+            return sortedSequence
+        }
+    }
+}

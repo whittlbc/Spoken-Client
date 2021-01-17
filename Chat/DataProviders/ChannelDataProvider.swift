@@ -12,17 +12,39 @@ import Combine
 
 class ChannelDataProvider<T: Model & NetworkingJSONDecodable>: DataProvider<T> {
     
+    func get(id: String, withMembers: Bool = false, withUsers: Bool = false) -> AnyPublisher<T, Error> {
+        if !withMembers {
+            return get(id: id)
+        }
+        
+        return get(id: id)
+            .flatMap({ self.loadMembers(for: $0, withUsers: withUsers) })
+            .eraseToAnyPublisher()
+    }
+
     func list(ids: [String], withMembers: Bool = false, withUsers: Bool = false) -> AnyPublisher<[T], Error> {
-        guard withMembers else {
+        if !withMembers {
             return list(ids: ids)
         }
         
         return list(ids: ids)
-            .flatMap({ self.loadMembers(for: $0, withUsers: withUsers) })
+            .flatMap({ self.loadMembers(forList: $0, withUsers: withUsers) })
             .eraseToAnyPublisher()
     }
     
-    private func loadMembers(for models: [T], withUsers: Bool = false) -> AnyPublisher<[T], Error> {
+    private func loadMembers(for model: T, withUsers: Bool = false) -> AnyPublisher<T, Error> {
+        var channel = model as! Channel
+                
+        return dataProvider.member
+            .list(ids: channel.memberIds, withUsers: withUsers)
+            .map { members in
+                channel.members = members
+                return channel as! T
+            }
+            .eraseToAnyPublisher()
+    }
+
+    private func loadMembers(forList models: [T], withUsers: Bool = false) -> AnyPublisher<[T], Error> {
         let channels = models as! [Channel]
                 
         return dataProvider.member
