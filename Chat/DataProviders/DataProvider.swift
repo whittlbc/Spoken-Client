@@ -22,7 +22,7 @@ class DataProvider<T: Model & NetworkingJSONDecodable> {
                 .setFailureType(to: Error.self)
                 .eraseToAnyPublisher()
         }
-                
+
         // Create a new vendor request to get this resource by id.
         let request: AnyPublisher<T, Error> = api.get(getNsp(), params: ["id": id])
 
@@ -89,8 +89,8 @@ class DataProvider<T: Model & NetworkingJSONDecodable> {
     private func getNsp(plural: Bool = false) -> String {
         Path.join([plural ? T.modelName.asPlural() : T.modelName], addRoot: true)
     }
-    
-    private func vendorErrorToDataProviderError(for error: Error) -> Error {
+        
+    func vendorErrorToDataProviderError(for error: Error) -> Error {
         guard let err = error as? NetworkingError else {
             logger.error("Vendor returned unknown error: \(error).")
             return DataProviderError.unknown
@@ -117,6 +117,21 @@ class DataProvider<T: Model & NetworkingJSONDecodable> {
             
         default:
             return DataProviderError.unknown
+        }
+    }
+    
+    func imageErrorToDataProviderError(for error: Error) -> Error {
+        guard let err = error as? ImageError else {
+            return DataProviderError.unknown
+        }
+                
+        switch err {
+        
+        case .invalidURL:
+            return DataProviderError.invalidURL
+            
+        case .requestFailed:
+            return DataProviderError.badImage
         }
     }
 }

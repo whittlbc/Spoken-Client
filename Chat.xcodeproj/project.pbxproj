@@ -92,6 +92,7 @@
 		09D19A5F25B25DAD00C0C476 /* ChannelDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09D19A5E25B25DAD00C0C476 /* ChannelDataProvider.swift */; };
 		09D19A6225B38D5100C0C476 /* Array+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09D19A6125B38D5100C0C476 /* Array+Helpers.swift */; };
 		09D19A6525B38DDB00C0C476 /* MemberDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09D19A6425B38DDB00C0C476 /* MemberDataProvider.swift */; };
+		09D3FC0425B4F80000CC744A /* ImageError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09D3FC0325B4F80000CC744A /* ImageError.swift */; };
 		09F534E725A7F76D001B4FF6 /* SpeechAnalyzerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F534E625A7F76D001B4FF6 /* SpeechAnalyzerDelegate.swift */; };
 		09F60AC6258BFD450020974A /* NSRect+Location.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F60AC5258BFD450020974A /* NSRect+Location.swift */; };
 		09F60AC9258C13680020974A /* Icon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F60AC8258C13680020974A /* Icon.swift */; };
@@ -188,6 +189,7 @@
 		09D19A5E25B25DAD00C0C476 /* ChannelDataProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelDataProvider.swift; sourceTree = "<group>"; };
 		09D19A6125B38D5100C0C476 /* Array+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+Helpers.swift"; sourceTree = "<group>"; };
 		09D19A6425B38DDB00C0C476 /* MemberDataProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemberDataProvider.swift; sourceTree = "<group>"; };
+		09D3FC0325B4F80000CC744A /* ImageError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageError.swift; sourceTree = "<group>"; };
 		09F534E625A7F76D001B4FF6 /* SpeechAnalyzerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechAnalyzerDelegate.swift; sourceTree = "<group>"; };
 		09F60AC5258BFD450020974A /* NSRect+Location.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSRect+Location.swift"; sourceTree = "<group>"; };
 		09F60AC8258C13680020974A /* Icon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Icon.swift; sourceTree = "<group>"; };
@@ -476,6 +478,7 @@
 				094DAAE425AEBA3300CFC2EC /* DataProviderError.swift */,
 				0995DE372581A9BC00DAA334 /* KeychainError.swift */,
 				094DAAE725AEBAE300CFC2EC /* LocalCacheError.swift */,
+				09D3FC0325B4F80000CC744A /* ImageError.swift */,
 			);
 			path = Errors;
 			sourceTree = "<group>";
@@ -689,6 +692,7 @@
 				0995DE01257AEDEC00DAA334 /* SidebarWindowController.swift in Sources */,
 				09D19A6525B38DDB00C0C476 /* MemberDataProvider.swift in Sources */,
 				09F60AC6258BFD450020974A /* NSRect+Location.swift in Sources */,
+				09D3FC0425B4F80000CC744A /* ImageError.swift in Sources */,
 				094DAB0E25AFBB8F00CFC2EC /* String+Helpers.swift in Sources */,
 				096862DE2582A2EB00B9B614 /* User+Arrow.swift in Sources */,
 				09C1329425A7D59800FB1D90 /* SpeechAnalyzerType.swift in Sources */,

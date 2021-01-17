@@ -17,7 +17,7 @@ struct User: Model {
     var name = Name()
     var avatar = ""
     var workspaceIds = [String]()
-    
+
     var workspaces = [Workspace]()
 
     func fullName() -> String {

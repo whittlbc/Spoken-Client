@@ -7,31 +7,39 @@
 //
 
 import Cocoa
+import Combine
 
 extension NSImage {
     
-    static func forKey(_ key: String, remoteURL: String, then handler: @escaping (NSImage?) -> Void) {
+    static func forKey(_ key: String, remoteURL: String) -> AnyPublisher<NSImage, Error> {
         // Attempt to get an image from the image cache for the provided key.
         if let image = CacheManager.imageCache.get(forKey: key) {
-            handler(image)
-            return
+            return Just(image)
+                .setFailureType(to: Error.self)
+                .eraseToAnyPublisher()
         }
 
-        // Create a url object from string.
+        // Create a URL object from the remote URL string.
         guard let url = URL(string: remoteURL) else {
-            logger.error("Invalid creation of URL from string(\(remoteURL) while fetching NSImage for key \(key).")
-            handler(nil)
-            return
+            return Fail(error: ImageError.invalidURL)
+                .eraseToAnyPublisher()
         }
-        
-        // Fetch image from remote URL.
-        let image = NSImage(byReferencing: url)
-        
-        // Cache image for given key.
-        try? CacheManager.imageCache.set(image, forKey: key)
-        
-        // Return the image.
-        handler(image)
+
+        // Fetch and publish image from remote url.
+        return URLSession.shared
+            .dataTaskPublisher(for: url)
+            .map(\.data)
+            .tryMap { data in
+                guard let image = NSImage(data: data) else {
+                    throw ImageError.requestFailed
+                }
+
+                // Cache image for given key.
+                try? CacheManager.imageCache.set(image, forKey: key)
+
+                return image
+            }
+            .eraseToAnyPublisher()
     }
 }
 

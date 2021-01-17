@@ -28,6 +28,13 @@ class UserDataProvider<T: Model & NetworkingJSONDecodable>: DataProvider<T> {
         return get(id: currentUserId)
     }
     
+    func avatar(id: String) -> AnyPublisher<NSImage, Error> {
+        get(id: id)
+            .flatMap({ NSImage.forKey(self.avatarImageKey(id: id), remoteURL: ($0 as! User).avatar) })
+            .mapError(imageErrorToDataProviderError)
+            .eraseToAnyPublisher()
+    }
+    
     func setCurrent(id: String) {
         do {
             try CacheManager.stringCache.set(id, forKey: currentKey)
@@ -36,20 +43,5 @@ class UserDataProvider<T: Model & NetworkingJSONDecodable>: DataProvider<T> {
         } catch {
             logger.error("Unknown error while caching current \(T.modelName) id in string cache: \(error)")
         }
-    }
-
-    func avatar(id: String, then handler: @escaping (NSImage?) -> Void) {
-        handler(nil)
-//        get(id: id) { [weak self] result, error in
-//            guard error == nil, let user = result as? User, let key = self?.avatarImageKey(id: user.id) else {
-//                handler(nil)
-//                return
-//            }
-//
-//            // Resolve the image from either the cache or the remote url.
-//            NSImage.forKey(key, remoteURL: user.avatar) { image in
-//                handler(image)
-//            }
-//        }
     }
 }

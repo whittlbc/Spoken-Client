@@ -14,6 +14,7 @@ public enum DataProviderError: Error {
     case unauthorized
     case forbidden
     case internalServerError
-    case assignmentFailed
+    case invalidURL
+    case badImage
     case unknown
 }
