@@ -71,8 +71,8 @@ class WorkspaceWindow: FloatingWindow, ChannelDelegate {
         super.init(contentRect: contentRect, styleMask: style, backing: backingStoreType, defer: flag)
 
         // Position and size window on screen.
-        repositionWindow(to: SidebarWindow.origin)
-        resizeWindow(to: SidebarWindow.size)
+        repositionWindow(to: WorkspaceWindow.origin)
+        resizeWindow(to: WorkspaceWindow.size)
         
         // Create window model.
         windowModel = WorkspaceWindowModel()

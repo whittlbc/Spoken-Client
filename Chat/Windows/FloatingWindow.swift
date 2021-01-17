@@ -91,10 +91,8 @@ class FloatingWindow: NSPanel {
             height: newSize.height
         )
         
-        if animate {
-            animator().setFrame(newFrame, display: true)
-        } else {
+        animate ?
+            animator().setFrame(newFrame, display: true) :
             setFrame(newFrame, display: true)
-        }
     }
 }

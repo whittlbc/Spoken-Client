@@ -35,7 +35,6 @@
 		095C677325A29B7300729845 /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = 095C677225A29B7300729845 /* Message.swift */; };
 		095C677625A29C6700729845 /* Channel+Arrow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 095C677525A29C6700729845 /* Channel+Arrow.swift */; };
 		095C677A25A29CC300729845 /* Message+Arrow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 095C677925A29CC300729845 /* Message+Arrow.swift */; };
-		095C678825A3D66B00729845 /* WorkspaceState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 095C678725A3D66B00729845 /* WorkspaceState.swift */; };
 		096862CA258202BB00B9B614 /* Networking in Frameworks */ = {isa = PBXBuildFile; productRef = 096862C9258202BB00B9B614 /* Networking */; };
 		096862CD25829C5A00B9B614 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 096862CC25829C5A00B9B614 /* User.swift */; };
 		096862D525829FE300B9B614 /* Arrow in Frameworks */ = {isa = PBXBuildFile; productRef = 096862D425829FE300B9B614 /* Arrow */; };
@@ -131,7 +130,6 @@
 		095C677225A29B7300729845 /* Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
 		095C677525A29C6700729845 /* Channel+Arrow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Channel+Arrow.swift"; sourceTree = "<group>"; };
 		095C677925A29CC300729845 /* Message+Arrow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Message+Arrow.swift"; sourceTree = "<group>"; };
-		095C678725A3D66B00729845 /* WorkspaceState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkspaceState.swift; sourceTree = "<group>"; };
 		096862CC25829C5A00B9B614 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		096862D72582A03F00B9B614 /* Arrow+Networking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Arrow+Networking.swift"; sourceTree = "<group>"; };
 		096862DD2582A2EB00B9B614 /* User+Arrow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "User+Arrow.swift"; sourceTree = "<group>"; };
@@ -285,7 +283,6 @@
 			isa = PBXGroup;
 			children = (
 				096862F32582B54F00B9B614 /* WorkspaceWindow.swift */,
-				095C678725A3D66B00729845 /* WorkspaceState.swift */,
 				094DAB1B25B11F0A00CFC2EC /* WorkspaceWindowModel.swift */,
 			);
 			path = WorkspaceWindow;
@@ -671,7 +668,6 @@
 				096862EE2582ABCE00B9B614 /* Member.swift in Sources */,
 				0995DE382581A9BC00DAA334 /* KeychainError.swift in Sources */,
 				09074D84259982DE00E72F93 /* ChannelAvatarViewController.swift in Sources */,
-				095C678825A3D66B00729845 /* WorkspaceState.swift in Sources */,
 				094DAAF025AEDAB900CFC2EC /* Path.swift in Sources */,
 				094DAB1425AFE70500CFC2EC /* NSImage+Helpers.swift in Sources */,
 				0996443D25A91755004473B7 /* SpeechRecognizerDelegate.swift in Sources */,

@@ -12,7 +12,7 @@ import Cocoa
 class SidebarWindow: FloatingWindow {
     
     // Largest width the sidebar's contents should ever get to.
-    static let width:Int = 250
+    static let width: Int = 250
     
     // Size of window.
     static let size = NSSize(width: SidebarWindow.width, height: Screen.getHeight())
