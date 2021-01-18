@@ -48,12 +48,13 @@
 		096862F42582B54F00B9B614 /* WorkspaceWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 096862F32582B54F00B9B614 /* WorkspaceWindowController.swift */; };
 		096862F82582CF6700B9B614 /* Cache in Frameworks */ = {isa = PBXBuildFile; productRef = 096862F72582CF6700B9B614 /* Cache */; };
 		0968631F2583FB2A00B9B614 /* mocks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0968631E2583FB2A00B9B614 /* mocks.swift */; };
-		0968632325840AB500B9B614 /* ChannelWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0968632225840AB500B9B614 /* ChannelWindow.swift */; };
+		0968632325840AB500B9B614 /* OldChannelWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0968632225840AB500B9B614 /* OldChannelWindow.swift */; };
 		09686328258427A500B9B614 /* ChannelViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09686327258427A500B9B614 /* ChannelViewController.swift */; };
 		0968632C2584299400B9B614 /* ChannelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0968632B2584299400B9B614 /* ChannelView.swift */; };
 		0968633125859A3000B9B614 /* ChannelAvatarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0968633025859A3000B9B614 /* ChannelAvatarView.swift */; };
 		096863352586C2B000B9B614 /* RoundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 096863342586C2B000B9B614 /* RoundView.swift */; };
 		096863382586C42B00B9B614 /* RoundShadowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 096863372586C42B00B9B614 /* RoundShadowView.swift */; };
+		097228F725B63EA100219591 /* ChannelWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 097228F625B63EA100219591 /* ChannelWindow.swift */; };
 		0990879525797561001660D1 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0990879425797561001660D1 /* AppDelegate.swift */; };
 		0990879925797563001660D1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0990879825797563001660D1 /* Assets.xcassets */; };
 		099087A625797645001660D1 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 099087A525797645001660D1 /* main.swift */; };
@@ -143,12 +144,13 @@
 		096862F02582ACE100B9B614 /* Member+Arrow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Member+Arrow.swift"; sourceTree = "<group>"; };
 		096862F32582B54F00B9B614 /* WorkspaceWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkspaceWindowController.swift; sourceTree = "<group>"; };
 		0968631E2583FB2A00B9B614 /* mocks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = mocks.swift; sourceTree = "<group>"; };
-		0968632225840AB500B9B614 /* ChannelWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelWindow.swift; sourceTree = "<group>"; };
+		0968632225840AB500B9B614 /* OldChannelWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OldChannelWindow.swift; sourceTree = "<group>"; };
 		09686327258427A500B9B614 /* ChannelViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelViewController.swift; sourceTree = "<group>"; };
 		0968632B2584299400B9B614 /* ChannelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelView.swift; sourceTree = "<group>"; };
 		0968633025859A3000B9B614 /* ChannelAvatarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelAvatarView.swift; sourceTree = "<group>"; };
 		096863342586C2B000B9B614 /* RoundView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundView.swift; sourceTree = "<group>"; };
 		096863372586C42B00B9B614 /* RoundShadowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundShadowView.swift; sourceTree = "<group>"; };
+		097228F625B63EA100219591 /* ChannelWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelWindow.swift; sourceTree = "<group>"; };
 		0990879125797561001660D1 /* Chat.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Chat.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0990879425797561001660D1 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		0990879825797563001660D1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -299,7 +301,8 @@
 			isa = PBXGroup;
 			children = (
 				09FF53CF25B524930083CD28 /* ChannelWindowController.swift */,
-				0968632225840AB500B9B614 /* ChannelWindow.swift */,
+				097228F625B63EA100219591 /* ChannelWindow.swift */,
+				0968632225840AB500B9B614 /* OldChannelWindow.swift */,
 				09FF53D225B5293D0083CD28 /* ChannelRenderSpec.swift */,
 				09074D862599BD0500E72F93 /* ChannelState.swift */,
 			);
@@ -689,6 +692,7 @@
 				0996443D25A91755004473B7 /* SpeechRecognizerDelegate.swift in Sources */,
 				09D19A6225B38D5100C0C476 /* Array+Helpers.swift in Sources */,
 				09D3FC0E25B50ADA00CC744A /* WorkspaceKeyManager.swift in Sources */,
+				097228F725B63EA100219591 /* ChannelWindow.swift in Sources */,
 				095C677A25A29CC300729845 /* Message+Arrow.swift in Sources */,
 				0995DE3B2581CA7500DAA334 /* InternalAPI.swift in Sources */,
 				0990879525797561001660D1 /* AppDelegate.swift in Sources */,
@@ -748,7 +752,7 @@
 				095C677325A29B7300729845 /* Message.swift in Sources */,
 				0995DE2125816B5E00DAA334 /* Config.swift in Sources */,
 				09074D872599BD0500E72F93 /* ChannelState.swift in Sources */,
-				0968632325840AB500B9B614 /* ChannelWindow.swift in Sources */,
+				0968632325840AB500B9B614 /* OldChannelWindow.swift in Sources */,
 				095C677025A29AA200729845 /* Channel.swift in Sources */,
 				09686328258427A500B9B614 /* ChannelViewController.swift in Sources */,
 				095C677625A29C6700729845 /* Channel+Arrow.swift in Sources */,

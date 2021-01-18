@@ -214,15 +214,19 @@ class ChannelViewController: NSViewController, ParticleViewDelegate {
         avatarViewController.render(state: state, isDisabled: isDisabled)
     }
     
-    // Render view and subviews with updated state and props.
-    func render(state: ChannelState, isDisabled: Bool? = nil) {
-        // Animate disabled status if provided.
-        if let disabled = isDisabled {
-            animateDisability(disabled)
-        }
-        
-        renderStateChanges(state: state)
-        
-        renderAvatarView(state: state, isDisabled: isDisabled)
+//    // Render view and subviews with updated state and props.
+//    func render(state: ChannelState, isDisabled: Bool? = nil) {
+//        // Animate disabled status if provided.
+//        if let disabled = isDisabled {
+//            animateDisability(disabled)
+//        }
+//
+//        renderStateChanges(state: state)
+//
+//        renderAvatarView(state: state, isDisabled: isDisabled)
+//    }
+    
+    // Render window to size/position.
+    func render(_ spec: ChannelRenderSpec) {
     }
 }

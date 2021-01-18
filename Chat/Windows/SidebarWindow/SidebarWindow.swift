@@ -39,8 +39,7 @@ class SidebarWindow: FloatingWindow {
         // This will be the main window for our application.
         level = .mainMenu
         
-        // Position and size window on screen.
-        repositionWindow(to: Style.origin)
-        resizeWindow(to: Style.size)
+        // Size and position window on screen.
+        updateFrame(size: Style.size, position: Style.origin)
     }
 }

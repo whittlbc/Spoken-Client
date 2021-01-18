@@ -276,18 +276,21 @@ class WorkspaceWindowController: NSWindowController, NSWindowDelegate, Workspace
         // Create channel window controller.
         let channelWindowController = ChannelWindowController(channel: channel)
         
-        // Get initial size of channel window.
-        let size = channelWindowController.size
+        // Build a render spec for the initial rendering of the channel.
+        var channelRenderSpec = ChannelRenderSpec()
         
-        // Set initial appearance of channel window.
-        channelWindowController.setAppearance(
-            size: size,
-            position: NSPoint(
-                x: getChannelWindowXPosition(windowWidth: size.width),
-                y: getChannelWindowInitialYPosition(forIndex: index)
-            )
+        // Initial size.
+        channelRenderSpec.size = channelWindowController.size
+        
+        // Initial position.
+        channelRenderSpec.position = NSPoint(
+            x: getChannelWindowXPosition(windowWidth: channelRenderSpec.size.width),
+            y: getChannelWindowInitialYPosition(forIndex: index)
         )
-                        
+
+        // Perform initial render of channel.
+        channelWindowController.render(channelRenderSpec)
+        
         // Subscribe to channel state updates.
         channelStateSubscriptions[channel.id] = channelWindowController.$state.sink { [weak self] state in
             self?.onChannelStateUpdate(channelId: channel.id)

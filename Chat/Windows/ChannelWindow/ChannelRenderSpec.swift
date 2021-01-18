@@ -9,12 +9,8 @@
 import Cocoa
 
 struct ChannelRenderSpec {
-    
     var isNew = false
-    
     var isDisabled = false
-    
     var size = NSSize()
-    
     var position = NSPoint()
 }

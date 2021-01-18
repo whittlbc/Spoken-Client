@@ -15,6 +15,9 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate {
     // Channel associated with window.
     var channel: Channel!
     
+    // Get window as channel window.
+    var channelWindow: ChannelWindow { window as! ChannelWindow }
+    
     // Window's current size.
     var size: NSSize { ChannelWindow.Style.size(forState: state) }
     
@@ -28,7 +31,7 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate {
     var latestHeightOffset: Float { Float(prevSize.height - size.height) / 2 }
     
     // Whether this channel in its current state should cause adjacent channels to be disabled.
-    var disablesAdjacentChannels: Bool { state == .recording(.starting) }
+    var disablesAdjacentChannels: Bool { isRecording() }
         
     // The channel's current state.
     @Published private(set) var state = ChannelState.idle {
@@ -68,10 +71,6 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate {
         
         // Add channel view controller
         addChannelViewController()
-    }
-    
-    func setAppearance(size: NSSize, position: NSPoint) {
-        (window as! ChannelWindow).updateFrame(size: size, position: position)
     }
     
     // Promote previous state to current state.
@@ -120,6 +119,10 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate {
         
     }
     
+    func cancelPreviewingTimer() {
+        
+    }
+    
     func registerMouseExited() {
         
     }
@@ -127,16 +130,12 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate {
     private func onStateSet() {
         // Cancel the previewing timer if not previewing.
         if !isPreviewing() {
-//            cancelPreviewingTimer()
+            cancelPreviewingTimer()
         }
     }
     
     // Add channel view controller as this window's content view controller.
     private func addChannelViewController() {
-        guard let channelWindow = window else {
-            return
-        }
-        
         // Create new channel view controller.
         let channelViewController = ChannelViewController()
         
@@ -150,7 +149,12 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate {
         channelWindow.makeFirstResponder(channelViewController.view)
     }
     
+    private func renderWindow(_ spec: ChannelRenderSpec) {
+        channelWindow.render(spec)
+    }
+            
     func render(_ spec: ChannelRenderSpec) {
-        
+        // Render channel window.
+        renderWindow(spec)
     }
 }

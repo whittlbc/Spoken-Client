@@ -42,8 +42,7 @@ class WorkspaceWindow: FloatingWindow {
         // Pass up with no changes.
         super.init(contentRect: contentRect, styleMask: style, backing: backingStoreType, defer: flag)
                 
-        // Position and size window on screen.
-        repositionWindow(to: Style.origin)
-        resizeWindow(to: Style.size)
+        // Size and position window on screen.
+        updateFrame(size: Style.size, position: Style.origin)
     }
 }
