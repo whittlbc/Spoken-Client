@@ -114,8 +114,8 @@ class WorkspaceWindowController: NSWindowController, NSWindowDelegate, Workspace
     }
     
     // Called when channel rendering has completed.
-    private func onChannelsRendered() {
-        
+    private func onChannelsRendered(_ channels: [Channel]) {
+        checkIfActiveRecordingNeedsStart(inChannels: channels)
     }
     
     // Subscribe to window state changes.
@@ -191,246 +191,69 @@ class WorkspaceWindowController: NSWindowController, NSWindowDelegate, Workspace
     
     // Cancel the active recording if one exists.
     private func findAndCancelActiveRecording() {
-        // See if there's an active recording taking place and cancel it if so.
-        if let activeRecordingChannel = findActiveRecordingChannel() {
-            activeRecordingChannel.cancelRecording()
+        if let controller = findActiveRecordingChannelWindowController() {
+            controller.cancelRecording()
         }
     }
     
     // Send the active recording if one exists.
     private func findAndSendActiveRecording() {
-        // See if there's an active recording taking place and send it if so.
-        if let activeRecordingChannel = findActiveRecordingChannel() {
-            activeRecordingChannel.sendRecording()
+        if let controller = findActiveRecordingChannelWindowController() {
+            controller.sendRecording()
         }
     }
     
     // Find the first channel with a recording state.
-    private func findActiveRecordingChannel() -> ChannelWindow? {
-        getOrderedChannelWindows().first(where: { $0.isRecording() })
+    private func findActiveRecordingChannelWindowController() -> ChannelWindowController? {
+        guard let channels = windowModel.workspace?.channels else {
+            return nil
+        }
+        
+        return getChannelWindowControllers(forChannels: channels).first(where: { $0.isRecording() })
+    }
+
+    private func checkIfActiveRecordingNeedsStart(inChannels channels: [Channel]) {
+        // Get active channel window controller.
+        let (_, controller) = getActiveChannelWindowController(inChannels: channels)
+        
+        // Ensure active channel has a recording waiting to be started.
+        guard let activeChannelWindowController = controller, activeChannelWindowController.isRecordingStarting() else {
+            return
+        }
+    
+        // Move active window to front of other channels.
+        bringChannelWindowToFront(forController: activeChannelWindowController)
+
+        // Start the recording.
+        activeChannelWindowController.startRecording()
     }
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-//
-//    // Set initial size and position of each channel.
-//    private func setInitialChannelSizesAndPositions() {
-//        var specs = [(ChannelWindow, NSSize, NSPoint)]()
-//        var size: NSSize
-//        var position: NSPoint
-//
-//        // First calculate updates across all channels.
-//        for (i, channelWindow) in getOrderedChannelWindows().enumerated() {
-//            // Calculate channel size.
-//            size = channelWindow.getSizeForCurrentState()
-//
-//            // Calculate channel position.
-//            position = NSPoint(
-//                x: getChannelXPosition(forChannelSize: size),
-//                y: getInitialChannelYPosition(channelWindow: channelWindow, atIndex: i)
-//            )
-//
-//            // Add updates to list.
-//            specs.append((channelWindow, size, position))
-//        }
-//
-//        // Apply all updates.
-//        for (channelWindow, size, position) in specs {
-//            channelWindow.render(size: size, position: position)
-//        }
-//    }
-
-//
-//    // Get the initial y-position of the channel window at the provided index.
-//    private func getInitialChannelYPosition(channelWindow: ChannelWindow, atIndex index: Int) -> CGFloat {
-//        // Get the idle channel window height + any configured gutter spacing between channels.
-//        let heightWithGutter = Float(channelWindow.getIdleWindowSize().height) + ChannelsStyle.gutterSpacing
-//
-//        // Calculate the absolute position of this channels window.
-//        return CGFloat(Float(Screen.getHeight()) - WorkspaceWindow.Style.channelCeiling - (heightWithGutter * Float(index)))
-//    }
-
-//    // Update size and position of each channel.
-//    private func updateChannelSizesAndPositions(activeChannelId: String) {
-//        // Get the active channel window's size change due to its latest state change.
-//        let (activeWindow, activeHeightOffset, _) = getActiveChannelSizeChange(activeChannelId: activeChannelId)
-//
-//        // Only proceed if the active channel window and its height offset were successfully found.
-//        guard let activeChannelWindow = activeWindow, let activeChannelHeightOffset = activeHeightOffset else {
-//            return
-//        }
-//
-//        // Get ordered list of existing channel windows.
-//        let channelWindows = getOrderedChannelWindows()
-//
-//        // Find the index of the active channel window.
-//        let activeIndex = channelWindows.firstIndex{ $0 === activeChannelWindow }
-//        let activeChannelIndex = activeIndex!
-//
-//        // Calculate new size and position destinations for all channel windows.
-//        calculateChannelWindowDestinations(
-//            channelWindows: channelWindows,
-//            activeChannelIndex: activeChannelIndex,
-//            activeChannelHeightOffset: activeChannelHeightOffset
-//        )
-//
-//        // Animate each channel window to its new destination.
-//        animateChannelWindowsToDestinations(
-//            channelWindows: channelWindows,
-//            activeChannelIndex: activeChannelIndex
-//        )
-//
-//        // If active channel's new state is previewing, ensure it is the only channel window in a previewing state.
-//        if activeChannelWindow.isPreviewing() {
-//            unpreviewNonActiveChannelWindows(channelWindows: channelWindows, activeChannelIndex: activeChannelIndex)
-//
-//            // Add a timer to check the mouse position in relation to the active channel window, and force
-//            // it out of the previewing state if the mouse isn't inside of the active channel window anymore.
-//            activeChannelWindow.startPreviewingTimer()
-//        }
-//    }
-        
-
-    
-//    // Calculate new animation destinations for each channel window.
-//    private func calculateChannelWindowDestinations(
-//        channelWindows: [ChannelWindow],
-//        activeChannelIndex: Int,
-//        activeChannelHeightOffset: Float) {
-//
-//        var channelWindow: ChannelWindow
-//        var newSize: NSSize
-//        var newPosition: NSPoint
-//        var destination: NSPoint
-//
-//        // Calculate new size and position of all channel windows.
-//        for i in 0..<channelWindows.count {
-//            channelWindow = channelWindows[i]
-//
-//            // Get current animation destination of channel.
-//            destination = channelWindow.getDestination()
-//
-//            // Get size of channel window for its current state.
-//            newSize = channelWindow.getSizeForCurrentState()
-//
-//            // Calculate new channel window position.
-//            newPosition = NSPoint(
-//                x: getChannelXPosition(forChannelSize: newSize),
-//                y: CGFloat(Float(destination.y) + (i < activeChannelIndex ? -activeChannelHeightOffset : activeChannelHeightOffset))
-//            )
-//
-//            // Set newly calculated destination on channel window, itself.
-//            channelWindow.setDestination(newPosition)
-//        }
-//    }
-
-//    // Animate each channel window to its stored destination.
-//    private func animateChannelWindowsToDestinations(channelWindows: [ChannelWindow], activeChannelIndex: Int) {
-//        // Get active channel window and id.
-//        let activeChannelWindow = channelWindows[activeChannelIndex]
-//        let activeChannelId = activeChannelWindow.channel.id
-//
-//        // Check to see if active channel window should animate its frame.
-//        let activeChannelWindowAnimatesFrame = ChannelWindow.stateShouldAnimateFrame(activeChannelWindow.state)
-//
-//        // Check to see if active channel window should disable those around it.
-//        let activeChannelWindowDisablesOthers = ChannelWindow.stateShouldDisableOtherChannels(activeChannelWindow.state)
-//
-//        NSAnimationContext.runAnimationGroup({ context in
-//            // Configure animation attributes.
-//            context.duration = AnimationConfig.ChannelWindows.duration
-//            context.timingFunction = CAMediaTimingFunction(name: AnimationConfig.ChannelWindows.timingFunctionName)
-//            context.allowsImplicitAnimation = true
-//
-//            // Vars for loop below.
-//            var isActiveChannel, isDisabled, ignoreFrameUpdate: Bool
-//
-//            // Re-render each channel window to its new destination.
-//            for (i, channelWindow) in channelWindows.enumerated() {
-//                isActiveChannel = i == activeChannelIndex
-//                isDisabled = !isActiveChannel && activeChannelWindowDisablesOthers
-//                ignoreFrameUpdate = isActiveChannel && !activeChannelWindowAnimatesFrame
-//
-//                channelWindow.render(
-//                    size: ignoreFrameUpdate ? nil : channelWindow.getSizeForCurrentState(),
-//                    position: ignoreFrameUpdate ? nil : channelWindow.getDestination(),
-//                    isDisabled: isDisabled,
-//                    propagate: true,
-//                    animate: true
-//                )
-//            }
-//        }, completionHandler: { [weak self] in
-//            self?.onChannelWindowAnimationsComplete(activeChannelId: activeChannelId)
-//        })
-//    }
-    
-//    private func onChannelWindowAnimationsComplete(activeChannelId: String) {
-//        // Get active channel window.
-//        guard let activeChannelWindow = channelWindowRefs[activeChannelId] else {
-//            logger.error("Unable to find active channel window for id \(activeChannelId)...")
-//            return
-//        }
-//
-//        // If the recording is waiting to be started...
-//        if activeChannelWindow.state === .recording(.starting) {
-//            // Move active window to front of other channels.
-//            bringChannelWindowToFront(activeChannelWindow)
-//
-//            // Start a new recording.
-//            activeChannelWindow.startRecording()
-//        }
-//    }
-//
-//    // Force a "mouse-exited" event on any previewing channel windows that aren't the active channel window.
-//    private func unpreviewNonActiveChannelWindows(channelWindows: [ChannelWindow], activeChannelIndex: Int) {
-//        for (i, channelWindow) in channelWindows.enumerated() {
-//            if i == activeChannelIndex {
-//                continue
-//            }
-//
-//            // If a channel that isn't the active channel is found to be in
-//            // the previewing state, force it out of this state.
-//            if channelWindow.isPreviewing() {
-//                channelWindow.registerMouseExited()
-//            }
-//        }
-//    }
-    
-    
-    
-    
-    
-    
-
-    // Find the active window controller and its index in the given list of channels.
-    private func getActiveChannelWindowController(inChannels channels: [Channel]) -> (Int, ChannelWindowController?) {
-        // Resolve id of active channel.
-        let activeId = activeChannelId ?? channels[0].id
-        
+    private func unpreviewNonActiveChannels(channels: [Channel], activeChannelIndex: Int) {
         for (i, channel) in channels.enumerated() {
-            if channel.id == activeId, let channelWindowController = channelWindowControllers[channel.id] {
-                return (i, channelWindowController)
+            if i == activeChannelIndex {
+                continue
+            }
+            
+            if let channelWindowController = channelWindowControllers[channel.id], channelWindowController.isPreviewing() {
+                channelWindowController.registerMouseExited()
             }
         }
-
-        return (0, nil)
+    }
+    
+    private func limitPreviewingChannelsToOne(channels: [Channel]) {
+        // Get active channel window controller and its index.
+        let (activeChannelIndex, controller) = getActiveChannelWindowController(inChannels: channels)
+        
+        // Ensure active channel window controller exists and is previewing.
+        guard let activeChannelWindowController = controller, activeChannelWindowController.isPreviewing() else {
+            return
+        }
+        
+        // Force a "mouse-exited" event on any previewing non-active channels.
+        unpreviewNonActiveChannels(channels: channels, activeChannelIndex: activeChannelIndex)
+        
+        // Start the active channel's previewing timer.
+        activeChannelWindowController.startPreviewingTimer()
     }
     
     // Add channel window as a child window to workspace window.
@@ -474,16 +297,16 @@ class WorkspaceWindowController: NSWindowController, NSWindowDelegate, Workspace
     }
     
     // Upsert channel window controller for channel id.
-    private func upsertChannelWindowController(forChannel channel: Channel, atIndex index: Int) -> (Bool, ChannelWindowController) {
-        var isNew = false
-        
-        // Get channel window controller by channel id, or create new one if doesn't exist.
-        guard let channelWindowController = channelWindowControllers[channel.id] else {
-            channelWindowControllers[channel.id] = createChannelWindowController(forChannel: channel, atIndex: index)
-            isNew = true
+    private func upsertChannelWindowController(forChannel channel: Channel, atIndex index: Int) -> (ChannelWindowController, Bool) {
+        if let channelWindowController = channelWindowControllers[channel.id] {
+            return (channelWindowController, false)
         }
         
-        return (isNew, channelWindowController)
+        let channelWindowController = createChannelWindowController(forChannel: channel, atIndex: index)
+        
+        channelWindowControllers[channel.id] = channelWindowController
+        
+        return (channelWindowController, true)
     }
     
     // Analyze properties of active channel.
@@ -501,6 +324,24 @@ class WorkspaceWindowController: NSWindowController, NSWindowDelegate, Workspace
             channelWindowController.latestHeightOffset,
             channelWindowController.disablesAdjacentChannels
         )
+    }
+    
+    // Find the active window controller and its index in the given list of channels.
+    private func getActiveChannelWindowController(inChannels channels: [Channel]) -> (Int, ChannelWindowController?) {
+        // Resolve id of active channel.
+        let activeId = activeChannelId ?? channels[0].id
+        
+        for (i, channel) in channels.enumerated() {
+            if channel.id == activeId, let channelWindowController = channelWindowControllers[channel.id] {
+                return (i, channelWindowController)
+            }
+        }
+
+        return (0, nil)
+    }
+    
+    private func getChannelWindowControllers(forChannels channels: [Channel]) -> [ChannelWindowController] {
+        channels.compactMap({ channelWindowControllers[$0.id] })
     }
     
     private func getChannelWindowXPosition(windowWidth: CGFloat) -> CGFloat {
@@ -561,7 +402,7 @@ class WorkspaceWindowController: NSWindowController, NSWindowDelegate, Workspace
         isDisabled: Bool) -> (ChannelWindowController, ChannelRenderSpec) {
         
         // Upsert channel window controller.
-        let (isNew, channelWindowController) = upsertChannelWindowController(forChannel: channel, atIndex: index)
+        let (channelWindowController, isNew) = upsertChannelWindowController(forChannel: channel, atIndex: index)
 
         // Get channel's appearance.
         let appearance = getChannelAppearance(
@@ -640,7 +481,7 @@ class WorkspaceWindowController: NSWindowController, NSWindowDelegate, Workspace
         // Don't render with animation unless specified.
         guard withAnimation else {
             renderChannelWindows(forSpecs: channelRenderSpecs)
-            onChannelsRendered()
+            onChannelsRendered(channels)
             return
         }
         
@@ -655,7 +496,7 @@ class WorkspaceWindowController: NSWindowController, NSWindowDelegate, Workspace
             self?.renderChannelWindows(forSpecs: channelRenderSpecs)
             
         }, completionHandler: { [weak self] in
-            self?.onChannelsRendered()
+            self?.onChannelsRendered(channels)
         })
     }
     
@@ -674,6 +515,9 @@ class WorkspaceWindowController: NSWindowController, NSWindowDelegate, Workspace
         
         // Note that channels have been rendered at least once.
         channelsHaveRendered = true
+        
+        // Ensure only 1 channel is ever in the previewing state at a time.
+        limitPreviewingChannelsToOne(channels: channels)
     }
 
     // Loaded view.

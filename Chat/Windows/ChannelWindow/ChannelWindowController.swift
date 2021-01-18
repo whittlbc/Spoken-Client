@@ -94,9 +94,34 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate {
         return state == .recording(.starting) // recording status is ignored here
     }
     
+    // Check if currently in the recording:starting state.
+    func isRecordingStarting() -> Bool {
+        return state === .recording(.starting)
+    }
+    
     // Check if the current state's case is different than the previous state's case.
     func stateChangedCase() -> Bool {
         return state != prevState
+    }
+    
+    func startRecording() {
+        
+    }
+    
+    func cancelRecording() {
+        
+    }
+    
+    func sendRecording() {
+        
+    }
+        
+    func startPreviewingTimer() {
+        
+    }
+    
+    func registerMouseExited() {
+        
     }
         
     private func onStateSet() {
