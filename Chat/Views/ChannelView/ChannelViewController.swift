@@ -24,9 +24,6 @@ class ChannelViewController: NSViewController, ParticleViewDelegate {
     // Workspace channel associated with this view.
     private var channel: Channel!
     
-    // Initial channel view frame -- provided from window.
-    private var initialFrame: NSRect!
-
     // Controller for avatar view subview.
     private var avatarViewController: ChannelAvatarViewController!
     
@@ -39,25 +36,23 @@ class ChannelViewController: NSViewController, ParticleViewDelegate {
     // Channel particle view for audio animation.
     private var particleView: ChannelParticleView!
         
-    // Proper initializer to use when rendering channel.
-    convenience init(channel: Channel, initialFrame: NSRect) {
-        self.init()
-        self.channel = channel
-        self.initialFrame = initialFrame
-    }
-    
-    // Override delegated init.
-    private override init(nibName nibNameOrNil: NSNib.Name?, bundle nibBundleOrNil: Bundle?) {
-        super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
+//    // Proper initializer to use when rendering channel.
+//    convenience init() {
+//        self.init()
+//    }
+//
+//    // Override delegated init.
+//    private override init(nibName nibNameOrNil: NSNib.Name?, bundle nibBundleOrNil: Bundle?) {
+//        super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
+//    }
+//
+//    required init?(coder: NSCoder) {
+//        fatalError("init(coder:) has not been implemented")
+//    }
 
     // Use ChannelView as primary view for this controller.
     override func loadView() {
-        view = ChannelView(frame: initialFrame)
+        view = ChannelView()
     }
     
     override func viewDidLoad() {

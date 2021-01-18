@@ -10,7 +10,23 @@ import Cocoa
 
 // Window representing a workspace channel.
 class ChannelWindow: FloatingWindow {
+    
+    // Channel window animation configuration.
+    enum AnimationConfig {
+        // Time it takes for a channel window to update size and position during a state change.
+        static let duration: CFTimeInterval = 0.13
 
+        // Name of timing function to use for all channel window animations.
+        static let timingFunctionName = CAMediaTimingFunctionName.easeOut
+    }
+    
+    // Artificial timing durations used in various places for better UX.
+    enum ArtificialTiming {
+
+        // How long to show window in the recording-sent state before reverting back to idle state.
+        static let showRecordingSentDuration = 0.9
+    }
+    
     // Workspace channel associated with window.
     var channel = Channel()
     
@@ -36,17 +52,6 @@ class ChannelWindow: FloatingWindow {
     // Timer that double checks the mouse is still inside this window if its in the previewing state.
     // State will be forced out of the previewing state if the mouse is not.
     private var previewingTimer: Timer?
-    
-    // Window styling info.
-    enum Style {
-        
-        // Artificial timing used for better UX.
-        enum ArtificialTiming {
-        
-            // How long to show window in the recording-sent state before reverting back to idle.
-            static let showRecordingSentDuration = 0.9
-        }
-    }
     
     // Get the default window size for the provided channel state.
     static func defaultSizeForState(_ state: ChannelState) -> NSSize {
@@ -160,7 +165,7 @@ class ChannelWindow: FloatingWindow {
     // Start a new audio message to send to this channel.
     func startRecording() {
         // Enable key event listners.
-        toggleRecordingKeyEventListeners(enable: true)
+        toggleRecordingKeyListeners(enable: true)
         
         // Upsert an active recording.
         AV.mic.startRecording()
@@ -172,7 +177,7 @@ class ChannelWindow: FloatingWindow {
     // Cancel recording and switch back to idle state.
     func cancelRecording() {
         // Disable key event listners.
-        toggleRecordingKeyEventListeners(enable: false)
+        toggleRecordingKeyListeners(enable: false)
         
         // Stop and cler the active recording.
         AV.mic.stopRecording()
@@ -185,7 +190,7 @@ class ChannelWindow: FloatingWindow {
     // Send the active audio message to this channel.
     func sendRecording() {
         // Disable key event listners.
-        toggleRecordingKeyEventListeners(enable: false)
+        toggleRecordingKeyListeners(enable: false)
 
         // Render state to recording-sending.
         showSendingRecording()
@@ -202,12 +207,12 @@ class ChannelWindow: FloatingWindow {
     }
 
     // Tell parent workspace window to toggle on/off the key-event listeners tied to recording.
-    func toggleRecordingKeyEventListeners(enable: Bool) {
+    func toggleRecordingKeyListeners(enable: Bool) {
         guard let workspaceWindow = getWorkspaceWindow() else {
             return
         }
         
-        workspaceWindow.toggleRecordingKeyEventListeners(enable: enable)
+        workspaceWindow.toggleRecordingKeyListeners(enable: enable)
     }
     
     // Get window's animation destination -- fallback to frame origin.
@@ -456,7 +461,7 @@ class ChannelWindow: FloatingWindow {
         render(propagate: true)
 
         // Show recording sent for specific amount of time and then revert to idle state.
-        DispatchQueue.main.asyncAfter(deadline: .now() + Style.ArtificialTiming.showRecordingSentDuration) { [weak self] in
+        DispatchQueue.main.asyncAfter(deadline: .now() + ArtificialTiming.showRecordingSentDuration) { [weak self] in
             // Follow the cancelling recording flow to get back to idle state.
             self?.showCancellingRecording()
             

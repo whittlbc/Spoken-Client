@@ -36,8 +36,6 @@ class WorkspaceWindowModel {
     }
 
     private var cancellable: AnyCancellable?
-
-    var channels: [Channel] { workspace?.channels ?? [] }
     
     func isLoading() -> Bool {
         switch state {
