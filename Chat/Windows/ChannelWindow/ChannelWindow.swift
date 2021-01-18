@@ -11,6 +11,37 @@ import Cocoa
 // Window representing a workspace channel.
 class ChannelWindow: FloatingWindow {
     
+    // Channel window styling information.
+    enum Style {
+        
+        // Idle window size.
+        static let idleSize = NSSize(width: 32, height: 32)
+        
+        // Previewing window size.
+        static let previewingSize = NSSize(width: 50, height: 50)
+        
+        // Recording window size.
+        static let recordingSize = NSSize(width: 120, height: 120)
+        
+        // Default window size for the provided channel state.
+        static func size(forState state: ChannelState) -> NSSize {
+            switch state {
+            
+            // Idle size.
+            case .idle:
+                return idleSize
+                
+            // Previewing size.
+            case .previewing:
+                return previewingSize
+                
+            // Recording size.
+            case .recording(let recordingStatus):
+                return recordingStatus == .starting || recordingStatus == .cancelling ? previewingSize : recordingSize
+            }
+        }
+    }
+    
     // Channel window animation configuration.
     enum AnimationConfig {
         // Time it takes for a channel window to update size and position during a state change.
@@ -52,19 +83,6 @@ class ChannelWindow: FloatingWindow {
     // Timer that double checks the mouse is still inside this window if its in the previewing state.
     // State will be forced out of the previewing state if the mouse is not.
     private var previewingTimer: Timer?
-    
-    // Get the default window size for the provided channel state.
-    static func defaultSizeForState(_ state: ChannelState) -> NSSize {
-        switch state {
-        case .idle:
-            return NSSize(width: 32, height: 32)
-        case .previewing:
-            return NSSize(width: 50, height: 50)
-        case .recording(let recordingStatus):
-            return recordingStatus == .starting || recordingStatus == .cancelling ?
-                NSSize(width: 50, height: 50) : NSSize(width: 120, height: 120)
-        }
-    }
     
     static func stateShouldAnimateFrame(_ state: ChannelState) -> Bool { true }
     
@@ -257,8 +275,8 @@ class ChannelWindow: FloatingWindow {
         }
     }
     
-    // Get the positional offset for this window due its latest state change.
-    func getStateChangeSizeOffset() -> (Float, Float) {
+    // Get the y offset change for this window due its latest state change.
+    func getStateChangeHeightOffset() -> (Float, Float) {
         let prevSize = calculateSize(forState: prevState)
         let currentSize = getSizeForCurrentState()
         

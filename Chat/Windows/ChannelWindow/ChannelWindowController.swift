@@ -14,6 +14,21 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate {
     
     // Channel associated with window.
     var channel: Channel!
+    
+    // Window's current size.
+    var size: NSSize { ChannelWindow.Style.size(forState: state) }
+    
+    // Window's previous size.
+    var prevSize: NSSize { ChannelWindow.Style.size(forState: prevState) }
+    
+    // Window's current position.
+    var position: NSPoint { window!.frame.origin }
+    
+    // Latest height offset due to most recent state change.
+    var latestHeightOffset: Float { Float(prevSize.height - size.height) / 2 }
+    
+    // Whether this channel in its current state should cause adjacent channels to be disabled.
+    var disablesAdjacentChannels: Bool { state == .recording(.starting) }
         
     // The channel's current state.
     @Published private(set) var state = ChannelState.idle {
@@ -55,6 +70,10 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate {
         addChannelViewController()
     }
     
+    func setAppearance(size: NSSize, position: NSPoint) {
+        (window as! ChannelWindow).updateFrame(size: size, position: position)
+    }
+    
     // Promote previous state to current state.
     func promotePreviousState() {
         prevState = state
@@ -79,7 +98,7 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate {
     func stateChangedCase() -> Bool {
         return state != prevState
     }
-    
+        
     private func onStateSet() {
         // Cancel the previewing timer if not previewing.
         if !isPreviewing() {
