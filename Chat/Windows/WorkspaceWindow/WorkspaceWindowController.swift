@@ -79,22 +79,22 @@ class WorkspaceWindowController: NSWindowController, NSWindowDelegate, Workspace
     }
 
     // Handle escape button key-down event.
-    func onEscPress() {
+    func onEscDown() {
         findAndCancelActiveRecording()
     }
     
     // Handle return button key-down event.
-    func onReturnPress() {
+    func onReturnDown() {
         findAndSendActiveRecording()
     }
     
     // Handle command button key-down event.
-    func onCommandKeyDown() {
+    func onCommandDown() {
         startChannelPromptSpeechRecognizer()
     }
     
     // Handle command button key-up event.
-    func onCommandKeyUp() {
+    func onCommandUp() {
         stopSpeechRecognition()
     }
         
