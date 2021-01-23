@@ -15,10 +15,10 @@ class ChannelWindow: FloatingWindow {
     enum Style {
         
         // Idle window size.
-        static let idleSize = NSSize(width: 32, height: 32)
+        static let idleSize = NSSize(width: 30, height: 30)
         
         // Previewing window size.
-        static let previewingSize = NSSize(width: 50, height: 50)
+        static let previewingSize = NSSize(width: 52, height: 52)
         
         // Recording window size.
         static let recordingSize = NSSize(width: 120, height: 120)
