@@ -520,7 +520,7 @@ class ChannelAvatarViewController: NSViewController {
         fadeInNewRecordingIndicator()
     }
     
-    private func renderStartingRecording(_ state: ChannelState) {
+    private func renderInitializingRecording(_ state: ChannelState) {
         // Animate avatar view size.
         animateAvatarViewSize(toState: state)
         
@@ -534,9 +534,6 @@ class ChannelAvatarViewController: NSViewController {
     private func renderCancellingRecording(_ state: ChannelState) {
         // Fade out blur layer to avatar image.
         fadeOutBlurLayer(duration: ChannelAvatarView.AnimationConfig.CheckmarkView.exitDuration)
-        
-        // Fade out checkmark.
-        fadeOutCheckmarkView()
     }
     
     private func renderSendingRecording(_ state: ChannelState) {
@@ -560,17 +557,27 @@ class ChannelAvatarViewController: NSViewController {
         addCheckmarkView()
     }
     
+    private func renderFinishedRecording(_ state: ChannelState) {
+        // Fade out blur layer to avatar image.
+        fadeOutBlurLayer(duration: ChannelAvatarView.AnimationConfig.CheckmarkView.exitDuration)
+        
+        // Fade out checkmark.
+        fadeOutCheckmarkView()
+    }
+    
     // Render recording-specific view updates.
     private func renderRecording(_ state: ChannelState, _ recordingStatus: RecordingStatus) {
         switch recordingStatus {
-        case .starting:
-            renderStartingRecording(state)
+        case .initializing:
+            renderInitializingRecording(state)
         case .cancelling:
             renderCancellingRecording(state)
         case .sending:
             renderSendingRecording(state)
         case .sent:
             renderSentRecording(state)
+        case .finished:
+            renderFinishedRecording(state)
         default:
             break
         }

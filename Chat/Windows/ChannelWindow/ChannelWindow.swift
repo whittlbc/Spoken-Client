@@ -37,7 +37,9 @@ class ChannelWindow: FloatingWindow {
                 
             // Recording size.
             case .recording(let recordingStatus):
-                return recordingStatus == .starting || recordingStatus == .cancelling ?
+                return (recordingStatus == .initializing ||
+                    recordingStatus == .cancelling ||
+                    recordingStatus == .finished) ?
                     previewingSize : recordingSize
             }
         }

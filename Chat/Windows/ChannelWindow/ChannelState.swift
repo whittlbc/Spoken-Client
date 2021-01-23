@@ -55,9 +55,10 @@ enum ChannelState {
 
 // Supported statuses of an active recording.
 enum RecordingStatus {
-    case starting
+    case initializing
     case started
     case cancelling
     case sending
     case sent
+    case finished
 }

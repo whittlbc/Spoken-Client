@@ -178,7 +178,7 @@ class WorkspaceWindowController: NSWindowController, NSWindowDelegate, Workspace
     private func checkIfActiveRecordingNeedsStart(activeChannelId: String) {
         // Ensure active channel has a recording waiting to be started.
         guard let activeChannelWindowController = channelWindowControllers[activeChannelId],
-              activeChannelWindowController.isRecordingStarting() else {
+              activeChannelWindowController.isRecordingInitializing() else {
             return
         }
     

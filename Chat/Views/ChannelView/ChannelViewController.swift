@@ -178,6 +178,18 @@ class ChannelViewController: NSViewController, ParticleViewDelegate {
         }
     }
     
+    // Reset contents back to initial idle state.
+    private func resetToIdle() {
+        // Flip avatar view x-alignment from center back to right.
+        alignAvatar(to: .right)
+        
+        // Remove particle view as a subview.
+        removeParticleView()
+        
+        // Reset particle view.
+        particleView.reset()
+    }
+    
     // Rendered with recording:started state.
     private func renderStartedRecording() {
         // Flip avatar view x-alignment from right to center.
@@ -189,20 +201,18 @@ class ChannelViewController: NSViewController, ParticleViewDelegate {
     
     // Rendered with recording:cancelling state.
     private func renderCancellingRecording() {
-        // Flip avatar view x-alignment from right to center.
-        alignAvatar(to: .right)
-        
-        // Remove particle view as a subview.
-        removeParticleView()
-        
-        // Reset particle view.
-        particleView.reset()
+        resetToIdle()
     }
     
     // Rendered with recording:sending state.
     private func renderSendingRecording() {
         // Explode the particle view.
         particleView.explode()
+    }
+    
+    // Rendered with recording:finished state.
+    private func renderFinishedRecording() {
+        resetToIdle()
     }
     
     // Render recording-specific view updates.
@@ -214,6 +224,8 @@ class ChannelViewController: NSViewController, ParticleViewDelegate {
             renderCancellingRecording()
         case .sending:
             renderSendingRecording()
+        case .finished:
+            renderFinishedRecording()
         default:
             break
         }

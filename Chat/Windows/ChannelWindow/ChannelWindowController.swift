@@ -122,7 +122,7 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate {
     func onAvatarClick() {
         switch state {
         case .previewing:
-            toRecordingStarting()
+            toRecordingInitializing()
         default:
             break
         }
@@ -150,12 +150,12 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate {
     
     // Check if currently in the recording state.
     func isRecording() -> Bool {
-        return state == .recording(.starting) // recording status is ignored here
+        return state == .recording(.initializing) // recording status is ignored here
     }
     
-    // Check if currently in the recording:starting state.
-    func isRecordingStarting() -> Bool {
-        return state === .recording(.starting)
+    // Check if currently in the recording:initializing state.
+    func isRecordingInitializing() -> Bool {
+        return state === .recording(.initializing)
     }
     
     // Check if currently in the recording:started state.
@@ -178,6 +178,11 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate {
         return state === .recording(.sent)
     }
     
+    // Check if currently in the recording:finished state.
+    func isRecordingFinished() -> Bool {
+        return state === .recording(.finished)
+    }
+    
     // Set state to idle.
     func toIdle() {
         state = .idle
@@ -188,9 +193,9 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate {
         state = .previewing
     }
     
-    // Set state to recording:starting.
-    func toRecordingStarting() {
-        state = .recording(.starting)
+    // Set state to recording:initializing.
+    func toRecordingInitializing() {
+        state = .recording(.initializing)
     }
     
     // Set state to recording:started.
@@ -211,6 +216,11 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate {
     // Set state to recording:sent.
     func toRecordingSent() {
         state = .recording(.sent)
+    }
+    
+    // Set state to recording:finished.
+    func toRecordingFinished() {
+        state = .recording(.finished)
     }
     
     // Check if the current state's case is different than the previous state's case.
@@ -348,11 +358,21 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate {
         
         // Show recording sent for specific amount of time and then revert to idle state.
         DispatchQueue.main.asyncAfter(deadline: .now() + ChannelWindow.ArtificialTiming.showRecordingSentDuration) { [weak self] in
-            // Follow the cancelling recording flow to get back to idle state.
-            self?.showRecordingCancelled()
+            self?.showRecordingFinished()
             
-            // HACK: Move somewhere else once you're actually uploading recordings...?
+            // TODO: Move somewhere else once you're actually uploading recordings...?
             AV.mic.clearRecording()
+        }
+    }
+    
+    // Show user that the recording has successfully finished.
+    private func showRecordingFinished() {
+        // Set state to finished recording.
+        toRecordingFinished()
+        
+        // Wait the tiniest amount of time, and then set state back to idle.
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) { [weak self] in
+            self?.toIdle()
         }
     }
     
