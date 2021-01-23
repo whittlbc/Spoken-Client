@@ -13,6 +13,7 @@ class SidebarWindow: FloatingWindow {
     
     // Sidebar window styling information.
     enum Style {
+        
         // Largest width the sidebar's contents should ever grow to.
         static let width: Int = 250
         

@@ -54,6 +54,7 @@
 		096863352586C2B000B9B614 /* RoundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 096863342586C2B000B9B614 /* RoundView.swift */; };
 		096863382586C42B00B9B614 /* RoundShadowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 096863372586C42B00B9B614 /* RoundShadowView.swift */; };
 		097228F725B63EA100219591 /* ChannelWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 097228F625B63EA100219591 /* ChannelWindow.swift */; };
+		097228FC25BC8F0C00219591 /* ChannelAvatarViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 097228FB25BC8F0C00219591 /* ChannelAvatarViewModel.swift */; };
 		0990879525797561001660D1 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0990879425797561001660D1 /* AppDelegate.swift */; };
 		0990879925797563001660D1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0990879825797563001660D1 /* Assets.xcassets */; };
 		099087A625797645001660D1 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 099087A525797645001660D1 /* main.swift */; };
@@ -99,7 +100,6 @@
 		09F60ACC258C2FD50020974A /* Style.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F60ACB258C2FD50020974A /* Style.swift */; };
 		09F60ACF258C37AC0020974A /* NSView+Animation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F60ACE258C37AC0020974A /* NSView+Animation.swift */; };
 		09F60AD72592B7CE0020974A /* HotKey in Frameworks */ = {isa = PBXBuildFile; productRef = 09F60AD62592B7CE0020974A /* HotKey */; };
-		09F60ADA2592CCF20020974A /* PulseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F60AD92592CCF20020974A /* PulseView.swift */; };
 		09FF53D025B524930083CD28 /* ChannelWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09FF53CF25B524930083CD28 /* ChannelWindowController.swift */; };
 		09FF53D325B5293D0083CD28 /* ChannelRenderSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09FF53D225B5293D0083CD28 /* ChannelRenderSpec.swift */; };
 /* End PBXBuildFile section */
@@ -149,6 +149,7 @@
 		096863342586C2B000B9B614 /* RoundView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundView.swift; sourceTree = "<group>"; };
 		096863372586C42B00B9B614 /* RoundShadowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundShadowView.swift; sourceTree = "<group>"; };
 		097228F625B63EA100219591 /* ChannelWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelWindow.swift; sourceTree = "<group>"; };
+		097228FB25BC8F0C00219591 /* ChannelAvatarViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelAvatarViewModel.swift; sourceTree = "<group>"; };
 		0990879125797561001660D1 /* Chat.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Chat.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0990879425797561001660D1 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		0990879825797563001660D1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -197,7 +198,6 @@
 		09F60AC8258C13680020974A /* Icon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Icon.swift; sourceTree = "<group>"; };
 		09F60ACB258C2FD50020974A /* Style.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Style.swift; sourceTree = "<group>"; };
 		09F60ACE258C37AC0020974A /* NSView+Animation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSView+Animation.swift"; sourceTree = "<group>"; };
-		09F60AD92592CCF20020974A /* PulseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PulseView.swift; sourceTree = "<group>"; };
 		09FF53CF25B524930083CD28 /* ChannelWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelWindowController.swift; sourceTree = "<group>"; };
 		09FF53D225B5293D0083CD28 /* ChannelRenderSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelRenderSpec.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -319,6 +319,7 @@
 			isa = PBXGroup;
 			children = (
 				09074D83259982DE00E72F93 /* ChannelAvatarViewController.swift */,
+				097228FB25BC8F0C00219591 /* ChannelAvatarViewModel.swift */,
 				0968633025859A3000B9B614 /* ChannelAvatarView.swift */,
 			);
 			path = ChannelAvatarView;
@@ -422,7 +423,6 @@
 				095C676A259E704100729845 /* SelfDrawnCheckmarkView */,
 				096863342586C2B000B9B614 /* RoundView.swift */,
 				096863372586C42B00B9B614 /* RoundShadowView.swift */,
-				09F60AD92592CCF20020974A /* PulseView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -679,6 +679,7 @@
 				099087BD25799BC2001660D1 /* Screen.swift in Sources */,
 				096862EB2582A8D000B9B614 /* Workspace+Arrow.swift in Sources */,
 				096863382586C42B00B9B614 /* RoundShadowView.swift in Sources */,
+				097228FC25BC8F0C00219591 /* ChannelAvatarViewModel.swift in Sources */,
 				0949C8B2259908E900B61D1F /* ParticleViewDelegate.swift in Sources */,
 				094DAB1C25B11F0A00CFC2EC /* WorkspaceWindowModel.swift in Sources */,
 				096862EE2582ABCE00B9B614 /* Member.swift in Sources */,
@@ -728,7 +729,6 @@
 				0995DE352581A51F00DAA334 /* Keychain.swift in Sources */,
 				0995DE3D2581CF6A00DAA334 /* API.swift in Sources */,
 				096862F12582ACE100B9B614 /* Member+Arrow.swift in Sources */,
-				09F60ADA2592CCF20020974A /* PulseView.swift in Sources */,
 				09FF53D025B524930083CD28 /* ChannelWindowController.swift in Sources */,
 				0996445525AE7A1D004473B7 /* Model.swift in Sources */,
 				095C676C259E706000729845 /* SelfDrawnCheckmarkView.swift in Sources */,

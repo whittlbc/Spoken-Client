@@ -13,6 +13,7 @@ class WorkspaceWindow: FloatingWindow {
     
     // Workspace window styling information.
     enum Style {
+        
         // Size should match sidebar window.
         static let size = SidebarWindow.Style.size
 

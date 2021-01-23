@@ -7,17 +7,16 @@
 //
 
 import Cocoa
+import Combine
 
 // Controller for ChannelAvatarView to manage all of its subviews and their interactions.
 class ChannelAvatarViewController: NSViewController {
     
-    // Workspace channel associated with this view.
-    private var channel: Channel!
+    // Manages data for avatar view.
+    private var viewModel: ChannelAvatarViewModel!
     
-    // Id of member in this channel not associated with the current user.
-    private var recipientId: String? {
-        channel.memberIds.first(where: { $0 != Session.currentUserId! })
-    }
+    // Channel avatar view.
+    private var avatarView: ChannelAvatarView { view as! ChannelAvatarView }
     
     // Container view of avatar.
     private var containerView: RoundShadowView!
@@ -36,148 +35,19 @@ class ChannelAvatarViewController: NSViewController {
     
     // Self-drawn checkmark view to show when a recording is sent.
     private var checkmarkView: SelfDrawnCheckmarkView?
+    
+    // Avatar image subscription.
+    private var imageSubscription: AnyCancellable?
 
-    // View styling information.
-    enum Style {
-        
-        // Container view styling.
-        enum ContainerView {
-            
-            // Positional styling for container view.
-            enum PositionStyle {
-                
-                // Height of avatar relative to parent channel view.
-                static let relativeHeight: CGFloat = 0.7
-                
-                // Absolute shift left of avatar view relative to parent channel view.
-                static let leftOffset: CGFloat = -5.0
-            }
-            
-            // Shadow styling for container view.
-            enum ShadowStyle {
-                
-                // Default, non-raised, shadow style.
-                static let grounded = Shadow(
-                    offset: CGSize(width: 0, height: -1),
-                    radius: 2.5,
-                    opacity: 0.5
-                )
-                
-                // Raised shadow style.
-                static let raised = Shadow(
-                    offset: CGSize(width: 1.0, height: -2),
-                    radius: 4.5,
-                    opacity: 0.5
-                )
-                
-                // Get shadow style config for channel state.
-                static func getShadow(forState state: ChannelState) -> Shadow {
-                    switch state {
-                    case .idle:
-                        return grounded
-                    case .previewing:
-                        return raised
-                    case .recording(_):
-                        return raised
-                    }
-                }
-            }
-        }
-        
-        // New recording indicator styling.
-        enum NewRecordingIndicator {
-            
-            // Positional styling for new recording indicator.
-            enum PositionStyle {
-                
-                // Height of indicator relative to parent channel view.
-                static let relativeHeight: CGFloat = 0.25
-                                
-                // Absolute shift of indicator relative to parent channel view.
-                static let edgeOffset: CGFloat = -8.0
-            }
-            
-            // Shadow styling for new recording indicator.
-            enum ShadowStyle {
-                
-                // Default, non-raised, shadow style.
-                static let grounded = Shadow(
-                    offset: CGSize(width: 0, height: 0),
-                    radius: 3.0,
-                    opacity: 0.5
-                )
-            }
-        }
-        
-        // Image blur layer styling.
-        enum BlurLayer {
-            
-            // Gaussian blur input radius used when applying disabled effect.
-            static let disabledBlurRadius: Double = 1.6
-            
-            // Gaussian blur input radius used when bluring layer behind spinner.
-            static let spinBlurRadius: Double = 1.6
-            
-            // Opacity of black background color of blur layer.
-            static let spinAlpha: CGFloat = 0.2
-        }
-        
-        // Spinner view styling.
-        enum SpinnerView {
-            
-            // Spinner color.
-            static let color = NSColor.white
-            
-            // Empty gap between avatar and spinner stroke.
-            static let diameter: CGFloat = 20.0
-        }
-        
-        // Checkmark view styling.
-        enum CheckmarkView {
-            
-            // Checkmark color.
-            static let color = NSColor.white
-            
-            // Length of side of checkmark view.
-            static let length: CGFloat = 15.0
-        }
-    }
-    
-    // Animation configuration for all child views that this view owns.
-    enum AnimationConfig {
-        
-        // Container view animation config.
-        enum ContainerView {
-            static let duration = WorkspaceWindow.AnimationConfig.ChannelWindows.duration
-            static let timingFunctionName = WorkspaceWindow.AnimationConfig.ChannelWindows.timingFunctionName
-        }
-        
-        // Image blur layer animation config.
-        enum BlurLayer {
-            
-            // Duration used when applying disabled effect.
-            static let disabledDuration = WorkspaceWindow.AnimationConfig.ChannelWindows.duration
-            
-            // Timing function used when fading in/out blur layer.
-            static let timingFunctionName = WorkspaceWindow.AnimationConfig.ChannelWindows.timingFunctionName
-        }
-        
-        // Spinner view animation config.
-        enum SpinnerView {
-            static let enterDuration: CFTimeInterval = 0.2
-        }
-        
-        // Checkmark view animation config.
-        enum CheckmarkView {
-            static let enterDuration: CFTimeInterval = 0.2
-            static let exitDuration: CFTimeInterval = 0.2
-        }
-    }
-    
     // Proper initializer to use when rendering channel.
     convenience init(channel: Channel) {
         self.init(nibName: nil, bundle: nil)
-        self.channel = channel
+        
+        // Create view model.
+        viewModel = ChannelAvatarViewModel(channel: channel)
+        
+        // Subscribe to view model.
+        subscribeToViewModel()
     }
     
     // Override delegated init.
@@ -205,19 +75,41 @@ class ChannelAvatarViewController: NSViewController {
 
         // Add avatar image view.
         addImageView()
+        
+        // Load and set avatar image.
+        loadAvatarImage()
     }
     
-    private func getAvatarView() -> ChannelAvatarView {
-        view as! ChannelAvatarView
+    // Handle changes in channel disability.
+    func isDisabledChanged(to isDisabled: Bool) {
+        // Toggle image view blur based on isDisabled status.
+        animateImageViewBlur(
+            showBlur: isDisabled,
+            blurRadius: ChannelAvatarView.Style.BlurLayer.disabledBlurRadius,
+            duration: ChannelAvatarView.AnimationConfig.BlurLayer.duration
+        )
     }
     
+    // Fetch avatar image from view model.
+    private func loadAvatarImage() {
+        viewModel.loadImage()
+    }
+    
+    // Subscribe to view model image changes.
+    private func subscribeToViewModel() {
+        // Set avatar image any time it changes.
+        imageSubscription = viewModel.$image.sink { [weak self] image in
+            self?.setAvatarImage(to: image)
+        }
+    }
+    
+    // Make avatar view layer-based and allow for overflow.
     private func setupViewLayer() {
-        // Make avatar view layer-based and allow overflow.
         view.wantsLayer = true
         view.layer?.masksToBounds = false
     }
 
-    // Render container view.
+    // Add and constrain container view.
     private func addContainerView() {
         // Create container view.
         createContainerView()
@@ -226,55 +118,25 @@ class ChannelAvatarViewController: NSViewController {
         constrainContainerView()
     }
     
-    // Render image view.
+    // // Add and constrain image view.
     private func addImageView() {
-        loadAvatarImage { [weak self] image in
-            guard let img = image else {
-                return
-            }
-            
-            // Create image view.
-            self?.createImageView()
-            
-            // Constrain image view.
-            self?.constrainImageView(image: img)
-        }
-    }
-    
-    private func loadAvatarImage(then handler: @escaping (NSImage?) -> Void) {
-        // Get id of member in this channel that doesn't belong to the current user.
-        guard let memberId = recipientId else {
-            handler(nil)
-            return
-        }
+        // Create image view.
+        self.createImageView()
         
-        handler(nil)
-//
-//        // Get member for id.
-//        dataProvider.member.get(id: memberId) { member, error in
-//            guard error == nil, let mem = member else {
-//                handler(nil)
-//                return
-//            }
-//
-//            // Get user avatar for user id.
-//            dataProvider.user.avatar(id: mem.userId) { image in
-//                guard let img = image else {
-//                    handler(nil)
-//                    return
-//                }
-//
-//                // Respond with the user avatar image.
-//                handler(img)
-//            }
-//        }
+        // Constrain image view.
+        self.constrainImageView()
+    }
+
+    // Set image as contents of image view layer.
+    private func setAvatarImage(to image: NSImage?) {
+        imageView.layer?.contents = image
     }
     
     // Create new container view.
     private func createContainerView() {
         // Create new round view with with drop shadow.
         containerView = RoundShadowView(
-            shadowConfig: Style.ContainerView.ShadowStyle.getShadow(forState: .idle)
+            shadowConfig: ChannelAvatarView.Style.ContainerView.ShadowStyle.getShadow(forState: .idle)
         )
 
         // Make it layer based and allow for overflow so that shadow can be seen.
@@ -295,7 +157,7 @@ class ChannelAvatarViewController: NSViewController {
             // Set height of container.
             containerView.heightAnchor.constraint(
                 equalTo: view.heightAnchor,
-                multiplier: Style.ContainerView.PositionStyle.relativeHeight
+                multiplier: ChannelAvatarView.Style.ContainerView.PositionStyle.relativeHeight
             ),
             
             // Keep container height and width the same.
@@ -321,7 +183,7 @@ class ChannelAvatarViewController: NSViewController {
     }
     
     // Set up image view auto-layout.
-    private func constrainImageView(image: NSImage) {
+    private func constrainImageView() {
         // Set up auto-layout for sizing/positioning.
         imageView.translatesAutoresizingMaskIntoConstraints = false
         
@@ -332,10 +194,7 @@ class ChannelAvatarViewController: NSViewController {
             imageView.centerXAnchor.constraint(equalTo: containerView.centerXAnchor),
             imageView.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),
         ])
-        
-        // Set image to contents of view.
-        imageView.layer?.contents = image
-        
+                
         // Constrain the image's size to the view's size.
         imageView.layer?.contentsGravity = .resizeAspectFill
         
@@ -347,7 +206,7 @@ class ChannelAvatarViewController: NSViewController {
     private func createNewRecordingIndicator() -> RoundShadowView {
         // Create new round view with with drop shadow.
         let indicator = RoundShadowView(
-            shadowConfig: Style.NewRecordingIndicator.ShadowStyle.grounded
+            shadowConfig: ChannelAvatarView.Style.NewRecordingIndicator.ShadowStyle.grounded
         )
         
         // Make it layer based and start it as hidden.
@@ -388,7 +247,7 @@ class ChannelAvatarViewController: NSViewController {
             // Set height of indicator.
             indicator.heightAnchor.constraint(
                 equalTo: view.heightAnchor,
-                multiplier: Style.NewRecordingIndicator.PositionStyle.relativeHeight
+                multiplier: ChannelAvatarView.Style.NewRecordingIndicator.PositionStyle.relativeHeight
             ),
             
             // Keep indicator height and width the same.
@@ -397,13 +256,13 @@ class ChannelAvatarViewController: NSViewController {
             // Align right sides (but shift it left the specified amount).
             indicator.rightAnchor.constraint(
                 equalTo: view.rightAnchor,
-                constant: Style.NewRecordingIndicator.PositionStyle.edgeOffset
+                constant: ChannelAvatarView.Style.NewRecordingIndicator.PositionStyle.edgeOffset
             ),
             
             // Align bottom sides (but shift it up the specified amount).
             indicator.bottomAnchor.constraint(
                 equalTo: view.bottomAnchor,
-                constant: Style.NewRecordingIndicator.PositionStyle.edgeOffset
+                constant: ChannelAvatarView.Style.NewRecordingIndicator.PositionStyle.edgeOffset
             ),
         ])
     }
@@ -438,18 +297,21 @@ class ChannelAvatarViewController: NSViewController {
         // Get size of image view frame.
         let imageSize = imageView.frame.size
         
+        // Get spinner view diameter.
+        let diameter = ChannelAvatarView.Style.SpinnerView.diameter
+        
         // Create spinner frame in center of image view frame.
         let spinnerFrame = NSRect(
-            x: (imageSize.width - Style.SpinnerView.diameter) / 2,
-            y: (imageSize.height - Style.SpinnerView.diameter) / 2,
-            width: Style.SpinnerView.diameter,
-            height: Style.SpinnerView.diameter
+            x: (imageSize.width - diameter) / 2,
+            y: (imageSize.height - diameter) / 2,
+            width: diameter,
+            height: diameter
         )
         
         // Create new chasing tail spinner.
         let spinner = ChasingTailSpinnerView(
             frame: spinnerFrame,
-            color: Style.SpinnerView.color
+            color: ChannelAvatarView.Style.SpinnerView.color
         )
         
         // Add spinner as subview of container view.
@@ -467,18 +329,20 @@ class ChannelAvatarViewController: NSViewController {
         // Get size of image view frame.
         let imageSize = imageView.frame.size
         
+        let length = ChannelAvatarView.Style.CheckmarkView.length
+        
         // Create checkmark frame.
         let checkmarkFrame = NSRect(
-            x: (imageSize.width - Style.CheckmarkView.length) / 2,
-            y: (imageSize.height - Style.CheckmarkView.length) / 2,
-            width: Style.CheckmarkView.length,
-            height: Style.CheckmarkView.length
+            x: (imageSize.width - length) / 2,
+            y: (imageSize.height - length) / 2,
+            width: length,
+            height: length
         )
         
         // Create new self-drawn checkmark view.
         let checkmark = SelfDrawnCheckmarkView(
             frame: checkmarkFrame,
-            color: Style.CheckmarkView.color
+            color: ChannelAvatarView.Style.CheckmarkView.color
         )
         
         // Add checkmark as subview of container view.
@@ -491,28 +355,18 @@ class ChannelAvatarViewController: NSViewController {
         return checkmark
     }
     
-    // Determine whether a state change should cause a size change animation.
-    private func stateShouldCauseAvatarSizeChange(_ state: ChannelState) -> Bool {
-        switch state {
-        case .idle,
-             .previewing:
-            return true
-        case .recording(let recordingStatus):
-            return recordingStatus == .starting
-        }
-    }
-    
+    // Animate the size change of avatar view for the given channel state.
     private func animateAvatarViewSize(toState state: ChannelState) {
-        getAvatarView().animateSize(toDiameter: ChannelWindow.defaultSizeForState(state).height)
+        avatarView.animateSize(toDiameter: ChannelWindow.Style.size(forState: state).height)
     }
     
     // Toggle the amount of drop shadow for container view based on state.
     private func animateContainerViewShadow(toState state: ChannelState) {
         containerView.updateShadow(
-            toConfig: Style.ContainerView.ShadowStyle.getShadow(forState: state),
+            toConfig: ChannelAvatarView.Style.ContainerView.ShadowStyle.getShadow(forState: state),
             animate: true,
-            duration: AnimationConfig.ContainerView.duration,
-            timingFunctionName: AnimationConfig.ContainerView.timingFunctionName
+            duration: ChannelAvatarView.AnimationConfig.ContainerView.duration,
+            timingFunctionName: ChannelAvatarView.AnimationConfig.ContainerView.timingFunctionName
         )
     }
     
@@ -555,7 +409,7 @@ class ChannelAvatarViewController: NSViewController {
                 NSView.AnimationKey.backgroundColor: Color.fromRGBA(0, 0, 0, alpha!).cgColor
             ],
             duration: duration,
-            timingFunctionName: AnimationConfig.BlurLayer.timingFunctionName,
+            timingFunctionName: ChannelAvatarView.AnimationConfig.BlurLayer.timingFunctionName,
             onLayer: blurLayer ?? createBlurLayer()
         )
     }
@@ -574,7 +428,7 @@ class ChannelAvatarViewController: NSViewController {
                 NSView.AnimationKey.backgroundColor: CGColor.clear
             ],
             duration: duration,
-            timingFunctionName: AnimationConfig.BlurLayer.timingFunctionName,
+            timingFunctionName: ChannelAvatarView.AnimationConfig.BlurLayer.timingFunctionName,
             onLayer: blur,
             completionHandler: { [weak self] in
                 // Remove blur layer from image view layer after it's faded out.
@@ -597,8 +451,8 @@ class ChannelAvatarViewController: NSViewController {
         // Fade in opacity.
         spinnerView!.animateAsGroup(
             values: [NSView.AnimationKey.opacity: 1.0],
-            duration: AnimationConfig.SpinnerView.enterDuration,
-            timingFunctionName: AnimationConfig.BlurLayer.timingFunctionName
+            duration: ChannelAvatarView.AnimationConfig.SpinnerView.enterDuration,
+            timingFunctionName: ChannelAvatarView.AnimationConfig.BlurLayer.timingFunctionName
         )
     }
 
@@ -610,8 +464,8 @@ class ChannelAvatarViewController: NSViewController {
         
         spinnerView!.animateAsGroup(
             values: [NSView.AnimationKey.opacity: 0.0],
-            duration: AnimationConfig.CheckmarkView.enterDuration,
-            timingFunctionName: AnimationConfig.BlurLayer.timingFunctionName,
+            duration: ChannelAvatarView.AnimationConfig.CheckmarkView.enterDuration,
+            timingFunctionName: ChannelAvatarView.AnimationConfig.BlurLayer.timingFunctionName,
             completionHandler: { [weak self] in
                 self?.spinnerView?.removeFromSuperview()
                 self?.spinnerView = nil
@@ -635,8 +489,8 @@ class ChannelAvatarViewController: NSViewController {
         
         checkmarkView!.animateAsGroup(
             values: [NSView.AnimationKey.opacity: 0.0],
-            duration: AnimationConfig.CheckmarkView.exitDuration,
-            timingFunctionName: AnimationConfig.BlurLayer.timingFunctionName,
+            duration: ChannelAvatarView.AnimationConfig.CheckmarkView.exitDuration,
+            timingFunctionName: ChannelAvatarView.AnimationConfig.BlurLayer.timingFunctionName,
             completionHandler: { [weak self] in
                 self?.checkmarkView?.removeFromSuperview()
                 self?.checkmarkView = nil
@@ -644,92 +498,93 @@ class ChannelAvatarViewController: NSViewController {
         )
     }
     
-    private func renderAvatarView(state: ChannelState) {
-        if stateShouldCauseAvatarSizeChange(state) {
-            animateAvatarViewSize(toState: state)
-        }
-    }
-    
-    private func renderContainerView(state: ChannelState) {
+    private func renderIdle(_ state: ChannelState) {
+        // Animate avatar view size.
+        animateAvatarViewSize(toState: state)
+        
+        // Animate container view drop shadow.
         animateContainerViewShadow(toState: state)
+        
+        // Fade out new recording indicator.
+        fadeOutNewRecordingIndicator()
     }
     
-    private func renderBlurLayer(state: ChannelState, isDisabled: Bool? = nil) {
-        if state === .recording(.sending) {
-            // Fade in blur layer to avatar image.
-            fadeInBlurLayer(
-                blurRadius: Style.BlurLayer.spinBlurRadius,
-                duration: AnimationConfig.SpinnerView.enterDuration,
-                alpha: Style.BlurLayer.spinAlpha
-            )
-            
-            return
-        }
+    private func renderPreviewing(_ state: ChannelState) {
+        // Animate avatar view size.
+        animateAvatarViewSize(toState: state)
         
-        if state === .recording(.sent) {
-            return
-        }
+        // Animate container view drop shadow.
+        animateContainerViewShadow(toState: state)
         
-        if state === .recording(.cancelling) {
-            fadeOutBlurLayer(
-                duration: AnimationConfig.CheckmarkView.exitDuration
-            )
-            
-            return
-        }
-        
-        if let disabled = isDisabled {
-            animateImageViewBlur(
-                showBlur: disabled,
-                blurRadius: Style.BlurLayer.disabledBlurRadius,
-                duration: AnimationConfig.BlurLayer.disabledDuration
-            )
-        }
+        // Fade in new recording indicator.
+        fadeInNewRecordingIndicator()
     }
     
-    private func renderNewRecordingIndicator(state: ChannelState) {
-        animateNewRecordingIndicatorVisibility(toState: state)
+    private func renderStartingRecording(_ state: ChannelState) {
+        // Animate avatar view size.
+        animateAvatarViewSize(toState: state)
+        
+        // Animate container view drop shadow.
+        animateContainerViewShadow(toState: state)
+        
+        // Fade out new recording indicator.
+        fadeOutNewRecordingIndicator()
     }
     
-    private func renderSpinnerView(state: ChannelState) {
-        // If sending recording, fade in the spinner view.
-        if state === .recording(.sending) {
-            fadeInSpinnerView()
-            return
-        }
+    private func renderCancellingRecording(_ state: ChannelState) {
+        // Fade out blur layer to avatar image.
+        fadeOutBlurLayer(duration: ChannelAvatarView.AnimationConfig.CheckmarkView.exitDuration)
         
-        // If recording was sent, fade out the spinner view.
-        if state === .recording(.sent) {
-            fadeOutSpinnerView()
-        }
+        // Fade out checkmark.
+        fadeOutCheckmarkView()
     }
     
-    private func renderCheckmarkView(state: ChannelState) {
-        // If recording was sent, add the checkmark view.
-        if state === .recording(.sent) {
-            addCheckmarkView()
-            return
-        }
+    private func renderSendingRecording(_ state: ChannelState) {
+        // Fade in blur layer to avatar image.
+        fadeInBlurLayer(
+            blurRadius: ChannelAvatarView.Style.BlurLayer.spinBlurRadius,
+            duration: ChannelAvatarView.AnimationConfig.SpinnerView.enterDuration,
+            alpha: ChannelAvatarView.Style.BlurLayer.spinAlpha
+        )
+
+        // Fade in spinner view.
+        fadeInSpinnerView()
+
+    }
+
+    private func renderSentRecording(_ state: ChannelState) {
+        // Fade out spinner view.
+        fadeOutSpinnerView()
         
-        // If recording is complete, fade out the checkmark view.
-        if state === .recording(.cancelling) {
-            fadeOutCheckmarkView()
+        // Show checkmark.
+        addCheckmarkView()
+    }
+    
+    // Render recording-specific view updates.
+    private func renderRecording(_ state: ChannelState, _ recordingStatus: RecordingStatus) {
+        switch recordingStatus {
+        case .starting:
+            renderStartingRecording(state)
+        case .cancelling:
+            renderCancellingRecording(state)
+        case .sending:
+            renderSendingRecording(state)
+        case .sent:
+            renderSentRecording(state)
+        default:
+            break
         }
     }
 
-    // Render view and subviews with updated state and props.
-    func render(state: ChannelState, isDisabled: Bool? = nil) {
-        
-        renderAvatarView(state: state)
-        
-        renderContainerView(state: state)
-    
-        renderBlurLayer(state: state, isDisabled: isDisabled)
-        
-        renderNewRecordingIndicator(state: state)
-        
-        renderSpinnerView(state: state)
-        
-        renderCheckmarkView(state: state)
+    // Render view and subviews based on channel state.
+    func render(_ state: ChannelState) {
+        switch state {
+        case .idle:
+            renderIdle(state)
+        case .previewing:
+            renderPreviewing(state)
+        case .recording(let recordingStatus):
+            renderRecording(state, recordingStatus)
+        }
     }
 }

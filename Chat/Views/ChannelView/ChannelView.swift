@@ -8,8 +8,18 @@
 
 import Cocoa
 
-// Primary content view of ChannelWindow -- will always take up entire window size.
+// Content view of channel window.
 class ChannelView: NSView {
+    
+    // Channel view styling information.
+    enum Style {
+        
+        // Opacity of view when disabled.
+        static let disabledOpacity: CGFloat = 0.25
+    }
+    
+    // Get this view's window as a channel window instance.
+    weak var channelWindow: ChannelWindow? { window as? ChannelWindow }
 
     // Allow this view to be the first responder in the chain to key events.
     override var acceptsFirstResponder: Bool { true }
@@ -41,17 +51,9 @@ class ChannelView: NSView {
         // Add lastest tracking area.
         addTrackingArea(trackingArea)
     }
-    
-    // Get parent ChannelWindow.
-    func getChannelWindow() -> ChannelWindow? {
-        window as? ChannelWindow
-    }
-    
-    // Handle when avatar view is clicked on.
+
+    // Bubble up event to channel window.
     func onAvatarClick() {
-        // Bubble up event to parent channel window.
-        if let parent = getChannelWindow() {
-            parent.onAvatarClick()
-        }
+        channelWindow?.onAvatarClick()
     }
 }

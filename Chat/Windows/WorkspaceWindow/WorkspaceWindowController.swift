@@ -505,15 +505,10 @@ class WorkspaceWindowController: NSWindowController, NSWindowDelegate, Workspace
     // Render workspace window contents based on current state.
     func render(_ state: WorkspaceWindowModel.State) {
         switch state {
-        // Loading current workspace.
         case .loading:
             renderLoading()
-
-        // Workspace successfully loaded.
         case .loaded(let workspace):
             renderLoaded(workspace: workspace)
-        
-        // Loading workspace failed.
         case .failed(let error):
             renderError(error)
         }

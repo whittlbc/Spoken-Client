@@ -37,7 +37,8 @@ class ChannelWindow: FloatingWindow {
                 
             // Recording size.
             case .recording(let recordingStatus):
-                return recordingStatus == .starting || recordingStatus == .cancelling ? previewingSize : recordingSize
+                return recordingStatus == .starting || recordingStatus == .cancelling ?
+                    previewingSize : recordingSize
             }
         }
     }
@@ -63,9 +64,15 @@ class ChannelWindow: FloatingWindow {
     
     // Get content view controller as channel view controller.
     var channelViewController: ChannelViewController { contentViewController as! ChannelViewController }
-    
-    // Whether this window should respond to interaction.
-    var isDisabled = false
+        
+    // Whether window should respond to interaction.
+    var isDisabled = false {
+        didSet {
+            if isDisabled != oldValue {
+                isDisabledChanged()
+            }
+        }
+    }
     
     // Flag indicating whether mouse is inside window.
     var isMouseInside = false
@@ -101,6 +108,11 @@ class ChannelWindow: FloatingWindow {
         registerMouseExited()
     }
     
+    // Bubble up event to controller.
+    func onAvatarClick() {
+        channelWindowController?.onAvatarClick()
+    }
+    
     // Mouse just entered the window.
     func registerMouseEntered() {
         isMouseInside = true
@@ -119,15 +131,15 @@ class ChannelWindow: FloatingWindow {
         // Bubble up mouse-exited event to delegate.
         channelWindowController?.onMouseExited()
     }
-
-    // Set current disabled status of this window.
-    private func setDisabled(to value: Bool) {
-        isDisabled = value
+    
+    // Handler for when isDisabled value changed.
+    private func isDisabledChanged() {
+        channelViewController.isDisabledChanged(to: isDisabled)
     }
 
     // Render channel view content.
-    func renderContent(_ spec: ChannelRenderSpec) {
-        channelViewController.render(spec)
+    func renderContent(_ spec: ChannelRenderSpec, _ state: ChannelState) {
+        channelViewController.render(spec, state)
     }
     
     // Render window frame.
@@ -136,14 +148,14 @@ class ChannelWindow: FloatingWindow {
     }
     
     // Render window to size/position.
-    func render(_ spec: ChannelRenderSpec) {
+    func render(_ spec: ChannelRenderSpec, _ state: ChannelState) {
         // Store latest disability info on window.
-        setDisabled(to: spec.isDisabled)
+        isDisabled = spec.isDisabled
 
         // Render frame.
         renderFrame(spec)
         
         // Render content.
-        renderContent(spec)
+        renderContent(spec, state)
     }
 }

@@ -111,16 +111,7 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate {
             break
         }
     }
-    
-    // Handle event where channel is prompted by speech recognition.
-    func onSpeechPrompted() {
-        if isDisabled {
-            return
-        }
-        
-        toRecordingStarting()
-    }
-        
+     
     // Whether the latest state update should render this channel individually or as a group.
     func shouldRenderIndividually() -> Bool {
         !stateChangedCase()
@@ -312,7 +303,7 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate {
     // Add channel view controller as this window's content view controller.
     private func addChannelViewController() {
         // Create new channel view controller.
-        let channelViewController = ChannelViewController()
+        let channelViewController = ChannelViewController(channel: channel)
         
         // Set channel view controller as the primary content of the channel window.
         channelWindow.contentViewController = channelViewController
@@ -371,8 +362,8 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate {
     }
     
     // Render the channel window with the given spec.
-    private func renderWindow(_ spec: ChannelRenderSpec) {
-        channelWindow.render(spec)
+    private func renderWindow(_ spec: ChannelRenderSpec, _ state: ChannelState) {
+        channelWindow.render(spec, state)
     }
     
     // Render window controller with render spec created from current state.
@@ -383,6 +374,6 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate {
     // Render this window controller.
     func render(_ spec: ChannelRenderSpec) {
         // Render channel window.
-        renderWindow(spec)
+        renderWindow(spec, state)
     }
 }

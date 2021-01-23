@@ -18,7 +18,7 @@ class UserDataProvider<T: Model & NetworkingJSONDecodable>: DataProvider<T> {
     
     func current() -> AnyPublisher<T, Error> {
         // Ensure current user id exists in the string cache
-        guard let currentUserId = CacheManager.stringCache.get(forKey: currentKey) else {
+        guard let currentUserId = Session.currentUserId else {
             // This should only fail if the user isn't logged in.
             return Fail(error: DataProviderError.unauthorized)
                 .eraseToAnyPublisher()
