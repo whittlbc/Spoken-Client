@@ -12,7 +12,6 @@
 		09074D84259982DE00E72F93 /* ChannelAvatarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09074D83259982DE00E72F93 /* ChannelAvatarViewController.swift */; };
 		09074D872599BD0500E72F93 /* ChannelState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09074D862599BD0500E72F93 /* ChannelState.swift */; };
 		0940E06E25A4D946006184D7 /* AV.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0940E06D25A4D946006184D7 /* AV.swift */; };
-		0940E07625A58935006184D7 /* ChannelDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0940E07525A58935006184D7 /* ChannelDelegate.swift */; };
 		0940E07B25A7ACF1006184D7 /* UserSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0940E07A25A7ACF1006184D7 /* UserSettings.swift */; };
 		0940E08025A7B6AB006184D7 /* Mic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0940E07F25A7B6AB006184D7 /* Mic.swift */; };
 		0949C897259686E800B61D1F /* NSView+Subviews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0949C896259686E800B61D1F /* NSView+Subviews.swift */; };
@@ -46,15 +45,16 @@
 		096862EB2582A8D000B9B614 /* Workspace+Arrow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 096862EA2582A8D000B9B614 /* Workspace+Arrow.swift */; };
 		096862EE2582ABCE00B9B614 /* Member.swift in Sources */ = {isa = PBXBuildFile; fileRef = 096862ED2582ABCE00B9B614 /* Member.swift */; };
 		096862F12582ACE100B9B614 /* Member+Arrow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 096862F02582ACE100B9B614 /* Member+Arrow.swift */; };
-		096862F42582B54F00B9B614 /* WorkspaceWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 096862F32582B54F00B9B614 /* WorkspaceWindow.swift */; };
+		096862F42582B54F00B9B614 /* WorkspaceWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 096862F32582B54F00B9B614 /* WorkspaceWindowController.swift */; };
 		096862F82582CF6700B9B614 /* Cache in Frameworks */ = {isa = PBXBuildFile; productRef = 096862F72582CF6700B9B614 /* Cache */; };
 		0968631F2583FB2A00B9B614 /* mocks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0968631E2583FB2A00B9B614 /* mocks.swift */; };
-		0968632325840AB500B9B614 /* ChannelWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0968632225840AB500B9B614 /* ChannelWindow.swift */; };
 		09686328258427A500B9B614 /* ChannelViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09686327258427A500B9B614 /* ChannelViewController.swift */; };
 		0968632C2584299400B9B614 /* ChannelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0968632B2584299400B9B614 /* ChannelView.swift */; };
 		0968633125859A3000B9B614 /* ChannelAvatarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0968633025859A3000B9B614 /* ChannelAvatarView.swift */; };
 		096863352586C2B000B9B614 /* RoundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 096863342586C2B000B9B614 /* RoundView.swift */; };
 		096863382586C42B00B9B614 /* RoundShadowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 096863372586C42B00B9B614 /* RoundShadowView.swift */; };
+		097228F725B63EA100219591 /* ChannelWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 097228F625B63EA100219591 /* ChannelWindow.swift */; };
+		097228FC25BC8F0C00219591 /* ChannelAvatarViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 097228FB25BC8F0C00219591 /* ChannelAvatarViewModel.swift */; };
 		0990879525797561001660D1 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0990879425797561001660D1 /* AppDelegate.swift */; };
 		0990879925797563001660D1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0990879825797563001660D1 /* Assets.xcassets */; };
 		099087A625797645001660D1 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 099087A525797645001660D1 /* main.swift */; };
@@ -92,13 +92,16 @@
 		09D19A6225B38D5100C0C476 /* Array+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09D19A6125B38D5100C0C476 /* Array+Helpers.swift */; };
 		09D19A6525B38DDB00C0C476 /* MemberDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09D19A6425B38DDB00C0C476 /* MemberDataProvider.swift */; };
 		09D3FC0425B4F80000CC744A /* ImageError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09D3FC0325B4F80000CC744A /* ImageError.swift */; };
+		09D3FC0925B5015C00CC744A /* WorkspaceWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09D3FC0825B5015C00CC744A /* WorkspaceWindow.swift */; };
+		09D3FC0E25B50ADA00CC744A /* WorkspaceKeyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09D3FC0D25B50ADA00CC744A /* WorkspaceKeyManager.swift */; };
 		09F534E725A7F76D001B4FF6 /* SpeechAnalyzerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F534E625A7F76D001B4FF6 /* SpeechAnalyzerDelegate.swift */; };
 		09F60AC6258BFD450020974A /* NSRect+Location.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F60AC5258BFD450020974A /* NSRect+Location.swift */; };
 		09F60AC9258C13680020974A /* Icon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F60AC8258C13680020974A /* Icon.swift */; };
 		09F60ACC258C2FD50020974A /* Style.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F60ACB258C2FD50020974A /* Style.swift */; };
 		09F60ACF258C37AC0020974A /* NSView+Animation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F60ACE258C37AC0020974A /* NSView+Animation.swift */; };
 		09F60AD72592B7CE0020974A /* HotKey in Frameworks */ = {isa = PBXBuildFile; productRef = 09F60AD62592B7CE0020974A /* HotKey */; };
-		09F60ADA2592CCF20020974A /* PulseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F60AD92592CCF20020974A /* PulseView.swift */; };
+		09FF53D025B524930083CD28 /* ChannelWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09FF53CF25B524930083CD28 /* ChannelWindowController.swift */; };
+		09FF53D325B5293D0083CD28 /* ChannelRenderSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09FF53D225B5293D0083CD28 /* ChannelRenderSpec.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -107,7 +110,6 @@
 		09074D83259982DE00E72F93 /* ChannelAvatarViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelAvatarViewController.swift; sourceTree = "<group>"; };
 		09074D862599BD0500E72F93 /* ChannelState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelState.swift; sourceTree = "<group>"; };
 		0940E06D25A4D946006184D7 /* AV.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AV.swift; sourceTree = "<group>"; };
-		0940E07525A58935006184D7 /* ChannelDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelDelegate.swift; sourceTree = "<group>"; };
 		0940E07A25A7ACF1006184D7 /* UserSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSettings.swift; sourceTree = "<group>"; };
 		0940E07F25A7B6AB006184D7 /* Mic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Mic.swift; sourceTree = "<group>"; };
 		0949C896259686E800B61D1F /* NSView+Subviews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSView+Subviews.swift"; sourceTree = "<group>"; };
@@ -139,14 +141,15 @@
 		096862EA2582A8D000B9B614 /* Workspace+Arrow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Workspace+Arrow.swift"; sourceTree = "<group>"; };
 		096862ED2582ABCE00B9B614 /* Member.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Member.swift; sourceTree = "<group>"; };
 		096862F02582ACE100B9B614 /* Member+Arrow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Member+Arrow.swift"; sourceTree = "<group>"; };
-		096862F32582B54F00B9B614 /* WorkspaceWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkspaceWindow.swift; sourceTree = "<group>"; };
+		096862F32582B54F00B9B614 /* WorkspaceWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkspaceWindowController.swift; sourceTree = "<group>"; };
 		0968631E2583FB2A00B9B614 /* mocks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = mocks.swift; sourceTree = "<group>"; };
-		0968632225840AB500B9B614 /* ChannelWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelWindow.swift; sourceTree = "<group>"; };
 		09686327258427A500B9B614 /* ChannelViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelViewController.swift; sourceTree = "<group>"; };
 		0968632B2584299400B9B614 /* ChannelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelView.swift; sourceTree = "<group>"; };
 		0968633025859A3000B9B614 /* ChannelAvatarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelAvatarView.swift; sourceTree = "<group>"; };
 		096863342586C2B000B9B614 /* RoundView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundView.swift; sourceTree = "<group>"; };
 		096863372586C42B00B9B614 /* RoundShadowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundShadowView.swift; sourceTree = "<group>"; };
+		097228F625B63EA100219591 /* ChannelWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelWindow.swift; sourceTree = "<group>"; };
+		097228FB25BC8F0C00219591 /* ChannelAvatarViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelAvatarViewModel.swift; sourceTree = "<group>"; };
 		0990879125797561001660D1 /* Chat.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Chat.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0990879425797561001660D1 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		0990879825797563001660D1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -188,12 +191,15 @@
 		09D19A6125B38D5100C0C476 /* Array+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+Helpers.swift"; sourceTree = "<group>"; };
 		09D19A6425B38DDB00C0C476 /* MemberDataProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemberDataProvider.swift; sourceTree = "<group>"; };
 		09D3FC0325B4F80000CC744A /* ImageError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageError.swift; sourceTree = "<group>"; };
+		09D3FC0825B5015C00CC744A /* WorkspaceWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkspaceWindow.swift; sourceTree = "<group>"; };
+		09D3FC0D25B50ADA00CC744A /* WorkspaceKeyManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkspaceKeyManager.swift; sourceTree = "<group>"; };
 		09F534E625A7F76D001B4FF6 /* SpeechAnalyzerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechAnalyzerDelegate.swift; sourceTree = "<group>"; };
 		09F60AC5258BFD450020974A /* NSRect+Location.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSRect+Location.swift"; sourceTree = "<group>"; };
 		09F60AC8258C13680020974A /* Icon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Icon.swift; sourceTree = "<group>"; };
 		09F60ACB258C2FD50020974A /* Style.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Style.swift; sourceTree = "<group>"; };
 		09F60ACE258C37AC0020974A /* NSView+Animation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSView+Animation.swift"; sourceTree = "<group>"; };
-		09F60AD92592CCF20020974A /* PulseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PulseView.swift; sourceTree = "<group>"; };
+		09FF53CF25B524930083CD28 /* ChannelWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelWindowController.swift; sourceTree = "<group>"; };
+		09FF53D225B5293D0083CD28 /* ChannelRenderSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelRenderSpec.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -282,8 +288,9 @@
 		0968630D2583176B00B9B614 /* WorkspaceWindow */ = {
 			isa = PBXGroup;
 			children = (
-				096862F32582B54F00B9B614 /* WorkspaceWindow.swift */,
+				096862F32582B54F00B9B614 /* WorkspaceWindowController.swift */,
 				094DAB1B25B11F0A00CFC2EC /* WorkspaceWindowModel.swift */,
+				09D3FC0825B5015C00CC744A /* WorkspaceWindow.swift */,
 			);
 			path = WorkspaceWindow;
 			sourceTree = "<group>";
@@ -291,9 +298,10 @@
 		0968632125840AA900B9B614 /* ChannelWindow */ = {
 			isa = PBXGroup;
 			children = (
-				0968632225840AB500B9B614 /* ChannelWindow.swift */,
+				09FF53CF25B524930083CD28 /* ChannelWindowController.swift */,
+				097228F625B63EA100219591 /* ChannelWindow.swift */,
+				09FF53D225B5293D0083CD28 /* ChannelRenderSpec.swift */,
 				09074D862599BD0500E72F93 /* ChannelState.swift */,
-				0940E07525A58935006184D7 /* ChannelDelegate.swift */,
 			);
 			path = ChannelWindow;
 			sourceTree = "<group>";
@@ -311,6 +319,7 @@
 			isa = PBXGroup;
 			children = (
 				09074D83259982DE00E72F93 /* ChannelAvatarViewController.swift */,
+				097228FB25BC8F0C00219591 /* ChannelAvatarViewModel.swift */,
 				0968633025859A3000B9B614 /* ChannelAvatarView.swift */,
 			);
 			path = ChannelAvatarView;
@@ -344,6 +353,7 @@
 				0996444F25AE6FC4004473B7 /* DataProviders */,
 				0995DE1D2581698300DAA334 /* Networking */,
 				095C678A25A3D8EB00729845 /* AV */,
+				09D3FC1A25B51C3100CC744A /* KeyManagers */,
 				0996446525AE92D0004473B7 /* Caching */,
 				099087BB25799BA2001660D1 /* Utilities */,
 				0940E07925A7ACD6006184D7 /* Settings */,
@@ -385,8 +395,8 @@
 		0995DDFD257AED9D00DAA334 /* SidebarWindow */ = {
 			isa = PBXGroup;
 			children = (
-				0995DDFE257AEDE000DAA334 /* SidebarWindow.swift */,
 				0995DE00257AEDEC00DAA334 /* SidebarWindowController.swift */,
+				0995DDFE257AEDE000DAA334 /* SidebarWindow.swift */,
 			);
 			path = SidebarWindow;
 			sourceTree = "<group>";
@@ -413,7 +423,6 @@
 				095C676A259E704100729845 /* SelfDrawnCheckmarkView */,
 				096863342586C2B000B9B614 /* RoundView.swift */,
 				096863372586C42B00B9B614 /* RoundShadowView.swift */,
-				09F60AD92592CCF20020974A /* PulseView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -555,6 +564,14 @@
 			path = SpeechAnalyzers;
 			sourceTree = "<group>";
 		};
+		09D3FC1A25B51C3100CC744A /* KeyManagers */ = {
+			isa = PBXGroup;
+			children = (
+				09D3FC0D25B50ADA00CC744A /* WorkspaceKeyManager.swift */,
+			);
+			path = KeyManagers;
+			sourceTree = "<group>";
+		};
 		09F534E525A7F506001B4FF6 /* ChannelPromptSpeechAnalyzer */ = {
 			isa = PBXGroup;
 			children = (
@@ -661,8 +678,8 @@
 				094DAAE525AEBA3300CFC2EC /* DataProviderError.swift in Sources */,
 				099087BD25799BC2001660D1 /* Screen.swift in Sources */,
 				096862EB2582A8D000B9B614 /* Workspace+Arrow.swift in Sources */,
-				0940E07625A58935006184D7 /* ChannelDelegate.swift in Sources */,
 				096863382586C42B00B9B614 /* RoundShadowView.swift in Sources */,
+				097228FC25BC8F0C00219591 /* ChannelAvatarViewModel.swift in Sources */,
 				0949C8B2259908E900B61D1F /* ParticleViewDelegate.swift in Sources */,
 				094DAB1C25B11F0A00CFC2EC /* WorkspaceWindowModel.swift in Sources */,
 				096862EE2582ABCE00B9B614 /* Member.swift in Sources */,
@@ -672,6 +689,8 @@
 				094DAB1425AFE70500CFC2EC /* NSImage+Helpers.swift in Sources */,
 				0996443D25A91755004473B7 /* SpeechRecognizerDelegate.swift in Sources */,
 				09D19A6225B38D5100C0C476 /* Array+Helpers.swift in Sources */,
+				09D3FC0E25B50ADA00CC744A /* WorkspaceKeyManager.swift in Sources */,
+				097228F725B63EA100219591 /* ChannelWindow.swift in Sources */,
 				095C677A25A29CC300729845 /* Message+Arrow.swift in Sources */,
 				0995DE3B2581CA7500DAA334 /* InternalAPI.swift in Sources */,
 				0990879525797561001660D1 /* AppDelegate.swift in Sources */,
@@ -710,15 +729,16 @@
 				0995DE352581A51F00DAA334 /* Keychain.swift in Sources */,
 				0995DE3D2581CF6A00DAA334 /* API.swift in Sources */,
 				096862F12582ACE100B9B614 /* Member+Arrow.swift in Sources */,
-				09F60ADA2592CCF20020974A /* PulseView.swift in Sources */,
+				09FF53D025B524930083CD28 /* ChannelWindowController.swift in Sources */,
 				0996445525AE7A1D004473B7 /* Model.swift in Sources */,
 				095C676C259E706000729845 /* SelfDrawnCheckmarkView.swift in Sources */,
+				09FF53D325B5293D0083CD28 /* ChannelRenderSpec.swift in Sources */,
 				095C6765259A6A8800729845 /* ChasingTailSpinnerView.swift in Sources */,
 				0996446B25AE92FD004473B7 /* CodableCache.swift in Sources */,
 				096862E52582A67F00B9B614 /* Name+Arrow.swift in Sources */,
 				0940E07B25A7ACF1006184D7 /* UserSettings.swift in Sources */,
 				0999974F25953600008E65FB /* ParticleShader.metal in Sources */,
-				096862F42582B54F00B9B614 /* WorkspaceWindow.swift in Sources */,
+				096862F42582B54F00B9B614 /* WorkspaceWindowController.swift in Sources */,
 				09F60AC9258C13680020974A /* Icon.swift in Sources */,
 				09074D7D2599222700E72F93 /* Color.swift in Sources */,
 				0996444825ABD34D004473B7 /* AudioSnapshot.swift in Sources */,
@@ -729,7 +749,6 @@
 				095C677325A29B7300729845 /* Message.swift in Sources */,
 				0995DE2125816B5E00DAA334 /* Config.swift in Sources */,
 				09074D872599BD0500E72F93 /* ChannelState.swift in Sources */,
-				0968632325840AB500B9B614 /* ChannelWindow.swift in Sources */,
 				095C677025A29AA200729845 /* Channel.swift in Sources */,
 				09686328258427A500B9B614 /* ChannelViewController.swift in Sources */,
 				095C677625A29C6700729845 /* Channel+Arrow.swift in Sources */,
@@ -740,6 +759,7 @@
 				096862CD25829C5A00B9B614 /* User.swift in Sources */,
 				0940E08025A7B6AB006184D7 /* Mic.swift in Sources */,
 				09F534E725A7F76D001B4FF6 /* SpeechAnalyzerDelegate.swift in Sources */,
+				09D3FC0925B5015C00CC744A /* WorkspaceWindow.swift in Sources */,
 				0996446725AE92DF004473B7 /* CacheManager.swift in Sources */,
 				096862E22582A61C00B9B614 /* Name.swift in Sources */,
 				0996444425ABAB43004473B7 /* AudioAnalysis.swift in Sources */,

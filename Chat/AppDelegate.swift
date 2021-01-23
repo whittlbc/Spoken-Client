@@ -16,6 +16,5 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     func applicationDidFinishLaunching(_ notification: Notification) {
         // Launch initial app window dependent on current user's auth status.
         windowControllerManager.launchInitialWindow()
-        
     }
 }

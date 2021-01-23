@@ -11,24 +11,36 @@ import Cocoa
 // Top-most window of our sidebar app.
 class SidebarWindow: FloatingWindow {
     
-    // Largest width the sidebar's contents should ever get to.
-    static let width: Int = 250
+    // Sidebar window styling information.
+    enum Style {
+        
+        // Largest width the sidebar's contents should ever grow to.
+        static let width: Int = 250
+        
+        // Height should match that of the entire screen.
+        static let height = Screen.getHeight()
+        
+        // Window size.
+        static let size = NSSize(width: Style.width, height: Style.height)
+
+        // Window position.
+        static let origin = NSPoint(x: Screen.getWidth() - Style.width, y: 0)
+    }
     
-    // Size of window.
-    static let size = NSSize(width: SidebarWindow.width, height: Screen.getHeight())
-
-    // Origin of window on screen.
-    static let origin = NSPoint(x: Screen.getWidth() - SidebarWindow.width, y: 0)
-
     // Override delegated init and size/position window on screen.
-    override init(contentRect: NSRect, styleMask style: NSWindow.StyleMask, backing backingStoreType: NSWindow.BackingStoreType, defer flag: Bool) {
+    override init(
+        contentRect: NSRect,
+        styleMask style: NSWindow.StyleMask,
+        backing backingStoreType: NSWindow.BackingStoreType,
+        defer flag: Bool) {
+        
+        // Pass up with no changes.
         super.init(contentRect: contentRect, styleMask: style, backing: backingStoreType, defer: flag)
         
         // This will be the main window for our application.
         level = .mainMenu
         
-        // Position and size window on screen.
-        repositionWindow(to: SidebarWindow.origin)
-        resizeWindow(to: SidebarWindow.size)
+        // Size and position window on screen.
+        updateFrame(size: Style.size, position: Style.origin)
     }
 }

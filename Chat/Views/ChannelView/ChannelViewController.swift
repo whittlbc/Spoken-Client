@@ -11,22 +11,15 @@ import Cocoa
 // Controller for ChannelView to manage all of its subviews and their interactions.
 class ChannelViewController: NSViewController, ParticleViewDelegate {
     
-    // View styling info.
-    enum Style {
-        
-        // ChannelView styling info.
-        enum ChannelView {
-            // Opacity of view when disabled.
-            static let disabledOpacity: CGFloat = 0.25
-        }
+    // Different supported horizontal alignments of avatar inside of channel view.
+    enum AvatarHorizontalAlignment {
+        case right
+        case center
     }
     
     // Workspace channel associated with this view.
     private var channel: Channel!
     
-    // Initial channel view frame -- provided from window.
-    private var initialFrame: NSRect!
-
     // Controller for avatar view subview.
     private var avatarViewController: ChannelAvatarViewController!
     
@@ -38,26 +31,25 @@ class ChannelViewController: NSViewController, ParticleViewDelegate {
 
     // Channel particle view for audio animation.
     private var particleView: ChannelParticleView!
-        
-    // Proper initializer to use when rendering channel.
-    convenience init(channel: Channel, initialFrame: NSRect) {
+
+    // Proper init to call when creating this class.
+    convenience init(channel: Channel) {
         self.init()
         self.channel = channel
-        self.initialFrame = initialFrame
     }
     
     // Override delegated init.
     private override init(nibName nibNameOrNil: NSNib.Name?, bundle nibBundleOrNil: Bundle?) {
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
     }
-    
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
     // Use ChannelView as primary view for this controller.
     override func loadView() {
-        view = ChannelView(frame: initialFrame)
+        view = ChannelView()
     }
     
     override func viewDidLoad() {
@@ -68,6 +60,15 @@ class ChannelViewController: NSViewController, ParticleViewDelegate {
         
         // Create particle view for voice audio animation.
         createParticleView()
+    }
+    
+    // Handle changes in channel disability.
+    func isDisabledChanged(to isDisabled: Bool) {
+        // Change alpha value of view based on isDisabled status.
+        animateAlpha(to: isDisabled ? ChannelView.Style.disabledOpacity : 1.0)
+        
+        // Pass this change down to avatar view controller.
+        avatarViewController.isDisabledChanged(to: isDisabled)
     }
     
     private func addAvatarView() {
@@ -87,7 +88,7 @@ class ChannelViewController: NSViewController, ParticleViewDelegate {
         avatarViewController.view.translatesAutoresizingMaskIntoConstraints = false
         
         // Get default idle height for channel window.
-        let initialAvatarDiameter = ChannelWindow.defaultSizeForState(.idle).height
+        let initialAvatarDiameter = ChannelWindow.Style.idleSize.height
         
         // Create height and width constraints for avatar view.
         let heightConstraint = avatarViewController.view.heightAnchor.constraint(equalToConstant: initialAvatarDiameter)
@@ -151,7 +152,7 @@ class ChannelViewController: NSViewController, ParticleViewDelegate {
     }
     
     func particleViewMetalUnavailable() {
-        // handle metal unavailable here
+        // TODO: handle metal unavailable here
     }
     
     // Handle each frame of particle view (should be running at 60fps).
@@ -160,24 +161,27 @@ class ChannelViewController: NSViewController, ParticleViewDelegate {
         particleView.handleParticleStep()
     }
     
-    // Animate disabled state.
-    private func animateDisability(_ isDisabled: Bool) {
-        view.animator().alphaValue = isDisabled ? Style.ChannelView.disabledOpacity : 1.0
+    // Animate alpha value of channel view.
+    private func animateAlpha(to value: CGFloat) {
+        view.animator().alphaValue = value
     }
     
-    private func renderStartedRecording() {
-        // Flip avatar view x-alignment from right to center.
-        avatarViewRightConstraint.isActive = false
-        avatarViewCenterXConstraint.isActive = true
-        
-        // Add particle view as a subview.
-        addParticleView()
+    // Update avatar view horizontal alignment.
+    private func alignAvatar(to alignment: AvatarHorizontalAlignment) {
+        switch alignment {
+        case .right:
+            avatarViewRightConstraint.isActive = true
+            avatarViewCenterXConstraint.isActive = false
+        case .center:
+            avatarViewRightConstraint.isActive = false
+            avatarViewCenterXConstraint.isActive = true
+        }
     }
     
-    private func renderCancellingRecording() {
-        // Flip avatar view x-alignment from right to center.
-        avatarViewCenterXConstraint.isActive = false
-        avatarViewRightConstraint.isActive = true
+    // Reset contents back to initial idle state.
+    private func resetToIdle() {
+        // Flip avatar view x-alignment from center back to right.
+        alignAvatar(to: .right)
         
         // Remove particle view as a subview.
         removeParticleView()
@@ -186,13 +190,33 @@ class ChannelViewController: NSViewController, ParticleViewDelegate {
         particleView.reset()
     }
     
+    // Rendered with recording:started state.
+    private func renderStartedRecording() {
+        // Flip avatar view x-alignment from right to center.
+        alignAvatar(to: .center)
+        
+        // Add particle view as a subview.
+        addParticleView()
+    }
+    
+    // Rendered with recording:cancelling state.
+    private func renderCancellingRecording() {
+        resetToIdle()
+    }
+    
+    // Rendered with recording:sending state.
     private func renderSendingRecording() {
         // Explode the particle view.
         particleView.explode()
     }
     
+    // Rendered with recording:finished state.
+    private func renderFinishedRecording() {
+        resetToIdle()
+    }
+    
     // Render recording-specific view updates.
-    private func renderRecordingStateChange(recordingStatus: RecordingStatus) {
+    private func renderRecording(status recordingStatus: RecordingStatus) {
         switch recordingStatus {
         case .started:
             renderStartedRecording()
@@ -200,34 +224,34 @@ class ChannelViewController: NSViewController, ParticleViewDelegate {
             renderCancellingRecording()
         case .sending:
             renderSendingRecording()
+        case .finished:
+            renderFinishedRecording()
         default:
             break
         }
     }
     
     // Render state-specific view updates.
-    private func renderStateChanges(state: ChannelState) {
+    private func renderState(_ state: ChannelState) {
         switch state {
         case .recording(let recordingStatus):
-            renderRecordingStateChange(recordingStatus: recordingStatus)
+            renderRecording(status: recordingStatus)
         default:
             break
         }
     }
 
-    private func renderAvatarView(state: ChannelState, isDisabled: Bool? = nil) {
-        avatarViewController.render(state: state, isDisabled: isDisabled)
+    // Render avatar view controller with given channel state.
+    private func renderAvatar(_ state: ChannelState) {
+        avatarViewController.render(state)
     }
     
-    // Render view and subviews with updated state and props.
-    func render(state: ChannelState, isDisabled: Bool? = nil) {
-        // Animate disabled status if provided.
-        if let disabled = isDisabled {
-            animateDisability(disabled)
-        }
+    // Render window to size/position.
+    func render(_ spec: ChannelRenderSpec, _ state: ChannelState) {
+        // Render based on state.
+        renderState(state)
         
-        renderStateChanges(state: state)
-        
-        renderAvatarView(state: state, isDisabled: isDisabled)
+        // Render avatar view controller.
+        renderAvatar(state)
     }
 }

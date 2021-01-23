@@ -11,7 +11,6 @@ import Foundation
 public enum Session {
     
     static var currentUserId: String? {
-        Mocks.Users.ben.id
-//        CacheManager.stringCache.get(forKey: dataProvider.user.currentKey)
+        CacheManager.stringCache.get(forKey: dataProvider.user.currentKey)
     }
 }

@@ -6,25 +6,25 @@
 //  Copyright © 2020 Ben Whittle. All rights reserved.
 //
 
-import AppKit
+import Cocoa
 
 // Controller for sidebar window.
 class SidebarWindowController: NSWindowController, NSWindowDelegate {
     
-    // SidebarWindow is this controller's window type.
-    typealias Window = SidebarWindow
-
-    // Window will be set to the above "Window" type, so no need to make the user set this during init.
+    // Controller for workspace window.
+    private var workspaceWindowController: WorkspaceWindowController!
+    
+    // Proper init to call when creating this class.
     convenience init() {
         self.init(window: nil)
     }
     
-    // Override delegated init -- initialize 'Window' type window.
+    // Override delegated init.
     private override init(window: NSWindow?) {
         precondition(window == nil, "call init() with no window")
         
         // Initialize with new sidebar window.
-        super.init(window: Window())
+        super.init(window: SidebarWindow())
         
         // Assign self as new sidebar window's delegate.
         self.window!.delegate = self
@@ -33,24 +33,29 @@ class SidebarWindowController: NSWindowController, NSWindowDelegate {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
+    
     // Show main window and add child windows.
     override func showWindow(_ sender: Any?) {
         super.showWindow(sender)
         
-        // Add workspace window as a child window.
+        // Add child windows.
+        addChildWindows()
+    }
+    
+    // Add child windows to sidebar window.
+    private func addChildWindows() {
         addWorkspaceWindow()
     }
     
     // Add workspace window as a child window.
     private func addWorkspaceWindow() {
-        // Create new workspace window.
-        let workspaceWindow = WorkspaceWindow()
+        // Create new workspace window controller.
+        workspaceWindowController = WorkspaceWindowController()
         
-        // Add workspace window as top-most child window.
-        window!.addChildWindow(workspaceWindow, ordered: NSWindow.OrderingMode.above)
+        // Add workspace window as top-most child window of sidebar window.
+        window!.addChildWindow(workspaceWindowController.window!, ordered: NSWindow.OrderingMode.above)
         
         // Load current workspace.
-        workspaceWindow.loadCurrentWorkspace()
+        workspaceWindowController.loadCurrentWorkspace()
     }
 }

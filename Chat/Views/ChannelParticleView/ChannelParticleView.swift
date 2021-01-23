@@ -44,11 +44,12 @@ class ChannelParticleView: ParticleView {
     static let micInputPipeKey = "channelParticleView"
     
     // Initial size of this view.
-    static let initialSize = ChannelWindow.defaultSizeForState(.recording(.started))
+    static let initialSize = ChannelWindow.Style.recordingSize
     
     // Total number of particles to render.
     static let numParticles = ParticleCount.TwentyFourtyEight
     
+    // Time to wait before applying initial gravity effects.
     static let initialGravityTimeout = 0.1
             
     // Whether particles have been purposefully exploded out of view.
