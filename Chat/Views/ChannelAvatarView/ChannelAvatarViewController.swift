@@ -45,9 +45,6 @@ class ChannelAvatarViewController: NSViewController {
         
         // Create view model.
         viewModel = ChannelAvatarViewModel(channel: channel)
-        
-        // Subscribe to view model.
-        subscribeToViewModel()
     }
     
     // Override delegated init.
@@ -75,6 +72,9 @@ class ChannelAvatarViewController: NSViewController {
 
         // Add avatar image view.
         addImageView()
+        
+        // Subscribe to view model.
+        subscribeToViewModel()
         
         // Load and set avatar image.
         loadAvatarImage()

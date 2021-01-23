@@ -29,7 +29,7 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate {
     
     // Window's current position.
     var position: NSPoint { window!.frame.origin }
-    
+        
     // Latest height offset due to most recent state change.
     var latestHeightOffset: Float { Float(prevSize.height - size.height) / 2 }
     
@@ -44,19 +44,33 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate {
     
     // Timer that double checks if the mouse is still inside this window when in the previewing state.
     private var previewingTimer: Timer?
+    
+    // Destination of window during active position animation.
+    private var destination: NSPoint?
 
     // The channel's current state.
-    @Published private(set) var state = ChannelState.idle {
-        didSet { prevState = oldValue }
+    private(set) var state = ChannelState.idle {
+        didSet {
+            prevState = oldValue
+            publishedState = state
+        }
     }
-    
+
     // The channel's previous state.
     private(set) var prevState = ChannelState.idle
+
+    // The state published to combine subscribers.
+    @Published private(set) var publishedState = ChannelState.idle
 
     // Proper init to call when creating this class.
     convenience init(channel: Channel) {
         self.init(window: nil)
+        
+        // Store ref to channel.
         self.channel = channel
+        
+        // Add channel view controller as main content.
+        addChannelViewController()
     }
     
     // Override delegated init.
@@ -74,14 +88,16 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate {
         fatalError("init(coder:) has not been implemented")
     }
     
-    // Show main window and add child windows.
-    override func showWindow(_ sender: Any?) {
-        super.showWindow(sender)
-        
-        // Add channel view controller
-        addChannelViewController()
+    // Get window's animation destination -- fallback to frame origin.
+    func getDestination() -> NSPoint {
+        destination ?? position
     }
     
+    // Set window's animation destination.
+    func setDestination(_ origin: NSPoint) {
+        destination = origin
+    }
+
     // Handle mouse-enter event by state.
     func onMouseEntered() {
         switch state {

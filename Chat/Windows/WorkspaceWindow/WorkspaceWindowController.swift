@@ -30,11 +30,6 @@ class WorkspaceWindowController: NSWindowController, NSWindowDelegate, Workspace
     // Bool to determine whether channels have been rendered at least once.
     private var channelsHaveRendered = false
     
-    // Id of most-recent active channel.
-    private var activeChannelId: String? {
-        didSet { promotePreviousChannelStates() }
-    }
-
     // Proper init to call when creating this class.
     convenience init() {
         self.init(window: nil)
@@ -101,9 +96,6 @@ class WorkspaceWindowController: NSWindowController, NSWindowDelegate, Workspace
             return
         }
         
-        // Set this channel to the active one.
-        activeChannelId = channelId
-        
         // If not switching to actively previewing, canel the previewing timer.
         if !activeChannelWindowController.isPreviewing() {
             activeChannelWindowController.cancelPreviewingTimer()
@@ -115,13 +107,16 @@ class WorkspaceWindowController: NSWindowController, NSWindowDelegate, Workspace
             return
         }
         
+        // Promote previous state to current state for all non-active channels.
+        promotePreviousChannelStates(activeChannelId: channelId)
+        
         // Re-render the entire workspace with all channels.
-        render(windowModel.state)
+        render(windowModel.state, activeChannelId: channelId)
     }
     
     // Called when channel rendering has completed.
-    private func onChannelsRendered() {
-        checkIfActiveRecordingNeedsStart()
+    private func onChannelsRendered(activeChannelId: String) {
+        checkIfActiveRecordingNeedsStart(activeChannelId: activeChannelId)
     }
     
     // Subscribe to window state changes.
@@ -151,7 +146,7 @@ class WorkspaceWindowController: NSWindowController, NSWindowDelegate, Workspace
     }
     
     // Promote previous state to current state for all non-active channels.
-    private func promotePreviousChannelStates() {
+    private func promotePreviousChannelStates(activeChannelId: String) {
         for (channelId, channelWindowController) in channelWindowControllers where channelId != activeChannelId {
             channelWindowController.promotePreviousState()
         }
@@ -180,10 +175,9 @@ class WorkspaceWindowController: NSWindowController, NSWindowDelegate, Workspace
         return getChannelWindowControllers(forChannels: channels).first(where: { $0.isRecording() })
     }
 
-    private func checkIfActiveRecordingNeedsStart() {
+    private func checkIfActiveRecordingNeedsStart(activeChannelId: String) {
         // Ensure active channel has a recording waiting to be started.
-        guard let activeId = activeChannelId,
-              let activeChannelWindowController = channelWindowControllers[activeId],
+        guard let activeChannelWindowController = channelWindowControllers[activeChannelId],
               activeChannelWindowController.isRecordingStarting() else {
             return
         }
@@ -207,9 +201,12 @@ class WorkspaceWindowController: NSWindowController, NSWindowDelegate, Workspace
         }
     }
     
-    private func limitPreviewingChannelsToOne(channels: [Channel]) {
+    private func limitPreviewingChannelsToOne(channels: [Channel], activeChannelId: String) {
         // Get active channel window controller and its index.
-        let (activeChannelIndex, controller) = getActiveChannelWindowController(inChannels: channels)
+        let (activeChannelIndex, controller) = getActiveChannelWindowController(
+            inChannels: channels,
+            activeChannelId: activeChannelId
+        )
         
         // Ensure active channel window controller exists and is previewing.
         guard let activeChannelWindowController = controller, activeChannelWindowController.isPreviewing() else {
@@ -262,7 +259,7 @@ class WorkspaceWindowController: NSWindowController, NSWindowDelegate, Workspace
         channelWindowController.render(channelRenderSpec)
         
         // Subscribe to channel state updates.
-        channelStateSubscriptions[channel.id] = channelWindowController.$state.sink { [weak self] state in
+        channelStateSubscriptions[channel.id] = channelWindowController.$publishedState.sink { [weak self] state in
             self?.onChannelStateUpdate(channelId: channel.id)
         }
         
@@ -283,12 +280,15 @@ class WorkspaceWindowController: NSWindowController, NSWindowDelegate, Workspace
     }
     
     // Analyze properties of active channel.
-    private func analyzeActiveChannel(channels: [Channel]) -> (Int, Float, Bool) {
+    private func analyzeActiveChannel(channels: [Channel], activeChannelId: String) -> (Int, Float, Bool) {
         // Get active channel window controller and its index.
-        let (index, controller) = getActiveChannelWindowController(inChannels: channels)
+        let (index, activeChannelWindowController) = getActiveChannelWindowController(
+            inChannels: channels,
+            activeChannelId: activeChannelId
+        )
         
         // Extract optional.
-        guard let channelWindowController = controller else {
+        guard let channelWindowController = activeChannelWindowController else {
             return (0, 0, false)
         }
         
@@ -300,12 +300,9 @@ class WorkspaceWindowController: NSWindowController, NSWindowDelegate, Workspace
     }
     
     // Find the active window controller and its index in the given list of channels.
-    private func getActiveChannelWindowController(inChannels channels: [Channel]) -> (Int, ChannelWindowController?) {
-        // Resolve id of active channel.
-        let activeId = activeChannelId ?? channels[0].id
-        
+    private func getActiveChannelWindowController(inChannels channels: [Channel], activeChannelId: String) -> (Int, ChannelWindowController?) {
         for (i, channel) in channels.enumerated() {
-            if channel.id == activeId, let channelWindowController = channelWindowControllers[channel.id] {
+            if channel.id == activeChannelId, let channelWindowController = channelWindowControllers[channel.id] {
                 return (i, channelWindowController)
             }
         }
@@ -336,7 +333,7 @@ class WorkspaceWindowController: NSWindowController, NSWindowDelegate, Workspace
         activeChannelIndex: Int,
         activeChannelHeightOffset: Float) -> CGFloat {
 
-        CGFloat(channelWindowController.position.y) + CGFloat(
+        CGFloat(channelWindowController.getDestination().y) + CGFloat(
             index < activeChannelIndex ? -activeChannelHeightOffset : activeChannelHeightOffset
         )
     }
@@ -385,6 +382,9 @@ class WorkspaceWindowController: NSWindowController, NSWindowDelegate, Workspace
             activeChannelHeightOffset: activeChannelHeightOffset
         )
         
+        // Set new position destination on channel window controller.
+        channelWindowController.setDestination(appearance.origin)
+        
         // Create new spec to render channel window with.
         let spec = ChannelRenderSpec(
             isNew: isNew,
@@ -397,9 +397,12 @@ class WorkspaceWindowController: NSWindowController, NSWindowDelegate, Workspace
         return (channelWindowController, spec)
     }
     
-    private func getChannelRenderSpecs(channels: [Channel]) -> [(ChannelWindowController, ChannelRenderSpec)] {
+    private func getChannelRenderSpecs(channels: [Channel], activeChannelId: String) -> [(ChannelWindowController, ChannelRenderSpec)] {
         // Get active channel window index and height offset due to latest state change.
-        let (activeIndex, activeHeightOffset, disableNonActiveChannels) = analyzeActiveChannel(channels: channels)
+        let (activeIndex, activeHeightOffset, disableNonActiveChannels) = analyzeActiveChannel(
+            channels: channels,
+            activeChannelId: activeChannelId
+        )
         
         // Return list of channel render specs with their associated controllers.
         return channels.enumerated().map { (i, channel) in
@@ -447,14 +450,14 @@ class WorkspaceWindowController: NSWindowController, NSWindowDelegate, Workspace
     }
     
     // Render all channel windows (with optional animation).
-    private func renderChannels(_ channels: [Channel], withAnimation: Bool) {
+    private func renderChannels(_ channels: [Channel], activeChannelId: String, withAnimation: Bool) {
         // Get list of channel render specs.
-        let channelRenderSpecs = getChannelRenderSpecs(channels: channels)
+        let channelRenderSpecs = getChannelRenderSpecs(channels: channels, activeChannelId: activeChannelId)
         
         // Don't render with animation unless specified.
         guard withAnimation else {
             renderChannelWindows(forSpecs: channelRenderSpecs)
-            onChannelsRendered()
+            onChannelsRendered(activeChannelId: activeChannelId)
             return
         }
         
@@ -469,12 +472,12 @@ class WorkspaceWindowController: NSWindowController, NSWindowDelegate, Workspace
             self?.renderChannelWindows(forSpecs: channelRenderSpecs)
             
         }, completionHandler: { [weak self] in
-            self?.onChannelsRendered()
+            self?.onChannelsRendered(activeChannelId: activeChannelId)
         })
     }
     
     // Render current workspace.
-    private func renderWorkspace(_ workspace: Workspace) {
+    private func renderWorkspace(_ workspace: Workspace, activeChannelId: String? = nil) {
         let channels = workspace.channels
         
         // If no channels exist yet, render view to create first channel.
@@ -483,32 +486,35 @@ class WorkspaceWindowController: NSWindowController, NSWindowDelegate, Workspace
             return
         }
         
+        // Give active channel id a fallback of the first channel's id.
+        let activeId = activeChannelId ?? channels[0].id
+        
         // Render channels and animate the changes if this isn't the first time rendering.
-        renderChannels(channels, withAnimation: channelsHaveRendered)
+        renderChannels(channels, activeChannelId: activeId, withAnimation: channelsHaveRendered)
         
         // Note that channels have been rendered at least once.
         channelsHaveRendered = true
         
         // Ensure only 1 channel is ever in the previewing state at a time.
-        limitPreviewingChannelsToOne(channels: channels)
+        limitPreviewingChannelsToOne(channels: channels, activeChannelId: activeId)
     }
 
     // Loaded view.
-    private func renderLoaded(workspace: Workspace?) {
+    private func renderLoaded(workspace: Workspace?, activeChannelId: String? = nil) {
         if let ws = workspace {
-            renderWorkspace(ws)
+            renderWorkspace(ws, activeChannelId: activeChannelId)
         } else {
             renderCreateFirstWorkspace()
         }
     }
 
     // Render workspace window contents based on current state.
-    func render(_ state: WorkspaceWindowModel.State) {
+    func render(_ state: WorkspaceWindowModel.State, activeChannelId: String? = nil) {
         switch state {
         case .loading:
             renderLoading()
         case .loaded(let workspace):
-            renderLoaded(workspace: workspace)
+            renderLoaded(workspace: workspace, activeChannelId: activeChannelId)
         case .failed(let error):
             renderError(error)
         }
