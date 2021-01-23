@@ -100,22 +100,32 @@ class WorkspaceWindowController: NSWindowController, NSWindowDelegate, Workspace
         
     // Handler called whenever a channel updates state.
     private func onChannelStateUpdate(channelId: String) {
-        // Only proceed if channel window controller exists and it's state case changed.
-        guard let channelWindowController = channelWindowControllers[channelId],
-              channelWindowController.stateChangedCase() else {
+        // Get active channel window controller for channel id.
+        guard let activeChannelWindowController = channelWindowControllers[channelId] else {
             return
         }
         
         // Set this channel to the active one.
         activeChannelId = channelId
         
-        // Re-render current state.
+        // If not switching to actively previewing, canel the previewing timer.
+        if !activeChannelWindowController.isPreviewing() {
+            activeChannelWindowController.cancelPreviewingTimer()
+        }
+        
+        // Re-render ONLY the active channel if it should be updated individually.
+        if activeChannelWindowController.shouldRenderIndividually() {
+            activeChannelWindowController.renderFromState()
+            return
+        }
+        
+        // Re-render the entire workspace with all channels.
         render(windowModel.state)
     }
     
     // Called when channel rendering has completed.
-    private func onChannelsRendered(_ channels: [Channel]) {
-        checkIfActiveRecordingNeedsStart(inChannels: channels)
+    private func onChannelsRendered() {
+        checkIfActiveRecordingNeedsStart()
     }
     
     // Subscribe to window state changes.
@@ -212,12 +222,11 @@ class WorkspaceWindowController: NSWindowController, NSWindowDelegate, Workspace
         return getChannelWindowControllers(forChannels: channels).first(where: { $0.isRecording() })
     }
 
-    private func checkIfActiveRecordingNeedsStart(inChannels channels: [Channel]) {
-        // Get active channel window controller.
-        let (_, controller) = getActiveChannelWindowController(inChannels: channels)
-        
+    private func checkIfActiveRecordingNeedsStart() {
         // Ensure active channel has a recording waiting to be started.
-        guard let activeChannelWindowController = controller, activeChannelWindowController.isRecordingStarting() else {
+        guard let activeId = activeChannelId,
+              let activeChannelWindowController = channelWindowControllers[activeId],
+              activeChannelWindowController.isRecordingStarting() else {
             return
         }
     
@@ -484,7 +493,7 @@ class WorkspaceWindowController: NSWindowController, NSWindowDelegate, Workspace
         // Don't render with animation unless specified.
         guard withAnimation else {
             renderChannelWindows(forSpecs: channelRenderSpecs)
-            onChannelsRendered(channels)
+            onChannelsRendered()
             return
         }
         
@@ -499,7 +508,7 @@ class WorkspaceWindowController: NSWindowController, NSWindowDelegate, Workspace
             self?.renderChannelWindows(forSpecs: channelRenderSpecs)
             
         }, completionHandler: { [weak self] in
-            self?.onChannelsRendered(channels)
+            self?.onChannelsRendered()
         })
     }
     

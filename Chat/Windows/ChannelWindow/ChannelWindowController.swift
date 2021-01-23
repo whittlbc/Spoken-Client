@@ -30,15 +30,15 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate {
     // Latest height offset due to most recent state change.
     var latestHeightOffset: Float { Float(prevSize.height - size.height) / 2 }
     
+    // Latest width offset due to most recent state change.
+    var latestWidthOffset: Float { Float(prevSize.width - size.width) / 2 }
+    
     // Whether this channel in its current state should cause adjacent channels to be disabled.
     var disablesAdjacentChannels: Bool { isRecording() }
         
     // The channel's current state.
     @Published private(set) var state = ChannelState.idle {
-        didSet {
-            prevState = oldValue
-            onStateSet()
-        }
+        didSet { prevState = oldValue }
     }
     
     // The channel's previous state.
@@ -71,6 +71,11 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate {
         
         // Add channel view controller
         addChannelViewController()
+    }
+    
+    // Whether the latest state update should render this channel individually or as a group.
+    func shouldRenderIndividually() -> Bool {
+        !stateChangedCase()
     }
     
     // Promote previous state to current state.
@@ -126,13 +131,6 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate {
     func registerMouseExited() {
         
     }
-        
-    private func onStateSet() {
-        // Cancel the previewing timer if not previewing.
-        if !isPreviewing() {
-            cancelPreviewingTimer()
-        }
-    }
     
     // Add channel view controller as this window's content view controller.
     private func addChannelViewController() {
@@ -149,10 +147,38 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate {
         channelWindow.makeFirstResponder(channelViewController.view)
     }
     
+    // Use the current state to create a new channel render spec with proper size/position params.
+    private func createRenderSpecFromState() -> ChannelRenderSpec {
+        // Create a fresh render spec.
+        var spec = ChannelRenderSpec()
+        
+        // Store current size and position refs.
+        let currSize = size
+        let currPos = position
+        
+        // Since state update has already occurred, use current size property as new spec size.
+        spec.size = currSize
+                
+        // Adjust new position to account for new size, but keep the center origins the same.
+        spec.position = NSPoint(
+            x: currPos.x + CGFloat(latestWidthOffset),
+            y: currPos.y + CGFloat(latestHeightOffset)
+        )
+        
+        return spec
+    }
+    
+    // Render the channel window with the given spec.
     private func renderWindow(_ spec: ChannelRenderSpec) {
         channelWindow.render(spec)
     }
-            
+    
+    // Render window controller with render spec created from current state.
+    func renderFromState() {
+        render(createRenderSpecFromState())
+    }
+
+    // Render this window controller.
     func render(_ spec: ChannelRenderSpec) {
         // Render channel window.
         renderWindow(spec)
