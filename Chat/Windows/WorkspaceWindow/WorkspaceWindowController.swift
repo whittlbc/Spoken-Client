@@ -89,14 +89,10 @@ class WorkspaceWindowController: NSWindowController, NSWindowDelegate, Workspace
     }
     
     // Handle command button key-down event.
-    func onCommandDown() {
-        startChannelPromptSpeechRecognizer()
-    }
-    
+    func onCommandDown() {}
+
     // Handle command button key-up event.
-    func onCommandUp() {
-        stopSpeechRecognition()
-    }
+    func onCommandUp() {}
         
     // Handler called whenever a channel updates state.
     private func onChannelStateUpdate(channelId: String) {
@@ -160,44 +156,6 @@ class WorkspaceWindowController: NSWindowController, NSWindowDelegate, Workspace
             channelWindowController.promotePreviousState()
         }
     }
-    
-    private func stopSpeechRecognition() {
-//        AV.mic.stopSpeechRecognition()
-    }
-    
-    private func startChannelPromptSpeechRecognizer() {
-//        AV.mic.startChannelPromptAnalyzer(onChannelPrompted: { [weak self] result in
-//            if let channelId = result as? String {
-//                self?.onChannelPromptedBySpeech(channelId: channelId)
-//            }
-//        })
-    }
-    
-//    private func onChannelPromptedBySpeech(channelId: String) {
-//        // Get ordered list of existing channel windows.
-//        let channelWindows = getOrderedChannelWindows()
-//
-//        // Find the index of the active channel window.
-//        let activeIndex = channelWindows.firstIndex{ $0.channel.id == channelId }
-//
-//        // Ensure channel window index was found.
-//        guard let activeChannelIndex = activeIndex else {
-//            logger.error("Speech recognizer prompted channel that couldn't be found: \(channelId)")
-//            return
-//        }
-//
-//        // Switch any channel windows currently in the previewing state to back to idle.
-//        unpreviewNonActiveChannelWindows(
-//            channelWindows: channelWindows,
-//            activeChannelIndex: activeChannelIndex
-//        )
-//
-//        // Get the active window by index.
-//        let activeChannelWindow = channelWindows[activeChannelIndex]
-//
-//        // Trigger channel window speech prompted handler.
-//        activeChannelWindow.onSpeechPrompted()
-//    }
     
     // Cancel the active recording if one exists.
     private func findAndCancelActiveRecording() {
