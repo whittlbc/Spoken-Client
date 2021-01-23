@@ -70,6 +70,7 @@ class ChannelWindow: FloatingWindow {
     // Flag indicating whether mouse is inside window.
     var isMouseInside = false
     
+    // Check if the given point is located inside of this window's frame.
     func isMouseLocationInsideFrame(loc: NSPoint? = nil) -> Bool {
         frame.isLocationInside(loc ?? mouseLocationOutsideOfEventStream)
     }
@@ -119,12 +120,14 @@ class ChannelWindow: FloatingWindow {
         channelWindowController?.onMouseExited()
     }
 
-    private func updateDisability(to value: Bool) {
+    // Set current disabled status of this window.
+    private func setDisabled(to value: Bool) {
         isDisabled = value
     }
-    
-    private func applyStatefulSpecProps(_ spec: ChannelRenderSpec) {
-        updateDisability(to: spec.isDisabled)
+
+    // Render channel view content.
+    func renderContent(_ spec: ChannelRenderSpec) {
+        channelViewController.render(spec)
     }
     
     // Render window frame.
@@ -132,15 +135,10 @@ class ChannelWindow: FloatingWindow {
         updateFrame(size: spec.size, position: spec.position)
     }
     
-    // Render channel view content.
-    func renderContent(_ spec: ChannelRenderSpec) {
-        channelViewController.render(spec)
-    }
-    
     // Render window to size/position.
     func render(_ spec: ChannelRenderSpec) {
-        // Apply any spec props that should be stored as props of this class instance.
-        applyStatefulSpecProps(spec)
+        // Store latest disability info on window.
+        setDisabled(to: spec.isDisabled)
 
         // Render frame.
         renderFrame(spec)

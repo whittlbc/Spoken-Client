@@ -340,7 +340,7 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate {
         toRecordingSent()
         
         // Show recording sent for specific amount of time and then revert to idle state.
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
+        DispatchQueue.main.asyncAfter(deadline: .now() + ChannelWindow.ArtificialTiming.showRecordingSentDuration) { [weak self] in
             // Follow the cancelling recording flow to get back to idle state.
             self?.showRecordingCancelled()
             
