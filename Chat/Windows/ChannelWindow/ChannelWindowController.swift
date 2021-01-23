@@ -18,6 +18,9 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate {
     // Get window as channel window.
     var channelWindow: ChannelWindow { window as! ChannelWindow }
     
+    // Controller of parent workspace window.
+    weak var workspaceWindowController: WorkspaceWindowController?
+    
     // Window's current size.
     var size: NSSize { ChannelWindow.Style.size(forState: state) }
     
@@ -36,6 +39,12 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate {
     // Whether this channel in its current state should cause adjacent channels to be disabled.
     var disablesAdjacentChannels: Bool { isRecording() }
         
+    // Whether this channel should respond to interaction.
+    var isDisabled: Bool { channelWindow.isDisabled }
+    
+    // Timer that double checks if the mouse is still inside this window when in the previewing state.
+    private var previewingTimer: Timer?
+
     // The channel's current state.
     @Published private(set) var state = ChannelState.idle {
         didSet { prevState = oldValue }
@@ -73,6 +82,45 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate {
         addChannelViewController()
     }
     
+    // Handle mouse-enter event by state.
+    func onMouseEntered() {
+        switch state {
+        case .idle:
+            onMouseEnteredIdle()
+        default:
+            break
+        }
+    }
+    
+    // Handle mouse-exit event by state.
+    func onMouseExited() {
+        switch state {
+        case .previewing:
+            onMouseExitedPreviewing()
+        default:
+            break
+        }
+    }
+
+    // Handle avatar click events.
+    func onAvatarClick() {
+        switch state {
+        case .previewing:
+            toRecordingStarting()
+        default:
+            break
+        }
+    }
+    
+    // Handle event where channel is prompted by speech recognition.
+    func onSpeechPrompted() {
+        if isDisabled {
+            return
+        }
+        
+        toRecordingStarting()
+    }
+        
     // Whether the latest state update should render this channel individually or as a group.
     func shouldRenderIndividually() -> Bool {
         !stateChangedCase()
@@ -103,35 +151,164 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate {
         return state === .recording(.starting)
     }
     
+    // Check if currently in the recording:started state.
+    func isRecordingStarted() -> Bool {
+        return state === .recording(.started)
+    }
+    
+    // Check if currently in the recording:cancelling state.
+    func isRecordingCancelling() -> Bool {
+        return state === .recording(.cancelling)
+    }
+    
+    // Check if currently in the recording:sending state.
+    func isRecordingSending() -> Bool {
+        return state === .recording(.sending)
+    }
+    
+    // Check if currently in the recording:sent state.
+    func isRecordingSent() -> Bool {
+        return state === .recording(.sent)
+    }
+    
+    // Set state to idle.
+    func toIdle() {
+        state = .idle
+    }
+    
+    // Set state to previewing.
+    func toPreviewing() {
+        state = .previewing
+    }
+    
+    // Set state to recording:starting.
+    func toRecordingStarting() {
+        state = .recording(.starting)
+    }
+    
+    // Set state to recording:started.
+    func toRecordingStarted() {
+        state = .recording(.started)
+    }
+    
+    // Set state to recording:cancelling.
+    func toRecordingCancelling() {
+        state = .recording(.cancelling)
+    }
+    
+    // Set state to recording:sending.
+    func toRecordingSending() {
+        state = .recording(.sending)
+    }
+    
+    // Set state to recording:sent.
+    func toRecordingSent() {
+        state = .recording(.sent)
+    }
+    
     // Check if the current state's case is different than the previous state's case.
     func stateChangedCase() -> Bool {
         return state != prevState
     }
     
+    // Start a new audio message to send to this channel.
     func startRecording() {
+        // Enable key event listners.
+        toggleRecordingKeyListeners(enable: true)
         
+        // Upsert an active recording.
+        AV.mic.startRecording()
+        
+        // Set state to started recording.
+        toRecordingStarted()
     }
     
+    // Cancel recording and switch back to idle state.
     func cancelRecording() {
+        // Disable key event listners.
+        toggleRecordingKeyListeners(enable: false)
         
+        // Stop and cler the active recording.
+        AV.mic.stopRecording()
+        AV.mic.clearRecording()
+
+        // Show recording as cancelled.
+        showRecordingCancelled()
     }
     
+    // Send the active audio message to this channel.
     func sendRecording() {
+        // Disable key event listners.
+        toggleRecordingKeyListeners(enable: false)
+
+        // Set state to sending recording.
+        toRecordingSending()
+
+        // Stop active recording.
+        AV.mic.stopRecording()
+
+        // TODO: Actually send recording...this will include a lot of steps...
         
+        // Hack to simulate network time.
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { [weak self] in
+            // Show recording as sent.
+            self?.showRecordingSent()
+        }
     }
-        
+
+    // Start timer used to check whether mouse is still inside the previewing window.
     func startPreviewingTimer() {
+        if previewingTimer != nil {
+            return
+        }
         
+        // Create timer that repeats call to self.ensureStillPreviewing every 150ms.
+        previewingTimer = Timer.scheduledTimer(
+            timeInterval: TimeInterval(0.15),
+            target: self,
+            selector: #selector(ensureStillPreviewing),
+            userInfo: nil,
+            repeats: true
+        )
     }
     
+    // Invalidate previewing timer and reset to nil if it exists.
     func cancelPreviewingTimer() {
+        if previewingTimer == nil {
+            return
+        }
         
+        previewingTimer!.invalidate()
+        previewingTimer = nil
     }
     
-    func registerMouseExited() {
-        
+    // Assume the mouse has exited the window, regardless of truth.
+    func forceMouseExit() {
+        channelWindow.registerMouseExited()
     }
     
+    // Tell parent workspace window controller to toggle the recording-related global hot-keys.
+    private func toggleRecordingKeyListeners(enable: Bool) {
+        workspaceWindowController?.toggleRecordingKeyListeners(enable: enable)
+    }
+    
+    // Ensure mouse is still inside this window; if not, force exit the mouse.
+    @objc private func ensureStillPreviewing() {
+        if !channelWindow.isMouseLocationInsideFrame() {
+            forceMouseExit()
+        }
+    }
+
+    // Mouse entered idle state --> update state to previewing.
+    private func onMouseEnteredIdle() {
+        toPreviewing()
+    }
+    
+    // Mouse exited previewing state --> update state to idle.
+    private func onMouseExitedPreviewing() {
+        toIdle()
+    }
+
     // Add channel view controller as this window's content view controller.
     private func addChannelViewController() {
         // Create new channel view controller.
@@ -145,6 +322,31 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate {
  
         // Make each channel view the first responder inside the channel window.
         channelWindow.makeFirstResponder(channelViewController.view)
+    }
+    
+    // Show user that the recording has been successfully cancelled.
+    private func showRecordingCancelled() {
+        // Set state to cancelling recording.
+        toRecordingCancelling()
+        
+        // Wait the tiniest amount of time, and then set state back to idle.
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) { [weak self] in
+            self?.toIdle()
+        }
+    }
+    
+    // Show user that the recording has been successfully sent.
+    private func showRecordingSent() {
+        toRecordingSent()
+        
+        // Show recording sent for specific amount of time and then revert to idle state.
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
+            // Follow the cancelling recording flow to get back to idle state.
+            self?.showRecordingCancelled()
+            
+            // HACK: Move somewhere else once you're actually uploading recordings...?
+            AV.mic.clearRecording()
+        }
     }
     
     // Use the current state to create a new channel render spec with proper size/position params.
@@ -177,7 +379,7 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate {
     func renderFromState() {
         render(createRenderSpecFromState())
     }
-
+    
     // Render this window controller.
     func render(_ spec: ChannelRenderSpec) {
         // Render channel window.

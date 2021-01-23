@@ -80,7 +80,7 @@ class OldChannelWindow: FloatingWindow {
     // The latest origin this window will-animate/has-animated to.
     private var destination: NSPoint?
     
-    // Timer that double checks the mouse is still inside this window if its in the previewing state.
+    // Timer that double checks if the mouse is still inside this window when in the previewing state.
     // State will be forced out of the previewing state if the mouse is not.
     private var previewingTimer: Timer?
     
@@ -180,6 +180,17 @@ class OldChannelWindow: FloatingWindow {
         cancelPreviewingTimer()
     }
 
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     // Start a new audio message to send to this channel.
     func startRecording() {
         // Enable key event listners.

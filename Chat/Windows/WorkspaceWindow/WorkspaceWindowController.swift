@@ -244,7 +244,7 @@ class WorkspaceWindowController: NSWindowController, NSWindowDelegate, Workspace
             }
             
             if let channelWindowController = channelWindowControllers[channel.id], channelWindowController.isPreviewing() {
-                channelWindowController.registerMouseExited()
+                channelWindowController.forceMouseExit()
             }
         }
     }
@@ -284,6 +284,9 @@ class WorkspaceWindowController: NSWindowController, NSWindowDelegate, Workspace
     private func createChannelWindowController(forChannel channel: Channel, atIndex index: Int) -> ChannelWindowController {
         // Create channel window controller.
         let channelWindowController = ChannelWindowController(channel: channel)
+        
+        // Add self as weak reference.
+        channelWindowController.workspaceWindowController = self
         
         // Build a render spec for the initial rendering of the channel.
         var channelRenderSpec = ChannelRenderSpec()
