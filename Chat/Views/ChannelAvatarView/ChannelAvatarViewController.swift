@@ -162,9 +162,14 @@ class ChannelAvatarViewController: NSViewController {
             
             // Keep container height and width the same.
             containerView.widthAnchor.constraint(equalTo: containerView.heightAnchor),
+                        
+            // Align right sides (but shift it left the specified amount).
+            containerView.rightAnchor.constraint(
+                equalTo: view.rightAnchor,
+                constant: ChannelAvatarView.Style.ContainerView.PositionStyle.leftOffset
+            ),
             
-            // Center-align axes.
-            containerView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            // Align y-centers.
             containerView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
         ])
     }

@@ -25,6 +25,8 @@ class ChannelAvatarView: NSView {
                 
                 // Absolute shift left of avatar view relative to parent channel view.
                 static let leftOffset: CGFloat = -5.0
+                
+                
             }
             
             // Shadow styling for container view.

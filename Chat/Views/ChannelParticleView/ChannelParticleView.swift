@@ -44,7 +44,7 @@ class ChannelParticleView: ParticleView {
     static let micInputPipeKey = "channelParticleView"
     
     // Initial size of this view.
-    static let initialSize = ChannelWindow.Style.recordingSize
+    static let initialSize = ChannelWindow.Style.recordingSize(withVideo: false) // audio only size
     
     // Total number of particles to render.
     static let numParticles = ParticleCount.TwentyFourtyEight

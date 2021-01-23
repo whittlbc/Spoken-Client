@@ -180,6 +180,11 @@ class ChannelViewController: NSViewController, ParticleViewDelegate {
     
     // Reset contents back to initial idle state.
     private func resetToIdle() {
+        // Nothing should have changed if using video.
+        if UserSettings.Video.useCamera {
+            return
+        }
+
         // Flip avatar view x-alignment from center back to right.
         alignAvatar(to: .right)
         
@@ -192,6 +197,11 @@ class ChannelViewController: NSViewController, ParticleViewDelegate {
     
     // Rendered with recording:started state.
     private func renderStartedRecording() {
+        // Don't change anything if using video for recording.
+        if UserSettings.Video.useCamera {
+            return
+        }
+        
         // Flip avatar view x-alignment from right to center.
         alignAvatar(to: .center)
         
@@ -206,6 +216,11 @@ class ChannelViewController: NSViewController, ParticleViewDelegate {
     
     // Rendered with recording:sending state.
     private func renderSendingRecording() {
+        // Particle view is only used if camera is not.
+        if UserSettings.Video.useCamera {
+            return
+        }
+
         // Explode the particle view.
         particleView.explode()
     }

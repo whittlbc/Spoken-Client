@@ -20,7 +20,7 @@ public enum AV {
         seekMicPermission()
         
         // Ask permission to use speech recognition on mic audio input (if user has feature enabled).
-        if UserSettings.SpeechRecognition.shouldEnable {
+        if UserSettings.SpeechRecognition.isEnabled {
             seekSpeechRecognitionPermission()
         }
     }

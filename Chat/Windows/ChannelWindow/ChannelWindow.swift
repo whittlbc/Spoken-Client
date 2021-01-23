@@ -21,7 +21,9 @@ class ChannelWindow: FloatingWindow {
         static let previewingSize = NSSize(width: 52, height: 52)
         
         // Recording window size.
-        static let recordingSize = NSSize(width: 120, height: 120)
+        static func recordingSize(withVideo: Bool) -> NSSize {
+            withVideo ? NSSize(width: 194, height: 194) : NSSize(width: 120, height: 120)
+        }
         
         // Default window size for the provided channel state.
         static func size(forState state: ChannelState) -> NSSize {
@@ -37,10 +39,16 @@ class ChannelWindow: FloatingWindow {
                 
             // Recording size.
             case .recording(let recordingStatus):
-                return (recordingStatus == .initializing ||
-                    recordingStatus == .cancelling ||
-                    recordingStatus == .finished) ?
-                    previewingSize : recordingSize
+                switch recordingStatus {
+                
+                // Initializing, cancelling, or finished recording.
+                case .initializing, .cancelling, .finished:
+                    return UserSettings.Video.useCamera ? recordingSize(withVideo: true) : previewingSize
+                
+                // All other recording statuses.
+                default:
+                    return recordingSize(withVideo: UserSettings.Video.useCamera)
+                }
             }
         }
     }
