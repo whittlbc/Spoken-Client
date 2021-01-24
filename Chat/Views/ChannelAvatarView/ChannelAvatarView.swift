@@ -20,13 +20,11 @@ class ChannelAvatarView: NSView {
             // Positional styling for container view.
             enum PositionStyle {
                 
-                // Height of avatar relative to parent channel view.
-                static let relativeHeight: CGFloat = 0.68
+                // Height offset of avatar relative to parent channel view.
+                static let heightOffset: CGFloat = -10.5
                 
                 // Absolute shift left of avatar view relative to parent channel view.
                 static let leftOffset: CGFloat = -5.0
-                
-                
             }
             
             // Shadow styling for container view.

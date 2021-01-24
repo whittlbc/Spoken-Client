@@ -27,6 +27,12 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate {
     // Window's previous size.
     var prevSize: NSSize { ChannelWindow.Style.size(forState: prevState) }
     
+    // Window's current external size.
+    var externalSize: NSSize { ChannelWindow.Style.externalSize(forState: state) }
+    
+    // Window's previous external size.
+    var prevExternalSize: NSSize { ChannelWindow.Style.externalSize(forState: prevState) }
+
     // Window's current position.
     var position: NSPoint { window!.frame.origin }
         
@@ -35,6 +41,9 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate {
     
     // Latest width offset due to most recent state change.
     var latestWidthOffset: Float { Float(prevSize.width - size.width) / 2 }
+    
+    // External height offset due to most recent state change.
+    var externalHeightOffset: Float { Float(prevExternalSize.height - externalSize.height) / 2 }
     
     // Whether this channel in its current state should cause adjacent channels to be disabled.
     var disablesAdjacentChannels: Bool { isRecording() }

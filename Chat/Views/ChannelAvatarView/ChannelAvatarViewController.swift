@@ -151,13 +151,13 @@ class ChannelAvatarViewController: NSViewController {
     private func constrainContainerView() {
         // Set up auto-layout for sizing/positioning.
         containerView.translatesAutoresizingMaskIntoConstraints = false
-        
+                
         // Add auto-layout constraints.
         NSLayoutConstraint.activate([
             // Set height of container.
             containerView.heightAnchor.constraint(
                 equalTo: view.heightAnchor,
-                multiplier: ChannelAvatarView.Style.ContainerView.PositionStyle.relativeHeight
+                constant: ChannelAvatarView.Style.ContainerView.PositionStyle.heightOffset
             ),
             
             // Keep container height and width the same.

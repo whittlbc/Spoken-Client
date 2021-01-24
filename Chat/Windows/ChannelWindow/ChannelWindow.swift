@@ -18,11 +18,15 @@ class ChannelWindow: FloatingWindow {
         static let idleSize = NSSize(width: 30, height: 30)
         
         // Previewing window size.
-        static let previewingSize = NSSize(width: 52, height: 52)
+        static let previewingSize = NSSize(width: 48, height: 48)
         
         // Recording window size.
         static func recordingSize(withVideo: Bool) -> NSSize {
-            withVideo ? NSSize(width: 194, height: 194) : NSSize(width: 120, height: 120)
+            withVideo ? NSSize(width: 143, height: 143) : NSSize(width: 120, height: 120)
+        }
+        
+        static func externalRecordingSize(withVideo: Bool) -> NSSize {
+            withVideo ? NSSize(width: 110, height: 110) : NSSize(width: 120, height: 120)
         }
         
         // Default window size for the provided channel state.
@@ -48,6 +52,29 @@ class ChannelWindow: FloatingWindow {
                 // All other recording statuses.
                 default:
                     return recordingSize(withVideo: UserSettings.Video.useCamera)
+                }
+            }
+        }
+        
+        // Size of channel window as it appears to other adjacent channels (can be faked).
+        static func externalSize(forState state: ChannelState) -> NSSize {
+            switch state {
+            
+            // For idle or previewing, just return regular size.
+            case .idle, .previewing:
+                return size(forState: state)
+                
+            // Recording size.
+            case .recording(let recordingStatus):
+                switch recordingStatus {
+                
+                // Initializing, cancelling, or finished recording.
+                case .initializing, .cancelling, .finished:
+                    return UserSettings.Video.useCamera ? externalRecordingSize(withVideo: true) : size(forState: state)
+                
+                // All other recording statuses.
+                default:
+                    return externalRecordingSize(withVideo: UserSettings.Video.useCamera)
                 }
             }
         }
