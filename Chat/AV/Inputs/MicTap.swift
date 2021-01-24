@@ -9,7 +9,7 @@
 import Cocoa
 import AVFoundation
 
-class Mic: SpeechRecognizerDelegate {
+class MicTap: SpeechRecognizerDelegate {
     
     let bus: AVAudioNodeBus = 0
     

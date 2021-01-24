@@ -8,6 +8,7 @@
 
 import Cocoa
 import Combine
+import AVFoundation
 
 // Controller for ChannelAvatarView to manage all of its subviews and their interactions.
 class ChannelAvatarViewController: NSViewController {
@@ -38,6 +39,8 @@ class ChannelAvatarViewController: NSViewController {
     
     // Avatar image subscription.
     private var imageSubscription: AnyCancellable?
+    
+    private weak var videoPreviewLayer: AVCaptureVideoPreviewLayer?
 
     // Proper initializer to use when rendering channel.
     convenience init(channel: Channel) {
@@ -503,6 +506,33 @@ class ChannelAvatarViewController: NSViewController {
         )
     }
     
+    private func addVideoPreviewLayer() {
+        guard UserSettings.Video.useCamera else {
+            return
+        }
+        
+        videoPreviewLayer = AV.avRecorder.videoPreviewLayer
+        
+        // Create new layer the size of image view.
+        guard let previewLayer = videoPreviewLayer else {
+            return
+        }
+                        
+        previewLayer.frame = imageView.bounds
+        previewLayer.videoGravity = .resizeAspectFill
+        previewLayer.masksToBounds = true
+        previewLayer.connection?.automaticallyAdjustsVideoMirroring = false
+        previewLayer.connection?.isVideoMirrored = true
+        
+        // Add video preview layer as sublayer to image view.
+        imageView.layer?.addSublayer(previewLayer)
+    }
+    
+    private func removeVideoPreviewLayer() {
+        videoPreviewLayer?.removeFromSuperlayer()
+        videoPreviewLayer = nil
+    }
+    
     private func renderIdle(_ state: ChannelState) {
         // Animate avatar view size.
         animateAvatarViewSize(toState: state)
@@ -536,9 +566,17 @@ class ChannelAvatarViewController: NSViewController {
         fadeOutNewRecordingIndicator()
     }
     
+    private func renderStartedRecording(_ state: ChannelState) {
+        // Add video preview layer.
+        addVideoPreviewLayer()
+    }
+    
     private func renderCancellingRecording(_ state: ChannelState) {
         // Fade out blur layer to avatar image.
         fadeOutBlurLayer(duration: ChannelAvatarView.AnimationConfig.CheckmarkView.exitDuration)
+        
+        // Remove video preview layer.
+        removeVideoPreviewLayer()
     }
     
     private func renderSendingRecording(_ state: ChannelState) {
@@ -551,7 +589,6 @@ class ChannelAvatarViewController: NSViewController {
 
         // Fade in spinner view.
         fadeInSpinnerView()
-
     }
 
     private func renderSentRecording(_ state: ChannelState) {
@@ -568,6 +605,9 @@ class ChannelAvatarViewController: NSViewController {
         
         // Fade out checkmark.
         fadeOutCheckmarkView()
+        
+        // Remove video preview layer.
+        removeVideoPreviewLayer()
     }
     
     // Render recording-specific view updates.
@@ -575,6 +615,8 @@ class ChannelAvatarViewController: NSViewController {
         switch recordingStatus {
         case .initializing:
             renderInitializingRecording(state)
+        case .started:
+            renderStartedRecording(state)
         case .cancelling:
             renderCancellingRecording(state)
         case .sending:
@@ -583,8 +625,6 @@ class ChannelAvatarViewController: NSViewController {
             renderSentRecording(state)
         case .finished:
             renderFinishedRecording(state)
-        default:
-            break
         }
     }
 

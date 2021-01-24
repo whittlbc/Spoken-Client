@@ -13,7 +13,9 @@ public enum AV {
     
     static let locale = Locale(identifier: "en-US")
     
-    static let mic = Mic()
+    static let mic = MicTap()
+    
+    static let avRecorder = AVRecorder()
     
     static func seekPermissions() {
         // Ask permission to access the mic.
@@ -22,6 +24,11 @@ public enum AV {
         // Ask permission to use speech recognition on mic audio input (if user has feature enabled).
         if UserSettings.SpeechRecognition.isEnabled {
             seekSpeechRecognitionPermission()
+        }
+        
+        // Ask permission to use the camera if the user wants to use video.
+        if UserSettings.Video.useCamera {
+            seekCameraPermission()
         }
     }
     
@@ -77,6 +84,51 @@ public enum AV {
         // Handle unknown cases that may arise in future versions.
         default:
             break
+        }
+    }
+    
+    static func seekCameraPermission() {
+        // Switch over the current auth status for camera access.
+        switch AVCaptureDevice.authorizationStatus(for: .video) {
+
+        // If already authorized, go ahead and configure the inputs requiring camera access.
+        case .authorized:
+            avRecorder.configure()
+        
+        // If user hasn't been asked yet, ask for permission.
+        case .notDetermined:
+            AVCaptureDevice.requestAccess(for: .video) { granted in
+                // Configure inputs requiring camera access when granted.
+                if granted {
+                    avRecorder.configure()
+                }
+            }
+            
+        // Log error if device restricts camera access.
+        case .restricted:
+            logger.error("Seeking camera permission failed -- device restricts camera access.")
+        
+        // Log error if user denies camera access.
+        case .denied:
+            logger.error("Seeking camera permission failed -- user denied access.")
+        
+        // Handle unknown cases that may arise in future versions.
+        default:
+            break
+        }
+    }
+    
+    static func startRecording() {
+        UserSettings.Video.useCamera ? AV.avRecorder.startRecording() : AV.mic.startRecording()
+    }
+    
+    static func stopRecording() {
+        UserSettings.Video.useCamera ? AV.avRecorder.stopRecording() : AV.mic.stopRecording()
+    }
+    
+    static func clearRecording() {
+        if !UserSettings.Video.useCamera {
+            AV.mic.clearRecording()
         }
     }
 }

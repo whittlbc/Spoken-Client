@@ -43,7 +43,7 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate {
     var latestWidthOffset: Float { Float(prevSize.width - size.width) / 2 }
     
     // External height offset due to most recent state change.
-    var externalHeightOffset: Float { Float(prevExternalSize.height - externalSize.height) / 2 }
+    var externalHeightOffset: Float { Float(prevExternalSize.height - externalSize.height) / 2}
     
     // Whether this channel in its current state should cause adjacent channels to be disabled.
     var disablesAdjacentChannels: Bool { isRecording() }
@@ -243,7 +243,7 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate {
         toggleRecordingKeyListeners(enable: true)
         
         // Upsert an active recording.
-        AV.mic.startRecording()
+        AV.startRecording()
         
         // Set state to started recording.
         toRecordingStarted()
@@ -255,8 +255,8 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate {
         toggleRecordingKeyListeners(enable: false)
         
         // Stop and cler the active recording.
-        AV.mic.stopRecording()
-        AV.mic.clearRecording()
+        AV.stopRecording()
+        AV.clearRecording()
 
         // Show recording as cancelled.
         showRecordingCancelled()
@@ -271,7 +271,7 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate {
         toRecordingSending()
 
         // Stop active recording.
-        AV.mic.stopRecording()
+        AV.stopRecording()
 
         // TODO: Actually send recording...this will include a lot of steps...
         
@@ -370,7 +370,7 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate {
             self?.showRecordingFinished()
             
             // TODO: Move somewhere else once you're actually uploading recordings...?
-            AV.mic.clearRecording()
+            AV.clearRecording()
         }
     }
     

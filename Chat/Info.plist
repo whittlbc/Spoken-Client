@@ -47,10 +47,12 @@
 			</dict>
 		</dict>
 	</dict>
+	<key>NSCameraUsageDescription</key>
+	<string>This app uses your camera to ...</string>
 	<key>NSHumanReadableCopyright</key>
 	<string>Copyright © 2020 Ben Whittle. All rights reserved.</string>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>Your microphone will be used to...</string>
+	<string>This app requires microphone access to ...</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
 	<key>NSSpeechRecognitionUsageDescription</key>
