@@ -93,14 +93,14 @@ public enum AV {
 
         // If already authorized, go ahead and configure the inputs requiring camera access.
         case .authorized:
-            avRecorder.configure()
+            return
         
         // If user hasn't been asked yet, ask for permission.
         case .notDetermined:
             AVCaptureDevice.requestAccess(for: .video) { granted in
                 // Configure inputs requiring camera access when granted.
                 if granted {
-                    avRecorder.configure()
+                    return
                 }
             }
             
@@ -118,12 +118,8 @@ public enum AV {
         }
     }
     
-    static func startRecording() {
-        UserSettings.Video.useCamera ? AV.avRecorder.startRecording() : AV.mic.startRecording()
-    }
-    
     static func stopRecording() {
-        UserSettings.Video.useCamera ? AV.avRecorder.stopRecording() : AV.mic.stopRecording()
+        UserSettings.Video.useCamera ? AV.avRecorder.stop() : AV.mic.stopRecording()
     }
     
     static func clearRecording() {

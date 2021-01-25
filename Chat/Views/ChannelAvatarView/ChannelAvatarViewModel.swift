@@ -13,9 +13,9 @@ class ChannelAvatarViewModel {
     
     typealias ImageResult = Result<NSImage, Error>
     
-    private var channel: Channel
+    var channel: Channel
     
-    private var recipient: Member { channel.members.first(where: { $0.userId != Session.currentUserId! })! }
+    var recipient: Member { channel.members.first(where: { $0.userId != Session.currentUserId! })! }
 
     @Published private(set) var image: NSImage?
     

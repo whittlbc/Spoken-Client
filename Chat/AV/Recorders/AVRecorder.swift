@@ -8,67 +8,110 @@
 
 import Cocoa
 import AVFoundation
+import Combine
 
-class AVRecorder {
-    
-    private let captureSession = AVCaptureSession()
-    
-    private var audioInput: AVCaptureDeviceInput?
-    
-    private var videoInput: AVCaptureDeviceInput?
-    
-    var videoPreviewLayer: AVCaptureVideoPreviewLayer?
-    
-    func configure() {
-        captureSession.beginConfiguration()
-        
-        configureAudioInput()
+class AVRecorder: NSObject, AVCaptureAudioDataOutputSampleBufferDelegate, AVCaptureVideoDataOutputSampleBufferDelegate {
 
-        configureVideoInput()
+    enum Threads {
+        static let control = "av-control"
+        static let dataOutput = "av-data-output"
+    }
+
+    @Published var state = AVRecorderState.initialized
+    
+    let sessionFactory = AVSessionFactory()
+    
+    var session: AVCaptureSession?
+    
+    var startStatus: AVRecorderStartStatus?
+    
+    private var controlThread: DispatchQueue { getBackgroundThread(name: Threads.control) }
+    
+    private var dataOutputThread: DispatchQueue { getBackgroundThread(name: Threads.dataOutput) }
         
-        configureVideoPreview()
+    func start(id: String) {
+        controlThread.async {
+            self.createSession()
+            self.startStatus = AVRecorderStartStatus()
+            self.session!.startRunning()
+            self.state = .starting(self.session!, id)
+        }
+    }
+    
+    func stop() {
+        controlThread.async {
+            self.state = .stopping
+            self.session!.stopRunning()
+            self.session = nil
+            self.startStatus = nil
+        }
+    }
+    
+    func isStarted() -> Bool {
+        state == .started("")
+    }
+    
+    // Handle any new AV output from the current capture session.
+    func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
+        switch output {
         
-        captureSession.commitConfiguration()
+        // New audio output.
+        case is AVCaptureAudioDataOutput:
+            onAudioOutput(sampleBuffer: sampleBuffer, connection: connection)
+            
+        // New video output.
+        case is AVCaptureVideoDataOutput:
+            onVideoOutput(sampleBuffer: sampleBuffer, connection: connection)
+            
+        default:
+            break
+        }
     }
     
-    func startRecording() {
-        captureSession.startRunning()
-    }
-    
-    func stopRecording() {
-        captureSession.stopRunning()
-    }
-    
-    private func configureAudioInput() {
-        guard let audioDevice = AVCaptureDevice.default(for: .audio) else {
+    private func onAudioOutput(sampleBuffer: CMSampleBuffer, connection: AVCaptureConnection) {
+        startStatus?.audio = true
+        
+        checkIfFullyStarted()
+        
+        guard isStarted() else {
             return
         }
-        
-        audioInput = try? AVCaptureDeviceInput(device: audioDevice)
-
-        guard let audioDeviceInput = audioInput, captureSession.canAddInput(audioDeviceInput) else {
-            return
-        }
-        
-        captureSession.addInput(audioDeviceInput)
     }
     
-    private func configureVideoInput() {
-        guard let videoDevice = AVCaptureDevice.default(for: .video) else {
+    private func onVideoOutput(sampleBuffer: CMSampleBuffer, connection: AVCaptureConnection) {
+        startStatus?.video = true
+        
+        checkIfFullyStarted()
+        
+        guard isStarted() else {
             return
         }
-
-        videoInput = try? AVCaptureDeviceInput(device: videoDevice)
-        
-        guard let videoDeviceInput = videoInput, captureSession.canAddInput(videoDeviceInput) else {
-            return
-        }
-        
-        captureSession.addInput(videoDeviceInput)
     }
     
-    private func configureVideoPreview() {
-        videoPreviewLayer = AVCaptureVideoPreviewLayer(session: captureSession)
+    private func checkIfFullyStarted() {
+        switch state {
+        
+        case .starting(_, let id):
+            if startStatus?.audio == true && startStatus?.video == true {
+                state = .started(id)
+            }
+
+        default:
+            break
+        }
+    }
+    
+    private func createSession() {
+        session = sessionFactory.createSession(
+            outputDelegate: self,
+            outputThread: dataOutputThread
+        )
+    }
+    
+    private func getBackgroundThread(name: String) -> DispatchQueue {
+        dispatch_queue_global_t(
+            label: [Config.appBundleID, name].joined(separator: "."),
+            qos: .background
+        )
     }
 }
-

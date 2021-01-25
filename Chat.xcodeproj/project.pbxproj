@@ -57,6 +57,8 @@
 		097228FC25BC8F0C00219591 /* ChannelAvatarViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 097228FB25BC8F0C00219591 /* ChannelAvatarViewModel.swift */; };
 		0972290225BCC98800219591 /* UserDefaults+RawRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0972290125BCC98800219591 /* UserDefaults+RawRepresentable.swift */; };
 		0972290A25BD17E700219591 /* AVRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0972290925BD17E700219591 /* AVRecorder.swift */; };
+		0972290F25BE1D8300219591 /* AVSessionFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0972290E25BE1D8300219591 /* AVSessionFactory.swift */; };
+		0972291725BE575C00219591 /* AVRecorderState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0972291625BE575C00219591 /* AVRecorderState.swift */; };
 		0990879525797561001660D1 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0990879425797561001660D1 /* AppDelegate.swift */; };
 		0990879925797563001660D1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0990879825797563001660D1 /* Assets.xcassets */; };
 		099087A625797645001660D1 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 099087A525797645001660D1 /* main.swift */; };
@@ -154,6 +156,8 @@
 		097228FB25BC8F0C00219591 /* ChannelAvatarViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelAvatarViewModel.swift; sourceTree = "<group>"; };
 		0972290125BCC98800219591 /* UserDefaults+RawRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserDefaults+RawRepresentable.swift"; sourceTree = "<group>"; };
 		0972290925BD17E700219591 /* AVRecorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AVRecorder.swift; sourceTree = "<group>"; };
+		0972290E25BE1D8300219591 /* AVSessionFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AVSessionFactory.swift; sourceTree = "<group>"; };
+		0972291625BE575C00219591 /* AVRecorderState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AVRecorderState.swift; sourceTree = "<group>"; };
 		0990879125797561001660D1 /* Chat.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Chat.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0990879425797561001660D1 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		0990879825797563001660D1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -508,6 +512,8 @@
 				0996443525A8F4A6004473B7 /* AudioRecorder.swift */,
 				0996443925A8F6B5004473B7 /* AudioRecording.swift */,
 				0972290925BD17E700219591 /* AVRecorder.swift */,
+				0972290E25BE1D8300219591 /* AVSessionFactory.swift */,
+				0972291625BE575C00219591 /* AVRecorderState.swift */,
 			);
 			path = Recorders;
 			sourceTree = "<group>";
@@ -720,6 +726,7 @@
 				09C1329425A7D59800FB1D90 /* SpeechAnalyzerType.swift in Sources */,
 				0995DDFF257AEDE000DAA334 /* SidebarWindow.swift in Sources */,
 				0995DE2F25818B3E00DAA334 /* Logger.swift in Sources */,
+				0972290F25BE1D8300219591 /* AVSessionFactory.swift in Sources */,
 				096862D82582A03F00B9B614 /* Arrow+Networking.swift in Sources */,
 				094DAB0025AF942500CFC2EC /* WorkspaceDataProvider.swift in Sources */,
 				09C1328125A7C3AC00FB1D90 /* SFSpeechRecognizer+AuthStatus.swift in Sources */,
@@ -768,6 +775,7 @@
 				0940E08025A7B6AB006184D7 /* MicTap.swift in Sources */,
 				09F534E725A7F76D001B4FF6 /* SpeechAnalyzerDelegate.swift in Sources */,
 				09D3FC0925B5015C00CC744A /* WorkspaceWindow.swift in Sources */,
+				0972291725BE575C00219591 /* AVRecorderState.swift in Sources */,
 				0996446725AE92DF004473B7 /* CacheManager.swift in Sources */,
 				096862E22582A61C00B9B614 /* Name.swift in Sources */,
 				0996444425ABAB43004473B7 /* AudioAnalysis.swift in Sources */,

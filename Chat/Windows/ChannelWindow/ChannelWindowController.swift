@@ -131,7 +131,7 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate {
     func onAvatarClick() {
         switch state {
         case .previewing:
-            toRecordingInitializing()
+            initializeRecording()
         default:
             break
         }
@@ -242,8 +242,10 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate {
         // Enable key event listners.
         toggleRecordingKeyListeners(enable: true)
         
-        // Upsert an active recording.
-        AV.startRecording()
+        // Start recording if using audio-only.
+        if !UserSettings.Video.useCamera {
+            AV.mic.startRecording()
+        }
         
         // Set state to started recording.
         toRecordingStarted()
@@ -255,6 +257,7 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate {
         toggleRecordingKeyListeners(enable: false)
         
         // Stop and cler the active recording.
+        
         AV.stopRecording()
         AV.clearRecording()
 
@@ -311,6 +314,14 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate {
     // Assume the mouse has exited the window, regardless of truth.
     func forceMouseExit() {
         channelWindow.registerMouseExited()
+    }
+    
+    private func initializeRecording() {
+        if UserSettings.Video.useCamera {
+            AV.avRecorder.start(id: channel.id)
+        }
+
+        toRecordingInitializing()
     }
     
     // Tell parent workspace window controller to toggle the recording-related global hot-keys.
