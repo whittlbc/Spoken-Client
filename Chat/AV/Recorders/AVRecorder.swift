@@ -23,7 +23,7 @@ class AVRecorder: NSObject, AVCaptureAudioDataOutputSampleBufferDelegate, AVCapt
     
     var session: AVCaptureSession?
     
-    var startStatus: AVRecorderStartStatus?
+    var startStatus = AVRecorderStartStatus()
     
     private var controlThread: DispatchQueue { getBackgroundThread(name: Threads.control) }
     
@@ -32,7 +32,6 @@ class AVRecorder: NSObject, AVCaptureAudioDataOutputSampleBufferDelegate, AVCapt
     func start(id: String) {
         controlThread.async {
             self.createSession()
-            self.startStatus = AVRecorderStartStatus()
             self.session!.startRunning()
             self.state = .starting(self.session!, id)
         }
@@ -43,7 +42,7 @@ class AVRecorder: NSObject, AVCaptureAudioDataOutputSampleBufferDelegate, AVCapt
             self.state = .stopping
             self.session!.stopRunning()
             self.session = nil
-            self.startStatus = nil
+            self.startStatus = AVRecorderStartStatus()
         }
     }
     
@@ -69,7 +68,7 @@ class AVRecorder: NSObject, AVCaptureAudioDataOutputSampleBufferDelegate, AVCapt
     }
     
     private func onAudioOutput(sampleBuffer: CMSampleBuffer, connection: AVCaptureConnection) {
-        startStatus?.audio = true
+        startStatus.audio = true
         
         checkIfFullyStarted()
         
@@ -79,7 +78,7 @@ class AVRecorder: NSObject, AVCaptureAudioDataOutputSampleBufferDelegate, AVCapt
     }
     
     private func onVideoOutput(sampleBuffer: CMSampleBuffer, connection: AVCaptureConnection) {
-        startStatus?.video = true
+        startStatus.video = true
         
         checkIfFullyStarted()
         
@@ -92,7 +91,7 @@ class AVRecorder: NSObject, AVCaptureAudioDataOutputSampleBufferDelegate, AVCapt
         switch state {
         
         case .starting(_, let id):
-            if startStatus?.audio == true && startStatus?.video == true {
+            if startStatus.audio && startStatus.video {
                 state = .started(id)
             }
 
