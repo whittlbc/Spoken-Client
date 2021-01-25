@@ -23,6 +23,9 @@ class AVSessionFactory {
         // Begin configuration of session.
         session.beginConfiguration()
         
+        // Set quality of AV captured.
+        setQuality(of: session, to: .high)
+        
         // Add audio input.
         addInput(ofType: .audio, to: session)
         
@@ -30,15 +33,25 @@ class AVSessionFactory {
         addInput(ofType: .video, to: session)
         
         // Add audio output.
-        addAudioOutput(to: session, delegate: outputDelegate, thread: outputThread)
-        
+        addAudioOutput(to: session, withDelegate: outputDelegate, onThread: outputThread)
+
         // Add video output.
-        addVideoOutput(to: session, delegate: outputDelegate, thread: outputThread)
+        addVideoOutput(to: session, withDelegate: outputDelegate, onThread: outputThread)
 
         // End configuration of session.
         session.commitConfiguration()
         
         return session
+    }
+    
+    // Set quality of AV capture session.
+    private func setQuality(of session: AVCaptureSession, to quality: AVCaptureSession.Preset) {
+        guard session.canSetSessionPreset(quality) else {
+            logger.error("Can't set session preset quality to \(quality).")
+            return
+        }
+        
+        session.sessionPreset = quality
     }
     
     // Add a device input to an AV capture session.
@@ -65,8 +78,8 @@ class AVSessionFactory {
     // Add a new audio output to an AV capture session.
     private func addAudioOutput(
         to session: AVCaptureSession,
-        delegate: AVCaptureAudioDataOutputSampleBufferDelegate,
-        thread: DispatchQueue) {
+        withDelegate delegate: AVCaptureAudioDataOutputSampleBufferDelegate,
+        onThread thread: DispatchQueue) {
 
         // Create a new audio data output instance.
         let audioDataOutput = AVCaptureAudioDataOutput()
@@ -87,8 +100,8 @@ class AVSessionFactory {
     // Add a new video output to an AV capture session.
     private func addVideoOutput(
         to session: AVCaptureSession,
-        delegate: AVCaptureVideoDataOutputSampleBufferDelegate,
-        thread: DispatchQueue) {
+        withDelegate delegate: AVCaptureVideoDataOutputSampleBufferDelegate,
+        onThread thread: DispatchQueue) {
 
         // Create a new video data output instance.
         let videoDataOutput = AVCaptureVideoDataOutput()
