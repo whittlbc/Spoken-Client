@@ -122,13 +122,13 @@ class ChannelAvatarView: NSView {
         
         // Container view animation config -- match that of channel window.
         enum ContainerView {
-            static let duration = ChannelWindow.AnimationConfig.duration
+            static let duration = ChannelWindow.AnimationConfig.duration(forState: .idle)
             static let timingFunctionName = ChannelWindow.AnimationConfig.timingFunctionName
         }
         
         // Blur layer animation config -- match that of channel window.
         enum BlurLayer {
-            static let duration = ChannelWindow.AnimationConfig.duration
+            static let duration = ChannelWindow.AnimationConfig.duration(forState: .idle)
             static let timingFunctionName = ChannelWindow.AnimationConfig.timingFunctionName
         }
         

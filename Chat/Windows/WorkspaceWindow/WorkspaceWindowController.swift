@@ -29,7 +29,7 @@ class WorkspaceWindowController: NSWindowController, NSWindowDelegate, Workspace
     
     // Bool to determine whether channels have been rendered at least once.
     private var channelsHaveRendered = false
-    
+        
     // Proper init to call when creating this class.
     convenience init() {
         self.init(window: nil)
@@ -280,7 +280,7 @@ class WorkspaceWindowController: NSWindowController, NSWindowDelegate, Workspace
     }
     
     // Analyze properties of active channel.
-    private func analyzeActiveChannel(channels: [Channel], activeChannelId: String) -> (Int, Float, Float, Bool) {
+    private func analyzeActiveChannel(channels: [Channel], activeChannelId: String) -> (Int, Float, Float, Bool, ChannelWindowController?) {
         // Get active channel window controller and its index.
         let (index, activeChannelWindowController) = getActiveChannelWindowController(
             inChannels: channels,
@@ -289,14 +289,15 @@ class WorkspaceWindowController: NSWindowController, NSWindowDelegate, Workspace
         
         // Extract optional.
         guard let channelWindowController = activeChannelWindowController else {
-            return (0, 0, 0, false)
+            return (0, 0, 0, false, nil)
         }
         
         return (
             index,
             channelWindowController.latestHeightOffset,
             channelWindowController.externalHeightOffset,
-            channelWindowController.disablesAdjacentChannels
+            channelWindowController.disablesAdjacentChannels,
+            activeChannelWindowController
         )
     }
     
@@ -411,15 +412,24 @@ class WorkspaceWindowController: NSWindowController, NSWindowDelegate, Workspace
         return (channelWindowController, spec)
     }
     
-    private func getChannelRenderSpecs(channels: [Channel], activeChannelId: String) -> [(ChannelWindowController, ChannelRenderSpec)] {
+    private func getChannelRenderSpecs(
+        channels: [Channel],
+        activeChannelId: String) -> ([(ChannelWindowController, ChannelRenderSpec)], ChannelWindowController?) {
+        
         // Get active channel window index and height offset due to latest state change.
-        let (activeIndex, activeHeightOffset, externalHeightOffset, disableNonActiveChannels) = analyzeActiveChannel(
+        let (
+            activeIndex,
+            activeHeightOffset,
+            externalHeightOffset,
+            disableNonActiveChannels,
+            activeChannelWindowController
+        ) = analyzeActiveChannel(
             channels: channels,
             activeChannelId: activeChannelId
         )
         
         // Return list of channel render specs with their associated controllers.
-        return channels.enumerated().map { (i, channel) in
+        return (channels.enumerated().map { (i, channel) in
             getChannelRenderSpec(
                 forChannel: channel,
                 atIndex: i,
@@ -428,7 +438,7 @@ class WorkspaceWindowController: NSWindowController, NSWindowDelegate, Workspace
                 externalHeightOffset: externalHeightOffset,
                 isDisabled: disableNonActiveChannels && i != activeIndex
             )
-        }
+        }, activeChannelWindowController)
     }
         
     // Error view.
@@ -466,8 +476,11 @@ class WorkspaceWindowController: NSWindowController, NSWindowDelegate, Workspace
     
     // Render all channel windows (with optional animation).
     private func renderChannels(_ channels: [Channel], activeChannelId: String, withAnimation: Bool) {
-        // Get list of channel render specs.
-        let channelRenderSpecs = getChannelRenderSpecs(channels: channels, activeChannelId: activeChannelId)
+        // Get list of channel render specs and the active channel window controller.
+        let (channelRenderSpecs, activeChannelWindowController) = getChannelRenderSpecs(
+            channels: channels,
+            activeChannelId: activeChannelId
+        )
         
         // Don't render with animation unless specified.
         guard withAnimation else {
@@ -479,7 +492,7 @@ class WorkspaceWindowController: NSWindowController, NSWindowDelegate, Workspace
         // Render channels with animation.
         NSAnimationContext.runAnimationGroup({ [weak self] context in
             // Configure animation attributes.
-            context.duration = ChannelWindow.AnimationConfig.duration
+            context.duration = ChannelWindow.AnimationConfig.duration(forState: activeChannelWindowController?.state)
             context.timingFunction = CAMediaTimingFunction(name: ChannelWindow.AnimationConfig.timingFunctionName)
             context.allowsImplicitAnimation = true
             

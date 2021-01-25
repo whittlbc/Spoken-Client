@@ -108,7 +108,7 @@ class AVSessionFactory {
         
         // Configure video output settings.
         videoDataOutput.videoSettings = [
-            kCVPixelBufferPixelFormatTypeKey as String: kCVPixelFormatType_32BGRA,
+            kCVPixelBufferPixelFormatTypeKey as String: NSNumber(value: kCVPixelFormatType_32BGRA),
         ]
         
         // Ignore frames that arrive late.

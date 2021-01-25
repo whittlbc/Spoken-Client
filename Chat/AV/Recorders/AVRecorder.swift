@@ -25,9 +25,9 @@ class AVRecorder: NSObject, AVCaptureAudioDataOutputSampleBufferDelegate, AVCapt
     
     var startStatus = AVRecorderStartStatus()
     
-    private var controlThread: DispatchQueue { getBackgroundThread(name: Threads.control) }
+    private lazy var controlThread = getBackgroundThread(name: Threads.control)
     
-    private var dataOutputThread: DispatchQueue { getBackgroundThread(name: Threads.dataOutput) }
+    private lazy var dataOutputThread = getBackgroundThread(name: Threads.dataOutput)
         
     func start(id: String) {
         controlThread.async {

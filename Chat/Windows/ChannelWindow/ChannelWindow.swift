@@ -83,7 +83,29 @@ class ChannelWindow: FloatingWindow {
     // Channel window animation configuration.
     enum AnimationConfig {
         // Time it takes for a channel window to update size and position during a state change.
-        static let duration: CFTimeInterval = 0.13
+        static func duration(forState state: ChannelState?) -> CFTimeInterval {
+            let resolvedState = state ?? ChannelState.idle
+            
+            switch resolvedState {
+            
+            // Idle and previewing.
+            case .idle, .previewing:
+                return 0.13
+                
+            // Recording size.
+            case .recording(let recordingStatus):
+                switch recordingStatus {
+                
+                // Initializing recording.
+                case .initializing:
+                    return UserSettings.Video.useCamera ? 0.15 : 0.13
+                
+                // All other recording statuses.
+                default:
+                    return 0.13
+                }
+            }
+        }
 
         // Name of timing function to use for all channel window animations.
         static let timingFunctionName = CAMediaTimingFunctionName.easeOut
