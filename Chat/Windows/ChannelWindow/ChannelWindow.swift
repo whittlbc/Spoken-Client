@@ -45,8 +45,11 @@ class ChannelWindow: FloatingWindow {
             case .recording(let recordingStatus):
                 switch recordingStatus {
                 
-                // Initializing, cancelling, or finished recording.
-                case .initializing, .cancelling, .finished:
+                case .initializing:
+                    return previewingSize
+                
+//                // Initializing, cancelling, or finished recording.
+                case .cancelling, .finished:
                     return UserSettings.Video.useCamera ? recordingSize(withVideo: true) : previewingSize
                 
                 // All other recording statuses.
@@ -68,8 +71,11 @@ class ChannelWindow: FloatingWindow {
             case .recording(let recordingStatus):
                 switch recordingStatus {
                 
+                case .initializing:
+                    return size(forState: state)
+
                 // Initializing, cancelling, or finished recording.
-                case .initializing, .cancelling, .finished:
+                case .cancelling, .finished:
                     return UserSettings.Video.useCamera ? externalRecordingSize(withVideo: true) : size(forState: state)
                 
                 // All other recording statuses.
@@ -97,7 +103,7 @@ class ChannelWindow: FloatingWindow {
                 switch recordingStatus {
                 
                 // Initializing recording.
-                case .initializing:
+                case .started:
                     return UserSettings.Video.useCamera ? 0.15 : 0.13
                 
                 // All other recording statuses.
@@ -113,7 +119,9 @@ class ChannelWindow: FloatingWindow {
     
     // Artificial timing durations used in various places for better UX.
     enum ArtificialTiming {
-
+ 
+        static let showVideoRecordingInitializingDuration = 0.85
+        
         // How long to show window in the recording-sent state before reverting back to idle state.
         static let showRecordingSentDuration = 0.9
     }

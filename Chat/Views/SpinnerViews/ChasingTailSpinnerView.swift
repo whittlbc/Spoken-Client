@@ -50,6 +50,7 @@ class ChasingTailSpinnerView: NSView {
         self.strokeBeginTime = strokeBeginTime
         self.strokeStartDuration = strokeStartDuration
         self.strokeEndDuration = strokeEndDuration
+        self.strokeTimingFunction = strokeTimingFunction
         
         // Make view layer based.
         setupLayer()

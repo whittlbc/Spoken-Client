@@ -31,7 +31,7 @@ class ChannelAvatarViewController: NSViewController {
     // Blur layer to fade-in when channel is disabled.
     private var blurLayer: CALayer?
     
-    // Spinner view around avatar to show when sending a recording.
+    // Spinner view around avatar to show when sending arbitrary content.
     private var spinnerView: ChasingTailSpinnerView?
     
     // Self-drawn checkmark view to show when a recording is sent.
@@ -45,6 +45,9 @@ class ChannelAvatarViewController: NSViewController {
 
     // Subscription to av recorder state changes.
     private var avRecorderSubscription: AnyCancellable?
+
+    // Loader view to show around avatar when loading arbitrary content.
+    private var loaderView: DashSpinnerView?
 
     // Proper initializer to use when rendering channel.
     convenience init(channel: Channel) {
@@ -341,7 +344,7 @@ class ChannelAvatarViewController: NSViewController {
         return blur
     }
         
-    // Create spinner view to spin around avatar during sending of recording.
+    // Create spinner view to spin inside avatar during sending of content.
     private func createSpinnerView() -> ChasingTailSpinnerView {
         // Get size of image view frame.
         let imageSize = imageView.frame.size
@@ -422,6 +425,35 @@ class ChannelAvatarViewController: NSViewController {
         previewLayer.connection?.isVideoMirrored = true
 
         return previewLayer
+    }
+    
+    // Create loader view to spin around avatar during the loading of arbitrary content.
+    private func createLoaderView() -> DashSpinnerView {
+        // Get size of image view frame.
+        let imageSize = imageView.frame.size
+        
+        // Get loader view diameter.
+        let diameter = ChannelAvatarView.Style.LoaderView.diameter
+        
+        // Create loader frame in center of image view frame.
+        let loaderFrame = NSRect(
+            x: (imageSize.width - diameter) / 2,
+            y: (imageSize.height - diameter) / 2,
+            width: diameter,
+            height: diameter
+        )
+        
+        // Create new dash spinner view as the loader view.
+        let loader = DashSpinnerView(frame: loaderFrame)
+        
+        // Add loader as subview of container view.
+        containerView.addSubview(
+            loader,
+            positioned: NSWindow.OrderingMode.above,
+            relativeTo: imageView
+        )
+        
+        return loader
     }
     
     // Animate the size change of avatar view for the given channel state.
@@ -592,6 +624,41 @@ class ChannelAvatarViewController: NSViewController {
         }
     }
     
+    private func fadeInLoaderView() {
+        // Upsert loader view.
+        loaderView = loaderView ?? createLoaderView()
+        
+        // Hide loader layer with opacity.
+        loaderView!.layer?.opacity = 0.0
+        
+        // Start loader.
+        loaderView!.spin()
+ 
+        // Fade in opacity.
+        loaderView!.animateAsGroup(
+            values: [NSView.AnimationKey.opacity: 1.0],
+            duration: ChannelAvatarView.AnimationConfig.LoaderView.enterDuration,
+            timingFunctionName: ChannelAvatarView.AnimationConfig.LoaderView.timingFunctionName
+        )
+    }
+
+    // Fade out loader view and remove it when animation finishes.
+    private func fadeOutLoaderView() {
+        if loaderView == nil {
+            return
+        }
+        
+        loaderView!.animateAsGroup(
+            values: [NSView.AnimationKey.opacity: 0.0],
+            duration: ChannelAvatarView.AnimationConfig.LoaderView.exitDuration,
+            timingFunctionName: ChannelAvatarView.AnimationConfig.LoaderView.timingFunctionName,
+            completionHandler: { [weak self] in
+                self?.loaderView?.removeFromSuperview()
+                self?.loaderView = nil
+            }
+        )
+    }
+
     private func renderIdle(_ state: ChannelState) {
         // Animate avatar view size.
         animateAvatarViewSize(toState: state)
@@ -623,14 +690,27 @@ class ChannelAvatarViewController: NSViewController {
         
         // Fade out new recording indicator.
         fadeOutNewRecordingIndicator()
+        
+        // Fade in the loader view if using video.
+        if UserSettings.Video.useCamera {
+            fadeInLoaderView()
+        }
     }
     
     private func renderStartedRecording(_ state: ChannelState) {
+        // Fade out loader view.
+        fadeOutLoaderView()
+        
+        // Animate avatar view size.
+        animateAvatarViewSize(toState: state)
     }
     
     private func renderCancellingRecording(_ state: ChannelState) {
         // Fade out blur layer to avatar image.
         fadeOutBlurLayer(duration: ChannelAvatarView.AnimationConfig.CheckmarkView.exitDuration)
+        
+        // Fade out loader view.
+        fadeOutLoaderView()
     }
     
     private func renderSendingRecording(_ state: ChannelState) {

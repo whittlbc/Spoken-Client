@@ -106,10 +106,10 @@ class WorkspaceWindowController: NSWindowController, NSWindowDelegate, Workspace
             activeChannelWindowController.renderFromState()
             return
         }
-        
+                
         // Promote previous state to current state for all non-active channels.
         promotePreviousChannelStates(activeChannelId: channelId)
-        
+                
         // Re-render the entire workspace with all channels.
         render(windowModel.state, activeChannelId: channelId)
     }
@@ -184,7 +184,7 @@ class WorkspaceWindowController: NSWindowController, NSWindowDelegate, Workspace
     
         // Move active window to front of other channels.
         bringChannelWindowToFront(forController: activeChannelWindowController)
-
+        
         // Start the recording.
         activeChannelWindowController.startRecording()
     }
@@ -481,7 +481,7 @@ class WorkspaceWindowController: NSWindowController, NSWindowDelegate, Workspace
             channels: channels,
             activeChannelId: activeChannelId
         )
-        
+                
         // Don't render with animation unless specified.
         guard withAnimation else {
             renderChannelWindows(forSpecs: channelRenderSpecs)
@@ -493,13 +493,18 @@ class WorkspaceWindowController: NSWindowController, NSWindowDelegate, Workspace
         NSAnimationContext.runAnimationGroup({ [weak self] context in
             // Configure animation attributes.
             context.duration = ChannelWindow.AnimationConfig.duration(forState: activeChannelWindowController?.state)
-            context.timingFunction = CAMediaTimingFunction(name: ChannelWindow.AnimationConfig.timingFunctionName)
+//            context.timingFunction = CAMediaTimingFunction(name: ChannelWindow.AnimationConfig.timingFunctionName)
+            context.timingFunction = CAMediaTimingFunction(controlPoints: 0.215, 0.61, 0.355, 1.0)
             context.allowsImplicitAnimation = true
             
             // Render channel windows.
             self?.renderChannelWindows(forSpecs: channelRenderSpecs)
             
-        }, completionHandler: { [weak self] in
+        },
+        // NOTE: Completion handler won't be called when rendering recording:initializing state when video is enabled,
+        // because an infinitely animated spinner is rendered inside the above context...preventing the above animation
+        // from actually ever "completing".
+        completionHandler: { [weak self] in
             self?.onChannelsRendered(activeChannelId: activeChannelId)
         })
     }

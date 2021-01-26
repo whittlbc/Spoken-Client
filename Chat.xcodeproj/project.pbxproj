@@ -59,6 +59,7 @@
 		0972290A25BD17E700219591 /* AVRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0972290925BD17E700219591 /* AVRecorder.swift */; };
 		0972290F25BE1D8300219591 /* AVSessionFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0972290E25BE1D8300219591 /* AVSessionFactory.swift */; };
 		0972291725BE575C00219591 /* AVRecorderState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0972291625BE575C00219591 /* AVRecorderState.swift */; };
+		0972291A25BF637600219591 /* DashSpinnerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0972291925BF637600219591 /* DashSpinnerView.swift */; };
 		0990879525797561001660D1 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0990879425797561001660D1 /* AppDelegate.swift */; };
 		0990879925797563001660D1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0990879825797563001660D1 /* Assets.xcassets */; };
 		099087A625797645001660D1 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 099087A525797645001660D1 /* main.swift */; };
@@ -158,6 +159,7 @@
 		0972290925BD17E700219591 /* AVRecorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AVRecorder.swift; sourceTree = "<group>"; };
 		0972290E25BE1D8300219591 /* AVSessionFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AVSessionFactory.swift; sourceTree = "<group>"; };
 		0972291625BE575C00219591 /* AVRecorderState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AVRecorderState.swift; sourceTree = "<group>"; };
+		0972291925BF637600219591 /* DashSpinnerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashSpinnerView.swift; sourceTree = "<group>"; };
 		0990879125797561001660D1 /* Chat.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Chat.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0990879425797561001660D1 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		0990879825797563001660D1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -256,6 +258,7 @@
 			isa = PBXGroup;
 			children = (
 				095C6764259A6A8800729845 /* ChasingTailSpinnerView.swift */,
+				0972291925BF637600219591 /* DashSpinnerView.swift */,
 			);
 			path = SpinnerViews;
 			sourceTree = "<group>";
@@ -750,6 +753,7 @@
 				09FF53D325B5293D0083CD28 /* ChannelRenderSpec.swift in Sources */,
 				095C6765259A6A8800729845 /* ChasingTailSpinnerView.swift in Sources */,
 				0996446B25AE92FD004473B7 /* CodableCache.swift in Sources */,
+				0972291A25BF637600219591 /* DashSpinnerView.swift in Sources */,
 				096862E52582A67F00B9B614 /* Name+Arrow.swift in Sources */,
 				0940E07B25A7ACF1006184D7 /* UserSettings.swift in Sources */,
 				0999974F25953600008E65FB /* ParticleShader.metal in Sources */,

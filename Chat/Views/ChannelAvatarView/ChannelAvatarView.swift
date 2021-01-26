@@ -102,7 +102,7 @@ class ChannelAvatarView: NSView {
             // Spinner color.
             static let color = NSColor.white
             
-            // Empty gap between avatar and spinner stroke.
+            // Diameter of spinner.
             static let diameter: CGFloat = 20.0
         }
         
@@ -114,6 +114,13 @@ class ChannelAvatarView: NSView {
             
             // Length of side of checkmark view.
             static let length: CGFloat = 15.0
+        }
+        
+        // Loader view styling.
+        enum LoaderView {
+            
+            // Diameter of loading spinner.
+            static let diameter: CGFloat = 46
         }
     }
     
@@ -141,6 +148,13 @@ class ChannelAvatarView: NSView {
         enum CheckmarkView {
             static let enterDuration: CFTimeInterval = 0.2
             static let exitDuration: CFTimeInterval = 0.2
+        }
+        
+        // Loader view animation config.
+        enum LoaderView {
+            static let enterDuration: CFTimeInterval = 0.2
+            static let exitDuration: CFTimeInterval = 0.2
+            static let timingFunctionName = ChannelWindow.AnimationConfig.timingFunctionName
         }
     }
     

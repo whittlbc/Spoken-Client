@@ -139,7 +139,8 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate {
      
     // Whether the latest state update should render this channel individually or as a group.
     func shouldRenderIndividually() -> Bool {
-        !stateChangedCase()
+        let renderAsGroup = stateChangedCase() || (UserSettings.Video.useCamera && isRecordingStarted())
+        return !renderAsGroup
     }
     
     // Promote previous state to current state.
@@ -242,12 +243,20 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate {
         // Enable key event listners.
         toggleRecordingKeyListeners(enable: true)
         
-        // Start recording if using audio-only.
-        if !UserSettings.Video.useCamera {
-            AV.mic.startRecording()
+        // Start recording either video or just audio based on settings.
+        UserSettings.Video.useCamera ? startRecordingVideo() : startRecordingAudio()
+    }
+    
+    func startRecordingVideo() {
+        DispatchQueue.main.asyncAfter(
+            deadline: .now() + ChannelWindow.ArtificialTiming.showVideoRecordingInitializingDuration
+        ) { [weak self] in
+            self?.toRecordingStarted()
         }
-        
-        // Set state to started recording.
+    }
+    
+    func startRecordingAudio() {
+        AV.mic.startRecording()
         toRecordingStarted()
     }
     
@@ -257,7 +266,6 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate {
         toggleRecordingKeyListeners(enable: false)
         
         // Stop and cler the active recording.
-        
         AV.stopRecording()
         AV.clearRecording()
 
@@ -317,11 +325,18 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate {
     }
     
     private func initializeRecording() {
+        toRecordingInitializing()
+
+        // Force start recording of video.
         if UserSettings.Video.useCamera {
             AV.avRecorder.start(id: channel.id)
+            
+            DispatchQueue.main.asyncAfter(
+                deadline: .now() + ChannelWindow.AnimationConfig.duration(forState: state)
+            ) { [weak self] in
+                self?.startRecording()
+            }
         }
-
-        toRecordingInitializing()
     }
     
     // Tell parent workspace window controller to toggle the recording-related global hot-keys.
