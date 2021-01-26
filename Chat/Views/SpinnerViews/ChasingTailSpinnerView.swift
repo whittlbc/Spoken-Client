@@ -38,7 +38,7 @@ class ChasingTailSpinnerView: NSView {
         strokeBeginTime: Double? = 0.4,
         strokeStartDuration: Double? = 1.0,
         strokeEndDuration: Double? = 0.6,
-        strokeTimingFunction: CAMediaTimingFunction? = CAMediaTimingFunction(controlPoints: 0.4, 0.0, 0.5, 1.0)) {
+        strokeTimingFunction: CAMediaTimingFunction? = CAMediaTimingFunction(controlPoints: 0.4, 0.2, 0.4, 0.9)) {
         
         self.init(frame: frameRect)
         

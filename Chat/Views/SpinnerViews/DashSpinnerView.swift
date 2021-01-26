@@ -32,10 +32,10 @@ class DashSpinnerView: NSView {
     
     convenience init(
         frame frameRect: NSRect,
-        lineWidth: CGFloat? = 1.75,
+        lineWidth: CGFloat? = 2.0,
         initialColor: NSColor? = Color.fromRGBA(80, 90, 195, 1),
         finalColor: NSColor? = Color.fromRGBA(83, 129, 255, 1),
-        duration: CFTimeInterval? = 1.1,
+        duration: CFTimeInterval? = 1.2,
         timingFunction: CAMediaTimingFunction? = CAMediaTimingFunction(name: .easeInEaseOut)) {
         
         self.init(frame: frameRect)

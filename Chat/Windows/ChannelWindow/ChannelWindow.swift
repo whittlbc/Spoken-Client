@@ -84,6 +84,25 @@ class ChannelWindow: FloatingWindow {
                 }
             }
         }
+        
+        static func adjacentChannelOffset(forState state: ChannelState) -> AdjacentChannelOffset {
+            switch state {
+            
+            case .idle, .previewing:
+                return AdjacentChannelOffset()
+                
+            case .recording(let recordingStatus):
+                switch recordingStatus {
+                
+                case .started:
+                    return AdjacentChannelOffset(above: 0, below: -9.0)
+
+                default:
+                    return AdjacentChannelOffset()
+                }
+            }
+
+        }
     }
     
     // Channel window animation configuration.
@@ -96,7 +115,7 @@ class ChannelWindow: FloatingWindow {
             
             // Idle and previewing.
             case .idle, .previewing:
-                return 0.18
+                return 0.19
                 
             // Recording size.
             case .recording(let recordingStatus):
@@ -104,11 +123,11 @@ class ChannelWindow: FloatingWindow {
                 
                 // Initializing recording.
                 case .started:
-                    return UserSettings.Video.useCamera ? 0.3 : 0.18
+                    return UserSettings.Video.useCamera ? 0.29 : 0.19
                 
                 // All other recording statuses.
                 default:
-                    return 0.18
+                    return 0.19
                 }
             }
         }
@@ -121,7 +140,7 @@ class ChannelWindow: FloatingWindow {
     enum ArtificialTiming {
  
         // How long to show the video recording loading spinner.
-        static let showVideoRecordingInitializingDuration = 0.77
+        static let showVideoRecordingInitializingDuration = 0.5
         
         // How long to show window in the recording-sent state before reverting back to idle state.
         static let showRecordingSentDuration = 0.9
@@ -226,4 +245,9 @@ class ChannelWindow: FloatingWindow {
         // Render content.
         renderContent(spec, state)
     }
+}
+
+struct AdjacentChannelOffset {
+    var above: Float = 0
+    var below: Float = 0
 }

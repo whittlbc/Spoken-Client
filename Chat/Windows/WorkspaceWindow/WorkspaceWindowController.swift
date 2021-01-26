@@ -280,7 +280,9 @@ class WorkspaceWindowController: NSWindowController, NSWindowDelegate, Workspace
     }
     
     // Analyze properties of active channel.
-    private func analyzeActiveChannel(channels: [Channel], activeChannelId: String) -> (Int, Float, Float, Bool, ChannelWindowController?) {
+    private func analyzeActiveChannel(
+        channels: [Channel],
+        activeChannelId: String) -> (Int, Float, Float, AdjacentChannelOffset, Bool, ChannelWindowController?) {
         // Get active channel window controller and its index.
         let (index, activeChannelWindowController) = getActiveChannelWindowController(
             inChannels: channels,
@@ -289,13 +291,14 @@ class WorkspaceWindowController: NSWindowController, NSWindowDelegate, Workspace
         
         // Extract optional.
         guard let channelWindowController = activeChannelWindowController else {
-            return (0, 0, 0, false, nil)
+            return (0, 0, 0, AdjacentChannelOffset(), false, nil)
         }
         
         return (
             index,
             channelWindowController.latestHeightOffset,
             channelWindowController.externalHeightOffset,
+            channelWindowController.adjacentChannelOffset,
             channelWindowController.disablesAdjacentChannels,
             activeChannelWindowController
         )
@@ -337,12 +340,17 @@ class WorkspaceWindowController: NSWindowController, NSWindowDelegate, Workspace
         externalHeightOffset: Float) -> CGFloat {
 
         var y = CGFloat(channelWindowController.getDestination().y)
-        
+                
+        // Above active channel
         if index < activeChannelIndex {
             y -= CGFloat(externalHeightOffset)
-        } else if index == activeChannelIndex {
+        }
+        // Is active channel
+        else if index == activeChannelIndex {
             y += CGFloat(activeChannelHeightOffset)
-        } else {
+        }
+        // Below active channel
+        else {
             y += CGFloat(externalHeightOffset)
         }
         
@@ -383,13 +391,14 @@ class WorkspaceWindowController: NSWindowController, NSWindowDelegate, Workspace
         activeChannelIndex: Int,
         activeChannelHeightOffset: Float,
         externalHeightOffset: Float,
+        adjacentChannelOffset: AdjacentChannelOffset,
         isDisabled: Bool) -> (ChannelWindowController, ChannelRenderSpec) {
         
         // Upsert channel window controller.
         let (channelWindowController, isNew) = upsertChannelWindowController(forChannel: channel, atIndex: index)
 
         // Get channel's appearance.
-        let appearance = getChannelAppearance(
+        var appearance = getChannelAppearance(
             forController: channelWindowController,
             atIndex: index,
             activeChannelIndex: activeChannelIndex,
@@ -399,6 +408,15 @@ class WorkspaceWindowController: NSWindowController, NSWindowDelegate, Workspace
         
         // Set new position destination on channel window controller.
         channelWindowController.setDestination(appearance.origin)
+        
+        // Add custom offset to adjacent channels above the active channel.
+        if index < activeChannelIndex {
+            appearance.origin.y += CGFloat(adjacentChannelOffset.above)
+        }
+        // Add custom offset to adjacent channels below the active channel.
+        else if index > activeChannelIndex {
+            appearance.origin.y += CGFloat(adjacentChannelOffset.below)
+        }
         
         // Create new spec to render channel window with.
         let spec = ChannelRenderSpec(
@@ -421,6 +439,7 @@ class WorkspaceWindowController: NSWindowController, NSWindowDelegate, Workspace
             activeIndex,
             activeHeightOffset,
             externalHeightOffset,
+            adjacentChannelOffset,
             disableNonActiveChannels,
             activeChannelWindowController
         ) = analyzeActiveChannel(
@@ -436,6 +455,7 @@ class WorkspaceWindowController: NSWindowController, NSWindowDelegate, Workspace
                 activeChannelIndex: activeIndex,
                 activeChannelHeightOffset: activeHeightOffset,
                 externalHeightOffset: externalHeightOffset,
+                adjacentChannelOffset: adjacentChannelOffset,
                 isDisabled: disableNonActiveChannels && i != activeIndex
             )
         }, activeChannelWindowController)

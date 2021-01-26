@@ -43,7 +43,10 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate {
     var latestWidthOffset: Float { Float(prevSize.width - size.width) / 2 }
     
     // External height offset due to most recent state change.
-    var externalHeightOffset: Float { Float(prevExternalSize.height - externalSize.height) / 2}
+    var externalHeightOffset: Float { Float(prevExternalSize.height - externalSize.height) / 2 }
+    
+    // Custom directional offsets (above & below) in position that should be applied to adjacent channels.
+    var adjacentChannelOffset: AdjacentChannelOffset { ChannelWindow.Style.adjacentChannelOffset(forState: state) }
     
     // Whether this channel in its current state should cause adjacent channels to be disabled.
     var disablesAdjacentChannels: Bool { isRecording() }

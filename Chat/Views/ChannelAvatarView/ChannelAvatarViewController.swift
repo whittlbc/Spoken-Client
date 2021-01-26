@@ -358,12 +358,12 @@ class ChannelAvatarViewController: NSViewController {
         let imageSize = imageView.frame.size
         
         // Get spinner view diameter.
-        let diameter = ChannelAvatarView.Style.SpinnerView.diameter
+        let diameter = ChannelAvatarView.Style.SpinnerView.diameter()
         
         // Create spinner frame in center of image view frame.
         let spinnerFrame = NSRect(
             x: (imageSize.width - diameter) / 2,
-            y: (imageSize.height - diameter) / 2,
+            y: ((imageSize.height - diameter) / 2) - CGFloat(UserSettings.Video.useCamera ? 4.0 : 0.0),
             width: diameter,
             height: diameter
         )
@@ -371,7 +371,11 @@ class ChannelAvatarViewController: NSViewController {
         // Create new chasing tail spinner.
         let spinner = ChasingTailSpinnerView(
             frame: spinnerFrame,
-            color: ChannelAvatarView.Style.SpinnerView.color
+            color: ChannelAvatarView.Style.SpinnerView.color,
+            lineWidth: UserSettings.Video.useCamera ? 1.85 : 1.5,
+            strokeBeginTime: UserSettings.Video.useCamera ? 0.375 : 0.4,
+            strokeStartDuration: UserSettings.Video.useCamera ? 0.95 : 1.0,
+            strokeEndDuration: UserSettings.Video.useCamera ? 0.575 : 0.6
         )
         
         // Add spinner as subview of container view.
@@ -389,12 +393,12 @@ class ChannelAvatarViewController: NSViewController {
         // Get size of image view frame.
         let imageSize = imageView.frame.size
         
-        let length = ChannelAvatarView.Style.CheckmarkView.length
+        let length = ChannelAvatarView.Style.CheckmarkView.length()
         
         // Create checkmark frame.
         let checkmarkFrame = NSRect(
             x: (imageSize.width - length) / 2,
-            y: (imageSize.height - length) / 2,
+            y: ((imageSize.height - length) / 2) - CGFloat(UserSettings.Video.useCamera ? 4.0 : 0.0),
             width: length,
             height: length
         )
@@ -402,7 +406,9 @@ class ChannelAvatarViewController: NSViewController {
         // Create new self-drawn checkmark view.
         let checkmark = SelfDrawnCheckmarkView(
             frame: checkmarkFrame,
-            color: ChannelAvatarView.Style.CheckmarkView.color
+            color: ChannelAvatarView.Style.CheckmarkView.color,
+            lineWidth: UserSettings.Video.useCamera ? 1.85 : 1.5,
+            duration: UserSettings.Video.useCamera ? 0.125 : 0.15
         )
         
         // Add checkmark as subview of container view.
@@ -446,7 +452,7 @@ class ChannelAvatarViewController: NSViewController {
         // Create loader frame in center of image view frame.
         let loaderFrame = NSRect(
             x: (imageSize.width - diameter) / 2,
-            y: (imageSize.height - diameter) / 2,
+            y: (imageSize.height - diameter) / 2 - 0.5,
             width: diameter,
             height: diameter
         )

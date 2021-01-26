@@ -102,7 +102,7 @@ class SelfDrawnCheckmarkView: NSView {
     func createStrokeEndAnimation() -> CABasicAnimation {
         let strokeEndAnimation = CABasicAnimation(keyPath: AnimationKeys.strokeEnd)
         strokeEndAnimation.duration = duration
-        strokeEndAnimation.timingFunction = CAMediaTimingFunction(name: .linear)
+        strokeEndAnimation.timingFunction = CAMediaTimingFunction(name: .easeOut)
         strokeEndAnimation.fromValue = 0.0
         strokeEndAnimation.toValue = 1.0
         strokeEndAnimation.isRemovedOnCompletion = false

@@ -90,7 +90,7 @@ class ChannelAvatarView: NSView {
             static let spinBlurRadius: Double = 1.6
             
             // Gaussian blur input radius used when bluring video placeholder avatar.
-            static let videoPlaceholderAvatarBlurRadius: Double = 2.3
+            static let videoPlaceholderAvatarBlurRadius: Double = 2.0
             
             // Opacity of blur layer shown with spinner.
             static let spinAlpha: CGFloat = 0.2
@@ -106,7 +106,9 @@ class ChannelAvatarView: NSView {
             static let color = NSColor.white
             
             // Diameter of spinner.
-            static let diameter: CGFloat = 20.0
+            static func diameter() -> CGFloat {
+                UserSettings.Video.useCamera ? 25.0 : 20.0
+            }
         }
         
         // Checkmark view styling.
@@ -114,16 +116,18 @@ class ChannelAvatarView: NSView {
             
             // Checkmark color.
             static let color = NSColor.white
-            
+                        
             // Length of side of checkmark view.
-            static let length: CGFloat = 15.0
+            static func length() -> CGFloat {
+                UserSettings.Video.useCamera ? 20.0 : 15.0
+            }
         }
         
         // Loader view styling.
         enum LoaderView {
             
             // Diameter of loading spinner.
-            static let diameter: CGFloat = 46.5
+            static let diameter: CGFloat = 46
         }
         
         // Video recipient view styling.
@@ -154,10 +158,10 @@ class ChannelAvatarView: NSView {
             enum BorderStyle {
                 
                 // Width of border around recipient avatar.
-                static let width: CGFloat = 1.2
+                static let width: CGFloat = 1.4
                 
                 // Color of border around recipient avatar.
-                static let color: CGColor = Color.fromRGBA(255, 255, 255, 0.8).cgColor
+                static let color: CGColor = Color.fromRGBA(255, 255, 255, 0.7).cgColor
             }
         }
     }
