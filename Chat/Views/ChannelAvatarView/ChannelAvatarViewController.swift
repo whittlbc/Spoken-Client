@@ -37,8 +37,8 @@ class ChannelAvatarViewController: NSViewController {
     // Self-drawn checkmark view to show when a recording is sent.
     private var checkmarkView: SelfDrawnCheckmarkView?
     
-    // Avatar image subscription.
-    private var imageSubscription: AnyCancellable?
+    // Avatar recipient image subscription.
+    private var recipientImageSubscription: AnyCancellable?
     
     // Channel video preview layer.
     private var videoPreviewLayer: AVCaptureVideoPreviewLayer?
@@ -86,8 +86,8 @@ class ChannelAvatarViewController: NSViewController {
         // Subscribe to view model.
         subscribeToViewModel()
         
-        // Load and set avatar image.
-        loadAvatarImage()
+        // Load and set recipient avatar image.
+        loadRecipientAvatarImage()
         
         // Subscribe to AV recorder.
         subscribeToAVRecorder()
@@ -103,15 +103,15 @@ class ChannelAvatarViewController: NSViewController {
         )
     }
     
-    // Fetch avatar image from view model.
-    private func loadAvatarImage() {
-        viewModel.loadImage()
+    // Fetch recipient avatar image from view model.
+    private func loadRecipientAvatarImage() {
+        viewModel.loadRecipientMemberAvatar()
     }
     
     // Subscribe to view model image changes.
     private func subscribeToViewModel() {
-        // Set avatar image any time it changes.
-        imageSubscription = viewModel.$image.sink { [weak self] image in
+        // Set avatar image any time recipient avatar changes.
+        recipientImageSubscription = viewModel.$recipientMemberAvatar.sink { [weak self] image in
             self?.setAvatarImage(to: image)
         }
     }
@@ -139,10 +139,11 @@ class ChannelAvatarViewController: NSViewController {
                 return
             }
                         
-            print("READY")
-
+            self.revealVideoPreviewLayer()
+            
         // Stopping recording.
         case .stopping:
+            // TODO: Figure out moves here.
             self.removeVideoPreviewLayer()
 
         default:
@@ -175,8 +176,12 @@ class ChannelAvatarViewController: NSViewController {
     }
 
     // Set image as contents of image view layer.
-    private func setAvatarImage(to image: NSImage?) {
-        imageView.layer?.contents = image
+    private func setAvatarImage(to image: NSImage?, animate: Bool? = false) {
+        if animate == true {
+            imageView.animator().layer?.contents = image
+        } else {
+            imageView.layer?.contents = image
+        }
     }
     
     // Create new container view.
@@ -338,9 +343,9 @@ class ChannelAvatarViewController: NSViewController {
         // Assign new blur layer to instance property.
         blurLayer = blur
         
-        // Add blur layer as sublayer to image view.
-        imageView.layer?.addSublayer(blur)
-
+        // Add blur layer as top-most sublayer to image view.
+        imageView.layer?.insertSublayer(blur, above: videoPreviewLayer)
+        
         return blur
     }
         
@@ -458,7 +463,13 @@ class ChannelAvatarViewController: NSViewController {
     
     // Animate the size change of avatar view for the given channel state.
     private func animateAvatarViewSize(toState state: ChannelState) {
-        avatarView.animateSize(toDiameter: ChannelWindow.Style.size(forState: state).height)
+        let diameter = ChannelWindow.Style.size(forState: state).height
+        
+        avatarView.animateSize(toDiameter: diameter)
+
+        if let blur = blurLayer {
+            blur.frame = NSRect(x: 0, y: 0, width: diameter, height: diameter)
+        }
     }
     
     // Toggle the amount of drop shadow for container view based on state.
@@ -613,6 +624,12 @@ class ChannelAvatarViewController: NSViewController {
         }
     }
     
+    private func revealVideoPreviewLayer() {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+            self.fadeOutBlurLayer(duration: ChannelAvatarView.AnimationConfig.VideoPreviewLayer.removeBlurDuration)
+        }
+    }
+    
     private func removeVideoPreviewLayer() {
         if videoPreviewLayer == nil {
             return
@@ -659,6 +676,20 @@ class ChannelAvatarViewController: NSViewController {
         )
     }
 
+    private func upsertVideoPlaceholderAvatar() {
+        viewModel.upsertVideoPlaceholderAvatar()
+    }
+    
+    private func fadeInVideoPlaceholderAvatar() {
+        if let image = viewModel.getVideoPlaceholderAvatar() {
+            setAvatarImage(to: image, animate: true)
+        }
+    }
+    
+    private func fadeOutVideoPlaceholderAvatar() {
+        setAvatarImage(to: viewModel.recipientMemberAvatar!, animate: true)
+    }
+    
     private func renderIdle(_ state: ChannelState) {
         // Animate avatar view size.
         animateAvatarViewSize(toState: state)
@@ -691,15 +722,32 @@ class ChannelAvatarViewController: NSViewController {
         // Fade out new recording indicator.
         fadeOutNewRecordingIndicator()
         
-        // Fade in the loader view if using video.
+        // If recording a video message...
         if UserSettings.Video.useCamera {
+            // Fade in the loader.
             fadeInLoaderView()
+            
+            // Upsert the video placeholder avatar.
+            upsertVideoPlaceholderAvatar()
         }
     }
     
     private func renderStartedRecording(_ state: ChannelState) {
-        // Fade out loader view.
-        fadeOutLoaderView()
+        // If recording a video message...
+        if UserSettings.Video.useCamera {
+            // Fade out loader view.
+            fadeOutLoaderView()
+
+            // Set the imageView to show the video placeholder avatar.
+            fadeInVideoPlaceholderAvatar()
+            
+            // Fade in blur layer.
+            fadeInBlurLayer(
+                blurRadius: ChannelAvatarView.Style.BlurLayer.videoPlaceholderAvatarBlurRadius,
+                duration: ChannelWindow.AnimationConfig.duration(forState: state),
+                alpha: ChannelAvatarView.Style.BlurLayer.videoPlaceholderAvatarAlpha
+            )
+        }
         
         // Animate avatar view size.
         animateAvatarViewSize(toState: state)
@@ -711,6 +759,10 @@ class ChannelAvatarViewController: NSViewController {
         
         // Fade out loader view.
         fadeOutLoaderView()
+        
+        if UserSettings.Video.useCamera {
+            fadeOutVideoPlaceholderAvatar()
+        }
     }
     
     private func renderSendingRecording(_ state: ChannelState) {
@@ -739,6 +791,11 @@ class ChannelAvatarViewController: NSViewController {
         
         // Fade out checkmark.
         fadeOutCheckmarkView()
+        
+        // Fade out video placeholder avatar if using video.
+        if UserSettings.Video.useCamera {
+            fadeOutVideoPlaceholderAvatar()
+        }
     }
     
     // Render recording-specific view updates.

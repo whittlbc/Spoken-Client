@@ -92,8 +92,14 @@ class ChannelAvatarView: NSView {
             // Gaussian blur input radius used when bluring layer behind spinner.
             static let spinBlurRadius: Double = 1.6
             
-            // Opacity of black background color of blur layer.
+            // Gaussian blur input radius used when bluring video placeholder avatar.
+            static let videoPlaceholderAvatarBlurRadius: Double = 2.3
+            
+            // Opacity of blur layer shown with spinner.
             static let spinAlpha: CGFloat = 0.2
+            
+            // Opacity of blur layer shown with video placeholder avatar.
+            static let videoPlaceholderAvatarAlpha: CGFloat = 0.2
         }
         
         // Spinner view styling.
@@ -155,6 +161,10 @@ class ChannelAvatarView: NSView {
             static let enterDuration: CFTimeInterval = 0.3
             static let exitDuration: CFTimeInterval = 0.3
             static let timingFunction = ChannelWindow.AnimationConfig.timingFunction
+        }
+        
+        enum VideoPreviewLayer {
+            static let removeBlurDuration: CFTimeInterval = 0.08
         }
     }
     
