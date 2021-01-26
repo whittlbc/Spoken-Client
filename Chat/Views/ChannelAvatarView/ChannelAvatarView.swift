@@ -33,15 +33,15 @@ class ChannelAvatarView: NSView {
                 // Default, non-raised, shadow style.
                 static let grounded = Shadow(
                     offset: CGSize(width: 0, height: -1),
-                    radius: 2.5,
-                    opacity: 0.5
+                    radius: 2,
+                    opacity: 0.6
                 )
                 
                 // Raised shadow style.
                 static let raised = Shadow(
-                    offset: CGSize(width: 1.0, height: -2),
-                    radius: 4.5,
-                    opacity: 0.5
+                    offset: CGSize(width: 1.1, height: -1.5),
+                    radius: 3,
+                    opacity: 0.6
                 )
                 
                 // Get shadow style config for channel state.
@@ -130,31 +130,31 @@ class ChannelAvatarView: NSView {
         // Container view animation config -- match that of channel window.
         enum ContainerView {
             static let duration = ChannelWindow.AnimationConfig.duration(forState: .idle)
-            static let timingFunctionName = ChannelWindow.AnimationConfig.timingFunctionName
+            static let timingFunction = ChannelWindow.AnimationConfig.timingFunction
         }
         
         // Blur layer animation config -- match that of channel window.
         enum BlurLayer {
             static let duration = ChannelWindow.AnimationConfig.duration(forState: .idle)
-            static let timingFunctionName = ChannelWindow.AnimationConfig.timingFunctionName
+            static let timingFunction = ChannelWindow.AnimationConfig.timingFunction
         }
         
         // Spinner view animation config.
         enum SpinnerView {
-            static let enterDuration: CFTimeInterval = 0.2
+            static let enterDuration: CFTimeInterval = 0.3
         }
         
         // Checkmark view animation config.
         enum CheckmarkView {
-            static let enterDuration: CFTimeInterval = 0.2
-            static let exitDuration: CFTimeInterval = 0.2
+            static let enterDuration: CFTimeInterval = 0.3
+            static let exitDuration: CFTimeInterval = 0.3
         }
         
         // Loader view animation config.
         enum LoaderView {
-            static let enterDuration: CFTimeInterval = 0.2
-            static let exitDuration: CFTimeInterval = 0.2
-            static let timingFunctionName = ChannelWindow.AnimationConfig.timingFunctionName
+            static let enterDuration: CFTimeInterval = 0.3
+            static let exitDuration: CFTimeInterval = 0.3
+            static let timingFunction = ChannelWindow.AnimationConfig.timingFunction
         }
     }
     

@@ -493,8 +493,7 @@ class WorkspaceWindowController: NSWindowController, NSWindowDelegate, Workspace
         NSAnimationContext.runAnimationGroup({ [weak self] context in
             // Configure animation attributes.
             context.duration = ChannelWindow.AnimationConfig.duration(forState: activeChannelWindowController?.state)
-//            context.timingFunction = CAMediaTimingFunction(name: ChannelWindow.AnimationConfig.timingFunctionName)
-            context.timingFunction = CAMediaTimingFunction(controlPoints: 0.215, 0.61, 0.355, 1.0)
+            context.timingFunction = ChannelWindow.AnimationConfig.timingFunction
             context.allowsImplicitAnimation = true
             
             // Render channel windows.

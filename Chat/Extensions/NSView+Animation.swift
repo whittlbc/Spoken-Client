@@ -36,7 +36,7 @@ extension NSView {
     func animateAsGroup(
         values: [String: Any],
         duration: CFTimeInterval,
-        timingFunctionName: CAMediaTimingFunctionName = CAMediaTimingFunctionName.linear,
+        timingFunction: CAMediaTimingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.linear),
         fillMode: CAMediaTimingFillMode = CAMediaTimingFillMode.both,
         isRemovedOnCompletion: Bool = false,
         repeatCount: Float = 0,
@@ -58,7 +58,7 @@ extension NSView {
                 forKey: key,
                 toValue: value,
                 duration: duration,
-                timingFunctionName: timingFunctionName,
+                timingFunction: timingFunction,
                 fillMode: fillMode,
                 isRemovedOnCompletion: isRemovedOnCompletion,
                 repeatCount: repeatCount
@@ -75,7 +75,7 @@ extension NSView {
         forKey key: String,
         toValue value: Any,
         duration: CFTimeInterval,
-        timingFunctionName: CAMediaTimingFunctionName = CAMediaTimingFunctionName.linear,
+        timingFunction: CAMediaTimingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.linear),
         fillMode: CAMediaTimingFillMode = CAMediaTimingFillMode.both,
         isRemovedOnCompletion: Bool = false,
         repeatCount: Float = 0) -> CABasicAnimation? {
@@ -83,7 +83,7 @@ extension NSView {
         // Create basic animation.
         let animation = CABasicAnimation(keyPath: key)
         animation.duration = duration
-        animation.timingFunction = CAMediaTimingFunction(name: timingFunctionName)
+        animation.timingFunction = timingFunction
         animation.fillMode = fillMode
         animation.isRemovedOnCompletion = isRemovedOnCompletion
         animation.repeatCount = repeatCount

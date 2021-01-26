@@ -467,7 +467,7 @@ class ChannelAvatarViewController: NSViewController {
             toConfig: ChannelAvatarView.Style.ContainerView.ShadowStyle.getShadow(forState: state),
             animate: true,
             duration: ChannelAvatarView.AnimationConfig.ContainerView.duration,
-            timingFunctionName: ChannelAvatarView.AnimationConfig.ContainerView.timingFunctionName
+            timingFunction: ChannelAvatarView.AnimationConfig.ContainerView.timingFunction
         )
     }
     
@@ -510,7 +510,7 @@ class ChannelAvatarViewController: NSViewController {
                 NSView.AnimationKey.backgroundColor: Color.fromRGBA(0, 0, 0, alpha!).cgColor
             ],
             duration: duration,
-            timingFunctionName: ChannelAvatarView.AnimationConfig.BlurLayer.timingFunctionName,
+            timingFunction: ChannelAvatarView.AnimationConfig.BlurLayer.timingFunction,
             onLayer: blurLayer ?? createBlurLayer()
         )
     }
@@ -529,7 +529,7 @@ class ChannelAvatarViewController: NSViewController {
                 NSView.AnimationKey.backgroundColor: CGColor.clear
             ],
             duration: duration,
-            timingFunctionName: ChannelAvatarView.AnimationConfig.BlurLayer.timingFunctionName,
+            timingFunction: ChannelAvatarView.AnimationConfig.BlurLayer.timingFunction,
             onLayer: blur,
             completionHandler: { [weak self] in
                 // Remove blur layer from image view layer after it's faded out.
@@ -553,7 +553,7 @@ class ChannelAvatarViewController: NSViewController {
         spinnerView!.animateAsGroup(
             values: [NSView.AnimationKey.opacity: 1.0],
             duration: ChannelAvatarView.AnimationConfig.SpinnerView.enterDuration,
-            timingFunctionName: ChannelAvatarView.AnimationConfig.BlurLayer.timingFunctionName
+            timingFunction: ChannelAvatarView.AnimationConfig.BlurLayer.timingFunction
         )
     }
 
@@ -566,7 +566,7 @@ class ChannelAvatarViewController: NSViewController {
         spinnerView!.animateAsGroup(
             values: [NSView.AnimationKey.opacity: 0.0],
             duration: ChannelAvatarView.AnimationConfig.CheckmarkView.enterDuration,
-            timingFunctionName: ChannelAvatarView.AnimationConfig.BlurLayer.timingFunctionName,
+            timingFunction: ChannelAvatarView.AnimationConfig.BlurLayer.timingFunction,
             completionHandler: { [weak self] in
                 self?.spinnerView?.removeFromSuperview()
                 self?.spinnerView = nil
@@ -591,7 +591,7 @@ class ChannelAvatarViewController: NSViewController {
         checkmarkView!.animateAsGroup(
             values: [NSView.AnimationKey.opacity: 0.0],
             duration: ChannelAvatarView.AnimationConfig.CheckmarkView.exitDuration,
-            timingFunctionName: ChannelAvatarView.AnimationConfig.BlurLayer.timingFunctionName,
+            timingFunction: ChannelAvatarView.AnimationConfig.BlurLayer.timingFunction,
             completionHandler: { [weak self] in
                 self?.checkmarkView?.removeFromSuperview()
                 self?.checkmarkView = nil
@@ -638,7 +638,7 @@ class ChannelAvatarViewController: NSViewController {
         loaderView!.animateAsGroup(
             values: [NSView.AnimationKey.opacity: 1.0],
             duration: ChannelAvatarView.AnimationConfig.LoaderView.enterDuration,
-            timingFunctionName: ChannelAvatarView.AnimationConfig.LoaderView.timingFunctionName
+            timingFunction: ChannelAvatarView.AnimationConfig.LoaderView.timingFunction
         )
     }
 
@@ -651,7 +651,7 @@ class ChannelAvatarViewController: NSViewController {
         loaderView!.animateAsGroup(
             values: [NSView.AnimationKey.opacity: 0.0],
             duration: ChannelAvatarView.AnimationConfig.LoaderView.exitDuration,
-            timingFunctionName: ChannelAvatarView.AnimationConfig.LoaderView.timingFunctionName,
+            timingFunction: ChannelAvatarView.AnimationConfig.LoaderView.timingFunction,
             completionHandler: { [weak self] in
                 self?.loaderView?.removeFromSuperview()
                 self?.loaderView = nil

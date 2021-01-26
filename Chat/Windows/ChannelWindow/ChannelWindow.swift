@@ -96,7 +96,7 @@ class ChannelWindow: FloatingWindow {
             
             // Idle and previewing.
             case .idle, .previewing:
-                return 0.13
+                return 0.18
                 
             // Recording size.
             case .recording(let recordingStatus):
@@ -104,17 +104,17 @@ class ChannelWindow: FloatingWindow {
                 
                 // Initializing recording.
                 case .started:
-                    return UserSettings.Video.useCamera ? 0.15 : 0.13
+                    return UserSettings.Video.useCamera ? 0.25 : 0.18
                 
                 // All other recording statuses.
                 default:
-                    return 0.13
+                    return 0.18
                 }
             }
         }
 
-        // Name of timing function to use for all channel window animations.
-        static let timingFunctionName = CAMediaTimingFunctionName.easeOut
+        // Timing function to use for all channel window animations.
+        static let timingFunction = CAMediaTimingFunction(controlPoints: 0.215, 0.61, 0.355, 1.0)
     }
     
     // Artificial timing durations used in various places for better UX.

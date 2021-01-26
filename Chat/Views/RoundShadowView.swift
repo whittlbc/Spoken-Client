@@ -53,17 +53,17 @@ class RoundShadowView: RoundView {
         toConfig config: Shadow,
         animate: Bool = false,
         duration: CFTimeInterval? = nil,
-        timingFunctionName: CAMediaTimingFunctionName? = nil,
+        timingFunction: CAMediaTimingFunction? = nil,
         completionHandler: (() -> Void)? = nil) {
         
         // Set shadow config to new given value.
         shadowConfig = config
         
         // Animate to new values if desired.
-        if animate, let dur = duration, let timing = timingFunctionName {
+        if animate, let dur = duration, let timing = timingFunction {
             animateToShadow(
                 duration: dur,
-                timingFunctionName: timing,
+                timingFunction: timing,
                 completionHandler: completionHandler
             )
         }
@@ -72,7 +72,7 @@ class RoundShadowView: RoundView {
     // Animate shadow values to those already set in shadow config.
     func animateToShadow(
         duration: CFTimeInterval,
-        timingFunctionName: CAMediaTimingFunctionName,
+        timingFunction: CAMediaTimingFunction,
         completionHandler: (() -> Void)? = nil) {
         animateAsGroup(
             values: [
@@ -82,7 +82,7 @@ class RoundShadowView: RoundView {
                 AnimationKey.shadowOpacity: shadowConfig.opacity
             ],
             duration: duration,
-            timingFunctionName: timingFunctionName,
+            timingFunction: timingFunction,
             completionHandler: completionHandler
         )
     }
