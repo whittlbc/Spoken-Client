@@ -50,4 +50,8 @@ class UserDataProvider<T: Model & NetworkingJSONDecodable>: DataProvider<T> {
             logger.error("Unknown error while caching current \(T.modelName) id in string cache: \(error)")
         }
     }
+    
+    func setVideoPlaceholder(id: String, image: NSImage) {
+        try? CacheManager.imageCache.set(image, forKey: videoPlaceholderImageKey(id: id))
+    }
 }

@@ -269,8 +269,12 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate {
         toggleRecordingKeyListeners(enable: false)
         
         // Stop and cler the active recording.
-        AV.stopRecording()
-        AV.clearRecording()
+        if UserSettings.Video.useCamera {
+            AV.avRecorder.stop(id: channel.id, cancelled: true)
+        } else {
+            AV.mic.stopRecording()
+            AV.mic.clearRecording()
+        }
 
         // Show recording as cancelled.
         showRecordingCancelled()
@@ -285,12 +289,12 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate {
         toRecordingSending()
 
         // Stop active recording.
-        AV.stopRecording()
-
+        UserSettings.Video.useCamera ? AV.avRecorder.stop(id: channel.id) : AV.mic.stopRecording()
+        
         // TODO: Actually send recording...this will include a lot of steps...
         
         // Hack to simulate network time.
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { [weak self] in
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) { [weak self] in
             // Show recording as sent.
             self?.showRecordingSent()
         }
@@ -399,7 +403,9 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate {
             self?.showRecordingFinished()
             
             // TODO: Move somewhere else once you're actually uploading recordings...?
-            AV.clearRecording()
+            if !UserSettings.Video.useCamera {
+                AV.mic.clearRecording()
+            }
         }
     }
     

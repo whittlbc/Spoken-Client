@@ -129,7 +129,7 @@ class ChannelAvatarViewController: NSViewController {
         switch state {
         
         // Just starting recording.
-        case .starting(let session, let channelId):
+        case .starting(id: let channelId, session: let session):
             guard channelId == viewModel.channel.id else {
                 return
             }
@@ -137,7 +137,7 @@ class ChannelAvatarViewController: NSViewController {
             self.addVideoPreviewLayer(session: session)
         
         // Recording started and visible.
-        case .started(let channelId):
+        case .started(id: let channelId):
             guard channelId == viewModel.channel.id else {
                 return
             }
@@ -145,9 +145,12 @@ class ChannelAvatarViewController: NSViewController {
             self.revealVideoPreviewLayer()
             
         // Stopping recording.
-        case .stopping:
-            // TODO: Figure out moves here.
-            self.removeVideoPreviewLayer()
+        case .stopped(id: let channelId, cancelled: let cancelled, lastFrame: let lastFrame):
+            guard channelId == viewModel.channel.id else {
+                return
+            }
+
+            self.removeVideoPreviewLayer(lastFrame: lastFrame, wasCancelled: cancelled)
 
         default:
             break
@@ -729,12 +732,24 @@ class ChannelAvatarViewController: NSViewController {
         }
     }
     
-    private func removeVideoPreviewLayer() {
+    private func hideVideoPreviewLayer() {
+        videoPreviewLayer?.opacity = 0.0
+    }
+    
+    private func removeVideoPreviewLayer(lastFrame: NSImage?, wasCancelled: Bool) {
         if videoPreviewLayer == nil {
             return
         }
         
+        if let image = lastFrame {
+            dataProvider.user.setVideoPlaceholder(id: Session.currentUserId!, image: image)
+        }
+        
         DispatchQueue.main.async {
+            if let image = lastFrame, !wasCancelled {
+                self.setAvatarImage(to: image)
+            }
+            
             self.videoPreviewLayer?.removeFromSuperlayer()
             self.videoPreviewLayer = nil
         }
@@ -889,6 +904,9 @@ class ChannelAvatarViewController: NSViewController {
             
             // Fade out the video recipient avatar.
             fadeOutVideoRecipientView()
+            
+            // Go ahead and hide video preview layer.
+            hideVideoPreviewLayer()
         }
     }
     

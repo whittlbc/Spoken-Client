@@ -28,26 +28,40 @@ class AVRecorder: NSObject, AVCaptureAudioDataOutputSampleBufferDelegate, AVCapt
     private lazy var controlThread = getBackgroundThread(name: Threads.control)
     
     private lazy var dataOutputThread = getBackgroundThread(name: Threads.dataOutput)
-        
+
     func start(id: String) {
         controlThread.async {
             self.createSession()
             self.session!.startRunning()
-            self.state = .starting(self.session!, id)
+            self.state = .starting(id: id, session: self.session!)
         }
     }
     
-    func stop() {
+    func stop(id: String, cancelled: Bool = false) {
         controlThread.async {
-            self.state = .stopping
+            self.state = .stopping(id: id, cancelled: cancelled)
+        }
+    }
+    
+    private func stopSession(id: String, cancelled: Bool, lastFrame: NSImage?) {
+        controlThread.async {
+            if self.session == nil {
+                return
+            }
+            
+            self.state = .stopped(id: id, cancelled: cancelled, lastFrame: lastFrame)
             self.session!.stopRunning()
             self.session = nil
             self.startStatus = AVRecorderStartStatus()
         }
     }
-    
+
     func isStarted() -> Bool {
-        state == .started("")
+        state == .started(id: "")
+    }
+    
+    func isStopping() -> Bool {
+        state == .stopping(id: "", cancelled: false)
     }
     
     // Handle any new AV output from the current capture session.
@@ -67,12 +81,16 @@ class AVRecorder: NSObject, AVCaptureAudioDataOutputSampleBufferDelegate, AVCapt
         }
     }
     
+    private func shouldProcessOutput() -> Bool {
+        isStarted() || isStopping()
+    }
+    
     private func onAudioOutput(sampleBuffer: CMSampleBuffer, connection: AVCaptureConnection) {
         startStatus.audio = true
         
         checkIfFullyStarted()
         
-        guard isStarted() else {
+        guard shouldProcessOutput() else {
             return
         }
     }
@@ -82,17 +100,63 @@ class AVRecorder: NSObject, AVCaptureAudioDataOutputSampleBufferDelegate, AVCapt
         
         checkIfFullyStarted()
         
-        guard isStarted() else {
+        guard shouldProcessOutput() else {
             return
+        }
+        
+        if isStopping() {
+            stopWithLastFrame(sampleBuffer: sampleBuffer)
+        }
+    }
+    
+    private func stopWithLastFrame(sampleBuffer: CMSampleBuffer) {
+        let (stoppingId, wasCancelled) = getStoppingAssociatedVals()
+        
+        guard let id = stoppingId, let cancelled = wasCancelled else {
+            return
+        }
+        
+        stopSession(
+            id: id,
+            cancelled: cancelled,
+            lastFrame: imageFromBuffer(sampleBuffer)
+        )
+    }
+    
+    private func imageFromBuffer(_ sampleBuffer: CMSampleBuffer) -> NSImage? {
+        guard let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else {
+            return nil
+        }
+
+        let attachments = CMCopyDictionaryOfAttachments(
+            allocator: kCFAllocatorDefault,
+            target: pixelBuffer,
+            attachmentMode: CMAttachmentMode(kCMAttachmentMode_ShouldPropagate)
+        )
+        
+        let image = CIImage(
+            cvImageBuffer: pixelBuffer,
+            options: attachments as? [CIImageOption: Any]
+        ).oriented(forExifOrientation: 9)
+        
+        return image.transformed(by: CGAffineTransform(scaleX: -1, y: 1)).nsImage
+    }
+    
+    private func getStoppingAssociatedVals() -> (String?, Bool?) {
+        switch state {
+        case .stopping(id: let id, cancelled: let cancelled):
+            return (id, cancelled)
+        default:
+            return (nil, nil)
         }
     }
     
     private func checkIfFullyStarted() {
         switch state {
         
-        case .starting(_, let id):
+        case .starting(id: let id, session: _):
             if startStatus.audio && startStatus.video {
-                state = .started(id)
+                state = .started(id: id)
             }
 
         default:

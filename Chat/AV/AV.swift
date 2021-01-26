@@ -117,14 +117,4 @@ public enum AV {
             break
         }
     }
-    
-    static func stopRecording() {
-        UserSettings.Video.useCamera ? AV.avRecorder.stop() : AV.mic.stopRecording()
-    }
-    
-    static func clearRecording() {
-        if !UserSettings.Video.useCamera {
-            AV.mic.clearRecording()
-        }
-    }
 }

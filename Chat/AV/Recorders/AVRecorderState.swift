@@ -6,14 +6,15 @@
 //  Copyright © 2021 Ben Whittle. All rights reserved.
 //
 
-import Foundation
+import Cocoa
 import AVFoundation
 
 enum AVRecorderState {
     case initialized
-    case starting(AVCaptureSession, String)
-    case started(String)
-    case stopping
+    case starting(id: String, session: AVCaptureSession)
+    case started(id: String)
+    case stopping(id: String, cancelled: Bool)
+    case stopped(id: String, cancelled: Bool, lastFrame: NSImage?)
 
     // Case equality check
     static func ==(lhs: AVRecorderState, rhs: AVRecorderState) -> Bool {
@@ -25,6 +26,8 @@ enum AVRecorderState {
         case (.started, .started):
             return true
         case (.stopping, .stopping):
+            return true
+        case (.stopped, .stopped):
             return true
         default:
             return false
