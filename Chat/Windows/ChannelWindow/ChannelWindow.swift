@@ -120,7 +120,7 @@ class ChannelWindow: FloatingWindow {
     // Artificial timing durations used in various places for better UX.
     enum ArtificialTiming {
  
-        static let showVideoRecordingInitializingDuration = 0.85
+        static let showVideoRecordingInitializingDuration = 0.7
         
         // How long to show window in the recording-sent state before reverting back to idle state.
         static let showRecordingSentDuration = 0.9

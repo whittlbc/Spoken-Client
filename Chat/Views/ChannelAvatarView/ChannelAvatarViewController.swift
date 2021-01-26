@@ -48,6 +48,9 @@ class ChannelAvatarViewController: NSViewController {
 
     // Loader view to show around avatar when loading arbitrary content.
     private var loaderView: DashSpinnerView?
+    
+    // Video recipient avatar view to show when recording a video message.
+    private var videoRecipientView: RoundView!
 
     // Proper initializer to use when rendering channel.
     convenience init(channel: Channel) {
@@ -461,6 +464,73 @@ class ChannelAvatarViewController: NSViewController {
         return loader
     }
     
+    // Create new image view.
+    private func createVideoRecipientView() -> RoundView {
+        // Create new round view.
+        let videoRecipient = RoundView()
+                
+        // Make it layer based, ensure overflow is hidden, and start it as hidden.
+        videoRecipient.wantsLayer = true
+        videoRecipient.layer?.masksToBounds = true
+        videoRecipient.alphaValue = 0
+        
+        // Wrap avatar in a thin white border.
+        videoRecipient.layer?.borderWidth = 1.2
+        videoRecipient.layer?.borderColor = Color.fromRGBA(255, 255, 255, 0.6).cgColor
+
+        // Add indicator as subview above all.
+        view.addSubview(
+            videoRecipient,
+            positioned: NSWindow.OrderingMode.above,
+            relativeTo: newRecordingIndicator ?? containerView
+        )
+                
+        // Add auto-layout constraints to video recipient.
+        constrainVideoRecipientView(videoRecipient)
+
+        // Add recipient avatar image as contents of view.
+        videoRecipient.layer?.contents = viewModel.recipientMemberAvatar!
+        
+        // Constrain the avatar's image size to the view's size.
+        videoRecipient.layer?.contentsGravity = .resizeAspectFill
+
+        // Assign new indicator to instance property.
+        videoRecipientView = videoRecipient
+        
+        // Return newly created, unwrapped, view.
+        return videoRecipientView!
+    }
+    
+    // Set up video recipient view auto-layout.
+    private func constrainVideoRecipientView(_ videoRecipient: RoundView) {
+        // Set up auto-layout for sizing/positioning.
+        videoRecipient.translatesAutoresizingMaskIntoConstraints = false
+
+        // Add auto-layout constraints.
+        NSLayoutConstraint.activate([
+            // Set height of video recipient view relative to channel avatar view.
+            videoRecipient.heightAnchor.constraint(
+                equalTo: view.heightAnchor,
+                multiplier: ChannelAvatarView.Style.VideoRecipientView.PositionStyle.relativeHeight
+            ),
+            
+            // Keep indicator height and width the same.
+            videoRecipient.widthAnchor.constraint(equalTo: videoRecipient.heightAnchor),
+            
+            // Align right sides (but shift it left the specified amount).
+            videoRecipient.rightAnchor.constraint(
+                equalTo: view.rightAnchor,
+                constant: ChannelAvatarView.Style.VideoRecipientView.PositionStyle.edgeOffset
+            ),
+            
+            // Align bottom sides (but shift it up the specified amount).
+            videoRecipient.bottomAnchor.constraint(
+                equalTo: view.bottomAnchor,
+                constant: ChannelAvatarView.Style.VideoRecipientView.PositionStyle.edgeOffset
+            ),
+        ])
+    }
+
     // Animate the size change of avatar view for the given channel state.
     private func animateAvatarViewSize(toState state: ChannelState) {
         let diameter = ChannelWindow.Style.size(forState: state).height
@@ -690,6 +760,26 @@ class ChannelAvatarViewController: NSViewController {
         setAvatarImage(to: viewModel.recipientMemberAvatar!, animate: true)
     }
     
+    // Upsert and show video recipient view.
+    private func fadeInVideoRecipientView() {
+        // Upsert video recipient subview.
+        let videoRecipient = videoRecipientView ?? createVideoRecipientView()
+        
+        // Show the video recipient.
+        videoRecipient.animator().alphaValue = 1
+    }
+    
+    // Hide video recipient view if it exists.
+    private func fadeOutVideoRecipientView() {
+        // Ensure video recipient subview exists.
+        guard let videoRecipient = videoRecipientView else {
+            return
+        }
+
+        // Hide the video recipient.
+        videoRecipient.animator().alphaValue = 0
+    }
+    
     private func renderIdle(_ state: ChannelState) {
         // Animate avatar view size.
         animateAvatarViewSize(toState: state)
@@ -747,6 +837,9 @@ class ChannelAvatarViewController: NSViewController {
                 duration: ChannelWindow.AnimationConfig.duration(forState: state),
                 alpha: ChannelAvatarView.Style.BlurLayer.videoPlaceholderAvatarAlpha
             )
+            
+            // Fade in video recipient avatar.
+            fadeInVideoRecipientView()
         }
         
         // Animate avatar view size.
@@ -760,8 +853,13 @@ class ChannelAvatarViewController: NSViewController {
         // Fade out loader view.
         fadeOutLoaderView()
         
+        // If this was a video recording...
         if UserSettings.Video.useCamera {
+            // Fade out the video placeholder image.
             fadeOutVideoPlaceholderAvatar()
+            
+            // Fade out the video recipient avatar.
+            fadeOutVideoRecipientView()
         }
     }
     
@@ -792,9 +890,13 @@ class ChannelAvatarViewController: NSViewController {
         // Fade out checkmark.
         fadeOutCheckmarkView()
         
-        // Fade out video placeholder avatar if using video.
+        // If this was a video recording...
         if UserSettings.Video.useCamera {
+            // Fade out the video placeholder image.
             fadeOutVideoPlaceholderAvatar()
+            
+            // Fade out the video recipient avatar.
+            fadeOutVideoRecipientView()
         }
     }
     

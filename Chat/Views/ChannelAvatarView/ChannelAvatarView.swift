@@ -128,6 +128,20 @@ class ChannelAvatarView: NSView {
             // Diameter of loading spinner.
             static let diameter: CGFloat = 46
         }
+        
+        // Video recipient view styling.
+        enum VideoRecipientView {
+            
+            // Positional styling for video recipient view.
+            enum PositionStyle {
+                
+                // Height of indicator relative to parent channel view.
+                static let relativeHeight: CGFloat = 0.18
+                                
+                // Absolute shift of indicator relative to parent channel view.
+                static let edgeOffset: CGFloat = -13.0
+            }
+        }
     }
     
     // Animation configuration for all child views that this view owns.
@@ -164,7 +178,7 @@ class ChannelAvatarView: NSView {
         }
         
         enum VideoPreviewLayer {
-            static let removeBlurDuration: CFTimeInterval = 0.08
+            static let removeBlurDuration: CFTimeInterval = 0.07
         }
     }
     
