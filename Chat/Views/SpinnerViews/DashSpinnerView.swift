@@ -134,7 +134,7 @@ class DashSpinnerView: NSView {
     func createLineDashPatternAnimation() -> CABasicAnimation {
         let lineDashPatternAnimation = CABasicAnimation(keyPath: AnimationKeys.lineDashPattern)
         lineDashPatternAnimation.fromValue = [2, 2]
-        lineDashPatternAnimation.toValue = [7, 6]
+        lineDashPatternAnimation.toValue = [7, 7]
         return lineDashPatternAnimation
     }
     

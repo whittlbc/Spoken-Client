@@ -50,7 +50,7 @@ class ChannelAvatarViewController: NSViewController {
     private var loaderView: DashSpinnerView?
     
     // Video recipient avatar view to show when recording a video message.
-    private var videoRecipientView: RoundView!
+    private var videoRecipientView: RoundShadowView!
 
     // Proper initializer to use when rendering channel.
     convenience init(channel: Channel) {
@@ -465,20 +465,18 @@ class ChannelAvatarViewController: NSViewController {
     }
     
     // Create new image view.
-    private func createVideoRecipientView() -> RoundView {
-        // Create new round view.
-        let videoRecipient = RoundView()
-                
-        // Make it layer based, ensure overflow is hidden, and start it as hidden.
+    private func createVideoRecipientView() -> RoundShadowView {
+        // Create new round view with with drop shadow.
+        let videoRecipient = RoundShadowView(
+            shadowConfig: ChannelAvatarView.Style.VideoRecipientView.ShadowStyle.grounded
+        )
+                        
+        // Make it layer based, and start it as hidden.
         videoRecipient.wantsLayer = true
-        videoRecipient.layer?.masksToBounds = true
+        videoRecipient.layer?.masksToBounds = false
         videoRecipient.alphaValue = 0
         
-        // Wrap avatar in a thin white border.
-        videoRecipient.layer?.borderWidth = 1.2
-        videoRecipient.layer?.borderColor = Color.fromRGBA(255, 255, 255, 0.6).cgColor
-
-        // Add indicator as subview above all.
+        // Add video recipinet as subview above all.
         view.addSubview(
             videoRecipient,
             positioned: NSWindow.OrderingMode.above,
@@ -487,14 +485,39 @@ class ChannelAvatarViewController: NSViewController {
                 
         // Add auto-layout constraints to video recipient.
         constrainVideoRecipientView(videoRecipient)
+                
+        // Create image view to go inside video recipient view.
+        let recipientImageView = RoundView()
+        
+        // Make it layer based and ensure overflow is hidden.
+        recipientImageView.wantsLayer = true
+        recipientImageView.layer?.masksToBounds = true
+        
+        // Add border around avatar.
+        recipientImageView.layer?.borderColor = ChannelAvatarView.Style.VideoRecipientView.BorderStyle.color
+        recipientImageView.layer?.borderWidth = ChannelAvatarView.Style.VideoRecipientView.BorderStyle.width
+        
+        // Add image view to video recipient view.
+        videoRecipient.addSubview(recipientImageView)
+        
+        // Set up auto-layout for sizing/positioning.
+        recipientImageView.translatesAutoresizingMaskIntoConstraints = false
+        
+        // Fix image size to video recipient size (equal height, width, and center).
+        NSLayoutConstraint.activate([
+            recipientImageView.heightAnchor.constraint(equalTo: videoRecipient.heightAnchor),
+            recipientImageView.widthAnchor.constraint(equalTo: videoRecipient.heightAnchor),
+            recipientImageView.centerXAnchor.constraint(equalTo: videoRecipient.centerXAnchor),
+            recipientImageView.centerYAnchor.constraint(equalTo: videoRecipient.centerYAnchor),
+        ])
+                
+        // Constrain the image's size to the view's size.
+        recipientImageView.layer?.contentsGravity = .resizeAspectFill
 
         // Add recipient avatar image as contents of view.
-        videoRecipient.layer?.contents = viewModel.recipientMemberAvatar!
-        
-        // Constrain the avatar's image size to the view's size.
-        videoRecipient.layer?.contentsGravity = .resizeAspectFill
+        recipientImageView.layer?.contents = viewModel.recipientMemberAvatar!
 
-        // Assign new indicator to instance property.
+        // Assign new recipient to instance property.
         videoRecipientView = videoRecipient
         
         // Return newly created, unwrapped, view.
@@ -502,7 +525,7 @@ class ChannelAvatarViewController: NSViewController {
     }
     
     // Set up video recipient view auto-layout.
-    private func constrainVideoRecipientView(_ videoRecipient: RoundView) {
+    private func constrainVideoRecipientView(_ videoRecipient: RoundShadowView) {
         // Set up auto-layout for sizing/positioning.
         videoRecipient.translatesAutoresizingMaskIntoConstraints = false
 

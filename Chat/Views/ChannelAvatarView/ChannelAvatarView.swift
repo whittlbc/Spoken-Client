@@ -33,25 +33,22 @@ class ChannelAvatarView: NSView {
                 // Default, non-raised, shadow style.
                 static let grounded = Shadow(
                     offset: CGSize(width: 0, height: -1),
-                    radius: 2,
+                    radius: 2.0,
                     opacity: 0.6
                 )
                 
                 // Raised shadow style.
                 static let raised = Shadow(
                     offset: CGSize(width: 1.1, height: -1.5),
-                    radius: 3,
+                    radius: 3.0,
                     opacity: 0.6
                 )
-                
                 // Get shadow style config for channel state.
                 static func getShadow(forState state: ChannelState) -> Shadow {
                     switch state {
                     case .idle:
                         return grounded
-                    case .previewing:
-                        return raised
-                    case .recording(_):
+                    case .previewing, .recording(_):
                         return raised
                     }
                 }
@@ -126,7 +123,7 @@ class ChannelAvatarView: NSView {
         enum LoaderView {
             
             // Diameter of loading spinner.
-            static let diameter: CGFloat = 46
+            static let diameter: CGFloat = 46.5
         }
         
         // Video recipient view styling.
@@ -136,10 +133,31 @@ class ChannelAvatarView: NSView {
             enum PositionStyle {
                 
                 // Height of indicator relative to parent channel view.
-                static let relativeHeight: CGFloat = 0.18
+                static let relativeHeight: CGFloat = 0.17
                                 
                 // Absolute shift of indicator relative to parent channel view.
-                static let edgeOffset: CGFloat = -13.0
+                static let edgeOffset: CGFloat = -14.5
+            }
+                        
+            // Shadow styling for new recording indicator.
+            enum ShadowStyle {
+                
+                // Default, non-raised, shadow style.
+                static let grounded = Shadow(
+                    offset: CGSize(width: -1, height: -1),
+                    radius: 3.0,
+                    opacity: 0.6
+                )
+            }
+            
+            // Border styling for video recipient avatar.
+            enum BorderStyle {
+                
+                // Width of border around recipient avatar.
+                static let width: CGFloat = 1.2
+                
+                // Color of border around recipient avatar.
+                static let color: CGColor = Color.fromRGBA(255, 255, 255, 0.8).cgColor
             }
         }
     }
@@ -178,7 +196,7 @@ class ChannelAvatarView: NSView {
         }
         
         enum VideoPreviewLayer {
-            static let removeBlurDuration: CFTimeInterval = 0.07
+            static let removeBlurDuration: CFTimeInterval = 0.06
         }
     }
     

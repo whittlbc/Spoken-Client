@@ -104,7 +104,7 @@ class ChannelWindow: FloatingWindow {
                 
                 // Initializing recording.
                 case .started:
-                    return UserSettings.Video.useCamera ? 0.25 : 0.18
+                    return UserSettings.Video.useCamera ? 0.3 : 0.18
                 
                 // All other recording statuses.
                 default:
@@ -120,7 +120,8 @@ class ChannelWindow: FloatingWindow {
     // Artificial timing durations used in various places for better UX.
     enum ArtificialTiming {
  
-        static let showVideoRecordingInitializingDuration = 0.7
+        // How long to show the video recording loading spinner.
+        static let showVideoRecordingInitializingDuration = 0.77
         
         // How long to show window in the recording-sent state before reverting back to idle state.
         static let showRecordingSentDuration = 0.9
