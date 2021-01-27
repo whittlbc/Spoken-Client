@@ -884,10 +884,10 @@ class ChannelAvatarViewController: NSViewController {
             
             // Fade in video recipient avatar.
             fadeInVideoRecipientView()
+            
+            // Animate avatar view size.
+            animateAvatarViewSize(toState: state)
         }
-        
-        // Animate avatar view size.
-        animateAvatarViewSize(toState: state)
     }
     
     private func renderCancellingRecording(_ state: ChannelState) {

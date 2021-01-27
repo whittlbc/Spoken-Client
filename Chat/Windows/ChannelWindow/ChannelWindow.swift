@@ -95,13 +95,12 @@ class ChannelWindow: FloatingWindow {
                 switch recordingStatus {
                 
                 case .started:
-                    return AdjacentChannelOffset(above: 0, below: -9.0)
+                    return UserSettings.Video.useCamera ? AdjacentChannelOffset(above: 0, below: -9.0) : AdjacentChannelOffset()
 
                 default:
                     return AdjacentChannelOffset()
                 }
             }
-
         }
     }
     
