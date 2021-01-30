@@ -13,7 +13,11 @@ import Combine
 
 class DataProvider<T: Model & NetworkingJSONDecodable> {
 
-    let cache: CodableCache<T> = CacheManager.newCodableCache(T.self, name: T.modelName)
+    let cache: CodableCache<T>
+
+    init(cacheCountLimit: UInt = 0) {
+        self.cache = CacheManager.newCodableCache(T.self, name: T.modelName, countLimit: cacheCountLimit)
+    }
     
     func get(id: String) -> AnyPublisher<T, Error> {
         // Get result from cache if it exists.
@@ -145,4 +149,6 @@ public enum dataProvider {
     static let channel = ChannelDataProvider<Channel>()
     
     static let member = MemberDataProvider<Member>()
+    
+    static let message = MessageDataProvider<Message>()
 }

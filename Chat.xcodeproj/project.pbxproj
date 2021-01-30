@@ -54,6 +54,7 @@
 		096863352586C2B000B9B614 /* RoundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 096863342586C2B000B9B614 /* RoundView.swift */; };
 		096863382586C42B00B9B614 /* RoundShadowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 096863372586C42B00B9B614 /* RoundShadowView.swift */; };
 		0968E29C25C0605D004E0C39 /* CIImage+NSImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0968E29B25C0605D004E0C39 /* CIImage+NSImage.swift */; };
+		0968E29F25C5B8DF004E0C39 /* MessageDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0968E29E25C5B8DF004E0C39 /* MessageDataProvider.swift */; };
 		097228F725B63EA100219591 /* ChannelWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 097228F625B63EA100219591 /* ChannelWindow.swift */; };
 		097228FC25BC8F0C00219591 /* ChannelAvatarViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 097228FB25BC8F0C00219591 /* ChannelAvatarViewModel.swift */; };
 		0972290225BCC98800219591 /* UserDefaults+RawRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0972290125BCC98800219591 /* UserDefaults+RawRepresentable.swift */; };
@@ -155,6 +156,7 @@
 		096863342586C2B000B9B614 /* RoundView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundView.swift; sourceTree = "<group>"; };
 		096863372586C42B00B9B614 /* RoundShadowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundShadowView.swift; sourceTree = "<group>"; };
 		0968E29B25C0605D004E0C39 /* CIImage+NSImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CIImage+NSImage.swift"; sourceTree = "<group>"; };
+		0968E29E25C5B8DF004E0C39 /* MessageDataProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageDataProvider.swift; sourceTree = "<group>"; };
 		097228F625B63EA100219591 /* ChannelWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelWindow.swift; sourceTree = "<group>"; };
 		097228FB25BC8F0C00219591 /* ChannelAvatarViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelAvatarViewModel.swift; sourceTree = "<group>"; };
 		0972290125BCC98800219591 /* UserDefaults+RawRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserDefaults+RawRepresentable.swift"; sourceTree = "<group>"; };
@@ -541,6 +543,7 @@
 				09D19A5E25B25DAD00C0C476 /* ChannelDataProvider.swift */,
 				09D19A6425B38DDB00C0C476 /* MemberDataProvider.swift */,
 				094DAB0225AF948300CFC2EC /* UserDataProvider.swift */,
+				0968E29E25C5B8DF004E0C39 /* MessageDataProvider.swift */,
 			);
 			path = DataProviders;
 			sourceTree = "<group>";
@@ -722,6 +725,7 @@
 				0968632C2584299400B9B614 /* ChannelView.swift in Sources */,
 				0940E06E25A4D946006184D7 /* AV.swift in Sources */,
 				0949C897259686E800B61D1F /* NSView+Subviews.swift in Sources */,
+				0968E29F25C5B8DF004E0C39 /* MessageDataProvider.swift in Sources */,
 				094DAB0325AF948300CFC2EC /* UserDataProvider.swift in Sources */,
 				0995DE01257AEDEC00DAA334 /* SidebarWindowController.swift in Sources */,
 				09D19A6525B38DDB00C0C476 /* MemberDataProvider.swift in Sources */,

@@ -13,6 +13,8 @@ struct Message: Model {
     static var modelName = "message"
 
     var id = ""
+    var channelId = ""
+    var senderId = ""
     
     func forCache() -> Message {
         self

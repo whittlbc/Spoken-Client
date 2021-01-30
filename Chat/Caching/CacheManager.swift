@@ -17,18 +17,16 @@ public enum CacheManager {
         static let image = "image"
     }
     
-    // On-Disk storage configuration
-    private static let diskConfig = DiskConfig(name: Config.appBundleID)
-
-    // In-memory storage configuration.
-    private static let memoryConfig = MemoryConfig()
-
     // Create a new codable cache.
-    static func newCodableCache<T: Codable>(_ value: T.Type, name: String = "default") -> CodableCache<T> {
+    static func newCodableCache<T: Codable>(
+        _ value: T.Type,
+        name: String = "default",
+        countLimit: UInt = 0,
+        totalCostLimit: UInt = 0) -> CodableCache<T> {
         do {
             let storage: Storage<String, T> = try Storage(
                 diskConfig: DiskConfig(name: name),
-                memoryConfig: MemoryConfig(),
+                memoryConfig: MemoryConfig(countLimit: countLimit, totalCostLimit: totalCostLimit),
                 transformer: TransformerFactory.forCodable(ofType: value)
             )
             
@@ -39,11 +37,11 @@ public enum CacheManager {
     }
     
     // Create a new image cache.
-    static func newImageCache(name: String = CacheName.image) -> ImageCache {
+    static func newImageCache(name: String = CacheName.image, countLimit: UInt = 0, totalCostLimit: UInt = 0) -> ImageCache {
         do {
             let storage: Storage<String, Image> = try Storage(
                 diskConfig: DiskConfig(name: CacheName.image),
-                memoryConfig: MemoryConfig(),
+                memoryConfig: MemoryConfig(countLimit: countLimit, totalCostLimit: totalCostLimit),
                 transformer: TransformerFactory.forImage()
             )
             
@@ -57,5 +55,5 @@ public enum CacheManager {
     static let stringCache: CodableCache<String> = CacheManager.newCodableCache(String.self, name: CacheName.string)
     
     // Global String:Image cache.
-    static let imageCache: ImageCache = CacheManager.newImageCache()
+    static let imageCache: ImageCache = CacheManager.newImageCache(countLimit: 50)
 }
