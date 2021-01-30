@@ -14,5 +14,9 @@ extension Message: ArrowParsable {
     
     public mutating func deserialize(_ json: JSON) {
         id <-- json["id"]
+        channelId <-- json["channel_id"]
+        senderId <-- json["sender_id"]
+        messageType <-- json["message_type"]
+        files <-- json["files"]
     }
 }

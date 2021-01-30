@@ -55,6 +55,7 @@
 		096863382586C42B00B9B614 /* RoundShadowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 096863372586C42B00B9B614 /* RoundShadowView.swift */; };
 		0968E29C25C0605D004E0C39 /* CIImage+NSImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0968E29B25C0605D004E0C39 /* CIImage+NSImage.swift */; };
 		0968E29F25C5B8DF004E0C39 /* MessageDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0968E29E25C5B8DF004E0C39 /* MessageDataProvider.swift */; };
+		0968E2A225C5C38E004E0C39 /* File.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0968E2A125C5C38E004E0C39 /* File.swift */; };
 		097228F725B63EA100219591 /* ChannelWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 097228F625B63EA100219591 /* ChannelWindow.swift */; };
 		097228FC25BC8F0C00219591 /* ChannelAvatarViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 097228FB25BC8F0C00219591 /* ChannelAvatarViewModel.swift */; };
 		0972290225BCC98800219591 /* UserDefaults+RawRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0972290125BCC98800219591 /* UserDefaults+RawRepresentable.swift */; };
@@ -157,6 +158,7 @@
 		096863372586C42B00B9B614 /* RoundShadowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundShadowView.swift; sourceTree = "<group>"; };
 		0968E29B25C0605D004E0C39 /* CIImage+NSImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CIImage+NSImage.swift"; sourceTree = "<group>"; };
 		0968E29E25C5B8DF004E0C39 /* MessageDataProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageDataProvider.swift; sourceTree = "<group>"; };
+		0968E2A125C5C38E004E0C39 /* File.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = File.swift; sourceTree = "<group>"; };
 		097228F625B63EA100219591 /* ChannelWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelWindow.swift; sourceTree = "<group>"; };
 		097228FB25BC8F0C00219591 /* ChannelAvatarViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelAvatarViewModel.swift; sourceTree = "<group>"; };
 		0972290125BCC98800219591 /* UserDefaults+RawRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserDefaults+RawRepresentable.swift"; sourceTree = "<group>"; };
@@ -452,6 +454,7 @@
 				096862ED2582ABCE00B9B614 /* Member.swift */,
 				095C677225A29B7300729845 /* Message.swift */,
 				0996445425AE7A1D004473B7 /* Model.swift */,
+				0968E2A125C5C38E004E0C39 /* File.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -779,6 +782,7 @@
 				095C677025A29AA200729845 /* Channel.swift in Sources */,
 				09686328258427A500B9B614 /* ChannelViewController.swift in Sources */,
 				095C677625A29C6700729845 /* Channel+Arrow.swift in Sources */,
+				0968E2A225C5C38E004E0C39 /* File.swift in Sources */,
 				0996443A25A8F6B5004473B7 /* AudioRecording.swift in Sources */,
 				09C1328D25A7CA3600FB1D90 /* ChannelPromptSpeechAnalyzer.swift in Sources */,
 				099087A8257976BF001660D1 /* WindowControllerManager.swift in Sources */,

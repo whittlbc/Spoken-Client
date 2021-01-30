@@ -8,6 +8,11 @@
 
 import Foundation
 
+enum MessageType: String {
+    case audio
+    case video
+}
+
 struct Message: Model {
     
     static var modelName = "message"
@@ -15,6 +20,8 @@ struct Message: Model {
     var id = ""
     var channelId = ""
     var senderId = ""
+    var messageType = ""
+    var files = [File]()
     
     func forCache() -> Message {
         self
