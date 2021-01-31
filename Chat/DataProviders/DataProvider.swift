@@ -81,10 +81,23 @@ class DataProvider<T: Model & NetworkingJSONDecodable> {
     }
     
     func create(params: Params) -> AnyPublisher<T, Error> {
-        // Create a new vendor request to get this resource by id.
+        // Create a new vendor request to create this resource with the given params..
         let request: AnyPublisher<T, Error> = api.post(getNsp(), params: params)
 
         // Create, cache, and publish the result.
+        return request
+            .mapError(vendorErrorToDataProviderError)
+            .handleEvents(receiveOutput: { [weak self] result in
+                self?.cacheResult(result)
+            })
+            .eraseToAnyPublisher()
+    }
+    
+    func patch(_ suffix: String, params: Params) -> AnyPublisher<T, Error> {
+        // Create a new vendor request to patch this resource with the following params.
+        let request: AnyPublisher<T, Error> = api.patch(getNsp() + suffix, params: params)
+
+        // Patch, cache, and publish the result.
         return request
             .mapError(vendorErrorToDataProviderError)
             .handleEvents(receiveOutput: { [weak self] result in

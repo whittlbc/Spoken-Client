@@ -35,7 +35,7 @@ class ChannelWindowModel {
         self.channel = channel
     }
     
-    func createRecordingMessage() {
+    func createRecordingMessage(fileSize: Int) {
         currentMessageRequestCompleted = false
     
         startNetworkTimer()

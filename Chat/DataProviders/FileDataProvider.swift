@@ -11,12 +11,16 @@ import Networking
 import Combine
 
 class FileDataProvider<T: Model & NetworkingJSONDecodable>: DataProvider<T> {
-    
+
     convenience init() {
         self.init(cacheCountLimit: 200)
     }
     
     override init(cacheCountLimit: UInt = 0) {
         super.init(cacheCountLimit: cacheCountLimit)
+    }
+    
+    func setUploadStatus(id: String, status: FileUploadStatus, etags: [String]) -> AnyPublisher<T, Error> {
+        patch("/upload-status", params: ["id": id, "status": status.rawValue, "etags": etags])
     }
 }

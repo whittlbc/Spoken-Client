@@ -14,7 +14,7 @@ public class Job {
     
     init() {}
     
-    func run() throws {
+    func run() {
         logger.debug("Running \(name)...")
     }
 }

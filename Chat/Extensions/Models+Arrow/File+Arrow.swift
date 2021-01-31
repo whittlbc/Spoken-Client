@@ -15,11 +15,11 @@ extension File: ArrowParsable {
     public mutating func deserialize(_ json: JSON) {
         id <-- json["id"]
         externalId <-- json["external_id"]
-        status <-- json["status"]
         fileType <-- json["file_type"]
         name <-- json["name"]
         ext <-- json["ext"]
         size <-- json["size"]
-        uploadURL <-- json["upload_url"]
+        uploadStatus <-- json["upload_status"]
+        uploadURLs <-- json["upload_urls"]
     }
 }

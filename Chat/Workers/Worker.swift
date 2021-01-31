@@ -6,7 +6,6 @@
 //  Copyright © 2021 Ben Whittle. All rights reserved.
 //
 
-
 import Cocoa
 
 public class Worker<T: Job> {
@@ -58,13 +57,9 @@ public class Worker<T: Job> {
         }
         
         // Pop last job off the queue.
-        let nextJob = jobsQueue.removeLast()
+        let job = jobsQueue.removeLast()
         
-        // Try to run the job and catch an errors.
-        do {
-            try nextJob.run()
-        } catch {
-            logger.error("\(error)")
-        }
+        // Run the job.
+        job.run()
     }
 }

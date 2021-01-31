@@ -295,11 +295,17 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate {
         // Set state to sending recording.
         toRecordingSending()
 
-        // Stop active recording.
+        // Stop the active recording.
         UserSettings.Video.useCamera ? AV.avRecorder.stop(id: channel.id) : AV.mic.stopRecording()
         
+        // Get the current recording's data.
+        guard let data = AV.currentRecordingData else {
+            logger.error("No current recording data exists -- not creating new recording message.")
+            return
+        }
+        
         // Create new recording message.
-        windowModel.createRecordingMessage()
+        windowModel.createRecordingMessage(fileSize: data.count)
     }
 
     // Start timer used to check whether mouse is still inside the previewing window.

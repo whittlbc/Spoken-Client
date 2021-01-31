@@ -8,22 +8,41 @@
 
 import Foundation
 
+enum FileType: String {
+    case flac
+}
+
+enum FileUploadStatus: String {
+    case pending
+    case succeeded
+    case failed
+}
+
 struct File: Model {
     
     static var modelName = "file"
 
     var id = ""
     var externalId = ""
-    var status = ""
     var fileType = ""
     var name = ""
     var ext = ""
     var size: Int = 0
-    var uploadURL = ""
+    var uploadStatus = ""
+    var uploadURLs = [String]()
+    
+    var mimeType: String {
+        switch FileType(rawValue: fileType) {
+        case .flac:
+            return "audio/x-flac"
+        default:
+            return ""
+        }
+    }
     
     func forCache() -> File {
         var file = self
-        file.uploadURL = ""
+        file.uploadURLs.removeAll()
         return file
     }
 }
