@@ -9,7 +9,7 @@
 import Cocoa
 import AVFoundation
 
-class MicTap: SpeechRecognizerDelegate {
+class MicTap {
     
     let bus: AVAudioNodeBus = 0
     
@@ -34,9 +34,7 @@ class MicTap: SpeechRecognizerDelegate {
     private var compressedBuffer: AVAudioCompressedBuffer?
 
     private var audioRecorder = AudioRecorder()
-    
-    private var speechRecognizer = SpeechRecognizer(locale: AV.locale)!
-    
+        
     typealias Pipe = (AVAudioPCMBuffer) -> Void
     
     private var pipes = [String:Pipe]()
@@ -46,9 +44,6 @@ class MicTap: SpeechRecognizerDelegate {
         if isConfigured {
             return
         }
-        
-        // Set self as delegate to speech recognizer.
-        speechRecognizer.speechDelegate = self
             
         // Configure audio engine.
         configureAudioEngine()
@@ -66,47 +61,6 @@ class MicTap: SpeechRecognizerDelegate {
     
     func removePipe(forKey key: String) {
         pipes.removeValue(forKey: key)
-    }
-    
-    func startChannelPromptAnalyzer(onChannelPrompted: @escaping (Any) -> Void) {
-        // Ensure class is configured, speech recognition is allowed/not-running, and no active recording exists.
-        guard isConfigured &&
-            speechRecognizer.isConfigured() &&
-            !speechRecognizer.isRunning &&
-            audioRecorder.audioRecording == nil &&
-            !audioRecorder.isRecording else {
-            return
-        }
-
-        // Configure speech analysis to look for channel prompts.
-        speechRecognizer.setAnalyzer(toType: .channelPrompt)
-                
-        // Set up callback to handle when a channel has been successfully prompted.
-        speechRecognizer.onKeySpeechResult = onChannelPrompted
-
-        // Start speech recognition.
-        startSpeechRecognition()
-        
-        // Start recording.
-        startRecording()
-    }
-    
-    // Start speech recognition.
-    func startSpeechRecognition() {
-        speechRecognizer.start()
-    }
-    
-    // Stop speech recognition.
-    func stopSpeechRecognition() {
-        speechRecognizer.stop()
-    }
-    
-    func onSpeechRecognitionStopped(keyResultSeen: Bool) {
-        // Stop and clear recording if no key result was seen.
-        if !keyResultSeen {
-            stopRecording()
-            clearRecording()
-        }
     }
     
     func startRecording() {
