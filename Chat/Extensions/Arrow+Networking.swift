@@ -31,3 +31,4 @@ extension Workspace: NetworkingJSONDecodable {}
 extension Channel: NetworkingJSONDecodable {}
 extension Member: NetworkingJSONDecodable {}
 extension Message: NetworkingJSONDecodable {}
+extension File: NetworkingJSONDecodable {}

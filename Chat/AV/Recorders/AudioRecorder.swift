@@ -13,6 +13,8 @@ class AudioRecorder {
 
     var audioRecording: AudioRecording?
     
+    var recordingData: Data? { audioRecording?.data }
+    
     var isRecording = false
         
     func start() {
@@ -29,7 +31,7 @@ class AudioRecorder {
     }
     
     func stop() {
-        // Only start if no active audio recording exists.
+        // Only stop if an active audio recording exists.
         guard audioRecording != nil && isRecording else {
             return
         }
@@ -42,9 +44,9 @@ class AudioRecorder {
         audioRecording = nil
     }
     
-    func handleMicInput(buffer: AVAudioPCMBuffer) {
+    func handleMicInput(data: Data) {
         if isRecording {
-            audioRecording?.append(buffer)
+            audioRecording?.append(data)
         }
     }
     

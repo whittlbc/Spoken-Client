@@ -19,8 +19,11 @@ struct File: Model {
     var name = ""
     var ext = ""
     var size: Int = 0
+    var uploadURL = ""
     
     func forCache() -> File {
-        self
+        var file = self
+        file.uploadURL = ""
+        return file
     }
 }

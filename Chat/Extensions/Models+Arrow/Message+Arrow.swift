@@ -17,6 +17,7 @@ extension Message: ArrowParsable {
         channelId <-- json["channel_id"]
         senderId <-- json["sender_id"]
         messageType <-- json["message_type"]
+        fileIds <-- json["file_ids"]
         files <-- json["files"]
     }
 }

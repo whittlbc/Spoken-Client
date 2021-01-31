@@ -9,8 +9,8 @@
 import Foundation
 
 enum MessageType: String {
-    case audio
-    case video
+    case audio = "audio"
+    case video = "video"
 }
 
 struct Message: Model {
@@ -21,9 +21,13 @@ struct Message: Model {
     var channelId = ""
     var senderId = ""
     var messageType = ""
-    var files = [File]()
+    var fileIds = [String]()
     
+    var files = [File]()
+
     func forCache() -> Message {
-        self
+        var message = self
+        message.files = []
+        return message
     }
 }

@@ -11,9 +11,9 @@ import AVFoundation
 
 class AudioRecording {
     
-    var data = NSMutableData()
-    
-    func append(_ audioPCMBuffer: AVAudioPCMBuffer) {
-        // TODO: Convert to FLAC and append to data (NSMutableData)
+    var data = Data()
+
+    func append(_ data: Data) {
+        self.data.append(data)
     }
 }

@@ -25,12 +25,21 @@ class AVRecorder: NSObject, AVCaptureAudioDataOutputSampleBufferDelegate, AVCapt
     
     var startStatus = AVRecorderStartStatus()
     
-    private lazy var controlThread = getBackgroundThread(name: Threads.control)
+    var avRecording: AVRecording?
     
-    private lazy var dataOutputThread = getBackgroundThread(name: Threads.dataOutput)
+    var recordingData: Data? { avRecording?.data }
+    
+    private lazy var controlThread = Thread.newBackgroundThread(name: Threads.control)
+    
+    private lazy var dataOutputThread = Thread.newBackgroundThread(name: Threads.dataOutput)
 
     func start(id: String) {
         controlThread.async {
+            guard self.avRecording == nil else {
+                return
+            }
+
+            self.createAVRecording()
             self.createSession()
             self.session!.startRunning()
             self.state = .starting(id: id, session: self.session!)
@@ -39,8 +48,20 @@ class AVRecorder: NSObject, AVCaptureAudioDataOutputSampleBufferDelegate, AVCapt
     
     func stop(id: String, cancelled: Bool = false) {
         controlThread.async {
+            if self.avRecording == nil {
+                return
+            }
+
             self.state = .stopping(id: id, cancelled: cancelled)
         }
+    }
+    
+    func clear() {
+        avRecording = nil
+    }
+    
+    private func createAVRecording() {
+        avRecording = AVRecording()
     }
     
     private func stopSession(id: String, cancelled: Bool, lastFrame: NSImage?) {
@@ -93,6 +114,8 @@ class AVRecorder: NSObject, AVCaptureAudioDataOutputSampleBufferDelegate, AVCapt
         guard shouldProcessOutput() else {
             return
         }
+        
+        // append n shit
     }
     
     private func onVideoOutput(sampleBuffer: CMSampleBuffer, connection: AVCaptureConnection) {
@@ -103,6 +126,12 @@ class AVRecorder: NSObject, AVCaptureAudioDataOutputSampleBufferDelegate, AVCapt
         guard shouldProcessOutput() else {
             return
         }
+        
+        
+        
+        // HERE
+        
+        
         
         if isStopping() {
             stopWithLastFrame(sampleBuffer: sampleBuffer)
@@ -168,13 +197,6 @@ class AVRecorder: NSObject, AVCaptureAudioDataOutputSampleBufferDelegate, AVCapt
         session = sessionFactory.createSession(
             outputDelegate: self,
             outputThread: dataOutputThread
-        )
-    }
-    
-    private func getBackgroundThread(name: String) -> DispatchQueue {
-        dispatch_queue_global_t(
-            label: [Config.appBundleID, name].joined(separator: "."),
-            qos: .background
         )
     }
 }

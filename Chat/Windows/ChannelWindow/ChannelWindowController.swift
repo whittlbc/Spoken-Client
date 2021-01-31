@@ -14,6 +14,8 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate {
     
     // Channel associated with window.
     var channel: Channel!
+
+    var windowModel: ChannelWindowModel!
     
     // Get window as channel window.
     var channelWindow: ChannelWindow { window as! ChannelWindow }
@@ -59,6 +61,8 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate {
     
     // Destination of window during active position animation.
     private var destination: NSPoint?
+    
+    private var currentMessageSubscription: AnyCancellable?
 
     // The channel's current state.
     private(set) var state = ChannelState.idle {
@@ -78,11 +82,14 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate {
     convenience init(channel: Channel) {
         self.init(window: nil)
         
-        // Store ref to channel.
-        self.channel = channel
+        // Create window model.
+        self.windowModel = ChannelWindowModel(channel: channel)
         
         // Add channel view controller as main content.
         addChannelViewController()
+        
+        // Subscribe to window model.
+        subscribeToWindowModel()
     }
     
     // Override delegated init.
@@ -291,13 +298,8 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate {
         // Stop active recording.
         UserSettings.Video.useCamera ? AV.avRecorder.stop(id: channel.id) : AV.mic.stopRecording()
         
-        // TODO: Actually send recording...this will include a lot of steps...
-        
-        // Hack to simulate network time.
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) { [weak self] in
-            // Show recording as sent.
-            self?.showRecordingSent()
-        }
+        // Create new recording message.
+        windowModel.createRecordingMessage()
     }
 
     // Start timer used to check whether mouse is still inside the previewing window.
@@ -329,6 +331,57 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate {
     // Assume the mouse has exited the window, regardless of truth.
     func forceMouseExit() {
         channelWindow.registerMouseExited()
+    }
+    
+    // Subscribe to window model changes.
+    private func subscribeToWindowModel() {
+        currentMessageSubscription = windowModel.$currentMessage.sink { [weak self] message in
+            self?.onCurrentMessageUpdated(message: message)
+        }
+    }
+    
+    private func onCurrentMessageUpdated(message: Message?) {
+        guard let msg = message else {
+            return
+        }
+        
+        // Handle newly recorded messages being sent.
+        if isRecordingSending() {
+            onRecordingMessageSent(message: msg)
+        }
+    }
+    
+    private func onRecordingMessageSent(message: Message) {
+        // Upload message's recording file.
+        uploadRecordingFile(forMessage: message)
+        
+        // Show recording as sent.
+        DispatchQueue.main.async { [weak self] in
+            self?.showRecordingSent()
+        }
+    }
+    
+    private func uploadRecordingFile(forMessage message: Message) {
+        // Ensure message has file.
+        guard message.files.count > 0 else {
+            logger.error("Message(id=\(message.id)) has no files -- no recording to upload.")
+            return
+        }
+        
+        // Use the first file associated with the message.
+        let file = message.files[0]
+        
+        // Get the current recording's data.
+        guard let data = AV.currentRecordingData else {
+            logger.error("No current recording data exists -- not uploading to File(id=\(file.id).")
+            return
+        }
+        
+        // Add a job to upload the file's data.
+        fileUploadWorker.addJob(FileUploadJob(file: file, data: data))
+        
+        // Clear the current recording.
+        AV.clearRecording()
     }
     
     private func initializeRecording() {
@@ -401,11 +454,6 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate {
         // Show recording sent for specific amount of time and then revert to idle state.
         DispatchQueue.main.asyncAfter(deadline: .now() + ChannelWindow.ArtificialTiming.showRecordingSentDuration) { [weak self] in
             self?.showRecordingFinished()
-            
-            // TODO: Move somewhere else once you're actually uploading recordings...?
-            if !UserSettings.Video.useCamera {
-                AV.mic.clearRecording()
-            }
         }
     }
     

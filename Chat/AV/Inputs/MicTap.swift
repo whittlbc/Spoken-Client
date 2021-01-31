@@ -13,14 +13,26 @@ class MicTap: SpeechRecognizerDelegate {
     
     let bus: AVAudioNodeBus = 0
     
-    let bufferSize: AVAudioFrameCount = 1024
+    let framesPerPacket: UInt32 = 1152
+    
+    let packetSize: UInt32 = 8
+    
+    var bufferSize: UInt32 { framesPerPacket * packetSize }
     
     var isConfigured = false
+    
+    var recordingData: Data? { audioRecorder.recordingData }
     
     private var isMicTapped = false
     
     private var audioEngine: AVAudioEngine!
     
+    private var mixerNode: AVAudioMixerNode!
+    
+    private var converter: AVAudioConverter!
+    
+    private var compressedBuffer: AVAudioCompressedBuffer?
+
     private var audioRecorder = AudioRecorder()
     
     private var speechRecognizer = SpeechRecognizer(locale: AV.locale)!
@@ -37,10 +49,10 @@ class MicTap: SpeechRecognizerDelegate {
         
         // Set self as delegate to speech recognizer.
         speechRecognizer.speechDelegate = self
-        
-        // Create audio engine.
-        createAudioEngine()
-        
+            
+        // Configure audio engine.
+        configureAudioEngine()
+                
         // Start audio engine.
         startAudioEngine()
             
@@ -117,19 +129,39 @@ class MicTap: SpeechRecognizerDelegate {
     func clearRecording() {
         audioRecorder.clear()
     }
-    
-    private func createAudioEngine() {
-        // Create audio engine.
+        
+    private func configureAudioEngine() {
+        // Create audio engine and mixer node.
         audioEngine = AVAudioEngine()
-                
-        // Access input node to force it's creation.
-        let _ = audioEngine.inputNode
+        mixerNode = AVAudioMixerNode()
+        
+        // Set volume to 0 to avoid audio feedback while recording.
+        mixerNode.volume = 0
+
+        // Build audio pipeline by attaching components.
+        buildAudioPipeline()
+        
+        // Prepare audio engine.
+        audioEngine.prepare()
+    }
+    
+    private func buildAudioPipeline() {
+        // Attach mixer node to audio engine.
+        audioEngine.attach(mixerNode)
+
+        // Connect input node to mixer node.
+        let inputNode = audioEngine.inputNode
+        let inputFormat = inputNode.outputFormat(forBus: bus)
+        audioEngine.connect(inputNode, to: mixerNode, format: inputFormat)
+
+        // Connect mixer node to main mixer node.
+        let mainMixerNode = audioEngine.mainMixerNode
+        let mixerFormat = AVAudioFormat(commonFormat: .pcmFormatFloat32, sampleRate: inputFormat.sampleRate, channels: 1, interleaved: false)
+        audioEngine.connect(mixerNode, to: mainMixerNode, format: mixerFormat)
     }
 
-    // Prepare and start audio engine.
+    // Start audio engine.
     private func startAudioEngine() {
-        audioEngine.prepare()
-                
         do {
             try audioEngine.start()
         } catch {
@@ -144,13 +176,30 @@ class MicTap: SpeechRecognizerDelegate {
         }
         
         isMicTapped = true
+        
+        // Get node to tap and it's output format.
+        let tapNode: AVAudioNode = mixerNode
+        let format = tapNode.outputFormat(forBus: bus)
+
+        // Prepare audio to be converted to FLAC.
+        var outDesc = AudioStreamBasicDescription()
+        outDesc.mSampleRate = format.sampleRate
+        outDesc.mChannelsPerFrame = 1
+        outDesc.mFormatID = kAudioFormatFLAC
+        outDesc.mFramesPerPacket = framesPerPacket
+        outDesc.mBitsPerChannel = 24
+        outDesc.mBytesPerPacket = 0
+
+        // Create audio converter.
+        let convertFormat = AVAudioFormat(streamDescription: &outDesc)!
+        converter = AVAudioConverter(from: format, to: convertFormat)
 
         audioEngine.inputNode.installTap(
             onBus: bus,
             bufferSize: bufferSize,
-            format: audioEngine.inputNode.outputFormat(forBus: bus)
+            format: format
         ) { [weak self] (buffer: AVAudioPCMBuffer, when: AVAudioTime) in
-            self?.handleMicInput(buffer: buffer, when: when)
+            self?.handleMicInput(buffer: buffer, when: when, convertFormat: convertFormat)
         }
     }
     
@@ -162,19 +211,50 @@ class MicTap: SpeechRecognizerDelegate {
         
         isMicTapped = false
 
-        audioEngine.inputNode.removeTap(onBus: bus)
+        // Untap mixer node.
+        mixerNode.removeTap(onBus: bus)
+        
+        // Reset audio converter.
+        converter.reset()
     }
     
-    private func handleMicInput(buffer: AVAudioPCMBuffer, when: AVAudioTime) {
-        // Pipe mic input to speech recognizer.
-        speechRecognizer.handleMicInput(buffer: buffer)
-        
-        // Pipe mic input to audio recorder.
-        audioRecorder.handleMicInput(buffer: buffer)
-        
-        // Pipe mic input to any custom pipes.
+    private func handleMicInput(buffer: AVAudioPCMBuffer, when: AVAudioTime, convertFormat: AVAudioFormat) {
+        // Pipe unconverted buffer to any custom pipes.
         for pipe in pipes.values {
             pipe(buffer)
         }
+        
+        // Get new compressed buffer.
+        compressedBuffer = newCompressedBuffer(convertFormat: convertFormat)
+
+        var outError: NSError? = nil
+        
+        // Convert audio to FLAC.
+        converter.convert(to: compressedBuffer!, error: &outError, withInputFrom: { (inNumPackets, outStatus) -> AVAudioBuffer? in
+            outStatus.pointee = AVAudioConverterInputStatus.haveData
+            return buffer // fill and return input buffer
+        })
+
+        // Get compressed audio buffer.
+        let audioBuffer = compressedBuffer!.audioBufferList.pointee.mBuffers
+        
+        // Ensure compressed buffer has data.
+        guard let mData = audioBuffer.mData else {
+            return
+        }
+
+        // Convert compressed audio to Data type.
+        let data = Data(bytes: mData, count: Int(audioBuffer.mDataByteSize))
+        
+        // Pipe compressed data to audio recorder.
+        audioRecorder.handleMicInput(data: data)
+    }
+    
+    private func newCompressedBuffer(convertFormat: AVAudioFormat) -> AVAudioCompressedBuffer {
+        AVAudioCompressedBuffer(
+            format: convertFormat,
+            packetCapacity: packetSize,
+            maximumPacketSize: converter.maximumOutputPacketSize
+        )
     }
 }

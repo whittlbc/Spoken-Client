@@ -80,6 +80,19 @@ class DataProvider<T: Model & NetworkingJSONDecodable> {
             .eraseToAnyPublisher()
     }
     
+    func create(params: Params) -> AnyPublisher<T, Error> {
+        // Create a new vendor request to get this resource by id.
+        let request: AnyPublisher<T, Error> = api.post(getNsp(), params: params)
+
+        // Create, cache, and publish the result.
+        return request
+            .mapError(vendorErrorToDataProviderError)
+            .handleEvents(receiveOutput: { [weak self] result in
+                self?.cacheResult(result)
+            })
+            .eraseToAnyPublisher()
+    }
+    
     func cacheResult(_ result: T) {
         do {
             try cache.set(result.forCache(), forKey: result.id)
@@ -151,4 +164,6 @@ public enum dataProvider {
     static let member = MemberDataProvider<Member>()
     
     static let message = MessageDataProvider<Message>()
+    
+    static let file = FileDataProvider<File>()
 }

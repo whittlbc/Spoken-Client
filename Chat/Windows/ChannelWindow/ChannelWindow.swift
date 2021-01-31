@@ -141,6 +141,9 @@ class ChannelWindow: FloatingWindow {
         // How long to show the video recording loading spinner.
         static let showVideoRecordingInitializingDuration = 0.5
         
+        // Minimum duration to show the spinner while sending a recording.
+        static let showRecordingSendingDuration = 1.2
+        
         // How long to show window in the recording-sent state before reverting back to idle state.
         static let showRecordingSentDuration = 0.9
     }
