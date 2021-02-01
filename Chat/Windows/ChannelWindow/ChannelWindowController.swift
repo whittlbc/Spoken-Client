@@ -347,8 +347,14 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate {
     }
     
     private func onRecordingMessageSent(message: Message) {
+        // Ensure message has a file.
+        guard message.files.count > 0 else {
+            logger.error("Message(id=\(message.id)) has no files -- no recording to upload.")
+            return
+        }
+
         // Upload message's recording file.
-        uploadRecordingFile(forMessage: message)
+        uploadRecordingFile(message.files[0])
         
         // Show recording as sent.
         DispatchQueue.main.async { [weak self] in
@@ -356,17 +362,8 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate {
         }
     }
     
-    private func uploadRecordingFile(forMessage message: Message) {
-        // Ensure message has file.
-        guard message.files.count > 0 else {
-            logger.error("Message(id=\(message.id)) has no files -- no recording to upload.")
-            return
-        }
-        
-        // Use the first file associated with the message.
-        let file = message.files[0]
-        
-        // Get the file url of the most recent AV recording.
+    private func uploadRecordingFile(_ file: File) {
+        // Get the url of the most recent AV recording.
         guard let recordingURL = AV.recordingURL else {
             logger.error("No current recording exists -- nothing to upload.")
             return
