@@ -12,10 +12,12 @@ import AVFoundation
 class AudioRecorder {
 
     var audioRecording: AudioRecording?
-    
-    var recordingData: Data? { audioRecording?.data }
-    
+        
     var isRecording = false
+    
+    var recordingSize: Int { audioRecording?.size ?? 0 }
+    
+    var recordingPath: URL? { audioRecording?.filePath }
         
     func start() {
         // Only start if no active audio recording exists.
@@ -38,6 +40,9 @@ class AudioRecorder {
         
         // Register active recording as stopped.
         isRecording = false
+        
+        // Tell the recording to finish.
+        audioRecording!.finish()
     }
     
     func clear() {

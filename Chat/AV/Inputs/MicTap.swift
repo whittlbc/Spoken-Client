@@ -21,8 +21,10 @@ class MicTap {
     
     var isConfigured = false
     
-    var recordingData: Data? { audioRecorder.recordingData }
+    var recordingSize: Int { audioRecorder.recordingSize }
     
+    var recordingPath: URL? { audioRecorder.recordingPath }
+        
     private var isMicTapped = false
     
     private var audioEngine: AVAudioEngine!

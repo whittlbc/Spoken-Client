@@ -27,12 +27,22 @@ class AVRecorder: NSObject, AVCaptureAudioDataOutputSampleBufferDelegate, AVCapt
     
     var avRecording: AVRecording?
     
-    var recordingData: Data? { avRecording?.data }
+    var recordingSize: Int { avRecording?.size ?? 0 }
     
+    var recordingPath: URL? { avRecording?.filePath }
+        
     private lazy var controlThread = Thread.newBackgroundThread(name: Threads.control)
     
     private lazy var dataOutputThread = Thread.newBackgroundThread(name: Threads.dataOutput)
-
+    
+    private var videoWriter: AVAssetWriter!
+    
+    private var videoWriterInput: AVAssetWriterInput!
+    
+    private var audioWriterInput: AVAssetWriterInput!
+    
+    private var sessionAtSourceTime: CMTime?
+        
     func start(id: String) {
         controlThread.async {
             guard self.avRecording == nil else {
@@ -71,8 +81,12 @@ class AVRecorder: NSObject, AVCaptureAudioDataOutputSampleBufferDelegate, AVCapt
             }
             
             self.state = .stopped(id: id, cancelled: cancelled, lastFrame: lastFrame)
+            
             self.session!.stopRunning()
             self.session = nil
+            
+            self.avRecording?.finish()
+            
             self.startStatus = AVRecorderStartStatus()
         }
     }
@@ -87,6 +101,10 @@ class AVRecorder: NSObject, AVCaptureAudioDataOutputSampleBufferDelegate, AVCapt
     
     // Handle any new AV output from the current capture session.
     func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
+        guard CMSampleBufferDataIsReady(sampleBuffer) else {
+            return
+        }
+        
         switch output {
         
         // New audio output.
@@ -105,17 +123,21 @@ class AVRecorder: NSObject, AVCaptureAudioDataOutputSampleBufferDelegate, AVCapt
     private func shouldProcessOutput() -> Bool {
         isStarted() || isStopping()
     }
-    
+
     private func onAudioOutput(sampleBuffer: CMSampleBuffer, connection: AVCaptureConnection) {
         startStatus.audio = true
         
         checkIfFullyStarted()
         
-        guard shouldProcessOutput() else {
+        guard shouldProcessOutput(), let recording = avRecording else {
             return
         }
         
-        // append n shit
+        if !recording.isConfigured {
+            recording.configure(sampleBuffer: sampleBuffer)
+        }
+        
+        recording.append(sampleBuffer, avType: .audio)
     }
     
     private func onVideoOutput(sampleBuffer: CMSampleBuffer, connection: AVCaptureConnection) {
@@ -123,15 +145,15 @@ class AVRecorder: NSObject, AVCaptureAudioDataOutputSampleBufferDelegate, AVCapt
         
         checkIfFullyStarted()
         
-        guard shouldProcessOutput() else {
+        guard shouldProcessOutput(), let recording = avRecording else {
             return
         }
         
+        if !recording.isConfigured {
+            recording.configure(sampleBuffer: sampleBuffer)
+        }
         
-        
-        // HERE
-        
-        
+        recording.append(sampleBuffer, avType: .audio)
         
         if isStopping() {
             stopWithLastFrame(sampleBuffer: sampleBuffer)
@@ -182,12 +204,10 @@ class AVRecorder: NSObject, AVCaptureAudioDataOutputSampleBufferDelegate, AVCapt
     
     private func checkIfFullyStarted() {
         switch state {
-        
         case .starting(id: let id, session: _):
             if startStatus.audio && startStatus.video {
                 state = .started(id: id)
             }
-
         default:
             break
         }

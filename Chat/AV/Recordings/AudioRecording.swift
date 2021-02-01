@@ -11,9 +11,30 @@ import AVFoundation
 
 class AudioRecording {
     
-    var data = Data()
+    let fileName = UUID().uuidString
+    
+    let fileExt = "flac"
+        
+    var filePath: URL { Path.tempDir.appendingPathComponent(fileName).appendingPathExtension(fileExt) }
+        
+    var size: Int { Path.size(filePath) ?? 0 }
+
+    private var stream: OutputStream?
+    
+    init() {
+        createStream()
+    }
 
     func append(_ data: Data) {
-        self.data.append(data)
+        stream?.write(data: data)
+    }
+    
+    func finish() {
+        stream?.close()
+    }
+    
+    private func createStream() {
+        stream = OutputStream(url: filePath, append: true)
+        stream?.open()
     }
 }

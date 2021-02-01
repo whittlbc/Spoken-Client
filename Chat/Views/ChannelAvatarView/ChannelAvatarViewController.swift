@@ -427,10 +427,7 @@ class ChannelAvatarViewController: NSViewController {
     private func createVideoPreviewLayer(session: AVCaptureSession) -> AVCaptureVideoPreviewLayer {
         let previewLayer = AVCaptureVideoPreviewLayer(session: session)
         
-        let diameter = (
-            ChannelWindow.Style.recordingSize(withVideo: true).height +
-            ChannelAvatarView.Style.ContainerView.PositionStyle.heightOffset
-        )
+        let diameter = ChannelAvatarView.Style.VideoPreviewLayer.diameter
                         
         previewLayer.frame = NSRect(x: 0, y: 0, width: diameter, height: diameter)
         

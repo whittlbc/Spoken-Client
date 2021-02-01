@@ -79,6 +79,8 @@
 		0994C75525C6005E0006919A /* ChannelWindowModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0994C75425C6005E0006919A /* ChannelWindowModel.swift */; };
 		0994C75925C61B0C0006919A /* File+Arrow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0994C75825C61B0C0006919A /* File+Arrow.swift */; };
 		0994C75C25C61DE00006919A /* AVAudioPCMBuffer+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0994C75B25C61DE00006919A /* AVAudioPCMBuffer+Helpers.swift */; };
+		0994C75F25C792F40006919A /* OutputStream+Data.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0994C75E25C792F40006919A /* OutputStream+Data.swift */; };
+		0994C76225C7ABA40006919A /* Data+InputStream.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0994C76125C7ABA40006919A /* Data+InputStream.swift */; };
 		0995DDFC257AED6400DAA334 /* FloatingWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0995DDFB257AED6400DAA334 /* FloatingWindow.swift */; };
 		0995DDFF257AEDE000DAA334 /* SidebarWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0995DDFE257AEDE000DAA334 /* SidebarWindow.swift */; };
 		0995DE01257AEDEC00DAA334 /* SidebarWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0995DE00257AEDEC00DAA334 /* SidebarWindowController.swift */; };
@@ -196,6 +198,8 @@
 		0994C75425C6005E0006919A /* ChannelWindowModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelWindowModel.swift; sourceTree = "<group>"; };
 		0994C75825C61B0C0006919A /* File+Arrow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "File+Arrow.swift"; sourceTree = "<group>"; };
 		0994C75B25C61DE00006919A /* AVAudioPCMBuffer+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AVAudioPCMBuffer+Helpers.swift"; sourceTree = "<group>"; };
+		0994C75E25C792F40006919A /* OutputStream+Data.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "OutputStream+Data.swift"; sourceTree = "<group>"; };
+		0994C76125C7ABA40006919A /* Data+InputStream.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Data+InputStream.swift"; sourceTree = "<group>"; };
 		0995DDFB257AED6400DAA334 /* FloatingWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingWindow.swift; sourceTree = "<group>"; };
 		0995DDFE257AEDE000DAA334 /* SidebarWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarWindow.swift; sourceTree = "<group>"; };
 		0995DE00257AEDEC00DAA334 /* SidebarWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarWindowController.swift; sourceTree = "<group>"; };
@@ -532,6 +536,8 @@
 				0972290125BCC98800219591 /* UserDefaults+RawRepresentable.swift */,
 				0968E29B25C0605D004E0C39 /* CIImage+NSImage.swift */,
 				0994C75B25C61DE00006919A /* AVAudioPCMBuffer+Helpers.swift */,
+				0994C75E25C792F40006919A /* OutputStream+Data.swift */,
+				0994C76125C7ABA40006919A /* Data+InputStream.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -763,6 +769,7 @@
 				097228FC25BC8F0C00219591 /* ChannelAvatarViewModel.swift in Sources */,
 				0949C8B2259908E900B61D1F /* ParticleViewDelegate.swift in Sources */,
 				094DAB1C25B11F0A00CFC2EC /* WorkspaceWindowModel.swift in Sources */,
+				0994C76225C7ABA40006919A /* Data+InputStream.swift in Sources */,
 				0972290A25BD17E700219591 /* AVRecorder.swift in Sources */,
 				096862EE2582ABCE00B9B614 /* Member.swift in Sources */,
 				0995DE382581A9BC00DAA334 /* KeychainError.swift in Sources */,
@@ -858,6 +865,7 @@
 				0940E08025A7B6AB006184D7 /* MicTap.swift in Sources */,
 				09F534E725A7F76D001B4FF6 /* SpeechAnalyzerDelegate.swift in Sources */,
 				09D3FC0925B5015C00CC744A /* WorkspaceWindow.swift in Sources */,
+				0994C75F25C792F40006919A /* OutputStream+Data.swift in Sources */,
 				0972291725BE575C00219591 /* AVRecorderState.swift in Sources */,
 				0996446725AE92DF004473B7 /* CacheManager.swift in Sources */,
 				0994C75525C6005E0006919A /* ChannelWindowModel.swift in Sources */,

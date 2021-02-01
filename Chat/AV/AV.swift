@@ -17,8 +17,12 @@ public enum AV {
     
     static let avRecorder = AVRecorder()
     
-    static var currentRecordingData: Data? {
-        UserSettings.Video.useCamera ? AV.avRecorder.recordingData : AV.mic.recordingData
+    static var recordingSize: Int {
+        UserSettings.Video.useCamera ? AV.avRecorder.recordingSize : AV.mic.recordingSize
+    }
+    
+    static var recordingURL: URL? {
+        UserSettings.Video.useCamera ? AV.avRecorder.recordingPath : AV.mic.recordingPath
     }
     
     static func seekPermissions() {
@@ -120,6 +124,10 @@ public enum AV {
         default:
             break
         }
+    }
+    
+    static func stopRecording(id: String) {
+        UserSettings.Video.useCamera ? AV.avRecorder.stop(id: id) : AV.mic.stopRecording()
     }
     
     static func clearRecording() {

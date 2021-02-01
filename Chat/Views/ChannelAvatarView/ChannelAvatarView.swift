@@ -164,6 +164,13 @@ class ChannelAvatarView: NSView {
                 static let color: CGColor = Color.fromRGBA(255, 255, 255, 0.7).cgColor
             }
         }
+        
+        enum VideoPreviewLayer {
+            static let diameter = (
+                ChannelWindow.Style.recordingSize(withVideo: true).height +
+                ChannelAvatarView.Style.ContainerView.PositionStyle.heightOffset
+            )
+        }
     }
     
     // Animation configuration for all child views that this view owns.

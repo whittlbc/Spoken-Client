@@ -296,16 +296,10 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate {
         toRecordingSending()
 
         // Stop the active recording.
-        UserSettings.Video.useCamera ? AV.avRecorder.stop(id: channel.id) : AV.mic.stopRecording()
-        
-        // Get the current recording's data.
-        guard let data = AV.currentRecordingData else {
-            logger.error("No current recording data exists -- not creating new recording message.")
-            return
-        }
+        AV.stopRecording(id: channel.id)
         
         // Create new recording message.
-        windowModel.createRecordingMessage(fileSize: data.count)
+        windowModel.createRecordingMessage(fileSize: AV.recordingSize)
     }
 
     // Start timer used to check whether mouse is still inside the previewing window.
@@ -377,16 +371,16 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate {
         // Use the first file associated with the message.
         let file = message.files[0]
         
-        // Get the current recording's data.
-        guard let data = AV.currentRecordingData else {
-            logger.error("No current recording data exists -- not uploading to File(id=\(file.id).")
+        // Get the file url of the most recent AV recording.
+        guard let recordingURL = AV.recordingURL else {
+            logger.error("No current recording exists -- nothing to upload.")
             return
         }
         
-        // Add a job to upload the file's data.
-        fileUploadWorker.addJob(FileUploadJob(file: file, data: data))
+        // Add a job to upload the file.
+        fileUploadWorker.addJob(FileUploadJob(file: file, url: recordingURL))
         
-        // Clear the current recording.
+        // Clear current recording.
         AV.clearRecording()
     }
     

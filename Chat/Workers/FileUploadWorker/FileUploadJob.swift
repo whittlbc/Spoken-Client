@@ -26,9 +26,11 @@ public class FileUploadJob: Job {
     
     private var file: File!
     
-    private var data: Data!
+    private var url: URL!
     
     private var isMultipartUpload: Bool!
+    
+    private var inputStream: InputStream?
     
     private var numParts: Int { file.uploadURLs.count }
     
@@ -38,10 +40,10 @@ public class FileUploadJob: Job {
     
     private var registerResultCancellable: AnyCancellable?
     
-    convenience init(file: File, data: Data) {
+    convenience init(file: File, url: URL) {
         self.init()
         self.file = file
-        self.data = data
+        self.url = url
         self.isMultipartUpload = numParts > 1
         self.etags = [String](repeating: "", count: numParts)
     }
@@ -50,15 +52,52 @@ public class FileUploadJob: Job {
         super.init()
     }
         
+    deinit {
+        clearLocalFile()
+        closeInputStream()
+    }
+    
     override func run() {
         super.run()
         
         // Register job as running,.
         toRunning()
         
-        // Upload each part of the file to each respective pre-signed url (may not even be multipart).
-        file.uploadURLs.enumerated().forEach { [weak self] (i, url) in
-            uploadData(getChunk(forPart: i), to: url, forPart: i) { _, error in
+        // Upload file in either the standard or multi-part fashion.
+        isMultipartUpload ? runMultipartUpload() : runStandardUpload()
+    }
+    
+    private func runStandardUpload() {
+        // Read entire file contents as data.
+        guard let data = readFileContents() else {
+            toFailed()
+            return
+        }
+        
+        // Upload file contents.
+        uploadData(data, to: file.uploadURLs[0], forPart: 0) { [weak self] _, error in
+            self?.handleUploadResponse(error: error)
+        }
+    }
+    
+    private func runMultipartUpload() {
+        // Create input stream from file url.
+        createInputStream()
+        
+        // Ensure input stream was successfully created.
+        guard let stream = inputStream else {
+            logger.error("Input stream creation failed at URL: \(url.absoluteString)")
+            toFailed()
+            return
+        }
+        
+        // Iterate over each pre-signed upload url...
+        file.uploadURLs.enumerated().forEach { (i, url) in
+            // Get next chunk of file from the input stream.
+            let chunk = Data(reading: stream, for: multipartChunkSize)
+            
+            // Upload chunk as part.
+            uploadData(chunk, to: url, forPart: i) { [weak self] _, error in
                 self?.handleUploadResponse(error: error)
             }
         }
@@ -94,28 +133,41 @@ public class FileUploadJob: Job {
     
     private func onSetState() {
         switch state {
+        
+        // Upload succeeded.
         case .succeeded:
             registerUploadResult(FileUploadStatus.succeeded)
+            
+        // Upload failed.
         case .failed:
             registerUploadResult(FileUploadStatus.failed)
+
         default:
             break
         }
     }
     
-    private func getChunk(forPart index: Int) -> Data {
-        // Calculate start index of chunk.
-        let startIndex = index * multipartChunkSize
-        
-        // Calculate end index of chunk.
-        var endIndex = (index + 1) * multipartChunkSize
-        endIndex = endIndex > data.count ? data.count : endIndex
-        
-        return data.subdata(in: startIndex..<endIndex)
+    private func readFileContents() -> Data? {
+        do {
+            let data = try Data(contentsOf: url)
+            return data
+        } catch {
+            logger.error("Error reading URL\(url.absoluteString) contents into Data object: \(error)")
+            return nil
+        }
+    }
+    
+    private func createInputStream() {
+        inputStream = InputStream(url: url)
+        inputStream?.open()
+    }
+    
+    private func nextChunk(forPart index: Int) -> Data {
+        Data(reading: inputStream!, for: multipartChunkSize)
     }
     
     private func uploadData(
-        _ body: Data,
+        _ data: Data,
         to destination: String,
         forPart partIndex: Int,
         then handler: @escaping (Bool, Error?) -> Void
@@ -126,13 +178,10 @@ public class FileUploadJob: Job {
             return
         }
         
-        // Create HTTP request.
-        let request = createUploadRequest(url: url, body: body)
-
         // Create upload task.
         let task = URLSession.shared.uploadTask(
-            with: request,
-            from: body,
+            with: createUploadRequest(url: url),
+            from: data,
             completionHandler: { [weak self] _, response, error in
                 self?.onRequestResponse(
                     forPart: partIndex,
@@ -147,7 +196,7 @@ public class FileUploadJob: Job {
         task.resume()
     }
     
-    private func createUploadRequest(url: URL, body: Data) -> URLRequest {
+    private func createUploadRequest(url: URL) -> URLRequest {
         // Create upload request.
         var request = URLRequest(
             url: url,
@@ -206,6 +255,7 @@ public class FileUploadJob: Job {
         handler(true, nil)
     }
     
+    // Let the server know if the file uploaded successfully or not.
     private func registerUploadResult(_ status: FileUploadStatus) {
         registerResultCancellable = dataProvider.file
             .setUploadStatus(id: file.id, status: status, etags: etags)
@@ -218,5 +268,15 @@ public class FileUploadJob: Job {
                     break
                 }
             }
+    }
+    
+    // Remove the file at the given url (should just be a temp file).
+    private func clearLocalFile() {
+        try? FileManager.default.removeItem(at: url)
+    }
+    
+    // Close input stream.
+    private func closeInputStream() {
+        inputStream?.close()
     }
 }

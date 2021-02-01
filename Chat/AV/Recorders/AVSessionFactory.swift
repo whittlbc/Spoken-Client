@@ -15,8 +15,8 @@ class AVSessionFactory {
     // Create and configure a new AV capture session.
     func createSession(
         outputDelegate: AVCaptureAudioDataOutputSampleBufferDelegate & AVCaptureVideoDataOutputSampleBufferDelegate,
-        outputThread: DispatchQueue) -> AVCaptureSession {
-        
+        outputThread: DispatchQueue
+    ) -> AVCaptureSession {
         // Create new capture session.
         let session = AVCaptureSession()
         
