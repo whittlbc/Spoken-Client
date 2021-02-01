@@ -32,7 +32,7 @@ class AudioRecorder {
         isRecording = true
     }
     
-    func stop() {
+    func stop(cancelled: Bool) {
         // Only stop if an active audio recording exists.
         guard audioRecording != nil && isRecording else {
             return
@@ -42,7 +42,11 @@ class AudioRecorder {
         isRecording = false
         
         // Tell the recording to finish.
-        audioRecording!.finish()
+        audioRecording!.finish(remove: cancelled) { [weak self] in
+            if cancelled {
+                self?.clear()
+            }
+        }
     }
     
     func clear() {

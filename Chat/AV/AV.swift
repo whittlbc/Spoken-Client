@@ -29,11 +29,6 @@ public enum AV {
         // Ask permission to access the mic.
         seekMicPermission()
         
-        // Ask permission to use speech recognition on mic audio input (if user has feature enabled).
-        if UserSettings.SpeechRecognition.isEnabled {
-            seekSpeechRecognitionPermission()
-        }
-        
         // Ask permission to use the camera if the user wants to use video.
         if UserSettings.Video.useCamera {
             seekCameraPermission()
@@ -71,30 +66,6 @@ public enum AV {
         }
     }
 
-    static func seekSpeechRecognitionPermission() {
-        // Switch over the current auth status for speech recognition access.
-        switch SFSpeechRecognizer.authorizationStatus() {
-
-        // If user hasn't been asked yet, ask for permission.
-        case .notDetermined:
-            SFSpeechRecognizer.requestAuthorization { _ in
-                return
-            }
-            
-        // Log error if device restricts speech recognition.
-        case .restricted:
-            logger.error("Seeking speech recognition permission failed -- device restricts speech recognition.")
-        
-        // Log error if user denies speech recognition permission.
-        case .denied:
-            logger.error("Seeking speech recognition permission failed -- user denied permission.")
-        
-        // Handle unknown cases that may arise in future versions.
-        default:
-            break
-        }
-    }
-    
     static func seekCameraPermission() {
         // Switch over the current auth status for camera access.
         switch AVCaptureDevice.authorizationStatus(for: .video) {
@@ -126,11 +97,15 @@ public enum AV {
         }
     }
     
-    static func stopRecording(id: String) {
-        UserSettings.Video.useCamera ? AV.avRecorder.stop(id: id) : AV.mic.stopRecording()
+    static func stopRecording(id: String, cancelled: Bool) {
+        UserSettings.Video.useCamera ?
+            AV.avRecorder.stop(id: id, cancelled: cancelled) :
+            AV.mic.stopRecording(cancelled: cancelled)
     }
     
     static func clearRecording() {
-        UserSettings.Video.useCamera ? AV.avRecorder.clear() : AV.mic.clearRecording()
+        UserSettings.Video.useCamera ?
+            AV.avRecorder.clear() :
+            AV.mic.clearRecording()
     }
 }

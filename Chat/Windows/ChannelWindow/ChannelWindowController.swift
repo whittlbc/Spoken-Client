@@ -275,13 +275,8 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate {
         // Disable key event listners.
         toggleRecordingKeyListeners(enable: false)
         
-        // Stop and cler the active recording.
-        if UserSettings.Video.useCamera {
-            AV.avRecorder.stop(id: channel.id, cancelled: true)
-        } else {
-            AV.mic.stopRecording()
-            AV.mic.clearRecording()
-        }
+        // Stop the active recording.
+        AV.stopRecording(id: channel.id, cancelled: true)
 
         // Show recording as cancelled.
         showRecordingCancelled()
@@ -296,7 +291,7 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate {
         toRecordingSending()
 
         // Stop the active recording.
-        AV.stopRecording(id: channel.id)
+        AV.stopRecording(id: channel.id, cancelled: false)
         
         // Create new recording message.
         windowModel.createRecordingMessage(fileSize: AV.recordingSize)

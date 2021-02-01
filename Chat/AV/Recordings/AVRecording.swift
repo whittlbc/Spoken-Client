@@ -71,8 +71,14 @@ class AVRecording {
         }
     }
     
-    func finish() {
-        videoWriter.finishWriting {}
+    func finish(remove: Bool, then handler: @escaping () -> Void) {
+        videoWriter.finishWriting {
+            if remove {
+                self.removeFile()
+            }
+            
+            handler()
+        }
     }
     
     private func buildPipeline() {
@@ -127,5 +133,9 @@ class AVRecording {
         if videoWriter.canAdd(audioWriterInput) {
             videoWriter.add(audioWriterInput)
         }
+    }
+    
+    private func removeFile() {
+        try? FileManager.default.removeItem(at: filePath)
     }
 }

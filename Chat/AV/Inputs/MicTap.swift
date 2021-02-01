@@ -73,10 +73,10 @@ class MicTap {
         tapMic()
     }
     
-    func stopRecording() {
+    func stopRecording(cancelled: Bool) {
         // Stop active audio recording.
-        audioRecorder.stop()
-                
+        audioRecorder.stop(cancelled: cancelled)
+
         // Untap the mic.
         untapMic()
     }

@@ -56,7 +56,7 @@ class AVRecorder: NSObject, AVCaptureAudioDataOutputSampleBufferDelegate, AVCapt
         }
     }
     
-    func stop(id: String, cancelled: Bool = false) {
+    func stop(id: String, cancelled: Bool) {
         controlThread.async {
             if self.avRecording == nil {
                 return
@@ -81,13 +81,15 @@ class AVRecorder: NSObject, AVCaptureAudioDataOutputSampleBufferDelegate, AVCapt
             }
             
             self.state = .stopped(id: id, cancelled: cancelled, lastFrame: lastFrame)
-            
             self.session!.stopRunning()
             self.session = nil
-            
-            self.avRecording?.finish()
-            
             self.startStatus = AVRecorderStartStatus()
+            
+            self.avRecording?.finish(remove: cancelled) {
+                if cancelled {
+                    self.clear()
+                }
+            }
         }
     }
 

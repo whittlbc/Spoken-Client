@@ -29,12 +29,22 @@ class AudioRecording {
         stream?.write(data: data)
     }
     
-    func finish() {
+    func finish(remove: Bool, then handler: @escaping () -> Void) {
         stream?.close()
+        
+        if remove {
+            removeFile()
+        }
+        
+        handler()
     }
-    
+
     private func createStream() {
         stream = OutputStream(url: filePath, append: true)
         stream?.open()
+    }
+    
+    private func removeFile() {
+        try? FileManager.default.removeItem(at: filePath)
     }
 }
