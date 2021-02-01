@@ -104,6 +104,10 @@ public class FileUploadJob: Job {
     }
     
     private func handleUploadResponse(error: Error?) {
+        guard isRunning() else {
+            return
+        }
+        
         requestsCompleted += 1
         
         // Register job as failed if error encountered.
@@ -117,6 +121,10 @@ public class FileUploadJob: Job {
         if requestsCompleted == numParts {
             toSucceeded()
         }
+    }
+    
+    private func isRunning() -> Bool {
+        state == .running
     }
     
     private func toRunning() {
