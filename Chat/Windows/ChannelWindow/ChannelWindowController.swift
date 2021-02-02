@@ -436,7 +436,7 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate {
         }
     }
     
-    private func startConsumingMessage(message: Message) {
+    private func startConsumingMessage(_ message: Message) {
         // Pause the UI event queue.
         uiEventQueue.pause()
         
