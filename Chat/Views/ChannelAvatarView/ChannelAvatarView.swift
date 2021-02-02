@@ -45,12 +45,7 @@ class ChannelAvatarView: NSView {
                 )
                 // Get shadow style config for channel state.
                 static func getShadow(forState state: ChannelState) -> Shadow {
-                    switch state {
-                    case .idle:
-                        return grounded
-                    case .previewing, .recording(_):
-                        return raised
-                    }
+                    state == .idle ? grounded : raised
                 }
             }
         }

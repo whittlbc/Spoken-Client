@@ -40,13 +40,16 @@ class SidebarWindowController: NSWindowController, NSWindowDelegate {
         
         // Add child windows.
         addChildWindows()
+        
+        // Run the UIEvent queue.
+        startUIEventQueue()
     }
     
     // Add child windows to sidebar window.
     private func addChildWindows() {
         addWorkspaceWindow()
     }
-    
+        
     // Add workspace window as a child window.
     private func addWorkspaceWindow() {
         // Create new workspace window controller.
@@ -57,5 +60,27 @@ class SidebarWindowController: NSWindowController, NSWindowDelegate {
         
         // Load current workspace.
         workspaceWindowController.loadCurrentWorkspace()
+    }
+    
+    // Start the UIEventQueue.
+    private func startUIEventQueue() {
+        uiEventQueue.start { [weak self] eventWrapper in
+            self?.onNewUIEvent(withWrapper: eventWrapper)
+        }
+    }
+    
+    // Handle new UIEvents.
+    private func onNewUIEvent(withWrapper eventWrapper: UIEventWrapper) {
+        switch eventWrapper.context {
+                    
+        // New Workspace UI Event.
+        case .workspace(id: let workspaceId):
+            handleWorkspaceUIEvent(eventWrapper.event, workspaceId: workspaceId)
+        }
+    }
+    
+    // Handle Workspace UI Event.
+    private func handleWorkspaceUIEvent(_ event: UIEvent, workspaceId: String) {
+        workspaceWindowController.handleUIEvent(event, forWorkspaceId: workspaceId)
     }
 }

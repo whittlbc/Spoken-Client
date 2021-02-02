@@ -25,7 +25,18 @@ class ChannelWindow: FloatingWindow {
             withVideo ? NSSize(width: 143, height: 143) : NSSize(width: 120, height: 120)
         }
         
+        // Recording window size as it appears to an adjacent channel window.
         static func externalRecordingSize(withVideo: Bool) -> NSSize {
+            withVideo ? NSSize(width: 110, height: 110) : NSSize(width: 120, height: 120)
+        }
+        
+        // Consuming window size.
+        static func consumingSize(withVideo: Bool) -> NSSize {
+            withVideo ? NSSize(width: 143, height: 143) : NSSize(width: 120, height: 120)
+        }
+        
+        // Consuming window size as it appears to an adjacent channel window.
+        static func externalConsumingSize(withVideo: Bool) -> NSSize {
             withVideo ? NSSize(width: 110, height: 110) : NSSize(width: 120, height: 120)
         }
         
@@ -45,16 +56,34 @@ class ChannelWindow: FloatingWindow {
             case .recording(let recordingStatus):
                 switch recordingStatus {
                 
+                // Initializing recording.
                 case .initializing:
                     return previewingSize
                 
-//                // Initializing, cancelling, or finished recording.
+                // Cancelling or finished recording.
                 case .cancelling, .finished:
                     return UserSettings.Video.useCamera ? recordingSize(withVideo: true) : previewingSize
                 
                 // All other recording statuses.
                 default:
                     return recordingSize(withVideo: UserSettings.Video.useCamera)
+                }
+                
+            // Consuming size.
+            case .consuming(let message, let consumingStatus):
+                switch consumingStatus {
+                
+                // Initializing consuming.
+                case .initializing:
+                    return previewingSize
+                
+                // Cancelling or finished consuming.
+                case .cancelling, .finished:
+                    return message.isVideo ? consumingSize(withVideo: true) : previewingSize
+                
+                // All other consuming statuses.
+                default:
+                    return consumingSize(withVideo: message.isVideo)
                 }
             }
         }
@@ -71,16 +100,34 @@ class ChannelWindow: FloatingWindow {
             case .recording(let recordingStatus):
                 switch recordingStatus {
                 
+                // Initializing recording.
                 case .initializing:
                     return size(forState: state)
 
-                // Initializing, cancelling, or finished recording.
+                // Cancelling or finished recording.
                 case .cancelling, .finished:
                     return UserSettings.Video.useCamera ? externalRecordingSize(withVideo: true) : size(forState: state)
                 
                 // All other recording statuses.
                 default:
                     return externalRecordingSize(withVideo: UserSettings.Video.useCamera)
+                }
+            
+            // Consuming size.
+            case .consuming(let message, let consumingStatus):
+                switch consumingStatus {
+                
+                // Initializing consuming.
+                case .initializing:
+                    return size(forState: state)
+
+                // Cancelling or finished consuming.
+                case .cancelling, .finished:
+                    return message.isVideo ? externalConsumingSize(withVideo: true) : size(forState: state)
+                
+                // All other consuming statuses.
+                default:
+                    return externalConsumingSize(withVideo: message.isVideo)
                 }
             }
         }
@@ -96,6 +143,16 @@ class ChannelWindow: FloatingWindow {
                 
                 case .started:
                     return UserSettings.Video.useCamera ? AdjacentChannelOffset(above: 0, below: -9.0) : AdjacentChannelOffset()
+
+                default:
+                    return AdjacentChannelOffset()
+                }
+                
+            case .consuming(let message, let consumingStatus):
+                switch consumingStatus {
+                
+                case .started:
+                    return message.isVideo ? AdjacentChannelOffset(above: 0, below: -9.0) : AdjacentChannelOffset()
 
                 default:
                     return AdjacentChannelOffset()
@@ -120,9 +177,22 @@ class ChannelWindow: FloatingWindow {
             case .recording(let recordingStatus):
                 switch recordingStatus {
                 
-                // Initializing recording.
+                // Started recording.
                 case .started:
                     return UserSettings.Video.useCamera ? 0.29 : 0.19
+                
+                // All other recording statuses.
+                default:
+                    return 0.19
+                }
+                
+            // Consuming size.
+            case .consuming(let message, let consumingStatus):
+                switch consumingStatus {
+                
+                // Started consuming.
+                case .started:
+                    return message.isVideo ? 0.29 : 0.19
                 
                 // All other recording statuses.
                 default:

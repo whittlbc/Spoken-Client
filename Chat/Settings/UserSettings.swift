@@ -37,4 +37,14 @@ enum UserSettings {
         @UserDefault(key: UserSettings.formatKey(nsp, "useCamera"))
         static var useCamera = true
     }
+    
+    enum Messages {
+        
+        // Messages namespace.
+        static let nsp = "messages"
+
+        // Whether the user wants to automatically play incoming messages.
+        @UserDefault(key: UserSettings.formatKey(nsp, "autoPlay"))
+        static var autoPlay = true
+    }
 }

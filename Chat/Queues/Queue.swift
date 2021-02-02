@@ -31,6 +31,11 @@ public class Queue<T> {
     }
 
     func start(then handler: @escaping Pipe) {
+        // Ensure not already running.
+        if isRunning {
+            return
+        }
+        
         // Use provided handler as pipe.
         pipe = handler
         

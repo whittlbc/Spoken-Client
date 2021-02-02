@@ -19,16 +19,20 @@ class DataProvider<T: Model & NetworkingJSONDecodable> {
         self.cache = CacheManager.newCodableCache(T.self, name: T.modelName, countLimit: cacheCountLimit)
     }
     
-    func get(id: String) -> AnyPublisher<T, Error> {
+    func get(id: String, params: Params = Params()) -> AnyPublisher<T, Error> {
         // Get result from cache if it exists.
         if let result = cache.get(forKey: id) {
             return Just(result)
                 .setFailureType(to: Error.self)
                 .eraseToAnyPublisher()
         }
+        
+        // Add id to params.
+        var finalParams = params
+        finalParams["id"] = id
 
         // Create a new vendor request to get this resource by id.
-        let request: AnyPublisher<T, Error> = api.get(getNsp(), params: ["id": id])
+        let request: AnyPublisher<T, Error> = api.get(getNsp(), params: finalParams)
 
         // Vend, cache, and publish the result.
         return request

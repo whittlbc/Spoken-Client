@@ -11,7 +11,9 @@ import Combine
 
 // Controller for workspace window.
 class WorkspaceWindowController: NSWindowController, NSWindowDelegate, WorkspaceKeyManagerDelegate {
-            
+    
+    var currentWorkspaceId: String? { windowModel.workspace?.id }
+    
     // Manages state and data for workspace window.
     private var windowModel: WorkspaceWindowModel!
         
@@ -66,7 +68,19 @@ class WorkspaceWindowController: NSWindowController, NSWindowDelegate, Workspace
     func loadCurrentWorkspace() {
         windowModel.loadWorkspace()
     }
-
+    
+    func handleUIEvent(_ event: UIEvent, forWorkspaceId workspaceId: String) {
+        // Ensure the current workspace has loaded.
+        guard let currentSpaceId = currentWorkspaceId else {
+            return
+        }
+        
+        // Handle event based on whether it pertains to the current workspace or not.
+        currentSpaceId == workspaceId ?
+            handleActiveWorkspaceUIEvent(event) :
+            handlePassiveWorkspaceUIEvent(event)
+    }
+    
     // Toggle the key listeners associated with recordings.
     func toggleRecordingKeyListeners(enable: Bool) {
         keyManager.toggleKeyListener(forKey: .escKey, pause: !enable)
@@ -88,7 +102,29 @@ class WorkspaceWindowController: NSWindowController, NSWindowDelegate, Workspace
 
     // Handle command button key-up event.
     func onCommandUp() {}
+    
+    private func handleActiveWorkspaceUIEvent(_ event: UIEvent) {
+        switch event {
         
+        // Handle new incoming messages.
+        case .newIncomingMessage(channelId: let channelId, messageId: let messageId):
+            onNewIncomingMessage(channelId: channelId, messageId: messageId)
+        }
+    }
+    
+    private func handlePassiveWorkspaceUIEvent(_ event: UIEvent) {
+        
+    }
+    
+    private func onNewIncomingMessage(channelId: String, messageId: String) {
+        // Get channel window controller by id.
+        guard let channelWindowController = channelWindowControllers[channelId] else {
+            return
+        }
+        
+        channelWindowController.newIncomingMessage(withId: messageId)
+    }
+    
     // Handler called whenever a channel updates state.
     private func onChannelStateUpdate(channelId: String) {
         // Get active channel window controller for channel id.

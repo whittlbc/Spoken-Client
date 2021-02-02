@@ -15,6 +15,7 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate {
     // Channel associated with window.
     var channel: Channel!
 
+    // Manages model data and interacts with the data layer.
     var windowModel: ChannelWindowModel!
     
     // Get window as channel window.
@@ -55,7 +56,7 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate {
         
     // Whether this channel should respond to interaction.
     var isDisabled: Bool { channelWindow.isDisabled }
-    
+        
     // Timer that double checks if the mouse is still inside this window when in the previewing state.
     private var previewingTimer: Timer?
     
@@ -63,6 +64,10 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate {
     private var destination: NSPoint?
     
     private var currentMessageSubscription: AnyCancellable?
+
+    private var stateAllowsMessageConsumption: Bool { isIdle() || isPreviewing() }
+    
+    private var canAutoConsumeMessage: Bool { stateAllowsMessageConsumption && UserSettings.Messages.autoPlay }
 
     // The channel's current state.
     private(set) var state = ChannelState.idle {
@@ -105,6 +110,11 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    // Either load the message or send it to the inbox based on state and user settings.
+    func newIncomingMessage(withId messageId: String) {
+        canAutoConsumeMessage ? loadMessageForConsumption(withId: messageId) : sendMessageToInbox(withId: messageId)
     }
     
     // Get window's animation destination -- fallback to frame origin.
@@ -243,6 +253,22 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate {
         state = .recording(.finished)
     }
     
+    func toConsumingInitializing(message: Message) {
+        state = .consuming(message, .initializing)
+    }
+    
+    func toConsumingStarted(message: Message) {
+        state = .consuming(message, .started)
+    }
+    
+    func toConsumingCancelling(message: Message) {
+        state = .consuming(message, .cancelling)
+    }
+    
+    func toConsumingFinished(message: Message) {
+        state = .consuming(message, .finished)
+    }
+    
     // Check if the current state's case is different than the previous state's case.
     func stateChangedCase() -> Bool {
         return state != prevState
@@ -335,6 +361,15 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate {
         }
     }
     
+    private func loadMessageForConsumption(withId messageId: String) {
+        windowModel.loadMessageForConsumption(withId: messageId)
+    }
+    
+    private func sendMessageToInbox(withId messageId: String) {
+        windowModel.sendMessageToInbox(withId: messageId)
+        renderFromState()
+    }
+    
     private func onCurrentMessageUpdated(message: Message?) {
         guard let msg = message else {
             return
@@ -343,6 +378,12 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate {
         // Handle newly recorded messages being sent.
         if isRecordingSending() {
             onRecordingMessageSent(message: msg)
+            return
+        }
+        
+        // Handle incoming messages if state permits this.
+        if stateAllowsMessageConsumption && msg.canConsume {
+            toConsumingStarted(message: msg)
         }
     }
     

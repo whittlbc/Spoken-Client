@@ -24,7 +24,17 @@ struct Message: Model {
     var fileIds = [String]()
     
     var files = [File]()
+    
+    var canConsume: Bool { files.count > 0 && !files[0].downloadURL.isEmpty }
+    
+    var isAudio: Bool { getMessageType() == .audio }
 
+    var isVideo: Bool { getMessageType() == .video }
+
+    func getMessageType() -> MessageType? {
+        MessageType(rawValue: messageType)
+    }
+    
     func forCache() -> Message {
         var message = self
         message.files = []

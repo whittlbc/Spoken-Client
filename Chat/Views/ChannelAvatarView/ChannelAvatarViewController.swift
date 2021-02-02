@@ -962,6 +962,36 @@ class ChannelAvatarViewController: NSViewController {
         }
     }
 
+    private func renderInitializingConsuming(_ state: ChannelState) {
+        
+    }
+    
+    private func renderStartedConsuming(_ state: ChannelState) {
+        
+    }
+    
+    private func renderCancellingConsuming(_ state: ChannelState) {
+        
+    }
+    
+    private func renderFinishedConsuming(_ state: ChannelState) {
+        
+    }
+
+    // Render consuming-specific view updates.
+    private func renderConsuming(_ state: ChannelState, _ message: Message, _ consumingStatus: ConsumingStatus) {
+        switch consumingStatus {
+        case .initializing:
+            renderInitializingConsuming(state)
+        case .started:
+            renderStartedConsuming(state)
+        case .cancelling:
+            renderCancellingConsuming(state)
+        case .finished:
+            renderFinishedConsuming(state)
+        }
+    }
+    
     // Render view and subviews based on channel state.
     func render(_ state: ChannelState) {
         switch state {
@@ -971,6 +1001,8 @@ class ChannelAvatarViewController: NSViewController {
             renderPreviewing(state)
         case .recording(let recordingStatus):
             renderRecording(state, recordingStatus)
+        case .consuming(let message, let consumingStatus):
+            renderConsuming(state, message, consumingStatus)
         }
     }
 }

@@ -30,6 +30,7 @@ struct File: Model {
     var size: Int = 0
     var uploadStatus = ""
     var uploadURLs = [String]()
+    var downloadURL = ""
     
     var mimeType: String {
         switch FileType(rawValue: fileType) {
@@ -43,6 +44,7 @@ struct File: Model {
     func forCache() -> File {
         var file = self
         file.uploadURLs.removeAll()
+        file.downloadURL = ""
         return file
     }
 }

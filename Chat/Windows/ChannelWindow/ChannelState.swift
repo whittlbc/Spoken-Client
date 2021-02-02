@@ -13,6 +13,7 @@ enum ChannelState {
     case idle
     case previewing
     case recording(RecordingStatus)
+    case consuming(Message, ConsumingStatus)
     
     // Case equality check + associated value equality checks
     static func ===(lhs: ChannelState, rhs: ChannelState) -> Bool {
@@ -23,6 +24,8 @@ enum ChannelState {
             return true
         case (.recording(let lstatus), .recording(let rstatus)):
             return lstatus == rstatus
+        case (.consuming(let lmessage, let lstatus), .consuming(let rmessage, let rstatus)):
+            return lmessage.id == rmessage.id && lstatus == rstatus
         default:
             return false
         }
@@ -42,6 +45,8 @@ enum ChannelState {
             return true
         case (.recording, .recording):
             return true
+        case (.consuming, .consuming):
+            return true
         default:
             return false
         }
@@ -60,5 +65,13 @@ enum RecordingStatus {
     case cancelling
     case sending
     case sent
+    case finished
+}
+
+// Consumption statuses of message content.
+enum ConsumingStatus {
+    case initializing
+    case started
+    case cancelling
     case finished
 }

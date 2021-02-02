@@ -52,6 +52,19 @@ class ChannelWindowModel {
             }
     }
     
+    func loadMessageForConsumption(withId id: String) {
+        currentMessageCancellable = dataProvider.message
+            .getForConsumption(id: id)
+            .asResult()
+            .sink { [weak self] result in
+                self?.currentMessageResult = result
+            }
+    }
+    
+    func sendMessageToInbox(withId id: String) {
+        // TODO
+    }
+    
     private func setCurrentMessageFromResult() {
         switch currentMessageResult {
         case .success(let message):

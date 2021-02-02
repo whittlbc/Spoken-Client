@@ -21,5 +21,6 @@ extension File: ArrowParsable {
         size <-- json["size"]
         uploadStatus <-- json["upload_status"]
         uploadURLs <-- json["upload_urls"]
+        downloadURL <-- json["downloadURL"]
     }
 }

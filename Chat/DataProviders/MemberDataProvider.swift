@@ -14,10 +14,10 @@ class MemberDataProvider<T: Model & NetworkingJSONDecodable>: DataProvider<T> {
     
     func get(id: String, withUser: Bool = false) -> AnyPublisher<T, Error> {
         if !withUser {
-            return get(id: id)
+            return super.get(id: id)
         }
         
-        return get(id: id)
+        return super.get(id: id)
             .flatMap({ self.loadUser(for: $0) })
             .eraseToAnyPublisher()
     }
