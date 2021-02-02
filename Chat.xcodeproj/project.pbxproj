@@ -81,6 +81,9 @@
 		0994C75C25C61DE00006919A /* AVAudioPCMBuffer+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0994C75B25C61DE00006919A /* AVAudioPCMBuffer+Helpers.swift */; };
 		0994C75F25C792F40006919A /* OutputStream+Data.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0994C75E25C792F40006919A /* OutputStream+Data.swift */; };
 		0994C76225C7ABA40006919A /* Data+InputStream.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0994C76125C7ABA40006919A /* Data+InputStream.swift */; };
+		0994C76825C8C8D80006919A /* UIEventQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0994C76725C8C8D80006919A /* UIEventQueue.swift */; };
+		0994C76D25C8C9270006919A /* Queue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0994C76C25C8C9270006919A /* Queue.swift */; };
+		0994C77125C8CDF50006919A /* UIEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0994C77025C8CDF50006919A /* UIEvent.swift */; };
 		0995DDFC257AED6400DAA334 /* FloatingWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0995DDFB257AED6400DAA334 /* FloatingWindow.swift */; };
 		0995DDFF257AEDE000DAA334 /* SidebarWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0995DDFE257AEDE000DAA334 /* SidebarWindow.swift */; };
 		0995DE01257AEDEC00DAA334 /* SidebarWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0995DE00257AEDEC00DAA334 /* SidebarWindowController.swift */; };
@@ -200,6 +203,9 @@
 		0994C75B25C61DE00006919A /* AVAudioPCMBuffer+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AVAudioPCMBuffer+Helpers.swift"; sourceTree = "<group>"; };
 		0994C75E25C792F40006919A /* OutputStream+Data.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "OutputStream+Data.swift"; sourceTree = "<group>"; };
 		0994C76125C7ABA40006919A /* Data+InputStream.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Data+InputStream.swift"; sourceTree = "<group>"; };
+		0994C76725C8C8D80006919A /* UIEventQueue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIEventQueue.swift; sourceTree = "<group>"; };
+		0994C76C25C8C9270006919A /* Queue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Queue.swift; sourceTree = "<group>"; };
+		0994C77025C8CDF50006919A /* UIEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIEvent.swift; sourceTree = "<group>"; };
 		0995DDFB257AED6400DAA334 /* FloatingWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingWindow.swift; sourceTree = "<group>"; };
 		0995DDFE257AEDE000DAA334 /* SidebarWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarWindow.swift; sourceTree = "<group>"; };
 		0995DE00257AEDEC00DAA334 /* SidebarWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarWindowController.swift; sourceTree = "<group>"; };
@@ -431,6 +437,7 @@
 				0996446525AE92D0004473B7 /* Caching */,
 				099087BB25799BA2001660D1 /* Utilities */,
 				0968E2A925C5D858004E0C39 /* Workers */,
+				0994C76625C8C8CC0006919A /* Queues */,
 				0940E07925A7ACD6006184D7 /* Settings */,
 				0995DE1C2581695A00DAA334 /* Extensions */,
 				0995DE362581A9A300DAA334 /* Errors */,
@@ -466,6 +473,24 @@
 				0968E2AD25C5DA53004E0C39 /* Thread.swift */,
 			);
 			path = Utilities;
+			sourceTree = "<group>";
+		};
+		0994C76625C8C8CC0006919A /* Queues */ = {
+			isa = PBXGroup;
+			children = (
+				0994C76F25C8CDE50006919A /* UIEventQueue */,
+				0994C76C25C8C9270006919A /* Queue.swift */,
+			);
+			path = Queues;
+			sourceTree = "<group>";
+		};
+		0994C76F25C8CDE50006919A /* UIEventQueue */ = {
+			isa = PBXGroup;
+			children = (
+				0994C76725C8C8D80006919A /* UIEventQueue.swift */,
+				0994C77025C8CDF50006919A /* UIEvent.swift */,
+			);
+			path = UIEventQueue;
 			sourceTree = "<group>";
 		};
 		0995DDFD257AED9D00DAA334 /* SidebarWindow */ = {
@@ -804,6 +829,7 @@
 				09D3FC0425B4F80000CC744A /* ImageError.swift in Sources */,
 				094DAB0E25AFBB8F00CFC2EC /* String+Helpers.swift in Sources */,
 				096862DE2582A2EB00B9B614 /* User+Arrow.swift in Sources */,
+				0994C76D25C8C9270006919A /* Queue.swift in Sources */,
 				09C1329425A7D59800FB1D90 /* SpeechAnalyzerType.swift in Sources */,
 				0995DDFF257AEDE000DAA334 /* SidebarWindow.swift in Sources */,
 				0995DE2F25818B3E00DAA334 /* Logger.swift in Sources */,
@@ -832,6 +858,7 @@
 				0996445525AE7A1D004473B7 /* Model.swift in Sources */,
 				095C676C259E706000729845 /* SelfDrawnCheckmarkView.swift in Sources */,
 				09FF53D325B5293D0083CD28 /* ChannelRenderSpec.swift in Sources */,
+				0994C77125C8CDF50006919A /* UIEvent.swift in Sources */,
 				095C6765259A6A8800729845 /* ChasingTailSpinnerView.swift in Sources */,
 				0996446B25AE92FD004473B7 /* CodableCache.swift in Sources */,
 				0972291A25BF637600219591 /* DashSpinnerView.swift in Sources */,
@@ -847,6 +874,7 @@
 				096863352586C2B000B9B614 /* RoundView.swift in Sources */,
 				0968E2A625C5C73C004E0C39 /* AVRecording.swift in Sources */,
 				094DAB1125AFD72900CFC2EC /* Session.swift in Sources */,
+				0994C76825C8C8D80006919A /* UIEventQueue.swift in Sources */,
 				0968E2B125C5DC58004E0C39 /* Worker.swift in Sources */,
 				0996443625A8F4A6004473B7 /* AudioRecorder.swift in Sources */,
 				095C677325A29B7300729845 /* Message.swift in Sources */,
