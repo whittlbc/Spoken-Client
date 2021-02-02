@@ -383,7 +383,7 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate {
         
         // Handle incoming messages if state permits this.
         if stateAllowsMessageConsumption && msg.canConsume {
-            toConsumingStarted(message: msg)
+            startConsumingMessage(msg)
         }
     }
     
@@ -418,6 +418,10 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate {
     }
     
     private func initializeRecording() {
+        // Pause the UI event queue.
+        uiEventQueue.pause()
+        
+        // Update state to recording:initializing
         toRecordingInitializing()
 
         // Force start recording of video.
@@ -429,6 +433,16 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate {
             ) { [weak self] in
                 self?.startRecording()
             }
+        }
+    }
+    
+    private func startConsumingMessage(message: Message) {
+        // Pause the UI event queue.
+        uiEventQueue.pause()
+        
+        // Switch to main queue and just straight to consuming:started.
+        DispatchQueue.main.async { [weak self] in
+            self?.toConsumingStarted(message: message)
         }
     }
     
@@ -471,13 +485,8 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate {
     
     // Show user that the recording has been successfully cancelled.
     private func showRecordingCancelled() {
-        // Set state to cancelling recording.
         toRecordingCancelling()
-        
-        // Wait the tiniest amount of time, and then set state back to idle.
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) { [weak self] in
-            self?.toIdle()
-        }
+        resetToIdle()
     }
     
     // Show user that the recording has been successfully sent.
@@ -492,12 +501,34 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate {
     
     // Show user that the recording has successfully finished.
     private func showRecordingFinished() {
-        // Set state to finished recording.
         toRecordingFinished()
-        
+        resetToIdle()
+    }
+    
+    // Show user that message consumption has successfully been cancelled.
+    private func showConsumingCancelled(message: Message) {
+        toConsumingCancelling(message: message)
+        resetToIdle()
+    }
+    
+    // Show user that message consumption has successfully finished.
+    private func showConsumingFinished(message: Message) {
+        toConsumingFinished(message: message)
+        resetToIdle()
+    }
+
+    private func resetToIdle() {
         // Wait the tiniest amount of time, and then set state back to idle.
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) { [weak self] in
             self?.toIdle()
+                
+            // Wait until idle animation finishes.
+            DispatchQueue.global().asyncAfter(
+                deadline: .now() + ChannelWindow.AnimationConfig.duration(forState: .idle)
+            ) {
+                // Resume UI events.
+                uiEventQueue.restart()
+            }
         }
     }
     

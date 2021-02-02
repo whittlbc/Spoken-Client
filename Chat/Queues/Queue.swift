@@ -57,6 +57,10 @@ public class Queue<T> {
         isRunning = false
     }
     
+    func restart() {
+        start(then: pipe)
+    }
+    
     func addItem(_ item: T) {
         items.insert(item, at: 0)
     }
