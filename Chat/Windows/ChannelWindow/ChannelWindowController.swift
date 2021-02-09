@@ -87,6 +87,8 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate {
     convenience init(channel: Channel) {
         self.init(window: nil)
         
+        self.channel = channel
+        
         // Create window model.
         self.windowModel = ChannelWindowModel(channel: channel)
         
@@ -275,26 +277,34 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate {
     }
     
     // Start a new audio message to send to this channel.
-    func startRecording() {
+    func startRecordingMessage(_ message: Message) {
         // Enable key event listners.
         toggleRecordingKeyListeners(enable: true)
-        
-        // Start recording either video or just audio based on settings.
-        UserSettings.Video.useCamera ? startRecordingVideo() : startRecordingAudio()
-    }
-    
-    func startRecordingVideo() {
+
         DispatchQueue.main.asyncAfter(
             deadline: .now() + ChannelWindow.ArtificialTiming.showVideoRecordingInitializingDuration
         ) { [weak self] in
             self?.toRecordingStarted()
         }
+        
+        // Start recording either video or just audio based on settings.
+        AV.startRecordingMessage(message)
+        
+//        UserSettings.Video.useCamera ? startRecordingVideo() : startRecordingAudio()
     }
     
-    func startRecordingAudio() {
-        AV.mic.startRecording()
-        toRecordingStarted()
-    }
+//    func startRecordingVideo() {
+//        DispatchQueue.main.asyncAfter(
+//            deadline: .now() + ChannelWindow.ArtificialTiming.showVideoRecordingInitializingDuration
+//        ) { [weak self] in
+//            self?.toRecordingStarted()
+//        }
+//    }
+//
+//    func startRecordingAudio() {
+//        AV.mic.startRecording()
+//        toRecordingStarted()
+//    }
     
     // Cancel recording and switch back to idle state.
     func cancelRecording() {
@@ -319,8 +329,8 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate {
         // Stop the active recording.
         AV.stopRecording(id: channel.id, cancelled: false)
         
-        // Create new recording message.
-        windowModel.createRecordingMessage(fileSize: AV.recordingSize)
+//        // Create new recording message.
+//        windowModel.createRecordingMessage(fileSize: AV.recordingSize)
     }
 
     // Start timer used to check whether mouse is still inside the previewing window.
@@ -375,33 +385,38 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate {
             return
         }
         
-        // Handle newly recorded messages being sent.
-        if isRecordingSending() {
-            onRecordingMessageSent(message: msg)
-            return
+        // If recording is initializing, start the recording.
+        if isRecordingInitializing() {
+            startRecordingMessage(msg)
         }
         
-        // Handle incoming messages if state permits this.
-        if stateAllowsMessageConsumption && msg.canConsume {
-            startConsumingMessage(msg)
-        }
+//        // Handle newly recorded messages being sent.
+//        if isRecordingSending() {
+//            onRecordingMessageSent(message: msg)
+//            return
+//        }
+        
+//        // Handle incoming messages if state permits this.
+//        if stateAllowsMessageConsumption && msg.canConsume {
+//            startConsumingMessage(msg)
+//        }
     }
     
-    private func onRecordingMessageSent(message: Message) {
-        // Ensure message has a file.
-        guard message.files.count > 0 else {
-            logger.error("Message(id=\(message.id)) has no files -- no recording to upload.")
-            return
-        }
-
-        // Upload message's recording file.
-        uploadRecordingFile(message.files[0])
-        
-        // Show recording as sent.
-        DispatchQueue.main.async { [weak self] in
-            self?.showRecordingSent()
-        }
-    }
+//    private func onRecordingMessageSent(message: Message) {
+//        // Ensure message has a file.
+//        guard message.files.count > 0 else {
+//            logger.error("Message(id=\(message.id)) has no files -- no recording to upload.")
+//            return
+//        }
+//
+//        // Upload message's recording file.
+//        uploadRecordingFile(message.files[0])
+//
+//        // Show recording as sent.
+//        DispatchQueue.main.async { [weak self] in
+//            self?.showRecordingSent()
+//        }
+//    }
     
     private func uploadRecordingFile(_ file: File) {
         // Get the url of the most recent AV recording.
@@ -424,16 +439,20 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate {
         // Update state to recording:initializing
         toRecordingInitializing()
 
-        // Force start recording of video.
-        if UserSettings.Video.useCamera {
-            AV.avRecorder.start(id: channel.id)
-            
-            DispatchQueue.main.asyncAfter(
-                deadline: .now() + ChannelWindow.AnimationConfig.duration(forState: state)
-            ) { [weak self] in
-                self?.startRecording()
-            }
-        }
+        // Create new recording message.
+        windowModel.createRecordingMessage()
+
+        
+//        // Force start recording of video.
+//        if UserSettings.Video.useCamera {
+//            AV.avRecorder.start(id: channel.id)
+//
+//            DispatchQueue.main.asyncAfter(
+//                deadline: .now() + ChannelWindow.AnimationConfig.duration(forState: state)
+//            ) { [weak self] in
+//                self?.startRecording()
+//            }
+//        }
     }
     
     private func startConsumingMessage(_ message: Message) {

@@ -152,7 +152,7 @@ class WorkspaceWindowController: NSWindowController, NSWindowDelegate, Workspace
     
     // Called when channel rendering has completed.
     private func onChannelsRendered(activeChannelId: String) {
-        checkIfActiveRecordingNeedsStart(activeChannelId: activeChannelId)
+        bringActiveRecordingToFront(activeChannelId: activeChannelId)
     }
     
     // Subscribe to window state changes.
@@ -210,19 +210,16 @@ class WorkspaceWindowController: NSWindowController, NSWindowDelegate, Workspace
         
         return getChannelWindowControllers(forChannels: channels).first(where: { $0.isRecording() })
     }
-
-    private func checkIfActiveRecordingNeedsStart(activeChannelId: String) {
+    
+    private func bringActiveRecordingToFront(activeChannelId: String) {
         // Ensure active channel has a recording waiting to be started.
         guard let activeChannelWindowController = channelWindowControllers[activeChannelId],
               activeChannelWindowController.isRecordingInitializing() else {
             return
         }
-    
+
         // Move active window to front of other channels.
         bringChannelWindowToFront(forController: activeChannelWindowController)
-        
-        // Start the recording.
-        activeChannelWindowController.startRecording()
     }
     
     private func unpreviewNonActiveChannels(channels: [Channel], activeChannelIndex: Int) {

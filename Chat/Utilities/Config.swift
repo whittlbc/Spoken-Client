@@ -17,6 +17,7 @@ public enum Config {
         static let apiURL = "API_URL"
         static let appName = "APP_NAME"
         static let appBundleID = "APP_BUNDLE_ID"
+        static let janusURL = "JANUS_URL"
     }
 
     // App environment options
@@ -74,4 +75,6 @@ public enum Config {
     // App bundle identifier.
     static let appBundleID = Config.getRequiredStringEnvVar(forKey: Keys.appBundleID)
     
+    // Websocket URL for Janus.
+    static let janusURL = Config.getRequiredStringEnvVar(forKey: Keys.janusURL)
 }

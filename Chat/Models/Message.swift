@@ -25,7 +25,7 @@ struct Message: Model {
     
     var files = [File]()
     
-    var canConsume: Bool { files.count > 0 && !files[0].downloadURL.isEmpty }
+    var canStream: Bool { files.count > 0 && !files[0].canStream }
     
     var isAudio: Bool { getMessageType() == .audio }
 

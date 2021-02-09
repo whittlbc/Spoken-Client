@@ -18,28 +18,22 @@ class ChannelWindowModel {
 
     private var currentMessageResult = MessageResult.success(Message()) {
         didSet {
-            // If timer has already expired, set current messsage from result.
-            if networkTimer == nil {
-                setCurrentMessageFromResult()
+            switch currentMessageResult {
+            case .success(let message):
+                self.currentMessage = message
+            case .failure(_):
+                self.currentMessage = nil
             }
         }
     }
-    
-    private var currentMessageRequestCompleted = false
-    
-    private var networkTimer: Timer?
-    
+        
     private var currentMessageCancellable: AnyCancellable?
     
     init(channel: Channel) {
         self.channel = channel
     }
     
-    func createRecordingMessage(fileSize: Int) {
-        currentMessageRequestCompleted = false
-    
-        startNetworkTimer()
-        
+    func createRecordingMessage() {
         currentMessageCancellable = dataProvider.message
             .create(
                 channelId: channel.id,
@@ -47,7 +41,6 @@ class ChannelWindowModel {
             )
             .asResult()
             .sink { [weak self] result in
-                self?.currentMessageRequestCompleted = true
                 self?.currentMessageResult = result
             }
     }
@@ -63,46 +56,5 @@ class ChannelWindowModel {
     
     func sendMessageToInbox(withId id: String) {
         // TODO
-    }
-    
-    private func setCurrentMessageFromResult() {
-        switch currentMessageResult {
-        case .success(let message):
-            self.currentMessage = message
-        case .failure(_):
-            self.currentMessage = nil
-        }
-    }
-    
-    private func startNetworkTimer() {
-        if networkTimer != nil {
-            return
-        }
-        
-        networkTimer = Timer.scheduledTimer(
-            timeInterval: TimeInterval(ChannelWindow.ArtificialTiming.showRecordingSendingDuration),
-            target: self,
-            selector: #selector(onNetworkTimerEnd),
-            userInfo: nil,
-            repeats: false
-        )
-    }
-    
-    @objc private func onNetworkTimerEnd() {
-        cancelNetworkTimer()
-        
-        // If request has already completed, set current message from result.
-        if currentMessageRequestCompleted {
-            setCurrentMessageFromResult()
-        }
-    }
-    
-    private func cancelNetworkTimer() {
-        if networkTimer == nil {
-            return
-        }
-        
-        networkTimer!.invalidate()
-        networkTimer = nil
     }
 }

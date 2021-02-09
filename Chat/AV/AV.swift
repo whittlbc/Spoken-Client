@@ -17,6 +17,8 @@ public enum AV {
     
     static let avRecorder = AVRecorder()
     
+    static let streamManager = StreamManager()
+    
     static var recordingSize: Int {
         UserSettings.Video.useCamera ? AV.avRecorder.recordingSize : AV.mic.recordingSize
     }
@@ -95,6 +97,10 @@ public enum AV {
         default:
             break
         }
+    }
+    
+    static func startRecordingMessage(_ message: Message) {
+        streamManager.streamNewMessage(message)
     }
     
     static func stopRecording(id: String, cancelled: Bool) {

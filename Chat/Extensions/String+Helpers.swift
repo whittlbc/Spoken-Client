@@ -10,6 +10,11 @@ import Foundation
 
 extension String {
     
+    static func random(length: Int) -> String {
+        let letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+        return String((0..<length).map{ _ in letters.randomElement()! })
+    }
+
     func asPlural() -> String {
         // Return new String with no changes if empty or already ends in "s".
         if self.isEmpty || self.last! == "s"  {
