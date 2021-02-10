@@ -18,5 +18,5 @@ protocol JanusSocketDelegate: NSObjectProtocol {
     
     func onSubscriberLeaving(_ handleId: Int?)
     
-    func onError(_ error: Error?)
+    func onSocketError(_ error: Error?)
 }

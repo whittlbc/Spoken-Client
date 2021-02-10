@@ -5,6 +5,7 @@
 //  Created by Amirali Asvadi on 4/2/20.
 //  Copyright © 2020 Amirali Asvadi. All rights reserved.
 //
+
 import Cocoa
 import WebRTC
 
@@ -12,46 +13,49 @@ private let kARDMediaStreamId = "ARDAMS"
 private let kARDAudioTrackId = "ARDAMSa0"
 private let kARDVideoTrackId = "ARDAMSv0"
 
-class ViewController: NSViewController,RTCPeerConnectionDelegate, JanusSocketDelegate {
+class ViewController: NSViewController, RTCPeerConnectionDelegate, JanusSocketDelegate {
 
     private static let factory: RTCPeerConnectionFactory = {
         RTCInitializeSSL()
+        
         //support all codec formats for encode and decode
-        return RTCPeerConnectionFactory(encoderFactory: RTCDefaultVideoEncoderFactory(),
-                                        decoderFactory: RTCDefaultVideoDecoderFactory())
+        return RTCPeerConnectionFactory(
+            encoderFactory: RTCDefaultVideoEncoderFactory(),
+            decoderFactory: RTCDefaultVideoDecoderFactory()
+        )
     }()
+    
+//    @IBOutlet weak var localView: RTCMTLNSVideoView!
+//    @IBOutlet weak var remoteView: RTCMTLNSVideoView!
 
     var websocket: JanusSocket!
     
-    var peerConnectionDict: [AnyHashable : JanusConnection]?
-    
+    var peerConnectionDict = [AnyHashable : JanusConnection]()
     var publisherPeerConnection: RTCPeerConnection? = nil
     
     var localTrack: RTCVideoTrack? = nil
-    
     var localAudioTrack: RTCAudioTrack? = nil
 
-    var saveId: NSNumber?
-    
+    var saveId: Int?
     var videoCheck: NSNumber?
 
-//    override class func awakeFromNib() {
-//        RTCInitializeSSL();
-//        RTCSetupInternalTracer();
-//    }
-    
+    override class func awakeFromNib() {
+        RTCInitializeSSL();
+        RTCSetupInternalTracer();
+    }
+
     override func viewDidLoad() {
+        // TODO: Figure out what the equivalent of this is on macOS.
 //        NotificationCenter.default.addObserver(self, selector: #selector(didSessionRouteChange(_:)), name: AVAudioSession.routeChangeNotification, object: nil)
-//        setSpeakerStates(enabled: true)
-        websocket = JanusSocket()
-        websocket.tryToConnect()
-        websocket.delegate = self
         
-        peerConnectionDict = [AnyHashable : JanusConnection]()
+        setSpeakerStates(enabled: true)
+        
+        websocket = JanusSocket()
+        websocket.connect()
+        websocket.delegate = self
         
         localTrack = createLocalVideoTrack()
         localAudioTrack = createLocalAudioTrack()
-        
         videoCheck = NSNumber(value: true)
     }
 
@@ -64,77 +68,70 @@ class ViewController: NSViewController,RTCPeerConnectionDelegate, JanusSocketDel
         }
     }
 
-    func peerConnection(_ peerConnection: RTCPeerConnection, didRemove stream: RTCMediaStream) {
-        print("=========didRemoveStream");
-    }
+    func createLocalVideoTrack() -> RTCMTLNSVideoView? {
+        let constraints = RTCMediaConstraints(mandatoryConstraints: nil, optionalConstraints: nil)
 
-
-    func peerConnection(_ peerConnection: RTCPeerConnection, didRemove candidates: [RTCIceCandidate]) {
-        print("=========didRemoveIceCandidates");
-    }
-
-    func createLocalVideoTrack() -> RTCVideoTrack? {
-        let cameraConstraints = RTCMediaConstraints(mandatoryConstraints: (currentMediaConstraint() as! [String : String]), optionalConstraints: nil)
-        let source = factory?.avFoundationVideoSource(with: cameraConstraints)
-        let localVideoTrack = factory!.videoTrack(with: source!, trackId: kARDVideoTrackId)
-        localView.captureSession = source?.captureSession
+        let source = ViewController.factory.avFoundationVideoSource(with: cameraConstraints)
+        let localVideoTrack = ViewController.factory.videoTrack(with: source!, trackId: kARDVideoTrackId)
+//        localView.captureSession = source?.captureSession
         return localVideoTrack
     }
 
-    func currentMediaConstraint() -> [AnyHashable : Any]? {
-        var mediaConstraintsDictionary: [AnyHashable : Any]? = nil
-        let widthConstraint = "500"
-        let heightConstraint = "500"
-        let frameRateConstrait = "20"
-        if widthConstraint != "" && heightConstraint != "" {
-            mediaConstraintsDictionary = [
-            kRTCMediaConstraintsMinWidth: widthConstraint,
-            //kRTCMediaConstraintsMaxWidth : widthConstraint,
-            kRTCMediaConstraintsMinHeight: heightConstraint,
-            //kRTCMediaConstraintsMaxHeight : heightConstraint,
-            kRTCMediaConstraintsMaxFrameRate: frameRateConstrait
-            ]
-        }
-        return mediaConstraintsDictionary
-    }
+//    func currentMediaConstraint() -> [AnyHashable : Any]? {
+//        var mediaConstraintsDictionary: [AnyHashable : Any]? = nil
+//        let widthConstraint = "500"
+//        let heightConstraint = "500"
+//        let frameRateConstrait = "20"
+//        if widthConstraint != "" && heightConstraint != "" {
+//            mediaConstraintsDictionary = [
+//            kRTCMediaConstraintsMinWidth: widthConstraint,
+//            kRTCMediaConstraintsMaxWidth : widthConstraint,
+//            kRTCMediaConstraintsMinHeight: heightConstraint,
+//            kRTCMediaConstraintsMaxHeight : heightConstraint,
+//            kRTCMediaConstraintsMaxFrameRate: frameRateConstrait
+//            ]
+//        }
+//        return mediaConstraintsDictionary
+//    }
 
-    func defaultMediaAudioConstraints() -> RTCMediaConstraints? {
-        let mandatoryConstraints = [
-            kRTCMediaConstraintsLevelControl: kRTCMediaConstraintsValueFalse
-        ]
-        let constraints = RTCMediaConstraints(mandatoryConstraints: mandatoryConstraints, optionalConstraints: nil)
-        return constraints
-    }
+//    func defaultMediaAudioConstraints() -> RTCMediaConstraints? {
+//        let mandatoryConstraints = [
+//            kRTCMediaConstraintsLevelControl: kRTCMediaConstraintsValueFalse
+//        ]
+//        let constraints = RTCMediaConstraints(mandatoryConstraints: mandatoryConstraints, optionalConstraints: nil)
+//        return constraints
+//        return nil
+//    }
 
     func createLocalAudioTrack() -> RTCAudioTrack? {
         let constraints = defaultMediaAudioConstraints()
-        let source = factory!.audioSource(with: constraints)
-        let track = factory!.audioTrack(with: source, trackId: kARDAudioTrackId)
+        let source = ViewController.factory.audioSource(with: constraints)
+        let track = ViewController.factory.audioTrack(with: source, trackId: kARDAudioTrackId)
         return track
     }
 
-    func createRemoteView() -> RTCEAGLVideoView? {
-        remoteView.delegate = self
-        return remoteView
-    }
+//    func createRemoteView() -> RTCMTLNSVideoView? {
+//        remoteView.delegate = self
+//        return remoteView
+//    }
 
     func createPublisherPeerConnection() {
         publisherPeerConnection = createPeerConnection()
         createAudioSender(publisherPeerConnection)
         createVideoSender(publisherPeerConnection)
     }
-
-    func videoView(_ videoView: RTCEAGLVideoView, didChangeVideoSize size: CGSize) {
-        var rect = videoView.frame
-        rect.size = size
-        print(String(format: "========didChangeVideiSize %fx%f", size.width, size.height))
-        videoView.frame = rect
-    }
+    
+//    func videoView(_ videoView: RTCVideoRenderer, didChangeVideoSize size: CGSize) {
+//        var rect = videoView.frame
+//        rect.size = size
+//        print(String(format: "========didChangeVideiSize %fx%f", size.width, size.height))
+//        videoView.frame = rect
+//    }
 
     func peerConnection(_ peerConnection: RTCPeerConnection, didAdd stream: RTCMediaStream) {
         print("=========didAddStream")
         var janusConnection: JanusConnection?
-        for key in peerConnectionDict! {
+        for key in peerConnectionDict {
             let jc:JanusConnection = key.value
             if peerConnection == jc.connection {
                 janusConnection = jc
@@ -153,9 +150,14 @@ class ViewController: NSViewController,RTCPeerConnectionDelegate, JanusSocketDel
             }
         })
     }
+    
+    func peerConnection(_ peerConnection: RTCPeerConnection, didRemove stream: RTCMediaStream) {
+        print("=========didRemoveStream");
+    }
 
-    func peerConnection(_ peerConnection: RTCPeerConnection?, didAddStream stream: RTCMediaStream?) {
-        print("=========didRemoveStream")
+
+    func peerConnection(_ peerConnection: RTCPeerConnection, didRemove candidates: [RTCIceCandidate]) {
+        print("=========didRemoveIceCandidates");
     }
 
     func peerConnection(_ peerConnection: RTCPeerConnection, didOpen dataChannel: RTCDataChannel) {
@@ -167,8 +169,8 @@ class ViewController: NSViewController,RTCPeerConnectionDelegate, JanusSocketDel
     func peerConnection(_ peerConnection: RTCPeerConnection, didGenerate candidate: RTCIceCandidate) {
         let sdp = candidate.sdp
         print("=========didGenerateIceCandidate==\(sdp)")
-        var handleId: NSNumber?
-        for key in peerConnectionDict! {
+        var handleId: Int?
+        for key in peerConnectionDict {
             let jc:JanusConnection = key.value
             if peerConnection == jc.connection {
                 handleId = jc.handleId
@@ -184,14 +186,12 @@ class ViewController: NSViewController,RTCPeerConnectionDelegate, JanusSocketDel
 
     func peerConnection(_ peerConnection: RTCPeerConnection, didChange newState: RTCIceGatheringState) {
     }
-
-    func peerConnectionShouldNegotiate(_ peerConnection: RTCPeerConnection) {
-    }
-
+    
     func peerConnection(_ peerConnection: RTCPeerConnection, didChange newState: RTCIceConnectionState) {
     }
 
-
+    func peerConnectionShouldNegotiate(_ peerConnection: RTCPeerConnection) {
+    }
 
     func createAudioSender(_ peerConnection: RTCPeerConnection?) -> RTCRtpSender? {
         let sender = peerConnection?.sender(withKind: kRTCMediaStreamTrackKindAudio, streamId: kARDMediaStreamId)
@@ -215,17 +215,16 @@ class ViewController: NSViewController,RTCPeerConnectionDelegate, JanusSocketDel
         let iceServers = [defaultSTUNServer()!]
         config.iceServers = iceServers
         config.iceTransportPolicy = RTCIceTransportPolicy.all
-        let peerConnection = ViewController.factory.peerConnection(with: config, constraints: constraints, delegate: self)
-//        let peerConnection = factory!.peerConnection(with: config, constraints: constraints!, delegate: self)
+        let peerConnection = ViewController.factory.peerConnection(with: config, constraints: constraints!, delegate: self)
         return peerConnection
     }
 
     func defaultSTUNServer() -> RTCIceServer? {
         let array = ["stun:stun.l.google.com:19302"]
-        return RTCIceServer(urlStrings: array)
+        return RTCIceServer(urlStrings: ["stun:stun.l.google.com:19302"])
     }
 
-    func defaultPeerConnectionConstraints() -> RTCMediaConstraints {
+    func defaultPeerConnectionConstraints() -> RTCMediaConstraints? {
         let optionalConstraints = [
             "DtlsSrtpKeyAgreement": "true"
         ]
@@ -233,46 +232,46 @@ class ViewController: NSViewController,RTCPeerConnectionDelegate, JanusSocketDel
         return constraints
     }
 
-//    @objc func didSessionRouteChange(_ notification: Notification?) {
-//        guard let info = notification?.userInfo,
-//        let value = info[AVAudioSessionRouteChangeReasonKey] as? UInt,
-//            let reason = AVAudioSession.RouteChangeReason(rawValue: value) else {
-//                return
-//        }
-//        switch reason {
-//        case .categoryChange:
-//            try? AVAudioSession.sharedInstance().overrideOutputAudioPort(.speaker)
-//        default:
-//            break
-//        }
-//    }
-//
-//    func setSpeakerStates(enabled: Bool)
-//    {
-//        let session = AVAudioSession.sharedInstance()
-//        var _: Error?
-//        try? session.setCategory(AVAudioSession.Category.playAndRecord)
-//        try? session.setMode(AVAudioSession.Mode.voiceChat)
-//        if enabled {
-//            try? session.overrideOutputAudioPort(AVAudioSession.PortOverride.speaker)
-//        } else {
-//            try? session.overrideOutputAudioPort(AVAudioSession.PortOverride.none)
-//        }
-//        try? session.setActive(true)
-//    }
+    @objc func didSessionRouteChange(_ notification: Notification?) {
+        guard let info = notification?.userInfo,
+        let value = info[AVAudioSessionRouteChangeReasonKey] as? UInt,
+            let reason = AVAudioSession.RouteChangeReason(rawValue: value) else {
+                return
+        }
+        switch reason {
+        case .categoryChange:
+            try? AVAudioSession.sharedInstance().overrideOutputAudioPort(.speaker)
+        default:
+            break
+        }
+    }
 
-    func onPublisherJoined(_ handleId: NSNumber?) {
+    func setSpeakerStates(enabled: Bool)
+    {
+        let session = AVAudioSession.sharedInstance()
+        var _: Error?
+        try? session.setCategory(AVAudioSession.Category.playAndRecord)
+        try? session.setMode(AVAudioSession.Mode.voiceChat)
+        if enabled {
+            try? session.overrideOutputAudioPort(AVAudioSession.PortOverride.speaker)
+        } else {
+            try? session.overrideOutputAudioPort(AVAudioSession.PortOverride.none)
+        }
+        try? session.setActive(true)
+    }
+
+    func onPublisherJoined(_ handleId: Int?) {
         offerPeerConnection(handleId)
     }
 
-    func offerPeerConnection(_ handleId: NSNumber?) {
+    func offerPeerConnection(_ handleId: Int?) {
         createPublisherPeerConnection()
         saveId = handleId
         let jc = JanusConnection()
         jc.connection = publisherPeerConnection
         jc.handleId = handleId
         if let handleId = handleId {
-            peerConnectionDict![handleId] = jc
+            peerConnectionDict[handleId] = jc
         }
         publisherPeerConnection!.offer(for: defaultOfferConstraints()!, completionHandler: { sdp, error in
             self.publisherPeerConnection!.setLocalDescription(sdp!, completionHandler: { error in
@@ -290,7 +289,7 @@ class ViewController: NSViewController,RTCPeerConnectionDelegate, JanusSocketDel
         let jc = JanusConnection()
         jc.connection = publisherPeerConnection
         jc.handleId = saveId
-        peerConnectionDict![saveId] = jc
+        peerConnectionDict[saveId] = jc
         publisherPeerConnection!.offer(for: defaultOfferConstraints()!, completionHandler: { sdp, error in
             self.publisherPeerConnection!.setLocalDescription(sdp!, completionHandler: { error in
                 self.websocket.publisherCreateOffer(self.saveId, sdp: sdp!,hasVideo: hasVideo)
@@ -306,24 +305,24 @@ class ViewController: NSViewController,RTCPeerConnectionDelegate, JanusSocketDel
         let constraints = RTCMediaConstraints(mandatoryConstraints: mandatoryConstraints, optionalConstraints: nil)
         return constraints
     }
-
-    func onPublisherRemoteJsep(_ handleId: NSNumber?, dict jsep: [AnyHashable : Any]?) {
+    
+    func onPublisherRemoteJSEP(_ handleId: Int?, jsep: JanusJSEP?) {
         var jc: JanusConnection? = nil
         if let handleId = handleId {
-            jc = peerConnectionDict![handleId]
+            jc = peerConnectionDict[handleId]
         }
         let answerDescription = RTCSessionDescription(fromJSONDictionary: jsep)!
         jc?.connection!.setRemoteDescription(answerDescription, completionHandler: { error in
         })
     }
 
-    func subscriberHandleRemoteJsep(_ handleId: NSNumber?, dict jsep: [AnyHashable : Any]?) {
+    func onSubscriberRemoteJSEP(_ handleId: Int?, jsep: JanusJSEP?) {
         let peerConnection = createPeerConnection()
         let jc = JanusConnection()
         jc.connection = peerConnection
         jc.handleId = handleId
         if let handleId = handleId {
-            peerConnectionDict![handleId] = jc
+            peerConnectionDict[handleId] = jc
         }
         let answerDescription = RTCSessionDescription(fromJSONDictionary: jsep)
         peerConnection?.setRemoteDescription(answerDescription!, completionHandler: { error in
@@ -340,10 +339,10 @@ class ViewController: NSViewController,RTCPeerConnectionDelegate, JanusSocketDel
         })
     }
 
-    func onLeaving(_ handleId: NSNumber?) {
+    func onSubscriberLeaving(_ handleId: Int?) {
         var jc: JanusConnection? = nil
         if let handleId = handleId {
-            jc = peerConnectionDict![handleId]
+            jc = peerConnectionDict[handleId]
         }
         jc?.connection!.close()
         jc?.connection = nil
@@ -352,7 +351,11 @@ class ViewController: NSViewController,RTCPeerConnectionDelegate, JanusSocketDel
         videoTrack = nil
         jc?.videoView!.renderFrame(nil)
         jc?.videoView!.removeFromSuperview()
-        peerConnectionDict!.removeValue(forKey: handleId)
+        peerConnectionDict.removeValue(forKey: handleId)
     }
 
+    func onSocketError(_ error: Error?) {
+        
+    }
 }
+

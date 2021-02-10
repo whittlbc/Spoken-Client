@@ -19,9 +19,12 @@ class WebRTCClient: NSObject, JanusSocketDelegate {
     
     private static let factory: RTCPeerConnectionFactory = {
         RTCInitializeSSL()
+        
         //support all codec formats for encode and decode
-        return RTCPeerConnectionFactory(encoderFactory: RTCDefaultVideoEncoderFactory(),
-                                        decoderFactory: RTCDefaultVideoDecoderFactory())
+        return RTCPeerConnectionFactory(
+            encoderFactory: RTCDefaultVideoEncoderFactory(),
+            decoderFactory: RTCDefaultVideoDecoderFactory()
+        )
     }()
 
     weak var delegate: WebRTCClientDelegate?
@@ -38,7 +41,7 @@ class WebRTCClient: NSObject, JanusSocketDelegate {
     private var remoteDataChannel: RTCDataChannel?
     private var constructedIceServers: [RTCIceServer]?
 
-    var websocket: JanusSocket!
+    var websocket: JanusSocket! 
     
     var peerConnectionDict: [AnyHashable : JanusConnection]?
     
@@ -61,7 +64,7 @@ class WebRTCClient: NSObject, JanusSocketDelegate {
 //        configureAudioSession()
         
         websocket = JanusSocket()
-        websocket.tryToConnect()
+        websocket.connect()
         websocket.delegate = self
 
         if (isAudioOn) {
