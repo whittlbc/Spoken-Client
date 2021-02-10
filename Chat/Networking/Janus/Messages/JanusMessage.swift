@@ -12,21 +12,17 @@ import Arrow
 typealias JanusJSEP = [AnyHashable: Any]
 
 class JanusMessage: Codable, ArrowParsable {
-        
-    static func fromJSON(_ json: JSON) -> Self {
-        let message = Self()
-        message.deserialize(json)
-        return message
-    }
     
     enum Key {
         static let janus = "janus"
         static let videoRoomPlugin = "janus.plugin.videoroom"
         static let create = "create"
         static let attach = "attach"
+        static let detach = "detach"
         static let keepAlive = "keepalive"
         static let transaction = "transaction"
         static let message = "message"
+        static let trickle = "trickle"
         static let error = "error"
         static let code = "code"
         static let reason = "reason"
@@ -47,6 +43,12 @@ class JanusMessage: Codable, ArrowParsable {
         case event
         case detached
         case ack
+    }
+    
+    static func fromJSON(_ json: JSON) -> Self {
+        let message = Self()
+        message.deserialize(json)
+        return message
     }
     
     required init() {}

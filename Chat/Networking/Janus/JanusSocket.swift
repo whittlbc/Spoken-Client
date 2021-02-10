@@ -12,6 +12,9 @@ import Arrow
 
 class JanusSocket: Socket {
     
+    // HACK
+    static let roomNumber: Int = 1234
+    
     typealias IncomingMessage = [String: Any]
     
     static let defaultHeaders: [String: String] = [
@@ -29,10 +32,10 @@ class JanusSocket: Socket {
         case offer
         case error
     }
-    
-    weak var delegate: JanusSocketDelegate?
-    
+        
     var state: State?
+
+    weak var delegate: JanusSocketDelegate?
     
     private var txs = [String: JanusTx]()
     
@@ -48,7 +51,7 @@ class JanusSocket: Socket {
         self.init(url: Config.janusURL, headers: JanusSocket.defaultHeaders)
         
         // Start timer on repeat to keep socket connection alive.
-        self.createKeepAliveTimer()
+        createKeepAliveTimer()
     }
     
     override init(url: String, headers: [String: String] = [:], requestTimeoutInterval: TimeInterval = 5) {
@@ -85,6 +88,23 @@ class JanusSocket: Socket {
         }
     }
     
+    func trickleCandidate(handleId: Int, candidate: RTCIceCandidate) {
+        sendMessage(JanusTrickleCandidateMessage(
+            sessionId: sessionId!,
+            handleId: handleId,
+            txId: JanusTx.newId(),
+            iceCandidate: candidate
+        ))
+    }
+    
+    func trickleCandidateComplete(handleId: Int) {
+        sendMessage(JanusTrickleCandidateCompleteMessage(
+            sessionId: sessionId!,
+            handleId: handleId,
+            txId: JanusTx.newId()
+        ))
+    }
+
     override func onConnected(headers: [String: String]) {
         // Set state to open.
         setState(.open)
@@ -93,8 +113,12 @@ class JanusSocket: Socket {
         createSession()
     }
     
+    override func onError(_ error: Error?) {
+        delegate?.onError(error)
+    }
+    
     override func onMessage(string: String) {
-        guard let (messageType, json) = self.deserializeMessage(string: string) else {
+        guard let (messageType, json) = deserializeMessage(string: string) else {
             return
         }
 
@@ -103,23 +127,60 @@ class JanusSocket: Socket {
 
         // Success janus message handler.
         case .success:
-            self.onSuccessMessage(JanusTxResponseMessage.fromJSON(json))
+            onSuccessMessage(JanusTxResponseMessage.fromJSON(json))
 
         // Error janus message handler.
         case .error:
-            self.onErrorMessage(JanusTxResponseMessage.fromJSON(json))
+            onErrorMessage(JanusTxResponseMessage.fromJSON(json))
 
         // Event janus message handler.
         case .event:
-            self.onEventMessage(JanusEventMessage.fromJSON(json))
+            onEventMessage(JanusEventMessage.fromJSON(json))
 
         // Event janus message handler.
         case .detached:
-            self.onDetachedMessage(JanusDetachedMessage.fromJSON(json))
+            onDetachedMessage(JanusDetachedMessage.fromJSON(json))
 
         default:
             break
         }
+    }
+    
+    func createPublisherOffer(handleId: Int, sdp: RTCSessionDescription, hasVideo: Bool) {
+        let jsep: JanusJSEP = [
+            "type": RTCSessionDescription.string(for: sdp.type),
+            "sdp": sdp.sdp
+        ]
+
+        // TODO: Fix all above to non-shit code.
+        
+        sendMessage(JanusPublisherOfferMessage(
+            sessionId: sessionId!,
+            handleId: handleId,
+            txId: JanusTx.newId(),
+            jsep: jsep,
+            requestType: .configure,
+            audio: true,
+            video: hasVideo
+        ))
+    }
+    
+    func createSubscriberAnswer(handleId: Int, sdp: RTCSessionDescription, ice: RTCIceCandidate) {
+        let jsep: JanusJSEP = [
+            "type": RTCSessionDescription.string(for: sdp.type),
+            "sdp": sdp.sdp
+        ]
+
+        // TODO: Fix all above to non-shit code.
+        
+        sendMessage(JanusSubscriberAnswerMessage(
+            sessionId: sessionId!,
+            handleId: handleId,
+            txId: JanusTx.newId(),
+            jsep: jsep,
+            requestType: .start,
+            room: JanusSocket.roomNumber
+        ))
     }
     
     private func onSuccessMessage(_ message: JanusTxResponseMessage) {
@@ -282,9 +343,8 @@ class JanusSocket: Socket {
                 self?.delegate?.onSubscriberRemoteJSEP(handle?.id, jsep: jsep)
             },
             feedId: publisher.feedId,
-            display: publisher.display,
             onLeaving: { [weak self] handle in
-                self?.delegate?.onSubscriberLeaving(handle?.id)
+                self?.onSubscriberLeaving(handle: handle)
             }
         )
         
@@ -295,31 +355,70 @@ class JanusSocket: Socket {
         joinRoom(as: .listener, handle: handle)
     }
     
-    private func joinRoom(as ptype: JanusJoinRoomMessageBody.PType, handle: JanusHandle) {
-        // Create new transaction to join room.
-        let tx = self.createTx(
-            onSuccess: { _ in },
-            onError: { _ in }
+    private func onSubscriberLeaving(handle: JanusHandle?) {
+        guard let handle = handle else {
+            logger.error("Janus handle subscriber leaving but handle was empty.")
+            return
+        }
+        
+        // Create new transaction to create a new handle.
+        let tx = createTx(
+            onSuccess: { [weak self, handle] message in
+                self?.onSubscriberLeavingSuccess(handle: handle)
+            },
+            onError: { [weak self] message in
+                self?.onSubscriberLeavingError(message)
+            }
         )
         
-        // Create message requesting to join room.
-        let message = JanusJoinRoomMessage(
+        // Send message to Janus.
+        sendMessage(JanusLeaveMessage(
+            sessionId: sessionId!,
+            handleId: handle.id,
+            txId: tx.id
+        ))
+    }
+    
+    private func onSubscriberLeavingSuccess(handle: JanusHandle) {
+        delegate?.onSubscriberLeaving(handle.id)
+        
+        handles.removeValue(forKey: handle.id)
+        
+        if let feedId = handle.feedId {
+            feeds.removeValue(forKey: feedId)
+        }
+    }
+    
+    private func onJoinedRoomSuccess(as ptype: JanusJoinRoomMessageBody.PType) {
+        logger.info("Successfully joined room as \(ptype.rawValue)")
+    }
+    
+    private func joinRoom(as ptype: JanusJoinRoomMessageBody.PType, handle: JanusHandle) {
+        // Create new transaction to join room.
+        let tx = createTx(
+            onSuccess: { [weak self] _ in
+                self?.onJoinedRoomSuccess(as: ptype)
+            },
+            onError: { [weak self] message in
+                self?.onJoinedRoomError(message)
+            }
+        )
+        
+        // Send message requesting to join room.
+        sendMessage(JanusJoinRoomMessage(
             sessionId: sessionId!,
             handleId: handle.id,
             txId: tx.id,
             requestType: .join,
-            room: 1234,
+            room: JanusSocket.roomNumber,
             ptype: ptype,
             feed: handle.feedId
-        )
-        
-        // Send message to Janus.
-        self.sendMessage(message)
+        ))
     }
         
     private func attachToPlugin(then onSuccess: @escaping JanusTxBlock) {
         // Create new transaction to create a new handle.
-        let tx = self.createTx(
+        let tx = createTx(
             onSuccess: onSuccess,
             onError: { [weak self] message in
                 self?.onHandleCreationError(message)
@@ -327,12 +426,12 @@ class JanusSocket: Socket {
         )
         
         // Send message to Janus.
-        self.sendMessage(JanusAttachToPluginMessage(sessionId: sessionId!, txId: tx.id))
+        sendMessage(JanusAttachToPluginMessage(sessionId: sessionId!, txId: tx.id))
     }
     
     private func createSession() {
         // Create new transaction to create a new session.
-        let tx = self.createTx(
+        let tx = createTx(
             onSuccess: { [weak self] message in
                 self?.onSessionCreationSuccess(message)
             },
@@ -342,14 +441,13 @@ class JanusSocket: Socket {
         )
         
         // Send message to Janus.
-        self.sendMessage(JanusCreateTxMessage(txId: tx.id))
+        sendMessage(JanusCreateTxMessage(txId: tx.id))
     }
     
     private func createHandle(
         id: Int,
         onRemoteJSEP: @escaping JanusRemoteJSEPBlock,
         feedId: Int? = nil,
-        display: String? = nil,
         onJoined: JanusHandleBlock? = nil,
         onLeaving: JanusHandleBlock? = nil
     ) -> JanusHandle {
@@ -358,7 +456,6 @@ class JanusSocket: Socket {
             id: id,
             onRemoteJSEP: onRemoteJSEP,
             feedId: feedId,
-            display: display,
             onJoined: onJoined,
             onLeaving: onLeaving
         )
@@ -383,7 +480,7 @@ class JanusSocket: Socket {
         keepAliveTimer = Timer.scheduledTimer(
             timeInterval: JanusSocket.keepAliveInterval,
             target: self,
-            selector: #selector(self.keepAlive),
+            selector: #selector(keepAlive),
             userInfo: nil,
             repeats: true
         )
@@ -434,5 +531,13 @@ class JanusSocket: Socket {
 
     private func onHandleCreationError(_ message: JanusTxResponseMessage) {
         logger.error("Janus handle creation failed: code=\(message.error.code), reason=\(message.error.reason).")
+    }
+    
+    private func onJoinedRoomError(_ message: JanusTxResponseMessage) {
+        logger.error("Janus failed to join room: code=\(message.error.code), reason=\(message.error.reason).")
+    }
+    
+    private func onSubscriberLeavingError(_ message: JanusTxResponseMessage) {
+        logger.error("Janus failed to leave as subscriber: code=\(message.error.code), reason=\(message.error.reason).")
     }
 }

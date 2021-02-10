@@ -17,6 +17,11 @@
 		0925751B25D3401F009FC434 /* JanusDetachedMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0925751A25D3401F009FC434 /* JanusDetachedMessage.swift */; };
 		0925751E25D375B2009FC434 /* JanusAttachToPluginMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0925751D25D375B2009FC434 /* JanusAttachToPluginMessage.swift */; };
 		0925752125D37DD1009FC434 /* JanusJoinRoomMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0925752025D37DD1009FC434 /* JanusJoinRoomMessage.swift */; };
+		0925752425D39F94009FC434 /* JanusLeaveMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0925752325D39F94009FC434 /* JanusLeaveMessage.swift */; };
+		0925752725D3A4A4009FC434 /* JanusPublisherOfferMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0925752625D3A4A4009FC434 /* JanusPublisherOfferMessage.swift */; };
+		0925752A25D3AB2D009FC434 /* JanusSubscriberAnswerMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0925752925D3AB2D009FC434 /* JanusSubscriberAnswerMessage.swift */; };
+		0925752E25D3ACE9009FC434 /* JanusTrickleCandidateMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0925752D25D3ACE9009FC434 /* JanusTrickleCandidateMessage.swift */; };
+		0925753125D3B140009FC434 /* JanusTrickleCandidateCompleteMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0925753025D3B140009FC434 /* JanusTrickleCandidateCompleteMessage.swift */; };
 		092E346D25D2F663001FA74F /* JanusMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 092E346C25D2F663001FA74F /* JanusMessage.swift */; };
 		092E347125D2F98F001FA74F /* JanusKeepAliveMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 092E347025D2F98F001FA74F /* JanusKeepAliveMessage.swift */; };
 		0940E06E25A4D946006184D7 /* AV.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0940E06D25A4D946006184D7 /* AV.swift */; };
@@ -164,6 +169,11 @@
 		0925751A25D3401F009FC434 /* JanusDetachedMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JanusDetachedMessage.swift; sourceTree = "<group>"; };
 		0925751D25D375B2009FC434 /* JanusAttachToPluginMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JanusAttachToPluginMessage.swift; sourceTree = "<group>"; };
 		0925752025D37DD1009FC434 /* JanusJoinRoomMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JanusJoinRoomMessage.swift; sourceTree = "<group>"; };
+		0925752325D39F94009FC434 /* JanusLeaveMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JanusLeaveMessage.swift; sourceTree = "<group>"; };
+		0925752625D3A4A4009FC434 /* JanusPublisherOfferMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JanusPublisherOfferMessage.swift; sourceTree = "<group>"; };
+		0925752925D3AB2D009FC434 /* JanusSubscriberAnswerMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JanusSubscriberAnswerMessage.swift; sourceTree = "<group>"; };
+		0925752D25D3ACE9009FC434 /* JanusTrickleCandidateMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JanusTrickleCandidateMessage.swift; sourceTree = "<group>"; };
+		0925753025D3B140009FC434 /* JanusTrickleCandidateCompleteMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JanusTrickleCandidateCompleteMessage.swift; sourceTree = "<group>"; };
 		092E346C25D2F663001FA74F /* JanusMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JanusMessage.swift; sourceTree = "<group>"; };
 		092E347025D2F98F001FA74F /* JanusKeepAliveMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JanusKeepAliveMessage.swift; sourceTree = "<group>"; };
 		0940E06D25A4D946006184D7 /* AV.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AV.swift; sourceTree = "<group>"; };
@@ -323,6 +333,11 @@
 				0925750925D31FB4009FC434 /* JanusCreateTxMessage.swift */,
 				0925751D25D375B2009FC434 /* JanusAttachToPluginMessage.swift */,
 				0925752025D37DD1009FC434 /* JanusJoinRoomMessage.swift */,
+				0925752325D39F94009FC434 /* JanusLeaveMessage.swift */,
+				0925752625D3A4A4009FC434 /* JanusPublisherOfferMessage.swift */,
+				0925752925D3AB2D009FC434 /* JanusSubscriberAnswerMessage.swift */,
+				0925752D25D3ACE9009FC434 /* JanusTrickleCandidateMessage.swift */,
+				0925753025D3B140009FC434 /* JanusTrickleCandidateCompleteMessage.swift */,
 			);
 			path = Outgoing;
 			sourceTree = "<group>";
@@ -956,6 +971,7 @@
 				0968632C2584299400B9B614 /* ChannelView.swift in Sources */,
 				0940E06E25A4D946006184D7 /* AV.swift in Sources */,
 				0949C897259686E800B61D1F /* NSView+Subviews.swift in Sources */,
+				0925752A25D3AB2D009FC434 /* JanusSubscriberAnswerMessage.swift in Sources */,
 				092E347125D2F98F001FA74F /* JanusKeepAliveMessage.swift in Sources */,
 				0968E29F25C5B8DF004E0C39 /* MessageDataProvider.swift in Sources */,
 				094DAB0325AF948300CFC2EC /* UserDataProvider.swift in Sources */,
@@ -986,6 +1002,7 @@
 				094DAB1825AFEB0900CFC2EC /* ImageCache.swift in Sources */,
 				09F60ACF258C37AC0020974A /* NSView+Animation.swift in Sources */,
 				0996445125AE6FD9004473B7 /* DataProvider.swift in Sources */,
+				0925753125D3B140009FC434 /* JanusTrickleCandidateCompleteMessage.swift in Sources */,
 				094DAAE825AEBAE300CFC2EC /* LocalCacheError.swift in Sources */,
 				096862E82582A88600B9B614 /* Workspace.swift in Sources */,
 				09C1328425A7C6A500FB1D90 /* SpeechRecognizer.swift in Sources */,
@@ -1008,6 +1025,7 @@
 				0925751525D33472009FC434 /* JanusTxResponseMessage.swift in Sources */,
 				0940E07B25A7ACF1006184D7 /* UserSettings.swift in Sources */,
 				0925752125D37DD1009FC434 /* JanusJoinRoomMessage.swift in Sources */,
+				0925752E25D3ACE9009FC434 /* JanusTrickleCandidateMessage.swift in Sources */,
 				0999974F25953600008E65FB /* ParticleShader.metal in Sources */,
 				096862F42582B54F00B9B614 /* WorkspaceWindowController.swift in Sources */,
 				0951D01A25CF5F6200E0FB28 /* RTCSessionDescription+JSON.swift in Sources */,
@@ -1016,6 +1034,7 @@
 				09F60AC9258C13680020974A /* Icon.swift in Sources */,
 				09074D7D2599222700E72F93 /* Color.swift in Sources */,
 				0996444825ABD34D004473B7 /* AudioSnapshot.swift in Sources */,
+				0925752425D39F94009FC434 /* JanusLeaveMessage.swift in Sources */,
 				09F60ACC258C2FD50020974A /* Style.swift in Sources */,
 				096863352586C2B000B9B614 /* RoundView.swift in Sources */,
 				0968E2A625C5C73C004E0C39 /* AVRecording.swift in Sources */,
@@ -1044,6 +1063,7 @@
 				0994C75F25C792F40006919A /* OutputStream+Data.swift in Sources */,
 				0972291725BE575C00219591 /* AVRecorderState.swift in Sources */,
 				0996446725AE92DF004473B7 /* CacheManager.swift in Sources */,
+				0925752725D3A4A4009FC434 /* JanusPublisherOfferMessage.swift in Sources */,
 				0994C75525C6005E0006919A /* ChannelWindowModel.swift in Sources */,
 				096862E22582A61C00B9B614 /* Name.swift in Sources */,
 				0996444425ABAB43004473B7 /* AudioAnalysis.swift in Sources */,

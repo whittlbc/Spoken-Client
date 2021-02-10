@@ -17,4 +17,6 @@ protocol JanusSocketDelegate: NSObjectProtocol {
     func onSubscriberRemoteJSEP(_ handleId: Int?, jsep: JanusJSEP?)
     
     func onSubscriberLeaving(_ handleId: Int?)
+    
+    func onError(_ error: Error?)
 }

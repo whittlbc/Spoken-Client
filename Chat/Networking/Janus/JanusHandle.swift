@@ -17,9 +17,7 @@ class JanusHandle {
     var id: Int!
     
     var feedId: Int?
-    
-    var display: String?
-            
+
     var onJoined: JanusHandleBlock?
 
     var onLeaving: JanusHandleBlock?
@@ -30,7 +28,6 @@ class JanusHandle {
         id: Int,
         onRemoteJSEP: @escaping JanusRemoteJSEPBlock,
         feedId: Int? = nil,
-        display: String? = nil,
         onJoined: JanusHandleBlock? = nil,
         onLeaving: JanusHandleBlock? = nil
     ) {

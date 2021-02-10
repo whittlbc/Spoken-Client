@@ -12,6 +12,8 @@ typealias JanusTxBlock = (JanusTxResponseMessage) -> Void
 
 class JanusTx {
     
+    static func newId() -> String { String.random(length: 12) }
+    
     var id: String!
 
     var onSuccess: JanusTxBlock
@@ -19,7 +21,7 @@ class JanusTx {
     var onError: JanusTxBlock
     
     init(id: String? = nil, onSuccess: @escaping JanusTxBlock, onError: @escaping JanusTxBlock) {
-        self.id = id ?? String.random(length: 12)
+        self.id = id ?? JanusTx.newId()
         self.onSuccess = onSuccess
         self.onError = onError
     }
