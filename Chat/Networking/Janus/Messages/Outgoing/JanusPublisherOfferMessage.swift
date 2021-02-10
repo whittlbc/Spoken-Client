@@ -8,7 +8,7 @@
 
 import Foundation
 
-class JanusPublisherOfferMessage: JanusMessage {
+class JanusOfferMessage: JanusMessage {
     
     var janus = JanusMessage.Key.message
     
@@ -19,7 +19,10 @@ class JanusPublisherOfferMessage: JanusMessage {
     var txId: String!
     
     var jsep: JanusJSEP!
-    
+}
+
+class JanusPublisherOfferMessage: JanusOfferMessage {
+        
     var body: JanusPublisherOfferMessageBody!
     
     enum CodingKeys: String, CodingKey {

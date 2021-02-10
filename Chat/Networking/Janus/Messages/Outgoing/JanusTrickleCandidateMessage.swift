@@ -9,7 +9,8 @@
 import Foundation
 import WebRTC
 
-class JanusTrickleCandidateMessage: JanusMessage {
+
+class JanusTrickleMessage: JanusMessage {
     
     var janus = JanusMessage.Key.trickle
     
@@ -18,7 +19,10 @@ class JanusTrickleCandidateMessage: JanusMessage {
     var handleId: Int!
     
     var txId: String!
-        
+}
+
+class JanusTrickleCandidateMessage: JanusTrickleMessage {
+    
     var candidate: JanusTrickleCandidateMessageCandidate?
     
     enum CodingKeys: String, CodingKey {

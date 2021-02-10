@@ -8,18 +8,8 @@
 
 import Foundation
 
-class JanusSubscriberAnswerMessage: JanusMessage {
-    
-    var janus = JanusMessage.Key.message
-    
-    var sessionId: Int!
-    
-    var handleId: Int!
-    
-    var txId: String!
-    
-    var jsep: JanusJSEP!
-    
+class JanusSubscriberAnswerMessage: JanusOfferMessage {
+        
     var body: JanusSubscriberAnswerMessageBody!
     
     enum CodingKeys: String, CodingKey {

@@ -12,7 +12,6 @@ import Arrow
 
 class JanusSocket: Socket {
     
-    // HACK
     static let roomNumber: Int = 1234
     
     typealias IncomingMessage = [String: Any]
@@ -118,26 +117,26 @@ class JanusSocket: Socket {
     }
     
     override func onMessage(string: String) {
+        // Deserialize message into JSON and obtain it's message type.
         guard let (messageType, json) = deserializeMessage(string: string) else {
             return
         }
 
-        // Call proper handler based on message type.
         switch messageType {
 
-        // Success janus message handler.
+        // Success message.
         case .success:
             onSuccessMessage(JanusTxResponseMessage.fromJSON(json))
 
-        // Error janus message handler.
+        // Error message.
         case .error:
             onErrorMessage(JanusTxResponseMessage.fromJSON(json))
 
-        // Event janus message handler.
+        // Event message.
         case .event:
             onEventMessage(JanusEventMessage.fromJSON(json))
 
-        // Event janus message handler.
+        // Detach message.
         case .detached:
             onDetachedMessage(JanusDetachedMessage.fromJSON(json))
 

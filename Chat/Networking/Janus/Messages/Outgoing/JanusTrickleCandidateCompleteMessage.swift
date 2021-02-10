@@ -9,16 +9,8 @@
 import Foundation
 import WebRTC
 
-class JanusTrickleCandidateCompleteMessage: JanusMessage {
-    
-    var janus = JanusMessage.Key.trickle
-    
-    var sessionId: Int!
-    
-    var handleId: Int!
-    
-    var txId: String!
-        
+class JanusTrickleCandidateCompleteMessage: JanusTrickleMessage {
+
     var candidate: JanusTrickleCandidateCompleteMessageCandidate
     
     enum CodingKeys: String, CodingKey {
