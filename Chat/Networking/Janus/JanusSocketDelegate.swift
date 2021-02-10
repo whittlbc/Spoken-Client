@@ -12,9 +12,9 @@ protocol JanusSocketDelegate: NSObjectProtocol {
 
     func onPublisherJoined(_ handleId: Int?)
     
-    func onPublisherRemoteJSEP(_ handleId: Int?, dict jsep: [AnyHashable : Any]?)
+    func onPublisherRemoteJSEP(_ handleId: Int?, jsep: JanusJSEP?)
     
-    func subscriberHandleRemoteJSEP(_ handleId: Int?, dict jsep: [AnyHashable : Any]?)
+    func onSubscriberRemoteJSEP(_ handleId: Int?, jsep: JanusJSEP?)
     
-    func onLeaving(_ handleId: Int?)
+    func onSubscriberLeaving(_ handleId: Int?)
 }

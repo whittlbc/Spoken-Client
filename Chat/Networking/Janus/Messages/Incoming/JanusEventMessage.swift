@@ -17,7 +17,7 @@ class JanusEventMessage: JanusMessage {
     
     var plugin = JanusEventMessagePlugin()
     
-    var jsep = [AnyHashable: Any]()
+    var jsep = JanusJSEP()
     
     var publishers: [JanusEventMessagePluginPublisher] { plugin.publishers }
     
@@ -83,14 +83,14 @@ class JanusEventMessagePluginData: JanusMessage {
 
 class JanusEventMessagePluginPublisher: JanusMessage {
     
-    var id: Int = 0
+    var feedId: Int = 0
     
     var display = ""
     
-    var hasFeed: Bool { id != 0 && !display.isEmpty }
+    var hasFeed: Bool { feedId != 0 && !display.isEmpty }
 
     override func deserialize(_ json: JSON) {
-        id <-- json[JanusMessage.Key.id]
+        feedId <-- json[JanusMessage.Key.id]
         display <-- json[JanusMessage.Key.display]
     }
 }

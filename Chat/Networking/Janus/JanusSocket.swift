@@ -47,7 +47,7 @@ class JanusSocket: Socket {
     convenience init() {
         self.init(url: Config.janusURL, headers: JanusSocket.defaultHeaders)
         
-        // Create timer to keep socket connection alive.
+        // Start timer on repeat to keep socket connection alive.
         self.createKeepAliveTimer()
     }
     
@@ -100,23 +100,23 @@ class JanusSocket: Socket {
 
         // Call proper handler based on message type.
         switch messageType {
-        
+
         // Success janus message handler.
         case .success:
             self.onSuccessMessage(JanusTxResponseMessage.fromJSON(json))
-            
+
         // Error janus message handler.
         case .error:
             self.onErrorMessage(JanusTxResponseMessage.fromJSON(json))
-            
+
         // Event janus message handler.
         case .event:
             self.onEventMessage(JanusEventMessage.fromJSON(json))
-            
+
         // Event janus message handler.
         case .detached:
             self.onDetachedMessage(JanusDetachedMessage.fromJSON(json))
-            
+
         default:
             break
         }
@@ -131,6 +131,9 @@ class JanusSocket: Socket {
         
         // Call tx success handler.
         tx.onSuccess(message)
+        
+        // Remove tx from registry.
+        txs.removeValue(forKey: tx.id)
     }
     
     private func onErrorMessage(_ message: JanusTxResponseMessage) {
@@ -142,6 +145,9 @@ class JanusSocket: Socket {
 
         // Call tx error handler.
         tx.onError(message)
+        
+        // Remove tx from registry.
+        txs.removeValue(forKey: tx.id)
     }
     
     private func onEventMessage(_ message: JanusEventMessage) {
@@ -157,7 +163,7 @@ class JanusSocket: Socket {
         
         // If videoroom handle left, register it as having left.
         if message.feedDidLeave {
-            onFeedLeft(withId: message.leavingFeedId)
+            onLeavingFeed(withId: message.leavingFeedId)
         }
         
         // Handle remote JSEP if provided.
@@ -190,14 +196,16 @@ class JanusSocket: Socket {
     
     private func onPublishersAvailable(_ publishers: [JanusEventMessagePluginPublisher]) {
         for publisher in publishers where publisher.hasFeed {
-            subscribeToFeed(publisher: publisher)
+            attachToPlugin { [weak self] message in
+                self?.onSubscriberHandleCreationSuccess(message, publisher: publisher)
+            }
         }
     }
     
-    private func onFeedLeft(withId feedId: Int) {
+    private func onLeavingFeed(withId feedId: Int) {
         // Get feed by id.
         guard let feed = feeds[feedId] else {
-            logger.warning("Janus feed left handler: No feed found for id: \(feedId)")
+            logger.warning("Janus feed leaving handler: No feed found for id: \(feedId)")
             return
         }
         
@@ -213,7 +221,7 @@ class JanusSocket: Socket {
         }
         
         // Call remote JSEP block.
-        handle.onRemoteJSEP?(handle, message.jsep)
+        handle.onRemoteJSEP(handle, message.jsep)
     }
     
     private func onSessionCreationSuccess(_ message: JanusTxResponseMessage) {
@@ -230,79 +238,100 @@ class JanusSocket: Socket {
         keepAliveTimer?.fire()
         
         // Create publisher handle.
-        // TODO
+        attachToPlugin { [weak self] message in
+            self?.onPublisherHandleCreationSuccess(message)
+        }
     }
     
-    private func onSessionCreationError(_ message: JanusTxResponseMessage) {
-        logger.error("Janus session creation failed: code=\(message.error.code), reason=\(message.error.reason).")
+    private func onPublisherHandleCreationSuccess(_ message: JanusTxResponseMessage) {
+        // Get handle id from message data.
+        guard message.hasDataId else {
+            logger.error("Janus handle creation succeeded but id returned was empty...\(message)")
+            return
+        }
+        
+        // Create new handle for publisher.
+        let handle = createHandle(
+            id: message.dataId,
+            onRemoteJSEP: { [weak self] handle, jsep in
+                self?.delegate?.onPublisherRemoteJSEP(handle?.id, jsep: jsep)
+            },
+            onJoined: { [weak self] handle in
+                self?.delegate?.onPublisherJoined(handle?.id)
+            }
+        )
+        
+        // Join room as publisher.
+        joinRoom(as: .publisher, handle: handle)
     }
     
-    private func createPublisherHandle() {
-//        let transaction = randomString(withLength: 12)
-//        let jt = JanusTransaction()
-//        jt.tid = transaction
-//        jt.success = { data in
-//            let handle = JanusHandle()
-//            handle.handleId = (data?["data"] as! [String:Any])["id"] as? NSNumber
-//            handle.onJoined = { handle in
-//                self.delegate?.onPublisherJoined(handle?.handleId)
-//            }
-//            handle.onRemoteJsep = { handle, jsep in
-//                self.delegate?.onPublisherRemoteJsep(handle?.handleId, dict: jsep)
-//            }
-//            self.handleDict![handle.handleId!] = handle
-//            self.publisherJoinRoom(handle)
-//        }
-//        jt.error = { data in
-//
-//        }
-//        transDict![transaction] = jt
-//        let attachMessage = [
-//            "janus": "attach",
-//            "plugin": "janus.plugin.videoroom",
-//            "transaction": transaction,
-//            "session_id": sessionId!
-//            ] as [String : Any]
-//        socket.write(string: jsonToString(json: attachMessage as AnyObject))
+    private func onSubscriberHandleCreationSuccess(
+        _ message: JanusTxResponseMessage,
+        publisher: JanusEventMessagePluginPublisher
+    ) {
+        // Get handle id from message data.
+        guard message.hasDataId else {
+            logger.error("Janus handle creation succeeded but id returned was empty...\(message)")
+            return
+        }
+        
+        // Create new handle for subscriber.
+        let handle = createHandle(
+            id: message.dataId,
+            onRemoteJSEP: { [weak self] handle, jsep in
+                self?.delegate?.onSubscriberRemoteJSEP(handle?.id, jsep: jsep)
+            },
+            feedId: publisher.feedId,
+            display: publisher.display,
+            onLeaving: { [weak self] handle in
+                self?.delegate?.onSubscriberLeaving(handle?.id)
+            }
+        )
+        
+        // Register handle as a feed.
+        feeds[publisher.feedId] = handle
+        
+        // Join room as subscriber.
+        joinRoom(as: .listener, handle: handle)
     }
     
-    private func subscribeToFeed(publisher: JanusEventMessagePluginPublisher) {
-//        let transaction = randomString(withLength: 12)
-//        let jt = JanusTransaction()
-//        jt.tid = transaction
-//        jt.success = { data in
-//            let handle = JanusHandle()
-//            handle.handleId = (data?["data"] as! [String:Any])["id"] as? NSNumber
-//            handle.feedId = feed
-//            handle.display = display
-//
-//            handle.onRemoteJsep = { handle, jsep in
-//                self.delegate?.subscriberHandleRemoteJsep(handle?.handleId, dict: jsep)
-//            }
-//
-//            handle.onLeaving = { handle in
-//                self.subscriberOnLeaving(handle: handle)
-//            }
-//
-//            self.handleDict?[handle.handleId!] = handle
-//            self.feedDict?[handle.feedId!] = handle
-//            self.subscriberJoinRoom(handle)
-//        }
-//        jt.error = { data in
-//        }
-//        transDict![transaction] = jt
-//
-//        let attachMessage = [
-//            "janus": "attach",
-//            "plugin": "janus.plugin.videoroom",
-//            "transaction": transaction,
-//            "session_id": sessionId!
-//            ] as [String : Any]
-//        socket.write(string: jsonToString(json: attachMessage as AnyObject))
+    private func joinRoom(as ptype: JanusJoinRoomMessageBody.PType, handle: JanusHandle) {
+        // Create new transaction to join room.
+        let tx = self.createTx(
+            onSuccess: { _ in },
+            onError: { _ in }
+        )
+        
+        // Create message requesting to join room.
+        let message = JanusJoinRoomMessage(
+            sessionId: sessionId!,
+            handleId: handle.id,
+            txId: tx.id,
+            requestType: .join,
+            room: 1234,
+            ptype: ptype,
+            feed: handle.feedId
+        )
+        
+        // Send message to Janus.
+        self.sendMessage(message)
+    }
+        
+    private func attachToPlugin(then onSuccess: @escaping JanusTxBlock) {
+        // Create new transaction to create a new handle.
+        let tx = self.createTx(
+            onSuccess: onSuccess,
+            onError: { [weak self] message in
+                self?.onHandleCreationError(message)
+            }
+        )
+        
+        // Send message to Janus.
+        self.sendMessage(JanusAttachToPluginMessage(sessionId: sessionId!, txId: tx.id))
     }
     
     private func createSession() {
-        // Create new transaction.
+        // Create new transaction to create a new session.
         let tx = self.createTx(
             onSuccess: { [weak self] message in
                 self?.onSessionCreationSuccess(message)
@@ -312,8 +341,32 @@ class JanusSocket: Socket {
             }
         )
         
-        // Send tx message to Janus.
+        // Send message to Janus.
         self.sendMessage(JanusCreateTxMessage(txId: tx.id))
+    }
+    
+    private func createHandle(
+        id: Int,
+        onRemoteJSEP: @escaping JanusRemoteJSEPBlock,
+        feedId: Int? = nil,
+        display: String? = nil,
+        onJoined: JanusHandleBlock? = nil,
+        onLeaving: JanusHandleBlock? = nil
+    ) -> JanusHandle {
+        // Create new handle.
+        let handle = JanusHandle(
+            id: id,
+            onRemoteJSEP: onRemoteJSEP,
+            feedId: feedId,
+            display: display,
+            onJoined: onJoined,
+            onLeaving: onLeaving
+        )
+        
+        // Store handle in handles registry.
+        handles[handle.id] = handle
+        
+        return handle
     }
     
     private func createTx(onSuccess: @escaping JanusTxBlock, onError: @escaping JanusTxBlock) -> JanusTx {
@@ -373,5 +426,13 @@ class JanusSocket: Socket {
         
         // Return both the incoming message type and its json.
         return (incomingMessageType, json)
+    }
+    
+    private func onSessionCreationError(_ message: JanusTxResponseMessage) {
+        logger.error("Janus session creation failed: code=\(message.error.code), reason=\(message.error.reason).")
+    }
+
+    private func onHandleCreationError(_ message: JanusTxResponseMessage) {
+        logger.error("Janus handle creation failed: code=\(message.error.code), reason=\(message.error.reason).")
     }
 }

@@ -15,6 +15,8 @@
 		0925751525D33472009FC434 /* JanusTxResponseMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0925751425D33472009FC434 /* JanusTxResponseMessage.swift */; };
 		0925751825D33D69009FC434 /* JanusEventMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0925751725D33D69009FC434 /* JanusEventMessage.swift */; };
 		0925751B25D3401F009FC434 /* JanusDetachedMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0925751A25D3401F009FC434 /* JanusDetachedMessage.swift */; };
+		0925751E25D375B2009FC434 /* JanusAttachToPluginMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0925751D25D375B2009FC434 /* JanusAttachToPluginMessage.swift */; };
+		0925752125D37DD1009FC434 /* JanusJoinRoomMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0925752025D37DD1009FC434 /* JanusJoinRoomMessage.swift */; };
 		092E346D25D2F663001FA74F /* JanusMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 092E346C25D2F663001FA74F /* JanusMessage.swift */; };
 		092E347125D2F98F001FA74F /* JanusKeepAliveMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 092E347025D2F98F001FA74F /* JanusKeepAliveMessage.swift */; };
 		0940E06E25A4D946006184D7 /* AV.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0940E06D25A4D946006184D7 /* AV.swift */; };
@@ -160,6 +162,8 @@
 		0925751425D33472009FC434 /* JanusTxResponseMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JanusTxResponseMessage.swift; sourceTree = "<group>"; };
 		0925751725D33D69009FC434 /* JanusEventMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JanusEventMessage.swift; sourceTree = "<group>"; };
 		0925751A25D3401F009FC434 /* JanusDetachedMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JanusDetachedMessage.swift; sourceTree = "<group>"; };
+		0925751D25D375B2009FC434 /* JanusAttachToPluginMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JanusAttachToPluginMessage.swift; sourceTree = "<group>"; };
+		0925752025D37DD1009FC434 /* JanusJoinRoomMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JanusJoinRoomMessage.swift; sourceTree = "<group>"; };
 		092E346C25D2F663001FA74F /* JanusMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JanusMessage.swift; sourceTree = "<group>"; };
 		092E347025D2F98F001FA74F /* JanusKeepAliveMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JanusKeepAliveMessage.swift; sourceTree = "<group>"; };
 		0940E06D25A4D946006184D7 /* AV.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AV.swift; sourceTree = "<group>"; };
@@ -317,6 +321,8 @@
 			children = (
 				092E347025D2F98F001FA74F /* JanusKeepAliveMessage.swift */,
 				0925750925D31FB4009FC434 /* JanusCreateTxMessage.swift */,
+				0925751D25D375B2009FC434 /* JanusAttachToPluginMessage.swift */,
+				0925752025D37DD1009FC434 /* JanusJoinRoomMessage.swift */,
 			);
 			path = Outgoing;
 			sourceTree = "<group>";
@@ -941,6 +947,7 @@
 				0951D01C25CF5F6200E0FB28 /* OldJanusSocket.swift in Sources */,
 				094DAB0A25AFB98600CFC2EC /* Dictionary+Helpers.swift in Sources */,
 				0968633125859A3000B9B614 /* ChannelAvatarView.swift in Sources */,
+				0925751E25D375B2009FC434 /* JanusAttachToPluginMessage.swift in Sources */,
 				092E346D25D2F663001FA74F /* JanusMessage.swift in Sources */,
 				09D19A5F25B25DAD00C0C476 /* ChannelDataProvider.swift in Sources */,
 				09416AEE25D2E61B00B71C02 /* JanusSocket.swift in Sources */,
@@ -1000,6 +1007,7 @@
 				09BFD8AF25D096540071966B /* OGViewController.swift in Sources */,
 				0925751525D33472009FC434 /* JanusTxResponseMessage.swift in Sources */,
 				0940E07B25A7ACF1006184D7 /* UserSettings.swift in Sources */,
+				0925752125D37DD1009FC434 /* JanusJoinRoomMessage.swift in Sources */,
 				0999974F25953600008E65FB /* ParticleShader.metal in Sources */,
 				096862F42582B54F00B9B614 /* WorkspaceWindowController.swift in Sources */,
 				0951D01A25CF5F6200E0FB28 /* RTCSessionDescription+JSON.swift in Sources */,

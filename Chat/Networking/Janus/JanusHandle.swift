@@ -14,15 +14,30 @@ typealias JanusRemoteJSEPBlock = (JanusHandle?, [AnyHashable : Any]?) -> Void
 
 class JanusHandle {
     
-    var handleId: Int?
+    var id: Int!
     
     var feedId: Int?
     
     var display: String?
-    
+            
     var onJoined: JanusHandleBlock?
-    
-    var onRemoteJSEP: JanusRemoteJSEPBlock?
-    
+
     var onLeaving: JanusHandleBlock?
+    
+    var onRemoteJSEP: JanusRemoteJSEPBlock
+    
+    init(
+        id: Int,
+        onRemoteJSEP: @escaping JanusRemoteJSEPBlock,
+        feedId: Int? = nil,
+        display: String? = nil,
+        onJoined: JanusHandleBlock? = nil,
+        onLeaving: JanusHandleBlock? = nil
+    ) {
+        self.id = id
+        self.onRemoteJSEP = onRemoteJSEP
+        self.feedId = feedId
+        self.onJoined = onJoined
+        self.onLeaving = onLeaving
+    }
 }

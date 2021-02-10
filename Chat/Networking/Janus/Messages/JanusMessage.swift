@@ -9,8 +9,10 @@
 import Foundation
 import Arrow
 
+typealias JanusJSEP = [AnyHashable: Any]
+
 class JanusMessage: Codable, ArrowParsable {
-    
+        
     static func fromJSON(_ json: JSON) -> Self {
         let message = Self()
         message.deserialize(json)
@@ -19,9 +21,12 @@ class JanusMessage: Codable, ArrowParsable {
     
     enum Key {
         static let janus = "janus"
+        static let videoRoomPlugin = "janus.plugin.videoroom"
         static let create = "create"
+        static let attach = "attach"
         static let keepAlive = "keepalive"
         static let transaction = "transaction"
+        static let message = "message"
         static let error = "error"
         static let code = "code"
         static let reason = "reason"
