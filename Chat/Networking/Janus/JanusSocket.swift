@@ -113,7 +113,7 @@ class JanusSocket: Socket {
     }
     
     override func onError(_ error: Error?) {
-        delegate?.onError(error)
+        delegate?.onSocketError(error)
     }
     
     override func onMessage(string: String) {

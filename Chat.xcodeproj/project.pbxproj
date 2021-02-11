@@ -22,6 +22,9 @@
 		0925752A25D3AB2D009FC434 /* JanusSubscriberAnswerMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0925752925D3AB2D009FC434 /* JanusSubscriberAnswerMessage.swift */; };
 		0925752E25D3ACE9009FC434 /* JanusTrickleCandidateMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0925752D25D3ACE9009FC434 /* JanusTrickleCandidateMessage.swift */; };
 		0925753125D3B140009FC434 /* JanusTrickleCandidateCompleteMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0925753025D3B140009FC434 /* JanusTrickleCandidateCompleteMessage.swift */; };
+		0929591425D4E8A400FB297B /* WebRTCClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0929591325D4E8A400FB297B /* WebRTCClient.swift */; };
+		0929591825D4EC0C00FB297B /* RTCPeerConnectionFactory+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0929591725D4EC0C00FB297B /* RTCPeerConnectionFactory+Helpers.swift */; };
+		0929591F25D50A4400FB297B /* WebRTCVideoSourceConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0929591E25D50A4400FB297B /* WebRTCVideoSourceConfig.swift */; };
 		092E346D25D2F663001FA74F /* JanusMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 092E346C25D2F663001FA74F /* JanusMessage.swift */; };
 		092E347125D2F98F001FA74F /* JanusKeepAliveMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 092E347025D2F98F001FA74F /* JanusKeepAliveMessage.swift */; };
 		0940E06E25A4D946006184D7 /* AV.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0940E06D25A4D946006184D7 /* AV.swift */; };
@@ -133,7 +136,7 @@
 		099997522595371E008E65FB /* ParticleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 099997512595371E008E65FB /* ParticleView.swift */; };
 		09BFD89D25CF62930071966B /* WebRTC in Frameworks */ = {isa = PBXBuildFile; productRef = 09BFD89C25CF62930071966B /* WebRTC */; };
 		09BFD8A825CF7F040071966B /* OldWebRTCClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09BFD8A725CF7F040071966B /* OldWebRTCClient.swift */; };
-		09BFD8AC25CF87810071966B /* WebRTCClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09BFD8AB25CF87810071966B /* WebRTCClient.swift */; };
+		09BFD8AC25CF87810071966B /* WRTCClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09BFD8AB25CF87810071966B /* WRTCClient.swift */; };
 		09BFD8AF25D096540071966B /* OGViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09BFD8AE25D096540071966B /* OGViewController.swift */; };
 		09BFD8BA25D0D1FF0071966B /* StreamManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09BFD8B925D0D1FF0071966B /* StreamManager.swift */; };
 		09C1328125A7C3AC00FB1D90 /* SFSpeechRecognizer+AuthStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09C1328025A7C3AC00FB1D90 /* SFSpeechRecognizer+AuthStatus.swift */; };
@@ -174,6 +177,9 @@
 		0925752925D3AB2D009FC434 /* JanusSubscriberAnswerMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JanusSubscriberAnswerMessage.swift; sourceTree = "<group>"; };
 		0925752D25D3ACE9009FC434 /* JanusTrickleCandidateMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JanusTrickleCandidateMessage.swift; sourceTree = "<group>"; };
 		0925753025D3B140009FC434 /* JanusTrickleCandidateCompleteMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JanusTrickleCandidateCompleteMessage.swift; sourceTree = "<group>"; };
+		0929591325D4E8A400FB297B /* WebRTCClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebRTCClient.swift; sourceTree = "<group>"; };
+		0929591725D4EC0C00FB297B /* RTCPeerConnectionFactory+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RTCPeerConnectionFactory+Helpers.swift"; sourceTree = "<group>"; };
+		0929591E25D50A4400FB297B /* WebRTCVideoSourceConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebRTCVideoSourceConfig.swift; sourceTree = "<group>"; };
 		092E346C25D2F663001FA74F /* JanusMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JanusMessage.swift; sourceTree = "<group>"; };
 		092E347025D2F98F001FA74F /* JanusKeepAliveMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JanusKeepAliveMessage.swift; sourceTree = "<group>"; };
 		0940E06D25A4D946006184D7 /* AV.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AV.swift; sourceTree = "<group>"; };
@@ -284,7 +290,7 @@
 		0999974E25953600008E65FB /* ParticleShader.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = ParticleShader.metal; sourceTree = "<group>"; };
 		099997512595371E008E65FB /* ParticleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParticleView.swift; sourceTree = "<group>"; };
 		09BFD8A725CF7F040071966B /* OldWebRTCClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OldWebRTCClient.swift; sourceTree = "<group>"; };
-		09BFD8AB25CF87810071966B /* WebRTCClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebRTCClient.swift; sourceTree = "<group>"; };
+		09BFD8AB25CF87810071966B /* WRTCClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WRTCClient.swift; sourceTree = "<group>"; };
 		09BFD8AE25D096540071966B /* OGViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OGViewController.swift; sourceTree = "<group>"; };
 		09BFD8B925D0D1FF0071966B /* StreamManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamManager.swift; sourceTree = "<group>"; };
 		09C1328025A7C3AC00FB1D90 /* SFSpeechRecognizer+AuthStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SFSpeechRecognizer+AuthStatus.swift"; sourceTree = "<group>"; };
@@ -352,6 +358,15 @@
 			path = Incoming;
 			sourceTree = "<group>";
 		};
+		0929591225D4E87900FB297B /* WebRTC */ = {
+			isa = PBXGroup;
+			children = (
+				0929591325D4E8A400FB297B /* WebRTCClient.swift */,
+				0929591E25D50A4400FB297B /* WebRTCVideoSourceConfig.swift */,
+			);
+			path = WebRTC;
+			sourceTree = "<group>";
+		};
 		092E346B25D2F650001FA74F /* Messages */ = {
 			isa = PBXGroup;
 			children = (
@@ -408,7 +423,7 @@
 				0951D01425CF5F6200E0FB28 /* RTCSessionDescription+JSON.swift */,
 				0951D01525CF5F6200E0FB28 /* ViewController.swift */,
 				09BFD8A725CF7F040071966B /* OldWebRTCClient.swift */,
-				09BFD8AB25CF87810071966B /* WebRTCClient.swift */,
+				09BFD8AB25CF87810071966B /* WRTCClient.swift */,
 				09BFD8AE25D096540071966B /* OGViewController.swift */,
 			);
 			path = Janus;
@@ -688,6 +703,7 @@
 				0994C75E25C792F40006919A /* OutputStream+Data.swift */,
 				0994C76125C7ABA40006919A /* Data+InputStream.swift */,
 				09416AE625D2E29500B71C02 /* Error+Helpers.swift */,
+				0929591725D4EC0C00FB297B /* RTCPeerConnectionFactory+Helpers.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -699,6 +715,7 @@
 				09416AE325D2DA1400B71C02 /* Socket.swift */,
 				0995DE392581CA6D00DAA334 /* APIs */,
 				09416AEC25D2E59200B71C02 /* Janus */,
+				0929591225D4E87900FB297B /* WebRTC */,
 			);
 			path = Networking;
 			sourceTree = "<group>";
@@ -953,6 +970,7 @@
 				095C677A25A29CC300729845 /* Message+Arrow.swift in Sources */,
 				0995DE3B2581CA7500DAA334 /* InternalAPI.swift in Sources */,
 				0968E2BD25C5E044004E0C39 /* FileUploadJob.swift in Sources */,
+				0929591825D4EC0C00FB297B /* RTCPeerConnectionFactory+Helpers.swift in Sources */,
 				0990879525797561001660D1 /* AppDelegate.swift in Sources */,
 				09416AF725D2E67E00B71C02 /* JanusHandle.swift in Sources */,
 				099997522595371E008E65FB /* ParticleView.swift in Sources */,
@@ -990,7 +1008,7 @@
 				0995DE2F25818B3E00DAA334 /* Logger.swift in Sources */,
 				0972290F25BE1D8300219591 /* AVSessionFactory.swift in Sources */,
 				096862D82582A03F00B9B614 /* Arrow+Networking.swift in Sources */,
-				09BFD8AC25CF87810071966B /* WebRTCClient.swift in Sources */,
+				09BFD8AC25CF87810071966B /* WRTCClient.swift in Sources */,
 				094DAB0025AF942500CFC2EC /* WorkspaceDataProvider.swift in Sources */,
 				0968E2AB25C5D87F004E0C39 /* FileUploadWorker.swift in Sources */,
 				09C1328125A7C3AC00FB1D90 /* SFSpeechRecognizer+AuthStatus.swift in Sources */,
@@ -1023,6 +1041,7 @@
 				096862E52582A67F00B9B614 /* Name+Arrow.swift in Sources */,
 				09BFD8AF25D096540071966B /* OGViewController.swift in Sources */,
 				0925751525D33472009FC434 /* JanusTxResponseMessage.swift in Sources */,
+				0929591425D4E8A400FB297B /* WebRTCClient.swift in Sources */,
 				0940E07B25A7ACF1006184D7 /* UserSettings.swift in Sources */,
 				0925752125D37DD1009FC434 /* JanusJoinRoomMessage.swift in Sources */,
 				0925752E25D3ACE9009FC434 /* JanusTrickleCandidateMessage.swift in Sources */,
@@ -1048,6 +1067,7 @@
 				09416AF425D2E66A00B71C02 /* JanusConnection.swift in Sources */,
 				095C677025A29AA200729845 /* Channel.swift in Sources */,
 				0994C75925C61B0C0006919A /* File+Arrow.swift in Sources */,
+				0929591F25D50A4400FB297B /* WebRTCVideoSourceConfig.swift in Sources */,
 				09686328258427A500B9B614 /* ChannelViewController.swift in Sources */,
 				095C677625A29C6700729845 /* Channel+Arrow.swift in Sources */,
 				0968E2A225C5C38E004E0C39 /* File.swift in Sources */,

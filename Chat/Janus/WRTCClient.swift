@@ -9,13 +9,13 @@
 import Foundation
 import WebRTC
 
-protocol WebRTCClientDelegate: class {
-    func webRTCClient(_ client: WebRTCClient, didGenerate candidate: RTCIceCandidate)
-    func webRTCClient(_ client: WebRTCClient, didChangeConnectionState state: RTCIceConnectionState)
-    func webRTCClient(_ client: WebRTCClient, didReceiveData data: Data)
+protocol WRTCClientDelegate: class {
+    func webRTCClient(_ client: WRTCClient, didGenerate candidate: RTCIceCandidate)
+    func webRTCClient(_ client: WRTCClient, didChangeConnectionState state: RTCIceConnectionState)
+    func webRTCClient(_ client: WRTCClient, didReceiveData data: Data)
 }
 
-class WebRTCClient: NSObject, JanusSocketDelegate {
+class WRTCClient: NSObject, JanusSocketDelegate {
     
     private static let factory: RTCPeerConnectionFactory = {
         RTCInitializeSSL()
@@ -27,13 +27,16 @@ class WebRTCClient: NSObject, JanusSocketDelegate {
         )
     }()
 
-    weak var delegate: WebRTCClientDelegate?
+    weak var delegate: WRTCClientDelegate?
     private let peerConnection: RTCPeerConnection
 
     // Accept video and audio from remote peer
     private let streamId = "KvsLocalMediaStream"
-    private let mediaConstrains = [kRTCMediaConstraintsOfferToReceiveAudio: kRTCMediaConstraintsValueTrue,
-                                   kRTCMediaConstraintsOfferToReceiveVideo: kRTCMediaConstraintsValueTrue]
+    private let mediaConstrains = [
+        kRTCMediaConstraintsOfferToReceiveAudio: kRTCMediaConstraintsValueTrue,
+        kRTCMediaConstraintsOfferToReceiveVideo: kRTCMediaConstraintsValueTrue
+    ]
+    
     private var videoCapturer: RTCVideoCapturer?
     private var localVideoTrack: RTCVideoTrack?
     private var localAudioTrack: RTCAudioTrack?
@@ -50,6 +53,7 @@ class WebRTCClient: NSObject, JanusSocketDelegate {
     required init(iceServers: [RTCIceServer], isAudioOn: Bool) {
         let config = RTCConfiguration()
         config.iceServers = iceServers
+        config.iceTransportPolicy = RTCIceTransportPolicy.all
         config.sdpSemantics = .unifiedPlan
         config.continualGatheringPolicy = .gatherContinually
         config.bundlePolicy = .maxBundle
@@ -58,7 +62,7 @@ class WebRTCClient: NSObject, JanusSocketDelegate {
         config.tcpCandidatePolicy = .enabled
                 
         let constraints = RTCMediaConstraints(mandatoryConstraints: nil, optionalConstraints: nil)
-        peerConnection = WebRTCClient.factory.peerConnection(with: config, constraints: constraints, delegate: nil)
+        peerConnection = WRTCClient.factory.peerConnection(with: config, constraints: constraints, delegate: nil)
 
         super.init()
 //        configureAudioSession()
@@ -67,10 +71,7 @@ class WebRTCClient: NSObject, JanusSocketDelegate {
         websocket.connect()
         websocket.delegate = self
 
-        if (isAudioOn) {
-            createLocalAudioStream()
-        }
-        
+        createLocalAudioStream()
         createLocalVideoStream()
         peerConnection.delegate = self
     }
@@ -198,16 +199,16 @@ class WebRTCClient: NSObject, JanusSocketDelegate {
     }
 
     private func createVideoTrack() -> RTCVideoTrack {
-        let videoSource = WebRTCClient.factory.videoSource()
+        let videoSource = WRTCClient.factory.videoSource()
         videoSource.adaptOutputFormat(toWidth: 1280, height: 720, fps: 30)
         videoCapturer = RTCCameraVideoCapturer(delegate: videoSource)
-        return WebRTCClient.factory.videoTrack(with: videoSource, trackId: "KvsVideoTrack")
+        return WRTCClient.factory.videoTrack(with: videoSource, trackId: "KvsVideoTrack")
     }
 
     private func createAudioTrack() -> RTCAudioTrack {
         let mediaConstraints = RTCMediaConstraints(mandatoryConstraints: nil, optionalConstraints: nil)
-        let audioSource = WebRTCClient.factory.audioSource(with: mediaConstraints)
-        return WebRTCClient.factory.audioTrack(with: audioSource, trackId: "KvsAudioTrack")
+        let audioSource = WRTCClient.factory.audioSource(with: mediaConstraints)
+        return WRTCClient.factory.audioTrack(with: audioSource, trackId: "KvsAudioTrack")
     }
     
     func onPublisherJoined(_ handleId: NSNumber?) {
@@ -227,7 +228,7 @@ class WebRTCClient: NSObject, JanusSocketDelegate {
     }
 }
 
-extension WebRTCClient: RTCPeerConnectionDelegate {
+extension WRTCClient: RTCPeerConnectionDelegate {
     func peerConnection(_: RTCPeerConnection, didChange stateChanged: RTCSignalingState) {
         debugPrint("peerConnection stateChanged: \(stateChanged)")
     }
@@ -268,7 +269,7 @@ extension WebRTCClient: RTCPeerConnectionDelegate {
     }
 }
 
-extension WebRTCClient: RTCDataChannelDelegate {
+extension WRTCClient: RTCDataChannelDelegate {
     func dataChannelDidChangeState(_ dataChannel: RTCDataChannel) {
         debugPrint("dataChannel didChangeState: \(dataChannel.readyState)")
     }

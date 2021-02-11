@@ -284,18 +284,18 @@ class ViewController: NSViewController, RTCPeerConnectionDelegate, JanusSocketDe
         })
     }
 
-    func offerPeerConnectionAgain(_ hasVideo:NSNumber?) {
-        createPublisherPeerConnection()
-        let jc = JanusConnection()
-        jc.connection = publisherPeerConnection
-        jc.handleId = saveId
-        peerConnectionDict[saveId] = jc
-        publisherPeerConnection!.offer(for: defaultOfferConstraints()!, completionHandler: { sdp, error in
-            self.publisherPeerConnection!.setLocalDescription(sdp!, completionHandler: { error in
-                self.websocket.publisherCreateOffer(self.saveId, sdp: sdp!,hasVideo: hasVideo)
-            })
-        })
-    }
+//    func offerPeerConnectionAgain(_ hasVideo:NSNumber?) {
+//        createPublisherPeerConnection()
+//        let jc = JanusConnection()
+//        jc.connection = publisherPeerConnection
+//        jc.handleId = saveId
+//        peerConnectionDict[saveId] = jc
+//        publisherPeerConnection!.offer(for: defaultOfferConstraints()!, completionHandler: { sdp, error in
+//            self.publisherPeerConnection!.setLocalDescription(sdp!, completionHandler: { error in
+//                self.websocket.publisherCreateOffer(self.saveId, sdp: sdp!,hasVideo: hasVideo)
+//            })
+//        })
+//    }
 
     func defaultOfferConstraints() -> RTCMediaConstraints? {
         let mandatoryConstraints = [
@@ -324,6 +324,7 @@ class ViewController: NSViewController, RTCPeerConnectionDelegate, JanusSocketDe
         if let handleId = handleId {
             peerConnectionDict[handleId] = jc
         }
+        
         let answerDescription = RTCSessionDescription(fromJSONDictionary: jsep)
         peerConnection?.setRemoteDescription(answerDescription!, completionHandler: { error in
         })
