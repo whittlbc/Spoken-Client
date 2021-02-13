@@ -10,7 +10,7 @@ import Foundation
 
 class JanusKeepAliveMessage: JanusMessage {
     
-    var janus = JanusMessage.Key.keepalive
+    var janus = JanusMessage.Key.keepAlive
     
     var sessionId: Int!
     

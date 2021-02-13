@@ -21,6 +21,7 @@ struct Message: Model {
     var channelId = ""
     var senderId = ""
     var messageType = ""
+    var uploadId: Int = 0
     var fileIds = [String]()
     
     var files = [File]()

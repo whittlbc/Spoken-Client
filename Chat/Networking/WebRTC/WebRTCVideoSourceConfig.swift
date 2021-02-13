@@ -9,7 +9,7 @@
 import Foundation
 
 struct WebRTCVideoSourceConfig {
-    var height: Int
     var width: Int
+    var height: Int
     var fps: Int
 }

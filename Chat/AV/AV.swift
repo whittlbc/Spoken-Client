@@ -103,10 +103,8 @@ public enum AV {
         streamManager.streamNewMessage(message)
     }
     
-    static func stopRecording(id: String, cancelled: Bool) {
-        UserSettings.Video.useCamera ?
-            AV.avRecorder.stop(id: id, cancelled: cancelled) :
-            AV.mic.stopRecording(cancelled: cancelled)
+    static func stopRecordingMessage() {
+        streamManager.stopMessage()
     }
     
     static func clearRecording() {

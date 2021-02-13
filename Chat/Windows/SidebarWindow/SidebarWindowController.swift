@@ -15,16 +15,9 @@ class SidebarWindowController: NSWindowController, NSWindowDelegate {
     // Controller for workspace window.
     private var workspaceWindowController: WorkspaceWindowController!
     
-    private var webRTCClient: WebRTCClient!
-
     // Proper init to call when creating this class.
     convenience init() {
         self.init(window: nil)
-        
-        webRTCClient = WebRTCClient(
-            iceServers: [RTCIceServer(urlStrings: ["stun:stun.l.google.com:19302"])],
-            isAudioOn: true
-        )
     }
     
     // Override delegated init.
@@ -51,17 +44,6 @@ class SidebarWindowController: NSWindowController, NSWindowDelegate {
         
         // Run the UIEvent queue.
         startUIEventQueue()
-                
-        let localRenderer = RTCMTLNSVideoView(frame: window!.frame)
-        
-        window!.contentView = localRenderer
-        
-//        let remoteRenderer = RTCMTLNSVideoView(frame: window!.frame)
-        
-        webRTCClient.startCaptureLocalVideo(renderer: localRenderer)
-        
-        
-//        webRTCClient.renderRemoteVideo(to: remoteRenderer)
     }
     
     // Add child windows to sidebar window.

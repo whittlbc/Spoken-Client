@@ -281,14 +281,14 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate {
         // Enable key event listners.
         toggleRecordingKeyListeners(enable: true)
 
+        // Start recording either video or audio based on settings.
+        AV.startRecordingMessage(message)
+        
         DispatchQueue.main.asyncAfter(
             deadline: .now() + ChannelWindow.ArtificialTiming.showVideoRecordingInitializingDuration
         ) { [weak self] in
             self?.toRecordingStarted()
         }
-        
-        // Start recording either video or just audio based on settings.
-        AV.startRecordingMessage(message)
         
 //        UserSettings.Video.useCamera ? startRecordingVideo() : startRecordingAudio()
     }
@@ -312,7 +312,7 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate {
         toggleRecordingKeyListeners(enable: false)
         
         // Stop the active recording.
-        AV.stopRecording(id: channel.id, cancelled: true)
+        AV.stopRecordingMessage()
 
         // Show recording as cancelled.
         showRecordingCancelled()
@@ -327,7 +327,7 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate {
         toRecordingSending()
 
         // Stop the active recording.
-        AV.stopRecording(id: channel.id, cancelled: false)
+        AV.stopRecordingMessage()
         
 //        // Create new recording message.
 //        windowModel.createRecordingMessage(fileSize: AV.recordingSize)

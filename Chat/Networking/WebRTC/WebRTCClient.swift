@@ -23,11 +23,11 @@ class WebRTCClient: NSObject, RTCPeerConnectionDelegate, JanusSocketDelegate {
     private var videoSourceConfig: WebRTCVideoSourceConfig!
     
     private let factory = RTCPeerConnectionFactory.newDefaultFactory()
-        
+
     private var connections = [Int: JanusConnection]()
     
     private var publisherPeerConnection: RTCPeerConnection!
-        
+
     private var localAudioTrack: RTCAudioTrack?
     
     private var localVideoTrack: RTCVideoTrack?
@@ -58,7 +58,7 @@ class WebRTCClient: NSObject, RTCPeerConnectionDelegate, JanusSocketDelegate {
         getMediaConstraints()
     }
             
-    required init(videoSourceConfig: WebRTCVideoSourceConfig) {
+    required init(roomId: Int, videoSourceConfig: WebRTCVideoSourceConfig) {
         super.init()
         
         // Store config to apply to local video track.
@@ -71,13 +71,58 @@ class WebRTCClient: NSObject, RTCPeerConnectionDelegate, JanusSocketDelegate {
         configureAudioSession()
 
         // Create and connect to signaling server.
-        createSignalingClient()
+        createSignalingClient(roomId: roomId)
         
         // Create local audio stream.
         createLocalAudioStream()
         
         // Create local video stream.
         createLocalVideoStream()
+    }
+    
+    deinit {
+        publisherPeerConnection.close()
+        publisherPeerConnection = nil
+        localAudioTrack = nil
+        localVideoTrack = nil
+        signalingClient = nil
+    }
+    
+    func renderLocalStream(to renderer: RTCVideoRenderer) {
+        // Ensure the video capturer has been set.
+        guard let capturer = self.videoCapturer as? RTCCameraVideoCapturer else {
+            logger.error("Failed to render local stream -- videoCapturer came up nil.")
+            return
+        }
+        
+        // Get a list of currently available video capture devices.
+        let captureDevices = RTCCameraVideoCapturer.captureDevices()
+        
+        // Ensure at least one video capture device exists.
+        guard captureDevices.count > 0 else {
+            logger.error("Failed to render local stream -- no video capture devices available.")
+            return
+        }
+        
+        // Use the first available capture device.
+        let camera = captureDevices[0]
+        
+        // Use the highest last supported video format.
+        guard let format = RTCCameraVideoCapturer.supportedFormats(for: camera).last else {
+            logger.error("Failed to render local stream -- no supported video capture formats.")
+            return
+        }
+        
+        guard let fps = format.videoSupportedFrameRateRanges.first?.maxFrameRate else {
+            logger.error("Failed to render local stream -- failed to get FPS for format: \(format)")
+            return
+        }
+
+        // Start capturing local video stream.
+        capturer.startCapture(with: camera, format: format, fps: Int(fps.magnitude))
+                
+        // Render the stream.
+        localVideoTrack?.add(renderer)
     }
         
     func onPublisherJoined(handleId: Int) {
@@ -189,7 +234,7 @@ class WebRTCClient: NSObject, RTCPeerConnectionDelegate, JanusSocketDelegate {
         // Answer peer connection.
         answerPeerConnection(connection.peerConnection, handleId: handleId)
     }
-    
+
     private func handleSubscriberLeaving(handleId: Int) {
         // Get connection for handleId.
         guard let connection = connections[handleId] else {
@@ -204,7 +249,9 @@ class WebRTCClient: NSObject, RTCPeerConnectionDelegate, JanusSocketDelegate {
 //        if let videoTrack = connection.videoTrack {
 //            // TODO: Remove any RTCVideoRenderer instances from video track
 //        }
-        
+
+        connection.videoTrack = nil
+
         // Remove connection from connections registry.
         connections.removeValue(forKey: handleId)
     }
@@ -364,9 +411,9 @@ class WebRTCClient: NSObject, RTCPeerConnectionDelegate, JanusSocketDelegate {
         )
     }
     
-    private func createSignalingClient() {
+    private func createSignalingClient(roomId: Int) {
         // Use Janus as signaling server.
-        signalingClient = JanusSocket()
+        signalingClient = JanusSocket(roomId: roomId)
         
         // Set delegate to self.
         signalingClient.delegate = self

@@ -9,6 +9,7 @@
 import Cocoa
 import Combine
 import AVFoundation
+import WebRTC
 
 // Controller for ChannelAvatarView to manage all of its subviews and their interactions.
 class ChannelAvatarViewController: NSViewController {
@@ -40,8 +41,8 @@ class ChannelAvatarViewController: NSViewController {
     // Avatar recipient image subscription.
     private var recipientImageSubscription: AnyCancellable?
     
-    // Channel video preview layer.
-    private var videoPreviewLayer: AVCaptureVideoPreviewLayer?
+    // Channel video preview view.
+    private var videoPreviewView: RTCMTLNSVideoView?
 
     // Subscription to av recorder state changes.
     private var avRecorderSubscription: AnyCancellable?
@@ -91,9 +92,6 @@ class ChannelAvatarViewController: NSViewController {
         
         // Load and set recipient avatar image.
         loadRecipientAvatarImage()
-        
-        // Subscribe to AV recorder.
-        subscribeToAVRecorder()
     }
     
     // Handle changes in channel disability.
@@ -118,45 +116,7 @@ class ChannelAvatarViewController: NSViewController {
             self?.setAvatarImage(to: image)
         }
     }
-    
-    private func subscribeToAVRecorder() {
-        avRecorderSubscription = AV.avRecorder.$state.sink { [weak self] state in
-            self?.onAVRecorderStateChange(state: state)
-        }
-    }
-    
-    private func onAVRecorderStateChange(state: AVRecorderState) {
-        switch state {
-        
-        // Just starting recording.
-        case .starting(id: let channelId, session: let session):
-            guard channelId == viewModel.channel.id else {
-                return
-            }
-                        
-            self.addVideoPreviewLayer(session: session)
-        
-        // Recording started and visible.
-        case .started(id: let channelId):
-            guard channelId == viewModel.channel.id else {
-                return
-            }
-                        
-            self.revealVideoPreviewLayer()
-            
-        // Stopping recording.
-        case .stopped(id: let channelId, cancelled: let cancelled, lastFrame: let lastFrame):
-            guard channelId == viewModel.channel.id else {
-                return
-            }
 
-            self.removeVideoPreviewLayer(lastFrame: lastFrame, wasCancelled: cancelled)
-
-        default:
-            break
-        }
-    }
-    
     // Make avatar view layer-based and allow for overflow.
     private func setupViewLayer() {
         view.wantsLayer = true
@@ -350,7 +310,7 @@ class ChannelAvatarViewController: NSViewController {
         blurLayer = blur
         
         // Add blur layer as top-most sublayer to image view.
-        imageView.layer?.insertSublayer(blur, above: videoPreviewLayer)
+        imageView.layer?.addSublayer(blur)
         
         return blur
     }
@@ -424,21 +384,38 @@ class ChannelAvatarViewController: NSViewController {
         return checkmark
     }
     
-    private func createVideoPreviewLayer(session: AVCaptureSession) -> AVCaptureVideoPreviewLayer {
-        let previewLayer = AVCaptureVideoPreviewLayer(session: session)
+    private func createVideoPreviewView() {
+        let previewView = RTCMTLNSVideoView(frame: imageView.frame)
         
-        let diameter = ChannelAvatarView.Style.VideoPreviewLayer.diameter
-                        
-        previewLayer.frame = NSRect(x: 0, y: 0, width: diameter, height: diameter)
+        // Make it layer based and start it as hidden.
+        previewView.wantsLayer = true
+        previewView.layer?.masksToBounds = true
+        previewView.alphaValue = 0
         
-        previewLayer.videoGravity = .resizeAspectFill
+        // Add video preview view as subview of image view.
+        imageView.addSubview(previewView)
         
-        previewLayer.masksToBounds = true
+        // Add auto-layout constraints to indicator.
+        constrainVideoPreviewView(previewView)
         
-        previewLayer.connection?.automaticallyAdjustsVideoMirroring = false
-        previewLayer.connection?.isVideoMirrored = true
+        // Store preview view.
+        videoPreviewView = previewView
+    }
 
-        return previewLayer
+    private func constrainVideoPreviewView(_ previewView: RTCMTLNSVideoView) {
+        // Set up auto-layout for sizing/positioning.
+        previewView.translatesAutoresizingMaskIntoConstraints = false
+        
+        // Fix image size to container size (equal height, width, and center).
+        NSLayoutConstraint.activate([
+            previewView.heightAnchor.constraint(equalTo: imageView.heightAnchor),
+            previewView.widthAnchor.constraint(equalTo: imageView.heightAnchor),
+            previewView.centerXAnchor.constraint(equalTo: imageView.centerXAnchor),
+            previewView.centerYAnchor.constraint(equalTo: imageView.centerYAnchor),
+        ])
+        
+        // Constrain the image's size to the view's size.
+        previewView.layer?.contentsGravity = .resizeAspectFill
     }
     
     // Create loader view to spin around avatar during the loading of arbitrary content.
@@ -708,35 +685,27 @@ class ChannelAvatarViewController: NSViewController {
             }
         )
     }
+
+    private func connectVideoPreviewToLocalStream() {
+        if let previewView = videoPreviewView {
+            AV.streamManager.renderLocalStream(to: previewView)
+        }
+    }
     
-    private func addVideoPreviewLayer(session: AVCaptureSession) {
-        // Ensure user has camera enabled.
-        guard UserSettings.Video.useCamera else {
+    private func showVideoPreviewView() {
+        // Reveal video preview view.
+        videoPreviewView?.alphaValue = 1.0
+        
+        // Fade out the blur.
+        fadeOutBlurLayer(duration: ChannelAvatarView.AnimationConfig.VideoPreviewLayer.removeBlurDuration)
+    }
+        
+    private func removeVideoPreviewView(lastFrame: NSImage? = nil, wasCancelled: Bool = false) {
+        if videoPreviewView == nil {
             return
         }
-                
-        videoPreviewLayer = videoPreviewLayer ?? createVideoPreviewLayer(session: session)
-    
-        DispatchQueue.main.async {
-            // Add video preview layer as sublayer to image view.
-            self.imageView.layer?.addSublayer(self.videoPreviewLayer!)
-        }
-    }
-    
-    private func revealVideoPreviewLayer() {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
-            self.fadeOutBlurLayer(duration: ChannelAvatarView.AnimationConfig.VideoPreviewLayer.removeBlurDuration)
-        }
-    }
-    
-    private func hideVideoPreviewLayer() {
-        videoPreviewLayer?.opacity = 0.0
-    }
-    
-    private func removeVideoPreviewLayer(lastFrame: NSImage?, wasCancelled: Bool) {
-        if videoPreviewLayer == nil {
-            return
-        }
+        
+        videoPreviewView!.alphaValue = 0.0
         
         if let image = lastFrame {
             dataProvider.user.setVideoPlaceholder(id: Session.currentUserId!, image: image)
@@ -747,8 +716,8 @@ class ChannelAvatarViewController: NSViewController {
                 self.setAvatarImage(to: image)
             }
             
-            self.videoPreviewLayer?.removeFromSuperlayer()
-            self.videoPreviewLayer = nil
+            self.videoPreviewView!.removeFromSuperview()
+            self.videoPreviewView = nil
         }
     }
     
@@ -860,6 +829,9 @@ class ChannelAvatarViewController: NSViewController {
             
             // Upsert the video placeholder avatar.
             upsertVideoPlaceholderAvatar()
+            
+            // Create the video preview view.
+            createVideoPreviewView()
         }
     }
     
@@ -884,6 +856,14 @@ class ChannelAvatarViewController: NSViewController {
             
             // Animate avatar view size.
             animateAvatarViewSize(toState: state)
+            
+            // Connect video preview to stream.
+            connectVideoPreviewToLocalStream()
+            
+            // Wait and show video preview view.
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                self.showVideoPreviewView()
+            }
         }
     }
     
@@ -902,8 +882,8 @@ class ChannelAvatarViewController: NSViewController {
             // Fade out the video recipient avatar.
             fadeOutVideoRecipientView()
             
-            // Go ahead and hide video preview layer.
-            hideVideoPreviewLayer()
+            // Remove the video preview view.
+            removeVideoPreviewView(wasCancelled: true)
         }
     }
     
@@ -941,6 +921,9 @@ class ChannelAvatarViewController: NSViewController {
             
             // Fade out the video recipient avatar.
             fadeOutVideoRecipientView()
+            
+            // Remove the video preview view.
+            removeVideoPreviewView()
         }
     }
     

@@ -11,7 +11,7 @@ import WebRTC
 
 class JanusTrickleCandidateCompleteMessage: JanusTrickleMessage {
 
-    var candidate: JanusTrickleCandidateCompleteMessageCandidate
+    var candidate: JanusTrickleCandidateCompleteMessageCandidate!
     
     enum CodingKeys: String, CodingKey {
         case janus
@@ -27,6 +27,14 @@ class JanusTrickleCandidateCompleteMessage: JanusTrickleMessage {
         self.handleId = handleId
         self.txId = txId
         self.candidate = JanusTrickleCandidateCompleteMessageCandidate()
+    }
+    
+    required init() {
+        super.init()
+    }
+    
+    required init(from decoder: Decoder) throws {
+        fatalError("init(from:) has not been implemented")
     }
 }
 

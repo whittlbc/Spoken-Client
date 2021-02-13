@@ -11,9 +11,7 @@ import WebRTC
 import Arrow
 
 class JanusSocket: Socket {
-    
-    static let roomNumber: Int = 1234
-    
+        
     typealias IncomingMessage = [String: Any]
     
     static let defaultHeaders: [String: String] = [
@@ -33,6 +31,8 @@ class JanusSocket: Socket {
     }
         
     var state: State?
+    
+    var roomId: Int!
 
     weak var delegate: JanusSocketDelegate?
     
@@ -46,8 +46,11 @@ class JanusSocket: Socket {
     
     private var keepAliveTimer: Timer?
 
-    convenience init() {
+    convenience init(roomId: Int) {
         self.init(url: Config.janusURL, headers: JanusSocket.defaultHeaders)
+        
+        // Set video room id to connect to.
+        self.roomId = roomId
         
         // Start timer on repeat to keep socket connection alive.
         createKeepAliveTimer()
@@ -123,7 +126,7 @@ class JanusSocket: Socket {
             txId: JanusTx.newId(),
             jsep: JanusMessage.newJSEP(fromSDP: sdp),
             requestType: .start,
-            room: JanusSocket.roomNumber
+            room: roomId
         ))
     }
 
@@ -399,7 +402,7 @@ class JanusSocket: Socket {
             handleId: handle.id,
             txId: tx.id,
             requestType: .join,
-            room: JanusSocket.roomNumber,
+            room: roomId,
             ptype: ptype,
             feed: handle.feedId
         ))

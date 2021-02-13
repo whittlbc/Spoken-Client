@@ -52,7 +52,6 @@
 		094DAB1825AFEB0900CFC2EC /* ImageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094DAB1725AFEB0900CFC2EC /* ImageCache.swift */; };
 		094DAB1C25B11F0A00CFC2EC /* WorkspaceWindowModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094DAB1B25B11F0A00CFC2EC /* WorkspaceWindowModel.swift */; };
 		094DAB1F25B1335E00CFC2EC /* Publisher+Operators.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094DAB1E25B1335E00CFC2EC /* Publisher+Operators.swift */; };
-		0951D01A25CF5F6200E0FB28 /* RTCSessionDescription+JSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0951D01425CF5F6200E0FB28 /* RTCSessionDescription+JSON.swift */; };
 		0951D01B25CF5F6200E0FB28 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0951D01525CF5F6200E0FB28 /* ViewController.swift */; };
 		0951D01C25CF5F6200E0FB28 /* OldJanusSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0951D01625CF5F6200E0FB28 /* OldJanusSocket.swift */; };
 		0951D02125CF5F9A00E0FB28 /* Starscream in Frameworks */ = {isa = PBXBuildFile; productRef = 0951D02025CF5F9A00E0FB28 /* Starscream */; };
@@ -206,7 +205,6 @@
 		094DAB1725AFEB0900CFC2EC /* ImageCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCache.swift; sourceTree = "<group>"; };
 		094DAB1B25B11F0A00CFC2EC /* WorkspaceWindowModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkspaceWindowModel.swift; sourceTree = "<group>"; };
 		094DAB1E25B1335E00CFC2EC /* Publisher+Operators.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Publisher+Operators.swift"; sourceTree = "<group>"; };
-		0951D01425CF5F6200E0FB28 /* RTCSessionDescription+JSON.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "RTCSessionDescription+JSON.swift"; path = "../../../JanusSwiftTest/Janus-Video-Room/RTCSessionDescription+JSON.swift"; sourceTree = "<group>"; };
 		0951D01525CF5F6200E0FB28 /* ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ViewController.swift; path = "../../../JanusSwiftTest/Janus-Video-Room/ViewController.swift"; sourceTree = "<group>"; };
 		0951D01625CF5F6200E0FB28 /* OldJanusSocket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = OldJanusSocket.swift; path = "../../../JanusSwiftTest/Janus-Video-Room/OldJanusSocket.swift"; sourceTree = "<group>"; };
 		095C6764259A6A8800729845 /* ChasingTailSpinnerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChasingTailSpinnerView.swift; sourceTree = "<group>"; };
@@ -418,7 +416,6 @@
 			isa = PBXGroup;
 			children = (
 				0951D01625CF5F6200E0FB28 /* OldJanusSocket.swift */,
-				0951D01425CF5F6200E0FB28 /* RTCSessionDescription+JSON.swift */,
 				0951D01525CF5F6200E0FB28 /* ViewController.swift */,
 				09BFD8AB25CF87810071966B /* WRTCClient.swift */,
 				09BFD8AE25D096540071966B /* OGViewController.swift */,
@@ -1043,7 +1040,6 @@
 				0925752E25D3ACE9009FC434 /* JanusTrickleCandidateMessage.swift in Sources */,
 				0999974F25953600008E65FB /* ParticleShader.metal in Sources */,
 				096862F42582B54F00B9B614 /* WorkspaceWindowController.swift in Sources */,
-				0951D01A25CF5F6200E0FB28 /* RTCSessionDescription+JSON.swift in Sources */,
 				0968E29C25C0605D004E0C39 /* CIImage+NSImage.swift in Sources */,
 				0925751B25D3401F009FC434 /* JanusDetachedMessage.swift in Sources */,
 				09F60AC9258C13680020974A /* Icon.swift in Sources */,
