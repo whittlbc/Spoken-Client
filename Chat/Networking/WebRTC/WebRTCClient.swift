@@ -163,29 +163,28 @@ class WebRTCClient: NSObject, RTCPeerConnectionDelegate, JanusSocketDelegate {
     }
 
     private func handlePublisherRemoteJSEP(handleId: Int, jsep: JanusJSEP?) {
-        // Get connection for handleId and use JSEP to set remote description.
-        guard let connection = connections[handleId],
-              let answerDescription = RTCSessionDescription(fromJSONDictionary: jsep) else {
-            logger.error("Both connection and JSEP required top set remote desc: handleId=\(handleId)")
+        // Get connection for handleId and ensure JSEP exists.
+        guard let connection = connections[handleId], let jsep = jsep else {
+            logger.error("Both connection and JSEP required to set remote desc: handleId=\(handleId)")
             return
         }
-                
-        // Set remote description on found peer connection.
-        setRemoteDescription(answerDescription, forPeerConnection: connection.peerConnection) {}
+
+        // Set remote description for peer connection.
+        setRemoteDescription(JanusMessage.newSDP(fromJSEP: jsep), forPeerConnection: connection.peerConnection) {}
     }
     
     private func handleSubscriberRemoteJSEP(handleId: Int, jsep: JanusJSEP?) {
-        // Create a new connection with the given handle.
-        let connection = createConnection(handleId: handleId)
-                
-        // Create new answer description.
-        guard let answerDescription = RTCSessionDescription(fromJSONDictionary: jsep) else {
-            logger.error("Answer description could not be created from JSEP: \(String(describing: jsep))")
+        // Ensure JSEP exists.
+        guard let jsep = jsep else {
+            logger.error("JSEP required top set remote desc: handleId=\(handleId)")
             return
         }
-        
-        // Set remote description of new peer connection.
-        setRemoteDescription(answerDescription, forPeerConnection: connection.peerConnection) {}
+
+        // Create a new connection with the given handle.
+        let connection = createConnection(handleId: handleId)
+
+        // Set remote description for new peer connection.
+        setRemoteDescription(JanusMessage.newSDP(fromJSEP: jsep), forPeerConnection: connection.peerConnection) {}
 
         // Answer peer connection.
         answerPeerConnection(connection.peerConnection, handleId: handleId)
@@ -202,9 +201,9 @@ class WebRTCClient: NSObject, RTCPeerConnectionDelegate, JanusSocketDelegate {
         connection.peerConnection.close()
         connection.peerConnection = nil
 
-        if let videoTrack = connection.videoTrack {
-            // TODO: Remove any RTCVideoRenderer instances from video track
-        }
+//        if let videoTrack = connection.videoTrack {
+//            // TODO: Remove any RTCVideoRenderer instances from video track
+//        }
         
         // Remove connection from connections registry.
         connections.removeValue(forKey: handleId)
@@ -212,11 +211,11 @@ class WebRTCClient: NSObject, RTCPeerConnectionDelegate, JanusSocketDelegate {
 
     // Set remote description of peer connection.
     private func setRemoteDescription(
-        _ description: RTCSessionDescription,
+        _ sdp: RTCSessionDescription,
         forPeerConnection peerConnection: RTCPeerConnection,
         then onSuccess: @escaping () -> Void
     ) {
-        peerConnection.setRemoteDescription(description, completionHandler: { error in
+        peerConnection.setRemoteDescription(sdp, completionHandler: { error in
             if let err = error {
                 logger.error("Error setting remote description: \(err)")
             }
@@ -228,11 +227,11 @@ class WebRTCClient: NSObject, RTCPeerConnectionDelegate, JanusSocketDelegate {
     
     // Set local description of peer connection.
     private func setLocalDescription(
-        _ description: RTCSessionDescription,
+        _ sdp: RTCSessionDescription,
         forPeerConnection peerConnection: RTCPeerConnection,
         then onSuccess: @escaping () -> Void
     ) {
-        peerConnection.setLocalDescription(description, completionHandler: { error in
+        peerConnection.setLocalDescription(sdp, completionHandler: { error in
             if let err = error {
                 logger.error("Error setting local description: \(err)")
             }

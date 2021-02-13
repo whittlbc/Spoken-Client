@@ -61,6 +61,13 @@ class JanusMessage: Codable, ArrowParsable {
         ]
     }
     
+    static func newSDP(fromJSEP jsep: JanusJSEP) -> RTCSessionDescription {
+        return RTCSessionDescription(
+            type: RTCSessionDescription.self.type(for: jsep[Key.type] as! String),
+            sdp: jsep[Key.sdp] as! String
+        )
+    }
+    
     required init() {}
     
     required init(from decoder: Decoder) throws {

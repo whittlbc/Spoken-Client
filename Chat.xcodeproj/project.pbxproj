@@ -135,7 +135,6 @@
 		0999974F25953600008E65FB /* ParticleShader.metal in Sources */ = {isa = PBXBuildFile; fileRef = 0999974E25953600008E65FB /* ParticleShader.metal */; };
 		099997522595371E008E65FB /* ParticleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 099997512595371E008E65FB /* ParticleView.swift */; };
 		09BFD89D25CF62930071966B /* WebRTC in Frameworks */ = {isa = PBXBuildFile; productRef = 09BFD89C25CF62930071966B /* WebRTC */; };
-		09BFD8A825CF7F040071966B /* OldWebRTCClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09BFD8A725CF7F040071966B /* OldWebRTCClient.swift */; };
 		09BFD8AC25CF87810071966B /* WRTCClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09BFD8AB25CF87810071966B /* WRTCClient.swift */; };
 		09BFD8AF25D096540071966B /* OGViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09BFD8AE25D096540071966B /* OGViewController.swift */; };
 		09BFD8BA25D0D1FF0071966B /* StreamManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09BFD8B925D0D1FF0071966B /* StreamManager.swift */; };
@@ -289,7 +288,6 @@
 		0996446A25AE92FD004473B7 /* CodableCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodableCache.swift; sourceTree = "<group>"; };
 		0999974E25953600008E65FB /* ParticleShader.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = ParticleShader.metal; sourceTree = "<group>"; };
 		099997512595371E008E65FB /* ParticleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParticleView.swift; sourceTree = "<group>"; };
-		09BFD8A725CF7F040071966B /* OldWebRTCClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OldWebRTCClient.swift; sourceTree = "<group>"; };
 		09BFD8AB25CF87810071966B /* WRTCClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WRTCClient.swift; sourceTree = "<group>"; };
 		09BFD8AE25D096540071966B /* OGViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OGViewController.swift; sourceTree = "<group>"; };
 		09BFD8B925D0D1FF0071966B /* StreamManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamManager.swift; sourceTree = "<group>"; };
@@ -420,7 +418,6 @@
 			isa = PBXGroup;
 			children = (
 				0951D01625CF5F6200E0FB28 /* OldJanusSocket.swift */,
-				09BFD8A725CF7F040071966B /* OldWebRTCClient.swift */,
 				0951D01425CF5F6200E0FB28 /* RTCSessionDescription+JSON.swift */,
 				0951D01525CF5F6200E0FB28 /* ViewController.swift */,
 				09BFD8AB25CF87810071966B /* WRTCClient.swift */,
@@ -975,7 +972,6 @@
 				09416AF725D2E67E00B71C02 /* JanusHandle.swift in Sources */,
 				099997522595371E008E65FB /* ParticleView.swift in Sources */,
 				094DAB1F25B1335E00CFC2EC /* Publisher+Operators.swift in Sources */,
-				09BFD8A825CF7F040071966B /* OldWebRTCClient.swift in Sources */,
 				09BFD8BA25D0D1FF0071966B /* StreamManager.swift in Sources */,
 				0951D01C25CF5F6200E0FB28 /* OldJanusSocket.swift in Sources */,
 				094DAB0A25AFB98600CFC2EC /* Dictionary+Helpers.swift in Sources */,
