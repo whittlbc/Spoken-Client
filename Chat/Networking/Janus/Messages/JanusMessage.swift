@@ -8,6 +8,7 @@
 
 import Foundation
 import Arrow
+import WebRTC
 
 typealias JanusJSEP = [AnyHashable: Any]
 
@@ -35,6 +36,8 @@ class JanusMessage: Codable, ArrowParsable {
         static let pluginData = "plugindata"
         static let sender = "sender"
         static let jsep = "jsep"
+        static let type = "type"
+        static let sdp = "sdp"
     }
     
     enum IncomingMessageType: String {
@@ -49,6 +52,13 @@ class JanusMessage: Codable, ArrowParsable {
         let message = Self()
         message.deserialize(json)
         return message
+    }
+    
+    static func newJSEP(fromSDP sdp: RTCSessionDescription) -> JanusJSEP {
+        [
+            Key.type: RTCSessionDescription.string(for: sdp.type),
+            Key.sdp: sdp.sdp
+        ]
     }
     
     required init() {}

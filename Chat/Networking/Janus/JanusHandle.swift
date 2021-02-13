@@ -8,9 +8,9 @@
 
 import Foundation
 
-typealias JanusHandleBlock = (JanusHandle?) -> Void
+typealias JanusHandleBlock = () -> Void
 
-typealias JanusRemoteJSEPBlock = (JanusHandle?, [AnyHashable : Any]?) -> Void
+typealias JanusRemoteJSEPBlock = (JanusJSEP?) -> Void
 
 class JanusHandle {
     

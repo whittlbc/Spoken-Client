@@ -10,13 +10,13 @@ import Foundation
 
 protocol JanusSocketDelegate: NSObjectProtocol {
 
-    func onPublisherJoined(_ handleId: Int?)
+    func onPublisherJoined(handleId: Int)
     
-    func onPublisherRemoteJSEP(_ handleId: Int?, jsep: JanusJSEP?)
+    func onPublisherRemoteJSEP(handleId: Int, jsep: JanusJSEP?)
     
-    func onSubscriberRemoteJSEP(_ handleId: Int?, jsep: JanusJSEP?)
+    func onSubscriberRemoteJSEP(handleId: Int, jsep: JanusJSEP?)
     
-    func onSubscriberLeaving(_ handleId: Int?)
+    func onSubscriberLeaving(handleId: Int)
     
     func onSocketError(_ error: Error?)
 }

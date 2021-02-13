@@ -11,11 +11,15 @@ import WebRTC
 
 class JanusConnection {
     
-    var handleId: Int?
+    var handleId: Int!
     
-    var connection: RTCPeerConnection?
+    var peerConnection: RTCPeerConnection!
     
     var videoTrack: RTCVideoTrack?
-    
-    var videoView: RTCMTLNSVideoView?
+        
+    init(handleId: Int, peerConnection: RTCPeerConnection, videoTrack: RTCVideoTrack? = nil) {
+        self.handleId = handleId
+        self.peerConnection = peerConnection
+        self.videoTrack = videoTrack
+    }
 }

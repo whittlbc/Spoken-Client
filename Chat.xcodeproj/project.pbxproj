@@ -420,9 +420,9 @@
 			isa = PBXGroup;
 			children = (
 				0951D01625CF5F6200E0FB28 /* OldJanusSocket.swift */,
+				09BFD8A725CF7F040071966B /* OldWebRTCClient.swift */,
 				0951D01425CF5F6200E0FB28 /* RTCSessionDescription+JSON.swift */,
 				0951D01525CF5F6200E0FB28 /* ViewController.swift */,
-				09BFD8A725CF7F040071966B /* OldWebRTCClient.swift */,
 				09BFD8AB25CF87810071966B /* WRTCClient.swift */,
 				09BFD8AE25D096540071966B /* OGViewController.swift */,
 			);
