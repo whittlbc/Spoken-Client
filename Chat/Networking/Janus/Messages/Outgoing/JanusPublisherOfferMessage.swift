@@ -70,15 +70,15 @@ class JanusPublisherOfferMessageBody: Codable, ArrowParsable {
 
     var request: String!
     
-    var audio: Int!
+    var audio: Bool!
     
-    var video: Int!
+    var video: Bool!
 
     convenience init(requestType: RequestType, audio: Bool, video: Bool) {
         self.init()
         self.request = requestType.rawValue
-        self.audio = audio ? 1 : 0
-        self.video = video ? 1 : 0
+        self.audio = audio
+        self.video = video
     }
     
     required init() {}

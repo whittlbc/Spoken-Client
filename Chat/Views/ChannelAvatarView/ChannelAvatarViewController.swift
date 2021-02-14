@@ -385,17 +385,17 @@ class ChannelAvatarViewController: NSViewController {
     }
     
     private func createVideoPreviewView() {
+        // Create new video preview view.
         let previewView = RTCMTLNSVideoView(frame: imageView.frame)
         
-        // Make it layer based and start it as hidden.
+        // Make it layer based.
         previewView.wantsLayer = true
         previewView.layer?.masksToBounds = true
-        previewView.alphaValue = 0
         
         // Add video preview view as subview of image view.
         imageView.addSubview(previewView)
         
-        // Add auto-layout constraints to indicator.
+        // Add auto-layout constraints.
         constrainVideoPreviewView(previewView)
         
         // Store preview view.
@@ -406,7 +406,7 @@ class ChannelAvatarViewController: NSViewController {
         // Set up auto-layout for sizing/positioning.
         previewView.translatesAutoresizingMaskIntoConstraints = false
         
-        // Fix image size to container size (equal height, width, and center).
+        // Fix size to image view size (equal height, width, and center).
         NSLayoutConstraint.activate([
             previewView.heightAnchor.constraint(equalTo: imageView.heightAnchor),
             previewView.widthAnchor.constraint(equalTo: imageView.heightAnchor),
@@ -414,7 +414,7 @@ class ChannelAvatarViewController: NSViewController {
             previewView.centerYAnchor.constraint(equalTo: imageView.centerYAnchor),
         ])
         
-        // Constrain the image's size to the view's size.
+        // Constrain the size to the image view's size.
         previewView.layer?.contentsGravity = .resizeAspectFill
     }
     
@@ -859,11 +859,6 @@ class ChannelAvatarViewController: NSViewController {
             
             // Connect video preview to stream.
             connectVideoPreviewToLocalStream()
-            
-            // Wait and show video preview view.
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                self.showVideoPreviewView()
-            }
         }
     }
     
@@ -888,12 +883,16 @@ class ChannelAvatarViewController: NSViewController {
     }
     
     private func renderSendingRecording(_ state: ChannelState) {
+        // TODO: Need to set avatar image to last frame of video
+        
         // Fade in blur layer to avatar image.
         fadeInBlurLayer(
             blurRadius: ChannelAvatarView.Style.BlurLayer.spinBlurRadius,
             duration: ChannelAvatarView.AnimationConfig.SpinnerView.enterDuration,
             alpha: ChannelAvatarView.Style.BlurLayer.spinAlpha
         )
+        
+        removeVideoPreviewView()
 
         // Fade in spinner view.
         fadeInSpinnerView()

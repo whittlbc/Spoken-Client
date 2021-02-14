@@ -289,22 +289,7 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate {
         ) { [weak self] in
             self?.toRecordingStarted()
         }
-        
-//        UserSettings.Video.useCamera ? startRecordingVideo() : startRecordingAudio()
     }
-    
-//    func startRecordingVideo() {
-//        DispatchQueue.main.asyncAfter(
-//            deadline: .now() + ChannelWindow.ArtificialTiming.showVideoRecordingInitializingDuration
-//        ) { [weak self] in
-//            self?.toRecordingStarted()
-//        }
-//    }
-//
-//    func startRecordingAudio() {
-//        AV.mic.startRecording()
-//        toRecordingStarted()
-//    }
     
     // Cancel recording and switch back to idle state.
     func cancelRecording() {
@@ -329,6 +314,13 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate {
         // Stop the active recording.
         AV.stopRecordingMessage()
         
+        // Show recording sending for a period of time, and then show it as sent.
+        DispatchQueue.main.asyncAfter(
+            deadline: .now() + ChannelWindow.ArtificialTiming.showRecordingSendingDuration
+        ) { [weak self] in
+            self?.showRecordingSent()
+        }
+
 //        // Create new recording message.
 //        windowModel.createRecordingMessage(fileSize: AV.recordingSize)
     }
@@ -441,18 +433,6 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate {
 
         // Create new recording message.
         windowModel.createRecordingMessage()
-
-        
-//        // Force start recording of video.
-//        if UserSettings.Video.useCamera {
-//            AV.avRecorder.start(id: channel.id)
-//
-//            DispatchQueue.main.asyncAfter(
-//                deadline: .now() + ChannelWindow.AnimationConfig.duration(forState: state)
-//            ) { [weak self] in
-//                self?.startRecording()
-//            }
-//        }
     }
     
     private func startConsumingMessage(_ message: Message) {
@@ -513,7 +493,9 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate {
         toRecordingSent()
         
         // Show recording sent for specific amount of time and then revert to idle state.
-        DispatchQueue.main.asyncAfter(deadline: .now() + ChannelWindow.ArtificialTiming.showRecordingSentDuration) { [weak self] in
+        DispatchQueue.main.asyncAfter(
+            deadline: .now() + ChannelWindow.ArtificialTiming.showRecordingSentDuration
+        ) { [weak self] in
             self?.showRecordingFinished()
         }
     }

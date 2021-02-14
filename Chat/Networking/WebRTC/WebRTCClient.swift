@@ -33,7 +33,7 @@ class WebRTCClient: NSObject, RTCPeerConnectionDelegate, JanusSocketDelegate {
     private var localVideoTrack: RTCVideoTrack?
     
     private var videoCapturer: RTCVideoCapturer?
-
+        
     private var signalingClient: JanusSocket!
     
     private var iceServers: [RTCIceServer] { [RTCIceServer(urlStrings: Config.iceServerURLs)] }
@@ -81,11 +81,22 @@ class WebRTCClient: NSObject, RTCPeerConnectionDelegate, JanusSocketDelegate {
     }
     
     deinit {
+        // Stop the video capture.
+        if let capturer = self.videoCapturer as? RTCCameraVideoCapturer {
+            capturer.stopCapture()
+        }
+        
+        // Close publisher peer connection.
         publisherPeerConnection.close()
         publisherPeerConnection = nil
+                
+        // Close connection with signaling server.
+        signalingClient.disconnect()
+        signalingClient = nil
+        
+        // Clear audio and video tracks.
         localAudioTrack = nil
         localVideoTrack = nil
-        signalingClient = nil
     }
     
     func renderLocalStream(to renderer: RTCVideoRenderer) {
@@ -117,7 +128,7 @@ class WebRTCClient: NSObject, RTCPeerConnectionDelegate, JanusSocketDelegate {
             logger.error("Failed to render local stream -- failed to get FPS for format: \(format)")
             return
         }
-
+        
         // Start capturing local video stream.
         capturer.startCapture(with: camera, format: format, fps: Int(fps.magnitude))
                 
@@ -385,7 +396,7 @@ class WebRTCClient: NSObject, RTCPeerConnectionDelegate, JanusSocketDelegate {
         
         // Create new video capturer with the new source as delegate.
         videoCapturer = RTCCameraVideoCapturer(delegate: videoSource)
-        
+                
         // Create local video track from source.
         localVideoTrack = factory.videoTrack(with: videoSource, trackId: Track.videoId)
     }

@@ -8,13 +8,14 @@
 
 import Cocoa
 import WebRTC
+import Combine
 
 class StreamManager {
-    
+        
     static let videoConfig = WebRTCVideoSourceConfig(
-        width: Int(ChannelAvatarView.Style.VideoPreviewLayer.diameter),
-        height: Int(ChannelAvatarView.Style.VideoPreviewLayer.diameter),
-        fps: 60
+        width: 800,
+        height: 800,
+        fps: 30
     )
 
     // WebRTC client for room connections.
@@ -25,7 +26,7 @@ class StreamManager {
     }
     
     func stopMessage() {
-        client = nil
+        teardownClient()
     }
     
     func renderLocalStream(to renderer: RTCVideoRenderer) {
@@ -34,7 +35,7 @@ class StreamManager {
     
     private func connectToRoom(_ roomId: Int) {
         // Tear down existing WebRTC client.
-        client = nil
+        teardownClient()
         
         // Create a new WebRTC client for this room.
         client = WebRTCClient(
@@ -42,5 +43,8 @@ class StreamManager {
             videoSourceConfig: StreamManager.videoConfig
         )
     }
+    
+    private func teardownClient() {
+        client = nil
+    }
 }
-

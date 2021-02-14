@@ -36,7 +36,7 @@ class ChannelWindowModel {
     func createRecordingMessage() {
         DispatchQueue.global(qos: .utility).asyncAfter(
             deadline: .now() + 0.5
-        ) {
+    ) {
             var message = Message()
             message.id = "abc123"
             message.channelId = self.channel.id
