@@ -7,8 +7,9 @@
 //
 
 import Foundation
+import Arrow
 
-class JanusAttachToPluginMessage: JanusMessage {
+class JanusAttachToPluginMessage: Codable, ArrowParsable {
     
     var janus = JanusMessage.Key.attach
     
@@ -30,4 +31,12 @@ class JanusAttachToPluginMessage: JanusMessage {
         self.sessionId = sessionId
         self.txId = txId
     }
+    
+    required init() {}
+
+    required init(from decoder: Decoder) throws {
+        fatalError("init(from:) has not been implemented")
+    }
+    
+    func deserialize(_ json: JSON) {}
 }

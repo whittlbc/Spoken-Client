@@ -10,9 +10,7 @@ import Foundation
 import Arrow
 import WebRTC
 
-typealias JanusJSEP = [AnyHashable: Any]
-
-class JanusMessage: Codable, ArrowParsable {
+enum JanusMessage {
     
     enum Key {
         static let janus = "janus"
@@ -48,31 +46,17 @@ class JanusMessage: Codable, ArrowParsable {
         case ack
     }
     
-    static func fromJSON(_ json: JSON) -> Self {
-        let message = Self()
-        message.deserialize(json)
-        return message
-    }
-    
-    static func newJSEP(fromSDP sdp: RTCSessionDescription) -> JanusJSEP {
-        [
-            Key.type: RTCSessionDescription.string(for: sdp.type),
-            Key.sdp: sdp.sdp
-        ]
-    }
-    
-    static func newSDP(fromJSEP jsep: JanusJSEP) -> RTCSessionDescription {
-        return RTCSessionDescription(
-            type: RTCSessionDescription.self.type(for: jsep[Key.type] as! String),
-            sdp: jsep[Key.sdp] as! String
-        )
-    }
-    
-    required init() {}
-    
-    required init(from decoder: Decoder) throws {
-        fatalError("init(from:) has not been implemented")
-    }
-    
-    func deserialize(_ json: JSON) {}
+//    static func newJSEP(fromSDP sdp: RTCSessionDescription) -> JanusJSEP {
+//        [
+//            Key.type: RTCSessionDescription.string(for: sdp.type),
+//            Key.sdp: sdp.sdp
+//        ]
+//    }
+//
+//    static func newSDP(fromJSEP jsep: JanusJSEP) -> RTCSessionDescription {
+//        return RTCSessionDescription(
+//            type: RTCSessionDescription.self.type(for: jsep[Key.type] as! String),
+//            sdp: jsep[Key.sdp] as! String
+//        )
+//    }
 }

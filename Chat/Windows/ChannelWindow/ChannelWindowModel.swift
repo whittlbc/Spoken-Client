@@ -34,15 +34,29 @@ class ChannelWindowModel {
     }
     
     func createRecordingMessage() {
-        currentMessageCancellable = dataProvider.message
-            .create(
-                channelId: channel.id,
-                messageType: UserSettings.Video.useCamera ? .video : .audio
-            )
-            .asResult()
-            .sink { [weak self] result in
-                self?.currentMessageResult = result
-            }
+        DispatchQueue.global(qos: .utility).asyncAfter(
+            deadline: .now() + 0.5
+        ) {
+            var message = Message()
+            message.id = "abc123"
+            message.channelId = self.channel.id
+            message.messageType = "video"
+            message.senderId = "ben"
+            message.uploadId = 1234
+            
+            self.currentMessageResult = MessageResult.success(message)
+        }
+        
+//        self.currentMessageResult = MessageResult.success(Message())
+//        currentMessageCancellable = dataProvider.message
+//            .create(
+//                channelId: channel.id,
+//                messageType: UserSettings.Video.useCamera ? .video : .audio
+//            )
+//            .asResult()
+//            .sink { [weak self] result in
+//                self?.currentMessageResult = result
+//            }
     }
     
     func loadMessageForConsumption(withId id: String) {

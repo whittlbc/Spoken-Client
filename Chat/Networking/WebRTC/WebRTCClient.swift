@@ -215,7 +215,7 @@ class WebRTCClient: NSObject, RTCPeerConnectionDelegate, JanusSocketDelegate {
         }
 
         // Set remote description for peer connection.
-        setRemoteDescription(JanusMessage.newSDP(fromJSEP: jsep), forPeerConnection: connection.peerConnection) {}
+        setRemoteDescription(jsep.toSDP(), forPeerConnection: connection.peerConnection) {}
     }
     
     private func handleSubscriberRemoteJSEP(handleId: Int, jsep: JanusJSEP?) {
@@ -229,7 +229,7 @@ class WebRTCClient: NSObject, RTCPeerConnectionDelegate, JanusSocketDelegate {
         let connection = createConnection(handleId: handleId)
 
         // Set remote description for new peer connection.
-        setRemoteDescription(JanusMessage.newSDP(fromJSEP: jsep), forPeerConnection: connection.peerConnection) {}
+        setRemoteDescription(jsep.toSDP(), forPeerConnection: connection.peerConnection) {}
 
         // Answer peer connection.
         answerPeerConnection(connection.peerConnection, handleId: handleId)

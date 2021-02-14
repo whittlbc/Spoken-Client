@@ -77,7 +77,7 @@ class Socket: WebSocketDelegate {
             logger.info("Socket connected")
             isConnected = true
             self.onConnected(headers: headers)
-            
+
         case .disconnected(let reason, let code):
             logger.info("Socket disconnected")
             isConnected = false

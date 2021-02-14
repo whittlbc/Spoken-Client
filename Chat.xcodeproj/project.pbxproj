@@ -25,6 +25,7 @@
 		0929591425D4E8A400FB297B /* WebRTCClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0929591325D4E8A400FB297B /* WebRTCClient.swift */; };
 		0929591825D4EC0C00FB297B /* RTCPeerConnectionFactory+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0929591725D4EC0C00FB297B /* RTCPeerConnectionFactory+Helpers.swift */; };
 		0929591F25D50A4400FB297B /* WebRTCVideoSourceConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0929591E25D50A4400FB297B /* WebRTCVideoSourceConfig.swift */; };
+		0929592825D8CD3B00FB297B /* JanusJSEP.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0929592725D8CD3B00FB297B /* JanusJSEP.swift */; };
 		092E346D25D2F663001FA74F /* JanusMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 092E346C25D2F663001FA74F /* JanusMessage.swift */; };
 		092E347125D2F98F001FA74F /* JanusKeepAliveMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 092E347025D2F98F001FA74F /* JanusKeepAliveMessage.swift */; };
 		0940E06E25A4D946006184D7 /* AV.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0940E06D25A4D946006184D7 /* AV.swift */; };
@@ -178,6 +179,7 @@
 		0929591325D4E8A400FB297B /* WebRTCClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebRTCClient.swift; sourceTree = "<group>"; };
 		0929591725D4EC0C00FB297B /* RTCPeerConnectionFactory+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RTCPeerConnectionFactory+Helpers.swift"; sourceTree = "<group>"; };
 		0929591E25D50A4400FB297B /* WebRTCVideoSourceConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebRTCVideoSourceConfig.swift; sourceTree = "<group>"; };
+		0929592725D8CD3B00FB297B /* JanusJSEP.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JanusJSEP.swift; sourceTree = "<group>"; };
 		092E346C25D2F663001FA74F /* JanusMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JanusMessage.swift; sourceTree = "<group>"; };
 		092E347025D2F98F001FA74F /* JanusKeepAliveMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JanusKeepAliveMessage.swift; sourceTree = "<group>"; };
 		0940E06D25A4D946006184D7 /* AV.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AV.swift; sourceTree = "<group>"; };
@@ -390,6 +392,7 @@
 				09416AF325D2E66A00B71C02 /* JanusConnection.swift */,
 				09416AF625D2E67E00B71C02 /* JanusHandle.swift */,
 				09416AF925D2E68400B71C02 /* JanusTx.swift */,
+				0929592725D8CD3B00FB297B /* JanusJSEP.swift */,
 			);
 			path = Janus;
 			sourceTree = "<group>";
@@ -1008,6 +1011,7 @@
 				0994C75C25C61DE00006919A /* AVAudioPCMBuffer+Helpers.swift in Sources */,
 				0968631F2583FB2A00B9B614 /* mocks.swift in Sources */,
 				099087A625797645001660D1 /* main.swift in Sources */,
+				0929592825D8CD3B00FB297B /* JanusJSEP.swift in Sources */,
 				0995DE13257B388500DAA334 /* NSBezierPath+CGPath.swift in Sources */,
 				0995DDFC257AED6400DAA334 /* FloatingWindow.swift in Sources */,
 				094DAB1825AFEB0900CFC2EC /* ImageCache.swift in Sources */,

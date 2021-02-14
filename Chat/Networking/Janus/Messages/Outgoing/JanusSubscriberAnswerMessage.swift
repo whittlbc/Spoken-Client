@@ -7,9 +7,20 @@
 //
 
 import Foundation
+import Arrow
 
-class JanusSubscriberAnswerMessage: JanusOfferMessage {
+class JanusSubscriberAnswerMessage: Codable, ArrowParsable {
         
+    var janus = JanusMessage.Key.message
+    
+    var sessionId: Int!
+    
+    var handleId: Int!
+    
+    var txId: String!
+    
+    var jsep: JanusJSEP!
+
     var body: JanusSubscriberAnswerMessageBody!
     
     enum CodingKeys: String, CodingKey {
@@ -39,9 +50,17 @@ class JanusSubscriberAnswerMessage: JanusOfferMessage {
             room: room
         )
     }
+    
+    required init() {}
+
+    required init(from decoder: Decoder) throws {
+        fatalError("init(from:) has not been implemented")
+    }
+    
+    func deserialize(_ json: JSON) {}
 }
 
-class JanusSubscriberAnswerMessageBody: JanusMessage {
+class JanusSubscriberAnswerMessageBody: Codable, ArrowParsable {
     
     enum RequestType: String {
         case start
@@ -56,4 +75,12 @@ class JanusSubscriberAnswerMessageBody: JanusMessage {
         self.request = requestType.rawValue
         self.room = room
     }
+    
+    required init() {}
+
+    required init(from decoder: Decoder) throws {
+        fatalError("init(from:) has not been implemented")
+    }
+    
+    func deserialize(_ json: JSON) {}
 }

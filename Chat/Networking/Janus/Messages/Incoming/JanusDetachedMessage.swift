@@ -9,7 +9,13 @@
 import Foundation
 import Arrow
 
-class JanusDetachedMessage: JanusMessage {
+class JanusDetachedMessage: Codable, ArrowParsable {
+    
+    static func fromJSON(_ json: JSON) -> Self {
+        let message = Self()
+        message.deserialize(json)
+        return message
+    }
     
     var janus = ""
     
@@ -17,7 +23,13 @@ class JanusDetachedMessage: JanusMessage {
     
     var hasSender: Bool { sender != 0 }
     
-    override func deserialize(_ json: JSON) {
+    required init() {}
+
+    required init(from decoder: Decoder) throws {
+        fatalError("init(from:) has not been implemented")
+    }
+
+    func deserialize(_ json: JSON) {
         janus <-- json[JanusMessage.Key.janus]
         sender <-- json[JanusMessage.Key.sender]
     }

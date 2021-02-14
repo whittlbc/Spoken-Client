@@ -9,7 +9,13 @@
 import Foundation
 import Arrow
 
-class JanusTxResponseMessage: JanusMessage {
+class JanusTxResponseMessage: Codable, ArrowParsable {
+    
+    static func fromJSON(_ json: JSON) -> Self {
+        let message = Self()
+        message.deserialize(json)
+        return message
+    }
     
     var janus = ""
     
@@ -25,7 +31,13 @@ class JanusTxResponseMessage: JanusMessage {
     
     var hasDataId: Bool { data.hasId }
     
-    override func deserialize(_ json: JSON) {
+    required init() {}
+
+    required init(from decoder: Decoder) throws {
+        fatalError("init(from:) has not been implemented")
+    }
+
+    func deserialize(_ json: JSON) {
         janus <-- json[JanusMessage.Key.janus]
         txId <-- json[JanusMessage.Key.transaction]
         data <-- json[JanusMessage.Key.data]
@@ -33,18 +45,24 @@ class JanusTxResponseMessage: JanusMessage {
     }
 }
 
-class JanusTxResponseMessageData: JanusMessage {
+class JanusTxResponseMessageData: Codable, ArrowParsable {
     
     var id: Int = 0
     
     var hasId: Bool { id != 0 }
     
-    override func deserialize(_ json: JSON) {
+    required init() {}
+
+    required init(from decoder: Decoder) throws {
+        fatalError("init(from:) has not been implemented")
+    }
+
+    func deserialize(_ json: JSON) {
         id <-- json[JanusMessage.Key.id]
     }
 }
 
-class JanusTxResponseMessageError: JanusMessage {
+class JanusTxResponseMessageError: Codable, ArrowParsable {
     
     var code: Int = 0
     
@@ -52,7 +70,13 @@ class JanusTxResponseMessageError: JanusMessage {
     
     var hasError: Bool { code != 0 && !reason.isEmpty }
 
-    override func deserialize(_ json: JSON) {
+    required init() {}
+
+    required init(from decoder: Decoder) throws {
+        fatalError("init(from:) has not been implemented")
+    }
+
+    func deserialize(_ json: JSON) {
         code <-- json[JanusMessage.Key.code]
         reason <-- json[JanusMessage.Key.reason]
     }

@@ -84,7 +84,7 @@ class JanusSocket: Socket {
         state == .error
     }
     
-    func sendMessage(_ message: JanusMessage) {
+    func sendMessage<T: Encodable>(_ message: T) {
         if let msg = serializeMessage(message) {
             webSocket.write(string: msg)
         }
@@ -112,7 +112,7 @@ class JanusSocket: Socket {
             sessionId: sessionId!,
             handleId: handleId,
             txId: JanusTx.newId(),
-            jsep: JanusMessage.newJSEP(fromSDP: sdp),
+            jsep: JanusJSEP(sdp: sdp),
             requestType: .configure,
             audio: true,
             video: hasVideo
@@ -124,7 +124,7 @@ class JanusSocket: Socket {
             sessionId: sessionId!,
             handleId: handleId,
             txId: JanusTx.newId(),
-            jsep: JanusMessage.newJSEP(fromSDP: sdp),
+            jsep: JanusJSEP(sdp: sdp),
             requestType: .start,
             room: roomId
         ))
@@ -147,7 +147,7 @@ class JanusSocket: Socket {
         guard let (messageType, json) = deserializeMessage(string: string) else {
             return
         }
-
+        
         switch messageType {
 
         // Success message.
@@ -487,7 +487,7 @@ class JanusSocket: Socket {
         sendMessage(JanusKeepAliveMessage(sessionId: sessId))
     }
     
-    private func serializeMessage(_ message: JanusMessage) -> String? {
+    private func serializeMessage<T: Encodable>(_ message: T) -> String? {
         do {
             let jsonData = try JSONEncoder().encode(message)
             return String(data: jsonData, encoding: .utf8)

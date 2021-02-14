@@ -7,8 +7,9 @@
 //
 
 import Foundation
+import Arrow
 
-class JanusJoinRoomMessage: JanusMessage {
+class JanusJoinRoomMessage: Codable, ArrowParsable {
     
     var janus = JanusMessage.Key.message
     
@@ -22,7 +23,6 @@ class JanusJoinRoomMessage: JanusMessage {
         
     enum CodingKeys: String, CodingKey {
         case janus
-        case plugin
         case sessionId = "session_id"
         case handleId = "handle_id"
         case txId = "transaction"
@@ -49,9 +49,17 @@ class JanusJoinRoomMessage: JanusMessage {
             feed: feed
         )
     }
+    
+    required init() {}
+
+    required init(from decoder: Decoder) throws {
+        fatalError("init(from:) has not been implemented")
+    }
+    
+    func deserialize(_ json: JSON) {}
 }
 
-class JanusJoinRoomMessageBody: JanusMessage {
+class JanusJoinRoomMessageBody: Codable, ArrowParsable {
     
     enum RequestType: String {
         case join
@@ -77,4 +85,12 @@ class JanusJoinRoomMessageBody: JanusMessage {
         self.ptype = ptype.rawValue
         self.feed = feed
     }
+    
+    required init() {}
+
+    required init(from decoder: Decoder) throws {
+        fatalError("init(from:) has not been implemented")
+    }
+    
+    func deserialize(_ json: JSON) {}
 }

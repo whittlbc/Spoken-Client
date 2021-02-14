@@ -14,7 +14,7 @@ class StreamManager {
     static let videoConfig = WebRTCVideoSourceConfig(
         width: Int(ChannelAvatarView.Style.VideoPreviewLayer.diameter),
         height: Int(ChannelAvatarView.Style.VideoPreviewLayer.diameter),
-        fps: 30
+        fps: 60
     )
 
     // WebRTC client for room connections.

@@ -7,8 +7,9 @@
 //
 
 import Foundation
+import Arrow
 
-class JanusLeaveMessage: JanusMessage {
+class JanusLeaveMessage: Codable, ArrowParsable {
     
     var janus = JanusMessage.Key.detach
     
@@ -31,5 +32,13 @@ class JanusLeaveMessage: JanusMessage {
         self.handleId = handleId
         self.txId = txId
     }
+    
+    required init() {}
+
+    required init(from decoder: Decoder) throws {
+        fatalError("init(from:) has not been implemented")
+    }
+    
+    func deserialize(_ json: JSON) {}
 }
 

@@ -7,9 +7,10 @@
 //
 
 import Foundation
+import Arrow
 
-class JanusOfferMessage: JanusMessage {
-    
+class JanusPublisherOfferMessage: Codable, ArrowParsable {
+        
     var janus = JanusMessage.Key.message
     
     var sessionId: Int!
@@ -19,10 +20,7 @@ class JanusOfferMessage: JanusMessage {
     var txId: String!
     
     var jsep: JanusJSEP!
-}
 
-class JanusPublisherOfferMessage: JanusOfferMessage {
-        
     var body: JanusPublisherOfferMessageBody!
     
     enum CodingKeys: String, CodingKey {
@@ -54,9 +52,17 @@ class JanusPublisherOfferMessage: JanusOfferMessage {
             video: video
         )
     }
+    
+    required init() {}
+
+    required init(from decoder: Decoder) throws {
+        fatalError("init(from:) has not been implemented")
+    }
+    
+    func deserialize(_ json: JSON) {}
 }
 
-class JanusPublisherOfferMessageBody: JanusMessage {
+class JanusPublisherOfferMessageBody: Codable, ArrowParsable {
     
     enum RequestType: String {
         case configure
@@ -74,4 +80,12 @@ class JanusPublisherOfferMessageBody: JanusMessage {
         self.audio = audio ? 1 : 0
         self.video = video ? 1 : 0
     }
+    
+    required init() {}
+
+    required init(from decoder: Decoder) throws {
+        fatalError("init(from:) has not been implemented")
+    }
+    
+    func deserialize(_ json: JSON) {}
 }

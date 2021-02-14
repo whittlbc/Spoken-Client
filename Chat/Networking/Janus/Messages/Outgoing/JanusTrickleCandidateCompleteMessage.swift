@@ -8,8 +8,17 @@
 
 import Foundation
 import WebRTC
+import Arrow
 
-class JanusTrickleCandidateCompleteMessage: JanusTrickleMessage {
+class JanusTrickleCandidateCompleteMessage: Codable, ArrowParsable {
+
+    var janus = JanusMessage.Key.trickle
+    
+    var sessionId: Int!
+    
+    var handleId: Int!
+    
+    var txId: String!
 
     var candidate: JanusTrickleCandidateCompleteMessageCandidate!
     
@@ -20,7 +29,7 @@ class JanusTrickleCandidateCompleteMessage: JanusTrickleMessage {
         case txId = "transaction"
         case candidate
     }
-
+    
     convenience init(sessionId: Int, handleId: Int, txId: String) {
         self.init()
         self.sessionId = sessionId
@@ -29,15 +38,24 @@ class JanusTrickleCandidateCompleteMessage: JanusTrickleMessage {
         self.candidate = JanusTrickleCandidateCompleteMessageCandidate()
     }
     
-    required init() {
-        super.init()
-    }
-    
+    required init() {}
+
     required init(from decoder: Decoder) throws {
         fatalError("init(from:) has not been implemented")
     }
+    
+    func deserialize(_ json: JSON) {}
 }
 
-class JanusTrickleCandidateCompleteMessageCandidate: JanusMessage {
+class JanusTrickleCandidateCompleteMessageCandidate: Codable, ArrowParsable {
+    
     var completed: Int = 1
+    
+    required init() {}
+
+    required init(from decoder: Decoder) throws {
+        fatalError("init(from:) has not been implemented")
+    }
+    
+    func deserialize(_ json: JSON) {}
 }

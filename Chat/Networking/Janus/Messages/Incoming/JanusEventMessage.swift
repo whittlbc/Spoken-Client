@@ -9,7 +9,13 @@
 import Foundation
 import Arrow
 
-class JanusEventMessage: JanusMessage {
+class JanusEventMessage: Codable, ArrowParsable {
+    
+    static func fromJSON(_ json: JSON) -> Self {
+        let message = Self()
+        message.deserialize(json)
+        return message
+    }
     
     var janus = ""
     
@@ -33,7 +39,13 @@ class JanusEventMessage: JanusMessage {
     
     var feedDidLeave: Bool { plugin.didLeave }
     
-    override func deserialize(_ json: JSON) {
+    required init() {}
+
+    required init(from decoder: Decoder) throws {
+        fatalError("init(from:) has not been implemented")
+    }
+
+    func deserialize(_ json: JSON) {
         janus <-- json[JanusMessage.Key.janus]
         sender <-- json[JanusMessage.Key.sender]
         plugin <-- json[JanusMessage.Key.pluginData]
@@ -41,7 +53,7 @@ class JanusEventMessage: JanusMessage {
     }
 }
 
-class JanusEventMessagePlugin: JanusMessage {
+class JanusEventMessagePlugin: Codable, ArrowParsable {
 
     var data = JanusEventMessagePluginData()
     
@@ -55,14 +67,20 @@ class JanusEventMessagePlugin: JanusMessage {
     
     var didLeave: Bool { leaving != 0 }
 
-    override func deserialize(_ json: JSON) {
+    required init() {}
+
+    required init(from decoder: Decoder) throws {
+        fatalError("init(from:) has not been implemented")
+    }
+
+    func deserialize(_ json: JSON) {
         data <-- json[JanusMessage.Key.data]
         publishers <-- json[JanusMessage.Key.publishers]
         leaving <-- json[JanusMessage.Key.leaving]
     }
 }
 
-class JanusEventMessagePluginData: JanusMessage {
+class JanusEventMessagePluginData: Codable, ArrowParsable {
     
     enum VideoRoomStatus: String {
         case joined
@@ -76,12 +94,18 @@ class JanusEventMessagePluginData: JanusMessage {
         VideoRoomStatus(rawValue: videoRoom)
     }
 
-    override func deserialize(_ json: JSON) {
+    required init() {}
+
+    required init(from decoder: Decoder) throws {
+        fatalError("init(from:) has not been implemented")
+    }
+
+    func deserialize(_ json: JSON) {
         videoRoom <-- json[JanusMessage.Key.videoRoom]
     }
 }
 
-class JanusEventMessagePluginPublisher: JanusMessage {
+class JanusEventMessagePluginPublisher: Codable, ArrowParsable {
     
     var feedId: Int = 0
     
@@ -89,7 +113,13 @@ class JanusEventMessagePluginPublisher: JanusMessage {
     
     var hasFeed: Bool { feedId != 0 && !display.isEmpty }
 
-    override func deserialize(_ json: JSON) {
+    required init() {}
+
+    required init(from decoder: Decoder) throws {
+        fatalError("init(from:) has not been implemented")
+    }
+
+    func deserialize(_ json: JSON) {
         feedId <-- json[JanusMessage.Key.id]
         display <-- json[JanusMessage.Key.display]
     }

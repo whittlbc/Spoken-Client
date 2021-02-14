@@ -28,6 +28,10 @@
 	<string>1</string>
 	<key>ENV</key>
 	<string>$(ENV)</string>
+	<key>ICE_SERVER_URLS</key>
+	<string>$(ICE_SERVER_URLS)</string>
+	<key>JANUS_URL</key>
+	<string>$(JANUS_URL)</string>
 	<key>LSApplicationCategoryType</key>
 	<string>public.app-category.productivity</string>
 	<key>LSMinimumSystemVersion</key>

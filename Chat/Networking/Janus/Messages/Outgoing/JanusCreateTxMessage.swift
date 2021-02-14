@@ -7,8 +7,9 @@
 //
 
 import Foundation
+import Arrow
 
-class JanusCreateTxMessage: JanusMessage {
+class JanusCreateTxMessage: Codable, ArrowParsable {
     
     var janus = JanusMessage.Key.create
     
@@ -23,4 +24,12 @@ class JanusCreateTxMessage: JanusMessage {
         self.init()
         self.txId = txId
     }
+
+    required init() {}
+
+    required init(from decoder: Decoder) throws {
+        fatalError("init(from:) has not been implemented")
+    }
+    
+    func deserialize(_ json: JSON) {}
 }

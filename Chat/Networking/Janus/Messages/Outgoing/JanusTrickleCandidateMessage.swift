@@ -8,9 +8,9 @@
 
 import Foundation
 import WebRTC
+import Arrow
 
-
-class JanusTrickleMessage: JanusMessage {
+class JanusTrickleCandidateMessage: Codable, ArrowParsable {
     
     var janus = JanusMessage.Key.trickle
     
@@ -19,10 +19,7 @@ class JanusTrickleMessage: JanusMessage {
     var handleId: Int!
     
     var txId: String!
-}
 
-class JanusTrickleCandidateMessage: JanusTrickleMessage {
-    
     var candidate: JanusTrickleCandidateMessageCandidate?
     
     enum CodingKeys: String, CodingKey {
@@ -49,9 +46,17 @@ class JanusTrickleCandidateMessage: JanusTrickleMessage {
             sdpMLineIndex: Int(iceCandidate.sdpMLineIndex)
         )
     }
+    
+    required init() {}
+
+    required init(from decoder: Decoder) throws {
+        fatalError("init(from:) has not been implemented")
+    }
+    
+    func deserialize(_ json: JSON) {}
 }
 
-class JanusTrickleCandidateMessageCandidate: JanusMessage {
+class JanusTrickleCandidateMessageCandidate: Codable, ArrowParsable {
     
     var candidate: String!
     
@@ -65,4 +70,12 @@ class JanusTrickleCandidateMessageCandidate: JanusMessage {
         self.sdpMid = sdpMid
         self.sdpMLineIndex = sdpMLineIndex
     }
+    
+    required init() {}
+
+    required init(from decoder: Decoder) throws {
+        fatalError("init(from:) has not been implemented")
+    }
+    
+    func deserialize(_ json: JSON) {}
 }
