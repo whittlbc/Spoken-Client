@@ -123,7 +123,7 @@ class WebRTCClient: NSObject, RTCPeerConnectionDelegate, JanusSocketDelegate {
         
         // Use the first available capture device.
         let camera = captureDevices[0]
-        
+                
         // Use the highest last supported video format.
         guard let format = RTCCameraVideoCapturer.supportedFormats(for: camera).last else {
             logger.error("Failed to render local stream -- no supported video capture formats.")
@@ -134,7 +134,7 @@ class WebRTCClient: NSObject, RTCPeerConnectionDelegate, JanusSocketDelegate {
             logger.error("Failed to render local stream -- failed to get FPS for format: \(format)")
             return
         }
-        
+                
         // Start capturing local video stream.
         capturer.startCapture(with: camera, format: format, fps: Int(fps.magnitude))
                         

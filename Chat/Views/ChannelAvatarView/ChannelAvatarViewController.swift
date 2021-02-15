@@ -397,7 +397,7 @@ class ChannelAvatarViewController: NSViewController {
         
         // Add auto-layout constraints.
         constrainVideoPreviewView(previewView)
-        
+                
         // Store preview view.
         videoPreviewView = previewView
     }

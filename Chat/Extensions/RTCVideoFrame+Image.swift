@@ -19,6 +19,8 @@ extension RTCVideoFrame {
         }
 
         return CIImage(cvImageBuffer: buffer.pixelBuffer)
+            .oriented(forExifOrientation: 9)
+            .transformed(by: CGAffineTransform(scaleX: -1, y: 1))
     }
     
     var nsImage: NSImage? { ciImage?.nsImage }
