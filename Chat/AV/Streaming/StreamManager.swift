@@ -20,7 +20,7 @@ class StreamManager {
 
     // WebRTC client for room connections.
     var client: WebRTCClient!
-    
+
     func streamNewMessage(_ message: Message) {
         connectToRoom(message.uploadId)
     }
@@ -31,6 +31,18 @@ class StreamManager {
     
     func renderLocalStream(to renderer: RTCVideoRenderer) {
         client.renderLocalStream(to: renderer)
+    }
+    
+    func cacheLastVideoFrame() -> NSImage? {
+        guard let videoPreviewView = client.localVideoRenderer as? WebRTCVideoPreviewView,
+              let lastFrame = videoPreviewView.lastFrame,
+              let image = lastFrame.nsImage else {
+            return nil
+        }
+        
+        dataProvider.user.setVideoPlaceholder(id: Session.currentUserId!, image: image)
+        
+        return image
     }
     
     private func connectToRoom(_ roomId: Int) {

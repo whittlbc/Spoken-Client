@@ -42,7 +42,7 @@ class ChannelAvatarViewController: NSViewController {
     private var recipientImageSubscription: AnyCancellable?
     
     // Channel video preview view.
-    private var videoPreviewView: RTCMTLNSVideoView?
+    private var videoPreviewView: WebRTCVideoPreviewView?
 
     // Subscription to av recorder state changes.
     private var avRecorderSubscription: AnyCancellable?
@@ -386,12 +386,12 @@ class ChannelAvatarViewController: NSViewController {
     
     private func createVideoPreviewView() {
         // Create new video preview view.
-        let previewView = RTCMTLNSVideoView(frame: imageView.frame)
+        let previewView = WebRTCVideoPreviewView(frame: imageView.frame)
         
         // Make it layer based.
         previewView.wantsLayer = true
         previewView.layer?.masksToBounds = true
-        
+                
         // Add video preview view as subview of image view.
         imageView.addSubview(previewView)
         
@@ -402,7 +402,7 @@ class ChannelAvatarViewController: NSViewController {
         videoPreviewView = previewView
     }
 
-    private func constrainVideoPreviewView(_ previewView: RTCMTLNSVideoView) {
+    private func constrainVideoPreviewView(_ previewView: WebRTCVideoPreviewView) {
         // Set up auto-layout for sizing/positioning.
         previewView.translatesAutoresizingMaskIntoConstraints = false
         
@@ -856,7 +856,7 @@ class ChannelAvatarViewController: NSViewController {
             
             // Animate avatar view size.
             animateAvatarViewSize(toState: state)
-            
+                        
             // Connect video preview to stream.
             connectVideoPreviewToLocalStream()
         }
@@ -883,8 +883,13 @@ class ChannelAvatarViewController: NSViewController {
     }
     
     private func renderSendingRecording(_ state: ChannelState) {
-        // TODO: Need to set avatar image to last frame of video
+        // Update avatar placeholder image to last frame of video.
+        if let image = AV.streamManager.cacheLastVideoFrame() {
+            setAvatarImage(to: image)
+        }
         
+        AV.stopRecordingMessage()
+
         // Fade in blur layer to avatar image.
         fadeInBlurLayer(
             blurRadius: ChannelAvatarView.Style.BlurLayer.spinBlurRadius,

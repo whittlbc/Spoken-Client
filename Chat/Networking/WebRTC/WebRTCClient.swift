@@ -8,6 +8,7 @@
 
 import Cocoa
 import WebRTC
+import AVFoundation
 
 class WebRTCClient: NSObject, RTCPeerConnectionDelegate, JanusSocketDelegate {
     
@@ -33,6 +34,8 @@ class WebRTCClient: NSObject, RTCPeerConnectionDelegate, JanusSocketDelegate {
     private var localVideoTrack: RTCVideoTrack?
     
     private var videoCapturer: RTCVideoCapturer?
+    
+    private(set) var localVideoRenderer: RTCVideoRenderer?
         
     private var signalingClient: JanusSocket!
     
@@ -100,6 +103,9 @@ class WebRTCClient: NSObject, RTCPeerConnectionDelegate, JanusSocketDelegate {
     }
     
     func renderLocalStream(to renderer: RTCVideoRenderer) {
+        // Store reference to video renderer.
+        localVideoRenderer = renderer
+        
         // Ensure the video capturer has been set.
         guard let capturer = self.videoCapturer as? RTCCameraVideoCapturer else {
             logger.error("Failed to render local stream -- videoCapturer came up nil.")
@@ -131,7 +137,7 @@ class WebRTCClient: NSObject, RTCPeerConnectionDelegate, JanusSocketDelegate {
         
         // Start capturing local video stream.
         capturer.startCapture(with: camera, format: format, fps: Int(fps.magnitude))
-                
+                        
         // Render the stream.
         localVideoTrack?.add(renderer)
     }

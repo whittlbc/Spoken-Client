@@ -82,10 +82,10 @@ class ChannelAvatarView: NSView {
             static let disabledBlurRadius: Double = 1.6
             
             // Gaussian blur input radius used when bluring layer behind spinner.
-            static let spinBlurRadius: Double = 3.0
+            static let spinBlurRadius: Double = 2.0
             
             // Gaussian blur input radius used when bluring video placeholder avatar.
-            static let videoPlaceholderAvatarBlurRadius: Double = 3.0
+            static let videoPlaceholderAvatarBlurRadius: Double = 2.0
             
             // Opacity of blur layer shown with spinner.
             static let spinAlpha: CGFloat = 0.2

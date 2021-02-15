@@ -310,9 +310,6 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate {
 
         // Set state to sending recording.
         toRecordingSending()
-
-        // Stop the active recording.
-        AV.stopRecordingMessage()
         
         // Show recording sending for a period of time, and then show it as sent.
         DispatchQueue.main.asyncAfter(
@@ -320,9 +317,6 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate {
         ) { [weak self] in
             self?.showRecordingSent()
         }
-
-//        // Create new recording message.
-//        windowModel.createRecordingMessage(fileSize: AV.recordingSize)
     }
 
     // Start timer used to check whether mouse is still inside the previewing window.

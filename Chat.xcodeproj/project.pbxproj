@@ -156,6 +156,8 @@
 		09F60ACC258C2FD50020974A /* Style.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F60ACB258C2FD50020974A /* Style.swift */; };
 		09F60ACF258C37AC0020974A /* NSView+Animation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F60ACE258C37AC0020974A /* NSView+Animation.swift */; };
 		09F60AD72592B7CE0020974A /* HotKey in Frameworks */ = {isa = PBXBuildFile; productRef = 09F60AD62592B7CE0020974A /* HotKey */; };
+		09FE18B325D9DDB400B3B7E7 /* WebRTCVideoPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09FE18B225D9DDB400B3B7E7 /* WebRTCVideoPreviewView.swift */; };
+		09FE18B625DA30C000B3B7E7 /* RTCVideoFrame+Image.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09FE18B525DA30C000B3B7E7 /* RTCVideoFrame+Image.swift */; };
 		09FF53D025B524930083CD28 /* ChannelWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09FF53CF25B524930083CD28 /* ChannelWindowController.swift */; };
 		09FF53D325B5293D0083CD28 /* ChannelRenderSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09FF53D225B5293D0083CD28 /* ChannelRenderSpec.swift */; };
 /* End PBXBuildFile section */
@@ -308,6 +310,8 @@
 		09F60AC8258C13680020974A /* Icon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Icon.swift; sourceTree = "<group>"; };
 		09F60ACB258C2FD50020974A /* Style.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Style.swift; sourceTree = "<group>"; };
 		09F60ACE258C37AC0020974A /* NSView+Animation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSView+Animation.swift"; sourceTree = "<group>"; };
+		09FE18B225D9DDB400B3B7E7 /* WebRTCVideoPreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebRTCVideoPreviewView.swift; sourceTree = "<group>"; };
+		09FE18B525DA30C000B3B7E7 /* RTCVideoFrame+Image.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RTCVideoFrame+Image.swift"; sourceTree = "<group>"; };
 		09FF53CF25B524930083CD28 /* ChannelWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelWindowController.swift; sourceTree = "<group>"; };
 		09FF53D225B5293D0083CD28 /* ChannelRenderSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelRenderSpec.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -361,6 +365,7 @@
 			children = (
 				0929591325D4E8A400FB297B /* WebRTCClient.swift */,
 				0929591E25D50A4400FB297B /* WebRTCVideoSourceConfig.swift */,
+				09FE18B225D9DDB400B3B7E7 /* WebRTCVideoPreviewView.swift */,
 			);
 			path = WebRTC;
 			sourceTree = "<group>";
@@ -701,6 +706,7 @@
 				0994C76125C7ABA40006919A /* Data+InputStream.swift */,
 				09416AE625D2E29500B71C02 /* Error+Helpers.swift */,
 				0929591725D4EC0C00FB297B /* RTCPeerConnectionFactory+Helpers.swift */,
+				09FE18B525DA30C000B3B7E7 /* RTCVideoFrame+Image.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -974,7 +980,9 @@
 				094DAB1F25B1335E00CFC2EC /* Publisher+Operators.swift in Sources */,
 				09BFD8BA25D0D1FF0071966B /* StreamManager.swift in Sources */,
 				0951D01C25CF5F6200E0FB28 /* OldJanusSocket.swift in Sources */,
+				09FE18B325D9DDB400B3B7E7 /* WebRTCVideoPreviewView.swift in Sources */,
 				094DAB0A25AFB98600CFC2EC /* Dictionary+Helpers.swift in Sources */,
+				09FE18B625DA30C000B3B7E7 /* RTCVideoFrame+Image.swift in Sources */,
 				0968633125859A3000B9B614 /* ChannelAvatarView.swift in Sources */,
 				0925751E25D375B2009FC434 /* JanusAttachToPluginMessage.swift in Sources */,
 				092E346D25D2F663001FA74F /* JanusMessage.swift in Sources */,
