@@ -1,5 +1,5 @@
 //
-//  JanusOfferMessage.swift
+//  JanusVideoRoomSubscriberAnswerMessage.swift
 //  Chat
 //
 //  Created by Ben Whittle on 2/9/21.
@@ -9,7 +9,7 @@
 import Foundation
 import Arrow
 
-class JanusPublisherOfferMessage: Codable, ArrowParsable {
+class JanusVideoRoomSubscriberAnswerMessage: Codable, ArrowParsable {
         
     var janus = JanusMessage.Key.message
     
@@ -21,7 +21,7 @@ class JanusPublisherOfferMessage: Codable, ArrowParsable {
     
     var jsep: JanusJSEP!
 
-    var body: JanusPublisherOfferMessageBody!
+    var body: JanusVideoRoomSubscriberAnswerMessageBody!
     
     enum CodingKeys: String, CodingKey {
         case janus
@@ -37,19 +37,17 @@ class JanusPublisherOfferMessage: Codable, ArrowParsable {
         handleId: Int,
         txId: String,
         jsep: JanusJSEP,
-        requestType: JanusPublisherOfferMessageBody.RequestType,
-        audio: Bool,
-        video: Bool
+        requestType: JanusVideoRoomSubscriberAnswerMessageBody.RequestType,
+        room: Int
     ) {
         self.init()
         self.sessionId = sessionId
         self.handleId = handleId
         self.txId = txId
         self.jsep = jsep
-        self.body = JanusPublisherOfferMessageBody(
+        self.body = JanusVideoRoomSubscriberAnswerMessageBody(
             requestType: requestType,
-            audio: audio,
-            video: video
+            room: room
         )
     }
     
@@ -62,23 +60,20 @@ class JanusPublisherOfferMessage: Codable, ArrowParsable {
     func deserialize(_ json: JSON) {}
 }
 
-class JanusPublisherOfferMessageBody: Codable, ArrowParsable {
+class JanusVideoRoomSubscriberAnswerMessageBody: Codable, ArrowParsable {
     
     enum RequestType: String {
-        case configure
+        case start
     }
 
     var request: String!
     
-    var audio: Bool!
+    var room: Int!
     
-    var video: Bool!
-
-    convenience init(requestType: RequestType, audio: Bool, video: Bool) {
+    convenience init(requestType: RequestType, room: Int) {
         self.init()
         self.request = requestType.rawValue
-        self.audio = audio
-        self.video = video
+        self.room = room
     }
     
     required init() {}

@@ -102,13 +102,13 @@ class ChannelParticleView: ParticleView {
     }
     
     func tapMic() {
-        AV.mic.addPipe(forKey: ChannelParticleView.micInputPipeKey, pipe: { [weak self] buffer in
-            self?.analyzeAudio(buffer: buffer)
-        })
+//        AV.mic.addPipe(forKey: ChannelParticleView.micInputPipeKey, pipe: { [weak self] buffer in
+//            self?.analyzeAudio(buffer: buffer)
+//        })
     }
     
     func untapMic() {
-        AV.mic.removePipe(forKey: ChannelParticleView.micInputPipeKey)
+//        AV.mic.removePipe(forKey: ChannelParticleView.micInputPipeKey)
     }
     
     private func analyzeAudio(buffer: AVAudioPCMBuffer) {

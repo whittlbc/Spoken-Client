@@ -20,11 +20,11 @@ class WebRTCClient: NSObject, RTCPeerConnectionDelegate, JanusSocketDelegate {
         static let audioId = "SpokenAudioTrack"
         static let videoId = "SpokenVideoTrack"
     }
-    
+     
     private var videoSourceConfig: WebRTCVideoSourceConfig!
     
     private let factory = RTCPeerConnectionFactory.newDefaultFactory()
-
+    
     private var connections = [Int: JanusConnection]()
     
     private var publisherPeerConnection: RTCPeerConnection!
@@ -36,21 +36,17 @@ class WebRTCClient: NSObject, RTCPeerConnectionDelegate, JanusSocketDelegate {
     private var videoCapturer: RTCVideoCapturer?
     
     private(set) var localVideoRenderer: RTCVideoRenderer?
-        
+
     private var signalingClient: JanusSocket!
     
-    private var iceServers: [RTCIceServer] { [RTCIceServer(urlStrings: Config.iceServerURLs)] }
-    
-    private var publisherMediaConstraints: RTCMediaConstraints {
-        getMediaConstraints()
-    }
-    
+    private var iceServers: [RTCIceServer]!
+                
     private var peerMediaConstraints: RTCMediaConstraints {
-        getMediaConstraints()
+        getMediaConstraints(options: ["DtlsSrtpKeyAgreement": kRTCMediaConstraintsValueTrue])
     }
     
     private var offerMediaConstraints: RTCMediaConstraints {
-        getMediaConstraints(receiveAudio: true, receiveVideo: true)
+        getMediaConstraints(receiveAudio: false, receiveVideo: false)
     }
     
     private var answerMediaConstraints: RTCMediaConstraints {
@@ -60,12 +56,15 @@ class WebRTCClient: NSObject, RTCPeerConnectionDelegate, JanusSocketDelegate {
     private var audioTrackMediaConstraints: RTCMediaConstraints {
         getMediaConstraints()
     }
-            
-    required init(roomId: Int, videoSourceConfig: WebRTCVideoSourceConfig) {
+    
+    required init(message: Message, videoSourceConfig: WebRTCVideoSourceConfig) {
         super.init()
         
         // Store config to apply to local video track.
         self.videoSourceConfig = videoSourceConfig
+        
+        // Set ICE servers from message.
+        self.iceServers = message.getIceServers()
         
         // Create publisher peer connection.
         createPublisherPeerConnection()
@@ -74,8 +73,8 @@ class WebRTCClient: NSObject, RTCPeerConnectionDelegate, JanusSocketDelegate {
         configureAudioSession()
 
         // Create and connect to signaling server.
-        createSignalingClient(roomId: roomId)
-        
+        createSignalingClient(message: message)
+                
         // Create local audio stream.
         createLocalAudioStream()
         
@@ -134,10 +133,10 @@ class WebRTCClient: NSObject, RTCPeerConnectionDelegate, JanusSocketDelegate {
             logger.error("Failed to render local stream -- failed to get FPS for format: \(format)")
             return
         }
-                
+
         // Start capturing local video stream.
         capturer.startCapture(with: camera, format: format, fps: Int(fps.magnitude))
-                        
+
         // Render the stream.
         localVideoTrack?.add(renderer)
     }
@@ -230,9 +229,11 @@ class WebRTCClient: NSObject, RTCPeerConnectionDelegate, JanusSocketDelegate {
             logger.error("Both connection and JSEP required to set remote desc: handleId=\(handleId)")
             return
         }
-
+        
         // Set remote description for peer connection.
         setRemoteDescription(jsep.toSDP(), forPeerConnection: connection.peerConnection) {}
+        
+        print("ANSWER: \n\(jsep.toSDP())")
     }
     
     private func handleSubscriberRemoteJSEP(handleId: Int, jsep: JanusJSEP?) {
@@ -344,10 +345,12 @@ class WebRTCClient: NSObject, RTCPeerConnectionDelegate, JanusSocketDelegate {
                 logger.error("No SDP returned when offering peer connection.")
                 return
             }
+            
+            print("OFFER: \n\(sdp)")
 
             // Set local description and create publisher offer.
             self.setLocalDescription(sdp, forPeerConnection: peerConnection) {
-                self.signalingClient.createPublisherOffer(handleId: handleId, sdp: sdp, hasVideo: true)
+                self.signalingClient.sendOffer(handleId: handleId, sdp: sdp)
             }
         }
     }
@@ -366,7 +369,7 @@ class WebRTCClient: NSObject, RTCPeerConnectionDelegate, JanusSocketDelegate {
 
             // Set local description and create subscriber answer.
             self.setLocalDescription(sdp, forPeerConnection: peerConnection) {
-                self.signalingClient.createSubscriberAnswer(handleId: handleId, sdp: sdp)
+                self.signalingClient.sendAnswer(handleId: handleId, sdp: sdp)
             }
         }
     }
@@ -399,7 +402,7 @@ class WebRTCClient: NSObject, RTCPeerConnectionDelegate, JanusSocketDelegate {
             height: Int32(videoSourceConfig.height),
             fps: Int32(videoSourceConfig.fps)
         )
-        
+                        
         // Create new video capturer with the new source as delegate.
         videoCapturer = RTCCameraVideoCapturer(delegate: videoSource)
                 
@@ -413,24 +416,23 @@ class WebRTCClient: NSObject, RTCPeerConnectionDelegate, JanusSocketDelegate {
     }
     
     private func createPublisherPeerConnection() {
-        publisherPeerConnection = factory.peerConnection(
-            with: getPeerRTCConfig(),
-            constraints: publisherMediaConstraints,
-            delegate: nil
-        )
+        publisherPeerConnection = createPeerConnection()
     }
     
     private func createPeerConnection() -> RTCPeerConnection {
         return factory.peerConnection(
             with: getPeerRTCConfig(),
             constraints: peerMediaConstraints,
-            delegate: nil
+            delegate: self
         )
     }
     
-    private func createSignalingClient(roomId: Int) {
+    private func createSignalingClient(message: Message) {
         // Use Janus as signaling server.
-        signalingClient = JanusSocket(roomId: roomId)
+        signalingClient = JanusRecordPlaySocket(
+            url: JanusSocket.formatURL(host: message.streamServerIP),
+            recordingId: Int.random(in: 1..<1000)
+        )
         
         // Set delegate to self.
         signalingClient.delegate = self
@@ -468,14 +470,14 @@ class WebRTCClient: NSObject, RTCPeerConnectionDelegate, JanusSocketDelegate {
         config.iceTransportPolicy = .all
         config.sdpSemantics = .unifiedPlan
         config.continualGatheringPolicy = .gatherContinually
-        config.bundlePolicy = .maxBundle
-        config.keyType = .ECDSA
-        config.rtcpMuxPolicy = .require
-        config.tcpCandidatePolicy = .enabled
         return config
     }
         
-    private func getMediaConstraints(receiveAudio: Bool? = nil, receiveVideo: Bool? = nil) -> RTCMediaConstraints {
+    private func getMediaConstraints(
+        receiveAudio: Bool? = nil,
+        receiveVideo: Bool? = nil,
+        options: [String: String]? = nil
+    ) -> RTCMediaConstraints {
         var mandatoryConstraints = [String: String]()
         
         if let audio = receiveAudio {
@@ -488,7 +490,7 @@ class WebRTCClient: NSObject, RTCPeerConnectionDelegate, JanusSocketDelegate {
         
         return RTCMediaConstraints(
             mandatoryConstraints: mandatoryConstraints.isEmpty ? nil : mandatoryConstraints,
-            optionalConstraints: nil
+            optionalConstraints: options
         )
     }
     

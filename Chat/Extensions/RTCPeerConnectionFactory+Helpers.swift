@@ -13,7 +13,7 @@ extension RTCPeerConnectionFactory {
     
     static func newDefaultFactory() -> RTCPeerConnectionFactory {
         RTCInitializeSSL()
-        
+                
         // Support all codec formats for encode and decode.
         return RTCPeerConnectionFactory(
             encoderFactory: RTCDefaultVideoEncoderFactory(),

@@ -1,5 +1,5 @@
 //
-//  JanusSocketDelegate.swift
+//  JanusVideoRoomSocketDelegate.swift
 //  Chat
 //
 //  Created by Ben Whittle on 2/9/21.

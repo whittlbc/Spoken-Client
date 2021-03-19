@@ -15,6 +15,7 @@ enum JanusMessage {
     enum Key {
         static let janus = "janus"
         static let videoRoomPlugin = "janus.plugin.videoroom"
+        static let recordPlayPlugin = "janus.plugin.recordplay"
         static let create = "create"
         static let attach = "attach"
         static let detach = "detach"
@@ -45,18 +46,4 @@ enum JanusMessage {
         case detached
         case ack
     }
-    
-//    static func newJSEP(fromSDP sdp: RTCSessionDescription) -> JanusJSEP {
-//        [
-//            Key.type: RTCSessionDescription.string(for: sdp.type),
-//            Key.sdp: sdp.sdp
-//        ]
-//    }
-//
-//    static func newSDP(fromJSEP jsep: JanusJSEP) -> RTCSessionDescription {
-//        return RTCSessionDescription(
-//            type: RTCSessionDescription.self.type(for: jsep[Key.type] as! String),
-//            sdp: jsep[Key.sdp] as! String
-//        )
-//    }
 }

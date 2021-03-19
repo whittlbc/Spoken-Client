@@ -109,7 +109,7 @@ class MicTap {
         let inputNode = audioEngine.inputNode
         let inputFormat = inputNode.outputFormat(forBus: bus)
         audioEngine.connect(inputNode, to: mixerNode, format: inputFormat)
-
+        
         // Connect mixer node to main mixer node.
         let mainMixerNode = audioEngine.mainMixerNode
         let mixerFormat = AVAudioFormat(commonFormat: .pcmFormatFloat32, sampleRate: inputFormat.sampleRate, channels: 1, interleaved: false)

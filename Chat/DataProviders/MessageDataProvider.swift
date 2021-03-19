@@ -23,33 +23,4 @@ class MessageDataProvider<T: Model & NetworkingJSONDecodable>: DataProvider<T> {
     func create(channelId: String, messageType: MessageType) -> AnyPublisher<T, Error> {
         create(params: ["channel_id": channelId, "message_type": messageType.rawValue])
     }
-    
-    func getForConsumption(id: String) -> AnyPublisher<T, Error> {
-        return get(id: id)
-            .flatMap({ self.loadFiles(for: $0, forConsumption: true) })
-            .eraseToAnyPublisher()
-    }
-    
-    private func loadFiles(for model: T, forConsumption: Bool = false) -> AnyPublisher<T, Error> {
-        var message = model as! Message
-        
-        return publishedFileIds(message: message)
-            .flatMap {
-                Publishers.MergeMany(
-                    $0.map({ dataProvider.file.get(id: $0, params: ["for_consumption": true]) })
-                )
-            }
-            .collect()
-            .map { files in
-                message.files = files
-                return message as! T
-            }
-            .eraseToAnyPublisher()
-    }
-    
-    private func publishedFileIds(message: Message) -> AnyPublisher<[String], Error> {
-        return Just(message.fileIds)
-            .setFailureType(to: Error.self)
-            .eraseToAnyPublisher()
-    }
 }

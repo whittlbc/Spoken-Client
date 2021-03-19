@@ -281,7 +281,7 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate {
         // Enable key event listners.
         toggleRecordingKeyListeners(enable: true)
 
-        // Start recording either video or audio based on settings.
+        // Start recording message.
         AV.startRecordingMessage(message)
         
         DispatchQueue.main.asyncAfter(
@@ -406,14 +406,14 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate {
     
     private func uploadRecordingFile(_ file: File) {
         // Get the url of the most recent AV recording.
-        guard let recordingURL = AV.recordingURL else {
-            logger.error("No current recording exists -- nothing to upload.")
-            return
-        }
+//        guard let recordingURL = AV.recordingURL else {
+//            logger.error("No current recording exists -- nothing to upload.")
+//            return
+//        }
         
-        // Add a job to upload the file.
-        fileUploadWorker.addJob(FileUploadJob(file: file, url: recordingURL))
-        
+//        // Add a job to upload the file.
+//        fileUploadWorker.addJob(FileUploadJob(file: file, url: recordingURL))
+//
         // Clear current recording.
         AV.clearRecording()
     }

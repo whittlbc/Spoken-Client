@@ -9,7 +9,7 @@
 import Foundation
 
 public enum Session {
-    
+
     static var currentUserId: String? {
         CacheManager.stringCache.get(forKey: dataProvider.user.currentKey)
     }

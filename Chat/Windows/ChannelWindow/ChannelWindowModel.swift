@@ -35,19 +35,22 @@ class ChannelWindowModel {
     
     func createRecordingMessage() {
         DispatchQueue.global(qos: .utility).asyncAfter(
-            deadline: .now() + 0.5
+            deadline: .now() + 0.1
     ) {
             var message = Message()
             message.id = "abc123"
             message.channelId = self.channel.id
-            message.messageType = "video"
             message.senderId = "ben"
-            message.uploadId = 1234
+            message.messageType = "video"
+            message.status = "pending"
+            message.streamServerIP = "54.177.6.163"
+            message.iceServerURLs = [
+                WebRTCIceServer(url: "stun:54.153.12.146:3478", username: nil, credential: nil)
+            ]
             
             self.currentMessageResult = MessageResult.success(message)
         }
         
-//        self.currentMessageResult = MessageResult.success(Message())
 //        currentMessageCancellable = dataProvider.message
 //            .create(
 //                channelId: channel.id,
@@ -61,7 +64,7 @@ class ChannelWindowModel {
     
     func loadMessageForConsumption(withId id: String) {
         currentMessageCancellable = dataProvider.message
-            .getForConsumption(id: id)
+            .get(id: id)
             .asResult()
             .sink { [weak self] result in
                 self?.currentMessageResult = result

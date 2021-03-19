@@ -13,19 +13,19 @@ public enum AV {
     
     static let locale = Locale(identifier: "en-US")
     
-    static let mic = MicTap()
+//    static let mic = MicTap()
     
-    static let avRecorder = AVRecorder()
+//    static let avRecorder = AVRecorder()
     
     static let streamManager = StreamManager()
     
-    static var recordingSize: Int {
-        UserSettings.Video.useCamera ? AV.avRecorder.recordingSize : AV.mic.recordingSize
-    }
-    
-    static var recordingURL: URL? {
-        UserSettings.Video.useCamera ? AV.avRecorder.recordingPath : AV.mic.recordingPath
-    }
+//    static var recordingSize: Int {
+//        UserSettings.Video.useCamera ? AV.avRecorder.recordingSize : AV.mic.recordingSize
+//    }
+//
+//    static var recordingURL: URL? {
+//        UserSettings.Video.useCamera ? AV.avRecorder.recordingPath : AV.mic.recordingPath
+//    }
     
     static func seekPermissions() {
         // Ask permission to access the mic.
@@ -43,14 +43,14 @@ public enum AV {
 
         // If already authorized, go ahead and configure the mic.
         case .authorized:
-            mic.configure()
+            break
         
         // If user hasn't been asked yet, ask for permission.
         case .notDetermined:
             AVCaptureDevice.requestAccess(for: .audio) { granted in
                 // Configure mic when access is granted.
                 if granted {
-                    mic.configure()
+                    // mic.configure()
                 }
             }
             
@@ -108,8 +108,8 @@ public enum AV {
     }
     
     static func clearRecording() {
-        UserSettings.Video.useCamera ?
-            AV.avRecorder.clear() :
-            AV.mic.clearRecording()
+//        UserSettings.Video.useCamera ?
+//            AV.avRecorder.clear() :
+//            AV.mic.clearRecording()
     }
 }

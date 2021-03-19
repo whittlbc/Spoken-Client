@@ -13,6 +13,10 @@ struct Channel: Model {
     static var modelName = "channel"
 
     var id = ""
+    var name = ""
+    var slug = ""
+    var isUserCreated = false
+    var workspaceId = ""
     var memberIds = [String]()
     
     var members = [Member]()

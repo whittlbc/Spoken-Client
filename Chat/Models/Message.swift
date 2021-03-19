@@ -7,10 +7,17 @@
 //
 
 import Foundation
+import WebRTC
 
 enum MessageType: String {
-    case audio = "audio"
-    case video = "video"
+    case audio
+    case video
+}
+
+enum MessageStatus: String {
+    case pending
+    case recording
+    case recorded
 }
 
 struct Message: Model {
@@ -21,24 +28,36 @@ struct Message: Model {
     var channelId = ""
     var senderId = ""
     var messageType = ""
-    var uploadId: Int = 0
-    var fileIds = [String]()
+    var status = ""
+    var failed = false
+    var streamServerIP = ""
+    var iceServerURLs = [WebRTCIceServer]()
     
-    var files = [File]()
-    
-    var canStream: Bool { files.count > 0 && !files[0].canStream }
-    
+    var sender: Member?
+        
     var isAudio: Bool { getMessageType() == .audio }
 
     var isVideo: Bool { getMessageType() == .video }
+    
+    var isPending: Bool { getStatus() == .pending }
+
+    var isRecording: Bool { getStatus() == .recording }
+
+    var isRecorded: Bool { getStatus() == .recorded }
 
     func getMessageType() -> MessageType? {
         MessageType(rawValue: messageType)
     }
     
+    func getStatus() -> MessageStatus? {
+        MessageStatus(rawValue: status)
+    }
+    
+    func getIceServers() -> [RTCIceServer] {
+        iceServerURLs.map({ $0.toIceServer() })
+    }
+    
     func forCache() -> Message {
-        var message = self
-        message.files = []
-        return message
+        self
     }
 }

@@ -22,7 +22,7 @@ class StreamManager {
     var client: WebRTCClient!
 
     func streamNewMessage(_ message: Message) {
-        connectToRoom(message.uploadId)
+        startNewRecording(forMessage: message)
     }
     
     func stopMessage() {
@@ -45,16 +45,28 @@ class StreamManager {
         return image
     }
     
-    private func connectToRoom(_ roomId: Int) {
+    private func startNewRecording(forMessage message: Message) {
         // Tear down existing WebRTC client.
         teardownClient()
-        
-        // Create a new WebRTC client for this room.
+
+        // Create a new WebRTC client to record this mesage.
         client = WebRTCClient(
-            roomId: roomId,
+            message: message,
             videoSourceConfig: StreamManager.videoConfig
         )
     }
+
+//    // TODO: Bring back when starting group conversation development
+//    private func connectToRoom(_ roomId: Int) {
+//        // Tear down existing WebRTC client.
+//        teardownClient()
+//
+//        // Create a new WebRTC client for this room.
+//        client = WebRTCClient(
+//            roomId: roomId,
+//            videoSourceConfig: StreamManager.videoConfig
+//        )
+//    }
     
     private func teardownClient() {
         client = nil

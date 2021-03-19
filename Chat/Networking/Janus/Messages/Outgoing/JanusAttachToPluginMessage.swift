@@ -13,7 +13,7 @@ class JanusAttachToPluginMessage: Codable, ArrowParsable {
     
     var janus = JanusMessage.Key.attach
     
-    var plugin = JanusMessage.Key.videoRoomPlugin
+    var plugin: String!
     
     var sessionId: Int!
     
@@ -26,8 +26,9 @@ class JanusAttachToPluginMessage: Codable, ArrowParsable {
         case txId = "transaction"
     }
 
-    convenience init(sessionId: Int, txId: String) {
+    convenience init(plugin: String, sessionId: Int, txId: String) {
         self.init()
+        self.plugin = plugin
         self.sessionId = sessionId
         self.txId = txId
     }

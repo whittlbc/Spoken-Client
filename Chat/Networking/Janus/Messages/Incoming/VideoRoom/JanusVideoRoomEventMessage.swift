@@ -1,5 +1,5 @@
 //
-//  JanusEventMessage.swift
+//  JanusVideoRoomEventMessage.swift
 //  Chat
 //
 //  Created by Ben Whittle on 2/9/21.
@@ -9,7 +9,7 @@
 import Foundation
 import Arrow
 
-class JanusEventMessage: Codable, ArrowParsable {
+class JanusVideoRoomEventMessage: Codable, ArrowParsable {
     
     static func fromJSON(_ json: JSON) -> Self {
         let message = Self()
@@ -21,11 +21,11 @@ class JanusEventMessage: Codable, ArrowParsable {
     
     var sender: Int = 0
     
-    var plugin = JanusEventMessagePlugin()
+    var plugin = JanusVideoRoomEventMessagePlugin()
     
     var jsep = JanusJSEP()
     
-    var publishers: [JanusEventMessagePluginPublisher] { plugin.publishers }
+    var publishers: [JanusVideoRoomEventMessagePluginPublisher] { plugin.publishers }
     
     var leavingFeedId: Int { plugin.leaving }
     
@@ -53,11 +53,11 @@ class JanusEventMessage: Codable, ArrowParsable {
     }
 }
 
-class JanusEventMessagePlugin: Codable, ArrowParsable {
+class JanusVideoRoomEventMessagePlugin: Codable, ArrowParsable {
 
-    var data = JanusEventMessagePluginData()
+    var data = JanusVideoRoomEventMessagePluginData()
     
-    var publishers = [JanusEventMessagePluginPublisher]()
+    var publishers = [JanusVideoRoomEventMessagePluginPublisher]()
     
     var leaving: Int = 0
     
@@ -80,7 +80,7 @@ class JanusEventMessagePlugin: Codable, ArrowParsable {
     }
 }
 
-class JanusEventMessagePluginData: Codable, ArrowParsable {
+class JanusVideoRoomEventMessagePluginData: Codable, ArrowParsable {
     
     enum VideoRoomStatus: String {
         case joined
@@ -105,7 +105,7 @@ class JanusEventMessagePluginData: Codable, ArrowParsable {
     }
 }
 
-class JanusEventMessagePluginPublisher: Codable, ArrowParsable {
+class JanusVideoRoomEventMessagePluginPublisher: Codable, ArrowParsable {
     
     var feedId: Int = 0
     
