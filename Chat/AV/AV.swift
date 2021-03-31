@@ -10,22 +10,8 @@ import Cocoa
 import Speech
 
 public enum AV {
-    
-    static let locale = Locale(identifier: "en-US")
-    
-//    static let mic = MicTap()
-    
-//    static let avRecorder = AVRecorder()
-    
+            
     static let streamManager = StreamManager()
-    
-//    static var recordingSize: Int {
-//        UserSettings.Video.useCamera ? AV.avRecorder.recordingSize : AV.mic.recordingSize
-//    }
-//
-//    static var recordingURL: URL? {
-//        UserSettings.Video.useCamera ? AV.avRecorder.recordingPath : AV.mic.recordingPath
-//    }
     
     static func seekPermissions() {
         // Ask permission to access the mic.
@@ -47,12 +33,7 @@ public enum AV {
         
         // If user hasn't been asked yet, ask for permission.
         case .notDetermined:
-            AVCaptureDevice.requestAccess(for: .audio) { granted in
-                // Configure mic when access is granted.
-                if granted {
-                    // mic.configure()
-                }
-            }
+            AVCaptureDevice.requestAccess(for: .audio) { _ in }
             
         // Log error if device restricts mic access.
         case .restricted:
@@ -78,12 +59,7 @@ public enum AV {
         
         // If user hasn't been asked yet, ask for permission.
         case .notDetermined:
-            AVCaptureDevice.requestAccess(for: .video) { granted in
-                // Configure inputs requiring camera access when granted.
-                if granted {
-                    return
-                }
-            }
+            AVCaptureDevice.requestAccess(for: .video) { _ in }
             
         // Log error if device restricts camera access.
         case .restricted:
@@ -108,8 +84,7 @@ public enum AV {
     }
     
     static func clearRecording() {
-//        UserSettings.Video.useCamera ?
-//            AV.avRecorder.clear() :
-//            AV.mic.clearRecording()
+        // TODO
+        // streamManager.cancelMessage()
     }
 }
