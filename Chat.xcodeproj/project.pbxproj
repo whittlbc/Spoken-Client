@@ -53,8 +53,6 @@
 		094DAB1825AFEB0900CFC2EC /* ImageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094DAB1725AFEB0900CFC2EC /* ImageCache.swift */; };
 		094DAB1C25B11F0A00CFC2EC /* WorkspaceWindowModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094DAB1B25B11F0A00CFC2EC /* WorkspaceWindowModel.swift */; };
 		094DAB1F25B1335E00CFC2EC /* Publisher+Operators.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094DAB1E25B1335E00CFC2EC /* Publisher+Operators.swift */; };
-		0951D01B25CF5F6200E0FB28 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0951D01525CF5F6200E0FB28 /* ViewController.swift */; };
-		0951D01C25CF5F6200E0FB28 /* OldJanusSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0951D01625CF5F6200E0FB28 /* OldJanusSocket.swift */; };
 		0951D02125CF5F9A00E0FB28 /* Starscream in Frameworks */ = {isa = PBXBuildFile; productRef = 0951D02025CF5F9A00E0FB28 /* Starscream */; };
 		0951F4322601018C0041E69D /* WebRTCIceServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0951F4312601018C0041E69D /* WebRTCIceServer.swift */; };
 		0951F435260239C10041E69D /* JanusVideoRoomSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0951F434260239C10041E69D /* JanusVideoRoomSocket.swift */; };
@@ -141,8 +139,6 @@
 		0999974F25953600008E65FB /* ParticleShader.metal in Sources */ = {isa = PBXBuildFile; fileRef = 0999974E25953600008E65FB /* ParticleShader.metal */; };
 		099997522595371E008E65FB /* ParticleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 099997512595371E008E65FB /* ParticleView.swift */; };
 		09BFD89D25CF62930071966B /* WebRTC in Frameworks */ = {isa = PBXBuildFile; productRef = 09BFD89C25CF62930071966B /* WebRTC */; };
-		09BFD8AC25CF87810071966B /* WRTCClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09BFD8AB25CF87810071966B /* WRTCClient.swift */; };
-		09BFD8AF25D096540071966B /* OGViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09BFD8AE25D096540071966B /* OGViewController.swift */; };
 		09BFD8BA25D0D1FF0071966B /* StreamManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09BFD8B925D0D1FF0071966B /* StreamManager.swift */; };
 		09C1328125A7C3AC00FB1D90 /* SFSpeechRecognizer+AuthStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09C1328025A7C3AC00FB1D90 /* SFSpeechRecognizer+AuthStatus.swift */; };
 		09C1328425A7C6A500FB1D90 /* SpeechRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09C1328325A7C6A500FB1D90 /* SpeechRecognizer.swift */; };
@@ -215,8 +211,6 @@
 		094DAB1725AFEB0900CFC2EC /* ImageCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCache.swift; sourceTree = "<group>"; };
 		094DAB1B25B11F0A00CFC2EC /* WorkspaceWindowModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkspaceWindowModel.swift; sourceTree = "<group>"; };
 		094DAB1E25B1335E00CFC2EC /* Publisher+Operators.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Publisher+Operators.swift"; sourceTree = "<group>"; };
-		0951D01525CF5F6200E0FB28 /* ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ViewController.swift; path = "../../../JanusSwiftTest/Janus-Video-Room/ViewController.swift"; sourceTree = "<group>"; };
-		0951D01625CF5F6200E0FB28 /* OldJanusSocket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = OldJanusSocket.swift; path = "../../../JanusSwiftTest/Janus-Video-Room/OldJanusSocket.swift"; sourceTree = "<group>"; };
 		0951F4312601018C0041E69D /* WebRTCIceServer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebRTCIceServer.swift; sourceTree = "<group>"; };
 		0951F434260239C10041E69D /* JanusVideoRoomSocket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JanusVideoRoomSocket.swift; sourceTree = "<group>"; };
 		0951F43726023C5B0041E69D /* JanusRecordPlaySocket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JanusRecordPlaySocket.swift; sourceTree = "<group>"; };
@@ -302,8 +296,6 @@
 		0996446A25AE92FD004473B7 /* CodableCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodableCache.swift; sourceTree = "<group>"; };
 		0999974E25953600008E65FB /* ParticleShader.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = ParticleShader.metal; sourceTree = "<group>"; };
 		099997512595371E008E65FB /* ParticleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParticleView.swift; sourceTree = "<group>"; };
-		09BFD8AB25CF87810071966B /* WRTCClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WRTCClient.swift; sourceTree = "<group>"; };
-		09BFD8AE25D096540071966B /* OGViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OGViewController.swift; sourceTree = "<group>"; };
 		09BFD8B925D0D1FF0071966B /* StreamManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamManager.swift; sourceTree = "<group>"; };
 		09C1328025A7C3AC00FB1D90 /* SFSpeechRecognizer+AuthStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SFSpeechRecognizer+AuthStatus.swift"; sourceTree = "<group>"; };
 		09C1328325A7C6A500FB1D90 /* SpeechRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechRecognizer.swift; sourceTree = "<group>"; };
@@ -433,17 +425,6 @@
 				0999974E25953600008E65FB /* ParticleShader.metal */,
 			);
 			path = ParticleView;
-			sourceTree = "<group>";
-		};
-		0951D01125CF5F0500E0FB28 /* Janus */ = {
-			isa = PBXGroup;
-			children = (
-				0951D01625CF5F6200E0FB28 /* OldJanusSocket.swift */,
-				0951D01525CF5F6200E0FB28 /* ViewController.swift */,
-				09BFD8AB25CF87810071966B /* WRTCClient.swift */,
-				09BFD8AE25D096540071966B /* OGViewController.swift */,
-			);
-			path = Janus;
 			sourceTree = "<group>";
 		};
 		0951F4432602591B0041E69D /* VideoRoom */ = {
@@ -639,7 +620,6 @@
 				0996444F25AE6FC4004473B7 /* DataProviders */,
 				0995DE1D2581698300DAA334 /* Networking */,
 				095C678A25A3D8EB00729845 /* AV */,
-				0951D01125CF5F0500E0FB28 /* Janus */,
 				09D3FC1A25B51C3100CC744A /* KeyManagers */,
 				0996446525AE92D0004473B7 /* Caching */,
 				099087BB25799BA2001660D1 /* Utilities */,
@@ -1033,7 +1013,6 @@
 				094DAB1425AFE70500CFC2EC /* NSImage+Helpers.swift in Sources */,
 				0996443D25A91755004473B7 /* SpeechRecognizerDelegate.swift in Sources */,
 				09D19A6225B38D5100C0C476 /* Array+Helpers.swift in Sources */,
-				0951D01B25CF5F6200E0FB28 /* ViewController.swift in Sources */,
 				0925751825D33D69009FC434 /* JanusVideoRoomEventMessage.swift in Sources */,
 				09D3FC0E25B50ADA00CC744A /* WorkspaceKeyManager.swift in Sources */,
 				097228F725B63EA100219591 /* ChannelWindow.swift in Sources */,
@@ -1047,7 +1026,6 @@
 				099997522595371E008E65FB /* ParticleView.swift in Sources */,
 				094DAB1F25B1335E00CFC2EC /* Publisher+Operators.swift in Sources */,
 				09BFD8BA25D0D1FF0071966B /* StreamManager.swift in Sources */,
-				0951D01C25CF5F6200E0FB28 /* OldJanusSocket.swift in Sources */,
 				09FE18B325D9DDB400B3B7E7 /* WebRTCVideoPreviewView.swift in Sources */,
 				094DAB0A25AFB98600CFC2EC /* Dictionary+Helpers.swift in Sources */,
 				09FE18B625DA30C000B3B7E7 /* RTCVideoFrame+Image.swift in Sources */,
@@ -1081,7 +1059,6 @@
 				0951F43826023C5B0041E69D /* JanusRecordPlaySocket.swift in Sources */,
 				0972290F25BE1D8300219591 /* AVSessionFactory.swift in Sources */,
 				096862D82582A03F00B9B614 /* Arrow+Networking.swift in Sources */,
-				09BFD8AC25CF87810071966B /* WRTCClient.swift in Sources */,
 				094DAB0025AF942500CFC2EC /* WorkspaceDataProvider.swift in Sources */,
 				0968E2AB25C5D87F004E0C39 /* FileUploadWorker.swift in Sources */,
 				09C1328125A7C3AC00FB1D90 /* SFSpeechRecognizer+AuthStatus.swift in Sources */,
@@ -1115,7 +1092,6 @@
 				0972291A25BF637600219591 /* DashSpinnerView.swift in Sources */,
 				09416AE725D2E29500B71C02 /* Error+Helpers.swift in Sources */,
 				096862E52582A67F00B9B614 /* Name+Arrow.swift in Sources */,
-				09BFD8AF25D096540071966B /* OGViewController.swift in Sources */,
 				0925751525D33472009FC434 /* JanusTxResponseMessage.swift in Sources */,
 				0929591425D4E8A400FB297B /* WebRTCClient.swift in Sources */,
 				0940E07B25A7ACF1006184D7 /* UserSettings.swift in Sources */,

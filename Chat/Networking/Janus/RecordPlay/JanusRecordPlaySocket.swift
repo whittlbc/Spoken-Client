@@ -12,14 +12,24 @@ import Arrow
 
 class JanusRecordPlaySocket: JanusSocket {
     
+    enum Action {
+        case record
+        case play
+    }
+    
     // Id of recording to either record or play.
     var recordingId: Int!
     
-    convenience init(url: String, recordingId: Int) {
+    var action: Action!
+    
+    convenience init(url: String, recordingId: Int, action: Action) {
         self.init(url: url, headers: JanusSocket.defaultHeaders)
         
         // Set recording id.
         self.recordingId = recordingId
+        
+        // Store whether to record or play.
+        self.action = action
 
         // Set plugin to videoroom.
         self.plugin = JanusMessage.Key.recordPlayPlugin
@@ -27,6 +37,18 @@ class JanusRecordPlaySocket: JanusSocket {
     
     override init(url: String, headers: [String: String] = [:], requestTimeoutInterval: TimeInterval = 5) {
         super.init(url: url, headers: headers, requestTimeoutInterval: requestTimeoutInterval)
+    }
+    
+    func isRecord() -> Bool {
+        action == .record
+    }
+    
+    func isPlay() -> Bool {
+        action == .play
+    }
+    
+    private func sendPlayRequest() {
+        
     }
                 
     override func sendOffer(handleId: Int, sdp: RTCSessionDescription) {
@@ -78,6 +100,10 @@ class JanusRecordPlaySocket: JanusSocket {
         
         // Register handle as joined.
         handle.onJoined!()
+    }
+    
+    private func onJoined(handleId: Int) {
+//        isPlay() ? sendPlayRequest(handleId: handleId) : delegate?.onPublisherJoined(handleId: handleId)
     }
     
     private func onRemoteJSEP(message: JanusRecordPlayEventMessage) {

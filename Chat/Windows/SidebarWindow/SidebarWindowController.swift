@@ -8,6 +8,8 @@
 
 import Cocoa
 import WebRTC
+import AVFoundation
+import AVKit
 
 // Controller for sidebar window.
 class SidebarWindowController: NSWindowController, NSWindowDelegate {
@@ -49,8 +51,30 @@ class SidebarWindowController: NSWindowController, NSWindowDelegate {
     // Add child windows to sidebar window.
     private func addChildWindows() {
         addWorkspaceWindow()
-    }
         
+//        NSMutableDictionary * headers = [NSMutableDictionary dictionary];
+//        [headers setObject:@"Your UA" forKey:@"User-Agent"];
+//        AVURLAsset * asset = [AVURLAsset URLAssetWithURL:URL options:@{@"AVURLAssetHTTPHeaderFieldsKey" : headers}];
+//        AVPlayerItem * item = [AVPlayerItem playerItemWithAsset:asset];
+
+//        guard let url = URL(string: "https://spoken-recordings-dev.s3-us-west-1.amazonaws.com/dcdcfa6a464abb492a5d1a8beb20ca5e_general.m3u8") else {
+//            return
+//        }
+//
+//        let playerView = AVPlayerView()
+//        playerView.frame = self.window!.frame
+//
+//        self.window!.contentView = playerView
+//
+//        // Create a new AVPlayer and associate it with the player view
+//        let asset = AVAsset(url: url)
+//        let playerItem = AVPlayerItem(asset: asset)
+//        let player = AVPlayer(playerItem: playerItem)
+//
+//        playerView.player = player
+//        player.play()
+    }
+
     // Add workspace window as a child window.
     private func addWorkspaceWindow() {
         // Create new workspace window controller.

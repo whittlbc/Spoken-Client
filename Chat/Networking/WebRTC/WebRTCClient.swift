@@ -431,7 +431,8 @@ class WebRTCClient: NSObject, RTCPeerConnectionDelegate, JanusSocketDelegate {
         // Use Janus as signaling server.
         signalingClient = JanusRecordPlaySocket(
             url: JanusSocket.formatURL(host: message.streamServerIP),
-            recordingId: Int.random(in: 1..<1000)
+            recordingId: Int.random(in: 1..<1000),
+            action: .record
         )
         
         // Set delegate to self.
