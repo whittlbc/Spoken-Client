@@ -63,6 +63,14 @@
 		0968E2B525C5DD68004E0C39 /* Job.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0968E2B425C5DD68004E0C39 /* Job.swift */; };
 		0968E2B825C5DEDF004E0C39 /* JobError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0968E2B725C5DEDF004E0C39 /* JobError.swift */; };
 		0968E2BD25C5E044004E0C39 /* FileUploadJob.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0968E2BC25C5E044004E0C39 /* FileUploadJob.swift */; };
+		09718F7E261544E100D41C05 /* AgoraRtcKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 09718F76261544E100D41C05 /* AgoraRtcKit.framework */; };
+		09718F7F261544E100D41C05 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 09718F77261544E100D41C05 /* Accelerate.framework */; };
+		09718F80261544E100D41C05 /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 09718F78261544E100D41C05 /* libc++.tbd */; };
+		09718F81261544E100D41C05 /* CoreWLAN.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 09718F79261544E100D41C05 /* CoreWLAN.framework */; };
+		09718F82261544E100D41C05 /* libresolv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 09718F7A261544E100D41C05 /* libresolv.tbd */; };
+		09718F83261544E100D41C05 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 09718F7B261544E100D41C05 /* SystemConfiguration.framework */; };
+		09718F84261544E200D41C05 /* libresolv.9.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 09718F7C261544E100D41C05 /* libresolv.9.tbd */; };
+		09718F85261544E200D41C05 /* VideoToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 09718F7D261544E100D41C05 /* VideoToolbox.framework */; };
 		097228F725B63EA100219591 /* ChannelWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 097228F625B63EA100219591 /* ChannelWindow.swift */; };
 		097228FC25BC8F0C00219591 /* ChannelAvatarViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 097228FB25BC8F0C00219591 /* ChannelAvatarViewModel.swift */; };
 		0972290225BCC98800219591 /* UserDefaults+RawRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0972290125BCC98800219591 /* UserDefaults+RawRepresentable.swift */; };
@@ -170,6 +178,14 @@
 		0968E2B425C5DD68004E0C39 /* Job.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Job.swift; sourceTree = "<group>"; };
 		0968E2B725C5DEDF004E0C39 /* JobError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobError.swift; sourceTree = "<group>"; };
 		0968E2BC25C5E044004E0C39 /* FileUploadJob.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileUploadJob.swift; sourceTree = "<group>"; };
+		09718F76261544E100D41C05 /* AgoraRtcKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = AgoraRtcKit.framework; sourceTree = "<group>"; };
+		09718F77261544E100D41C05 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
+		09718F78261544E100D41C05 /* libc++.tbd */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "usr/lib/libc++.tbd"; sourceTree = SDKROOT; };
+		09718F79261544E100D41C05 /* CoreWLAN.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreWLAN.framework; path = System/Library/Frameworks/CoreWLAN.framework; sourceTree = SDKROOT; };
+		09718F7A261544E100D41C05 /* libresolv.tbd */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libresolv.tbd; path = usr/lib/libresolv.tbd; sourceTree = SDKROOT; };
+		09718F7B261544E100D41C05 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
+		09718F7C261544E100D41C05 /* libresolv.9.tbd */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libresolv.9.tbd; path = usr/lib/libresolv.9.tbd; sourceTree = SDKROOT; };
+		09718F7D261544E100D41C05 /* VideoToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = VideoToolbox.framework; path = System/Library/Frameworks/VideoToolbox.framework; sourceTree = SDKROOT; };
 		097228F625B63EA100219591 /* ChannelWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelWindow.swift; sourceTree = "<group>"; };
 		097228FB25BC8F0C00219591 /* ChannelAvatarViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelAvatarViewModel.swift; sourceTree = "<group>"; };
 		0972290125BCC98800219591 /* UserDefaults+RawRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserDefaults+RawRepresentable.swift"; sourceTree = "<group>"; };
@@ -231,10 +247,18 @@
 			buildActionMask = 2147483647;
 			files = (
 				09F60AD72592B7CE0020974A /* HotKey in Frameworks */,
+				09718F84261544E200D41C05 /* libresolv.9.tbd in Frameworks */,
+				09718F7F261544E100D41C05 /* Accelerate.framework in Frameworks */,
+				09718F7E261544E100D41C05 /* AgoraRtcKit.framework in Frameworks */,
+				09718F82261544E100D41C05 /* libresolv.tbd in Frameworks */,
+				09718F81261544E100D41C05 /* CoreWLAN.framework in Frameworks */,
 				096862D525829FE300B9B614 /* Arrow in Frameworks */,
 				096862F82582CF6700B9B614 /* Cache in Frameworks */,
+				09718F85261544E200D41C05 /* VideoToolbox.framework in Frameworks */,
 				09BFD89D25CF62930071966B /* WebRTC in Frameworks */,
+				09718F80261544E100D41C05 /* libc++.tbd in Frameworks */,
 				096862CA258202BB00B9B614 /* Networking in Frameworks */,
+				09718F83261544E100D41C05 /* SystemConfiguration.framework in Frameworks */,
 				0995DE2D25818AF000DAA334 /* Logging in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -368,6 +392,21 @@
 			path = FileUploadWorker;
 			sourceTree = "<group>";
 		};
+		09718F75261544BF00D41C05 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				09718F77261544E100D41C05 /* Accelerate.framework */,
+				09718F76261544E100D41C05 /* AgoraRtcKit.framework */,
+				09718F79261544E100D41C05 /* CoreWLAN.framework */,
+				09718F78261544E100D41C05 /* libc++.tbd */,
+				09718F7C261544E100D41C05 /* libresolv.9.tbd */,
+				09718F7A261544E100D41C05 /* libresolv.tbd */,
+				09718F7B261544E100D41C05 /* SystemConfiguration.framework */,
+				09718F7D261544E100D41C05 /* VideoToolbox.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		0990878825797561001660D1 = {
 			isa = PBXGroup;
 			children = (
@@ -387,6 +426,7 @@
 		0990879325797561001660D1 /* Chat */ = {
 			isa = PBXGroup;
 			children = (
+				09718F75261544BF00D41C05 /* Frameworks */,
 				099087A525797645001660D1 /* main.swift */,
 				0990879425797561001660D1 /* AppDelegate.swift */,
 				099087A7257976BF001660D1 /* WindowControllerManager.swift */,
@@ -930,6 +970,10 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = 2X8HM5UJ6Y;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Chat",
+				);
 				INFOPLIST_FILE = Chat/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -953,6 +997,10 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = 2X8HM5UJ6Y;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Chat",
+				);
 				INFOPLIST_FILE = Chat/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1037,6 +1085,10 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = 2X8HM5UJ6Y;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Chat",
+				);
 				INFOPLIST_FILE = Chat/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1114,6 +1166,10 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = 2X8HM5UJ6Y;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Chat",
+				);
 				INFOPLIST_FILE = Chat/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
