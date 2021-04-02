@@ -114,11 +114,12 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate, StreamManag
         fatalError("init(coder:) has not been implemented")
     }
     
-    // Either load the message or send it to the inbox based on state and user settings.
-    func newIncomingMessage(withId messageId: String) {
-        canAutoConsumeMessage ? loadMessageForConsumption(withId: messageId) : sendMessageToInbox(withId: messageId)
+    func handleNewIncomingMessage(_ message: Message, cookies: [String: String]) {
+        canAutoConsumeMessage ?
+            consumeMessage(message, cookies: cookies) :
+            sendMessageToInbox(message, cookies: cookies)
     }
-    
+
     // Get window's animation destination -- fallback to frame origin.
     func getDestination() -> NSPoint {
         destination ?? position
@@ -366,12 +367,17 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate, StreamManag
         }
     }
     
-    private func loadMessageForConsumption(withId messageId: String) {
-        windowModel.loadMessageForConsumption(withId: messageId)
+    private func consumeMessage(_ message: Message, cookies: [String: String]) {
+        toConsumingInitializing(message: message)
+        
+        // ^This render should place the av player within ChannelAvatarViewController with an opacity of 0 and get it ready...
+        // ...then, there should be some call back to this class (being the delegate of whatever player class you make) when the
+        // first frame is loaded/rendered? Or maybe you could detect when it's loaded and then just call play from here right before
+        // calling toConsumingStarted
     }
     
-    private func sendMessageToInbox(withId messageId: String) {
-        windowModel.sendMessageToInbox(withId: messageId)
+    private func sendMessageToInbox(_ message: Message, cookies: [String: String]) {
+        windowModel.sendMessageToInbox(message, cookies: cookies)
         renderFromState()
     }
     
@@ -385,47 +391,6 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate, StreamManag
             AV.stopRecordingMessage()
             return
         }
-                        
-//        // Handle newly recorded messages being sent.
-//        if isRecordingSending() {
-//            onRecordingMessageSent(message: msg)
-//            return
-//        }
-        
-//        // Handle incoming messages if state permits this.
-//        if stateAllowsMessageConsumption && msg.canConsume {
-//            startConsumingMessage(msg)
-//        }
-    }
-    
-//    private func onRecordingMessageSent(message: Message) {
-//        // Ensure message has a file.
-//        guard message.files.count > 0 else {
-//            logger.error("Message(id=\(message.id)) has no files -- no recording to upload.")
-//            return
-//        }
-//
-//        // Upload message's recording file.
-//        uploadRecordingFile(message.files[0])
-//
-//        // Show recording as sent.
-//        DispatchQueue.main.async { [weak self] in
-//            self?.showRecordingSent()
-//        }
-//    }
-    
-    private func uploadRecordingFile(_ file: File) {
-        // Get the url of the most recent AV recording.
-//        guard let recordingURL = AV.recordingURL else {
-//            logger.error("No current recording exists -- nothing to upload.")
-//            return
-//        }
-        
-//        // Add a job to upload the file.
-//        fileUploadWorker.addJob(FileUploadJob(file: file, url: recordingURL))
-//
-        // Clear current recording.
-//        AV.clearRecording()
     }
     
     private func initializeRecording() {

@@ -34,6 +34,7 @@ struct Message: Model {
     var status = ""
     var failed = false
     var token = ""
+    var url = ""
     
     var sender: Member?
         

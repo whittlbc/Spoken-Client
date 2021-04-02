@@ -8,7 +8,7 @@
 
 import Cocoa
 
-public let uiEventQueue = Queue<UIEventWrapper>(
+let uiEventQueue = Queue<UIEvent>(
     name: "ui-event-queue",
     threadName: "ui-events"
 )

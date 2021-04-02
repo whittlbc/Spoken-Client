@@ -8,15 +8,6 @@
 
 import Cocoa
 
-public struct UIEventWrapper {
-    let context: UIEventContext
-    let event: UIEvent
-}
-
-public enum UIEventContext {
-    case workspace(id: String)
-}
-
-public enum UIEvent {
-    case newIncomingMessage(channelId: String, messageId: String)
+enum UIEvent {
+    case newIncomingMessage(message: Message, cookies: [String: String])
 }

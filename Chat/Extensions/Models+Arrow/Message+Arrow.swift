@@ -20,5 +20,6 @@ extension Message: ArrowParsable {
         status <-- json["status"]
         failed <-- json["failed"]
         token <-- json["token"]
+        url <-- json["url"]
     }
 }

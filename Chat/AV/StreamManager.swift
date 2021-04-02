@@ -11,6 +11,8 @@ import AgoraRtcKit
 import Combine
 
 class StreamManager: NSObject, AgoraRtcEngineDelegate, AgoraVideoDataPluginDelegate {
+    
+    var camaraHasBeenTurnedOnBefore = false
         
     private var rtcKit: AgoraRtcEngineKit!
     

@@ -89,23 +89,21 @@ class SidebarWindowController: NSWindowController, NSWindowDelegate {
     
     // Start the UIEventQueue.
     private func startUIEventQueue() {
-        uiEventQueue.start { [weak self] eventWrapper in
-            self?.onNewUIEvent(withWrapper: eventWrapper)
+        uiEventQueue.start { [weak self] event in
+            self?.onNewUIEvent(event)
         }
     }
     
     // Handle new UIEvents.
-    private func onNewUIEvent(withWrapper eventWrapper: UIEventWrapper) {
-        switch eventWrapper.context {
-                    
-        // New Workspace UI Event.
-        case .workspace(id: let workspaceId):
-            handleWorkspaceUIEvent(eventWrapper.event, workspaceId: workspaceId)
+    private func onNewUIEvent(_ event: UIEvent) {
+        switch event {
+        
+        // New incoming message.
+        case .newIncomingMessage(message: let message, cookies: let cookies):
+            workspaceWindowController.handleNewIncomingMessage(message, cookies: cookies)
+            
+        default:
+            break
         }
-    }
-    
-    // Handle Workspace UI Event.
-    private func handleWorkspaceUIEvent(_ event: UIEvent, workspaceId: String) {
-        workspaceWindowController.handleUIEvent(event, forWorkspaceId: workspaceId)
     }
 }
