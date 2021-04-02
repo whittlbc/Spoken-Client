@@ -35,18 +35,15 @@ class ChannelWindowModel {
     
     func createRecordingMessage() {
         DispatchQueue.global(qos: .utility).asyncAfter(
-            deadline: .now() + 0.1
+            deadline: .now() + 0.5
     ) {
             var message = Message()
             message.id = "abc123"
             message.channelId = self.channel.id
             message.senderId = "ben"
             message.messageType = "video"
-            message.status = "pending"
-            message.streamServerIP = "54.177.6.163"
-            message.iceServerURLs = [
-                WebRTCIceServer(url: "stun:54.153.12.146:3478", username: nil, credential: nil)
-            ]
+            message.status = "recording"
+            message.token = "asdfasdadfs"
             
             self.currentMessageResult = MessageResult.success(message)
         }
@@ -62,6 +59,58 @@ class ChannelWindowModel {
 //            }
     }
     
+    func sendRecordingMessage() {
+        DispatchQueue.global(qos: .utility).asyncAfter(
+            deadline: .now() + 0.1
+    ) {
+            var message = Message()
+            message.id = "abc123"
+            message.channelId = self.channel.id
+            message.senderId = "ben"
+            message.messageType = "video"
+            message.status = "sent"
+            message.token = ""
+            
+            self.currentMessageResult = MessageResult.success(message)
+        }
+        
+//        currentMessageCancellable = dataProvider.message
+//            .create(
+//                channelId: channel.id,
+//                messageType: UserSettings.Video.useCamera ? .video : .audio
+//            )
+//            .asResult()
+//            .sink { [weak self] result in
+//                self?.currentMessageResult = result
+//            }
+    }
+    
+    func cancelRecordingMessage() {
+        DispatchQueue.global(qos: .utility).asyncAfter(
+            deadline: .now() + 0.1
+    ) {
+            var message = Message()
+            message.id = "abc123"
+            message.channelId = self.channel.id
+            message.senderId = "ben"
+            message.messageType = "video"
+            message.status = "cancelled"
+            message.token = ""
+            
+            self.currentMessageResult = MessageResult.success(message)
+        }
+        
+//        currentMessageCancellable = dataProvider.message
+//            .create(
+//                channelId: channel.id,
+//                messageType: UserSettings.Video.useCamera ? .video : .audio
+//            )
+//            .asResult()
+//            .sink { [weak self] result in
+//                self?.currentMessageResult = result
+//            }
+    }
+
     func loadMessageForConsumption(withId id: String) {
         currentMessageCancellable = dataProvider.message
             .get(id: id)

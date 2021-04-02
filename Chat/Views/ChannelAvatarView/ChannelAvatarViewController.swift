@@ -9,7 +9,7 @@
 import Cocoa
 import Combine
 import AVFoundation
-import WebRTC
+import AgoraRtcKit
 
 // Controller for ChannelAvatarView to manage all of its subviews and their interactions.
 class ChannelAvatarViewController: NSViewController {
@@ -42,7 +42,7 @@ class ChannelAvatarViewController: NSViewController {
     private var recipientImageSubscription: AnyCancellable?
     
     // Channel video preview view.
-    private var videoPreviewView: WebRTCVideoPreviewView?
+    private var videoPreviewView: VideoView?
 
     // Subscription to av recorder state changes.
     private var avRecorderSubscription: AnyCancellable?
@@ -386,23 +386,22 @@ class ChannelAvatarViewController: NSViewController {
     
     private func createVideoPreviewView() {
         // Create new video preview view.
-        let previewView = WebRTCVideoPreviewView(frame: imageView.frame)
+        let previewView = VideoView(frame: imageView.frame)
+
+        // Hide the view initially.
+        previewView.alphaValue = 0
         
-        // Make it layer based.
-        previewView.wantsLayer = true
-        previewView.layer?.masksToBounds = true
-                
         // Add video preview view as subview of image view.
         imageView.addSubview(previewView)
-        
+
         // Add auto-layout constraints.
         constrainVideoPreviewView(previewView)
-                
+
         // Store preview view.
         videoPreviewView = previewView
     }
 
-    private func constrainVideoPreviewView(_ previewView: WebRTCVideoPreviewView) {
+    private func constrainVideoPreviewView(_ previewView: VideoView) {
         // Set up auto-layout for sizing/positioning.
         previewView.translatesAutoresizingMaskIntoConstraints = false
         
@@ -688,7 +687,7 @@ class ChannelAvatarViewController: NSViewController {
 
     private func connectVideoPreviewToLocalStream() {
         if let previewView = videoPreviewView {
-            AV.streamManager.renderLocalStream(to: previewView)
+            AV.initLocalStream(to: previewView)
         }
     }
     
@@ -697,7 +696,7 @@ class ChannelAvatarViewController: NSViewController {
         videoPreviewView?.alphaValue = 1.0
         
         // Fade out the blur.
-        fadeOutBlurLayer(duration: ChannelAvatarView.AnimationConfig.VideoPreviewLayer.removeBlurDuration)
+//        fadeOutBlurLayer(duration: ChannelAvatarView.AnimationConfig.VideoPreviewLayer.removeBlurDuration)
     }
         
     private func removeVideoPreviewView(lastFrame: NSImage? = nil, wasCancelled: Bool = false) {
@@ -832,6 +831,9 @@ class ChannelAvatarViewController: NSViewController {
             
             // Create the video preview view.
             createVideoPreviewView()
+            
+            // Connect video preview to stream.
+            connectVideoPreviewToLocalStream()
         }
     }
     
@@ -850,15 +852,20 @@ class ChannelAvatarViewController: NSViewController {
                 duration: ChannelWindow.AnimationConfig.duration(forState: state),
                 alpha: ChannelAvatarView.Style.BlurLayer.videoPlaceholderAvatarAlpha
             )
-            
+
             // Fade in video recipient avatar.
             fadeInVideoRecipientView()
             
             // Animate avatar view size.
             animateAvatarViewSize(toState: state)
-                        
-            // Connect video preview to stream.
-            connectVideoPreviewToLocalStream()
+            
+            showVideoPreviewView()
+//            // Show video preview.
+//            DispatchQueue.main.asyncAfter(
+//                deadline: .now() + ChannelWindow.AnimationConfig.duration(forState: state) + 0.2
+//            ) { [weak self] in
+//                self?.showVideoPreviewView()
+//            }
         }
     }
     

@@ -55,7 +55,7 @@ class ChannelParticleView: ParticleView {
     // Whether particles have been purposefully exploded out of view.
     private var exploded = false
     
-    private var audioSnapshot = AudioSnapshot()
+//    private var audioSnapshot = AudioSnapshot()
     
     private var globalRotation: Float = 0
     
@@ -88,7 +88,7 @@ class ChannelParticleView: ParticleView {
         frameCount = 0
         globalRotation = 0
         untapMic()
-        audioSnapshot = AudioSnapshot()
+//        audioSnapshot = AudioSnapshot()
 
         DispatchQueue.main.asyncAfter(deadline: .now() + ChannelParticleView.initialGravityTimeout) { [weak self] in
             self?.respawnOutOfBoundsParticles = true
@@ -120,30 +120,30 @@ class ChannelParticleView: ParticleView {
     }
     
     private func calculateAudioAmplitude(buffer: AVAudioPCMBuffer) {
-        audioSnapshot.amplitude = Float(AudioAnalysis.amplitude(forBuffer: buffer) * AudioVisualizationConfig.amplitudeScaleFactor)
+//        audioSnapshot.amplitude = Float(AudioAnalysis.amplitude(forBuffer: buffer) * AudioVisualizationConfig.amplitudeScaleFactor)
     }
     
     private func calculateAudioMinMax(buffer: AVAudioPCMBuffer) {
         // Perform an FFT on the buffer to get an array of normalized magnitudes.
-        let fftData = AudioAnalysis.fft(forBuffer: buffer)
-        
-        // Split fft data into two halfs -- the lower half and the higher half.
-        let numFrames = fftData.count
-        let halfNumFrames = numFrames / 2
-        let lowFrames = fftData[0 ... halfNumFrames - 1]
-        let highFrames = fftData[halfNumFrames ... numFrames - 1]
-
-        // Calculate the min and max for both the lower and higher frames.
-        let lowMin = lowFrames.min() ?? 0
-        let lowMax = lowFrames.max() ?? 0
-        let highMin = highFrames.min() ?? 0
-        let highMax = highFrames.max() ?? 0
-
-        // Find indexes of each min/max.
-        audioSnapshot.lowMinIndex = Float(fftData.firstIndex(of: lowMin) ?? 0)
-        audioSnapshot.lowMaxIndex = Float(fftData.firstIndex(of: lowMax) ?? 0)
-        audioSnapshot.highMinIndex = Float((fftData.firstIndex(of: highMin) ?? 0) - halfNumFrames)
-        audioSnapshot.highMaxIndex = Float((fftData.firstIndex(of: highMax) ?? 0) - halfNumFrames)
+//        let fftData = AudioAnalysis.fft(forBuffer: buffer)
+//
+//        // Split fft data into two halfs -- the lower half and the higher half.
+//        let numFrames = fftData.count
+//        let halfNumFrames = numFrames / 2
+//        let lowFrames = fftData[0 ... halfNumFrames - 1]
+//        let highFrames = fftData[halfNumFrames ... numFrames - 1]
+//
+//        // Calculate the min and max for both the lower and higher frames.
+//        let lowMin = lowFrames.min() ?? 0
+//        let lowMax = lowFrames.max() ?? 0
+//        let highMin = highFrames.min() ?? 0
+//        let highMax = highFrames.max() ?? 0
+//
+//        // Find indexes of each min/max.
+//        audioSnapshot.lowMinIndex = Float(fftData.firstIndex(of: lowMin) ?? 0)
+//        audioSnapshot.lowMaxIndex = Float(fftData.firstIndex(of: lowMax) ?? 0)
+//        audioSnapshot.highMinIndex = Float((fftData.firstIndex(of: highMin) ?? 0) - halfNumFrames)
+//        audioSnapshot.highMaxIndex = Float((fftData.firstIndex(of: highMax) ?? 0) - halfNumFrames)
     }
     
     private func updateGlobalRotation() {
@@ -165,16 +165,16 @@ class ChannelParticleView: ParticleView {
     }
     
     private func handleAudioVisualizationStep() {
-        let radiusLow = audioSnapshot.lowMaxIndex * AudioVisualizationConfig.fftScaleFactor
-        let mass = audioSnapshot.lowMaxIndex * audioSnapshot.amplitude
-                
-        setGravityWellProperties(
-            gravityWellIndex: 0,
-            normalisedPositionX: 0.5 + radiusLow * sin(globalRotation),
-            normalisedPositionY: 0.5 + radiusLow * cos(globalRotation),
-            mass: mass,
-            spin: mass * AudioVisualizationConfig.spinToMassRatio
-        )
+//        let radiusLow = audioSnapshot.lowMaxIndex * AudioVisualizationConfig.fftScaleFactor
+//        let mass = audioSnapshot.lowMaxIndex * audioSnapshot.amplitude
+//
+//        setGravityWellProperties(
+//            gravityWellIndex: 0,
+//            normalisedPositionX: 0.5 + radiusLow * sin(globalRotation),
+//            normalisedPositionY: 0.5 + radiusLow * cos(globalRotation),
+//            mass: mass,
+//            spin: mass * AudioVisualizationConfig.spinToMassRatio
+//        )
     }
     
     func handleParticleStep() {

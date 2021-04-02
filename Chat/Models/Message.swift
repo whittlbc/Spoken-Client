@@ -15,9 +15,12 @@ enum MessageType: String {
 }
 
 enum MessageStatus: String {
-    case pending
     case recording
     case recorded
+    case uploaded
+    case sending
+    case sent
+    case cancelled
 }
 
 struct Message: Model {
@@ -30,8 +33,7 @@ struct Message: Model {
     var messageType = ""
     var status = ""
     var failed = false
-    var streamServerIP = ""
-    var iceServerURLs = [WebRTCIceServer]()
+    var token = ""
     
     var sender: Member?
         
@@ -39,11 +41,17 @@ struct Message: Model {
 
     var isVideo: Bool { getMessageType() == .video }
     
-    var isPending: Bool { getStatus() == .pending }
-
     var isRecording: Bool { getStatus() == .recording }
 
     var isRecorded: Bool { getStatus() == .recorded }
+
+    var isUploaded: Bool { getStatus() == .uploaded }
+
+    var isSending: Bool { getStatus() == .sending }
+
+    var isSent: Bool { getStatus() == .sent }
+    
+    var isCancelled: Bool { getStatus() == .cancelled }
 
     func getMessageType() -> MessageType? {
         MessageType(rawValue: messageType)
@@ -51,10 +59,6 @@ struct Message: Model {
     
     func getStatus() -> MessageStatus? {
         MessageStatus(rawValue: status)
-    }
-    
-    func getIceServers() -> [RTCIceServer] {
-        iceServerURLs.map({ $0.toIceServer() })
     }
     
     func forCache() -> Message {

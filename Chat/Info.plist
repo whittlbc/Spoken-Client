@@ -2,6 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>AGORA_APP_ID</key>
+	<string>$(AGORA_APP_ID)</string>
 	<key>API_URL</key>
 	<string>$(API_URL)</string>
 	<key>APP_BUNDLE_ID</key>
@@ -28,10 +30,6 @@
 	<string>1</string>
 	<key>ENV</key>
 	<string>$(ENV)</string>
-	<key>ICE_SERVER_URLS</key>
-	<string>$(ICE_SERVER_URLS)</string>
-	<key>JANUS_URL</key>
-	<string>$(JANUS_URL)</string>
 	<key>LSApplicationCategoryType</key>
 	<string>public.app-category.productivity</string>
 	<key>LSMinimumSystemVersion</key>

@@ -17,8 +17,7 @@ public enum Config {
         static let apiURL = "API_URL"
         static let appName = "APP_NAME"
         static let appBundleID = "APP_BUNDLE_ID"
-        static let janusURL = "JANUS_URL"
-        static let iceServerURLs = "ICE_SERVER_URLS"
+        static let agoraAppID = "AGORA_APP_ID"
     }
 
     // App environment options
@@ -76,11 +75,6 @@ public enum Config {
     // App bundle identifier.
     static let appBundleID = Config.getRequiredStringEnvVar(forKey: Keys.appBundleID)
     
-    // Websocket URL for Janus.
-    static let janusURL = Config.getRequiredStringEnvVar(forKey: Keys.janusURL)
-    
-    // URL strings to WebRTC ICE servers.
-    static let iceServerURLs: [String] = Config.getRequiredStringEnvVar(forKey: Keys.iceServerURLs)
-        .split(separator: ",")
-        .map { String($0) }
+    // Agora App ID.
+    static let agoraAppID = Config.getRequiredStringEnvVar(forKey: Keys.agoraAppID)
 }

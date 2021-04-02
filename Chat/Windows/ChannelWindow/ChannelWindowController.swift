@@ -284,9 +284,8 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate {
         // Start recording message.
         AV.startRecordingMessage(message)
         
-        DispatchQueue.main.asyncAfter(
-            deadline: .now() + ChannelWindow.ArtificialTiming.showVideoRecordingInitializingDuration
-        ) { [weak self] in
+        // Show recording as started.
+        DispatchQueue.main.async { [weak self] in
             self?.toRecordingStarted()
         }
     }
@@ -295,12 +294,12 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate {
     func cancelRecording() {
         // Disable key event listners.
         toggleRecordingKeyListeners(enable: false)
-        
-        // Stop the active recording.
-        AV.stopRecordingMessage()
 
         // Show recording as cancelled.
         showRecordingCancelled()
+        
+        // Cancel the message.
+        windowModel.cancelRecordingMessage()
     }
     
     // Send the active audio message to this channel.
@@ -310,6 +309,9 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate {
 
         // Set state to sending recording.
         toRecordingSending()
+        
+        // Send the message.
+        windowModel.sendRecordingMessage()
         
         // Show recording sending for a period of time, and then show it as sent.
         DispatchQueue.main.asyncAfter(
@@ -371,11 +373,18 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate {
             return
         }
         
+        // If message has been cancelled or sent, stop the recording.
+        if msg.isSent || msg.isCancelled {
+            AV.stopRecordingMessage()
+            return
+        }
+        
         // If recording is initializing, start the recording.
         if isRecordingInitializing() {
             startRecordingMessage(msg)
+            return
         }
-        
+                
 //        // Handle newly recorded messages being sent.
 //        if isRecordingSending() {
 //            onRecordingMessageSent(message: msg)
@@ -415,7 +424,7 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate {
 //        fileUploadWorker.addJob(FileUploadJob(file: file, url: recordingURL))
 //
         // Clear current recording.
-        AV.clearRecording()
+//        AV.clearRecording()
     }
     
     private func initializeRecording() {

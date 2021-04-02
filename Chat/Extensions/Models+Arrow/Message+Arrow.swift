@@ -19,7 +19,6 @@ extension Message: ArrowParsable {
         messageType <-- json["message_type"]
         status <-- json["status"]
         failed <-- json["failed"]
-        streamServerIP <-- json["stream_server_ip"]
-        iceServerURLs <-- json["ice_server_urls"]
+        token <-- json["token"]
     }
 }

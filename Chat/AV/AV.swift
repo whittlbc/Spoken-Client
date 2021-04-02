@@ -13,6 +13,26 @@ public enum AV {
             
     static let streamManager = StreamManager()
     
+    static func initLocalStream(to videoView: VideoView) {
+        // Initialize RTC kit.
+        streamManager.initializeRTCKit()
+        
+        // Render the local stream to the provided video view.
+        streamManager.renderLocalStream(to: videoView)
+    }
+    
+    static func startRecordingMessage(_ message: Message) {
+        streamManager.joinChannel(
+            withId: message.id,
+            token: message.token,
+            uid: StreamConfig.recordingUserUid
+        )
+    }
+    
+    static func stopRecordingMessage() {
+        streamManager.leaveChannel()
+    }
+        
     static func seekPermissions() {
         // Ask permission to access the mic.
         seekMicPermission()
@@ -73,18 +93,5 @@ public enum AV {
         default:
             break
         }
-    }
-    
-    static func startRecordingMessage(_ message: Message) {
-        streamManager.streamNewMessage(message)
-    }
-    
-    static func stopRecordingMessage() {
-        streamManager.stopMessage()
-    }
-    
-    static func clearRecording() {
-        // TODO
-        // streamManager.cancelMessage()
     }
 }
