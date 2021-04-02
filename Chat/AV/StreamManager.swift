@@ -11,18 +11,12 @@ import AgoraRtcKit
 import Combine
 
 class StreamManager: NSObject, AgoraRtcEngineDelegate {
-    
-    private var initialized = false
-    
+        
     private var rtcKit: AgoraRtcEngineKit!
     
     private var videoSessions = [VideoSession]()
     
-    func prepareForNewStream() {
-        if !initialized {
-            initializeRTCKit()
-        }
-    }
+    weak var delegate: StreamManagerDelegate?
     
     func initializeRTCKit() {
         // Create new RTC kit instance.
@@ -48,13 +42,9 @@ class StreamManager: NSObject, AgoraRtcEngineDelegate {
 
         // Set encryption type.
         setStreamEncryption()
-        
-        // Register self as initialized.
-        initialized = true
     }
     
     func renderLocalStream(to videoView: VideoView) {
-        
         // Create a new local video session.
         let localSession = VideoSession.newLocalSession(videoView: videoView)
         
@@ -91,19 +81,6 @@ class StreamManager: NSObject, AgoraRtcEngineDelegate {
         // Clear all video sessions.
         videoSessions.removeAll()
     }
-        
-    func cacheLastVideoFrame() -> NSImage? {
-        return nil
-//        guard let videoPreviewView = client.localVideoRenderer as? WebRTCVideoPreviewView,
-//              let lastFrame = videoPreviewView.lastFrame,
-//              let image = lastFrame.nsImage else {
-//            return nil
-//        }
-//
-//        dataProvider.user.setVideoPlaceholder(id: Session.currentUserId!, image: image)
-//
-//        return image
-    }
     
     // Occurs when the local user joins a specified channel.
     func rtcEngine(_ engine: AgoraRtcEngineKit, didJoinChannel channel: String, withUid uid: UInt, elapsed: Int) {
@@ -123,11 +100,13 @@ class StreamManager: NSObject, AgoraRtcEngineDelegate {
     
     // Reports an error during SDK runtime.
     func rtcEngine(_ engine: AgoraRtcEngineKit, didOccurError errorCode: AgoraErrorCode) {
-        logger.error("RTC error code \(errorCode)")
+        logger.error("RTC error code \(errorCode.rawValue)")
     }
     
     // Got first local video frame.
-    func rtcEngine(_ engine: AgoraRtcEngineKit, firstLocalVideoFrameWith size: CGSize, elapsed: Int) {}
+    func rtcEngine(_ engine: AgoraRtcEngineKit, firstLocalVideoFrameWith size: CGSize, elapsed: Int) {
+        delegate?.onVideoPreviewStarted()
+    }
     
     // Local stats available.
     func rtcEngine(_ engine: AgoraRtcEngineKit, reportRtcStats stats: AgoraChannelStats) {}

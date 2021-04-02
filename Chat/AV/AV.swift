@@ -11,16 +11,23 @@ import Speech
 
 public enum AV {
             
-    static let streamManager = StreamManager()
+    // Audio/video permissions manager.
+    static var permissions = AVPermissions()
     
-    static func initLocalStream(to videoView: VideoView) {
-        // Initialize RTC kit.
-        streamManager.initializeRTCKit()
-        
-        // Render the local stream to the provided video view.
+    // Audio/video stream manager.
+    static let streamManager = StreamManager()
+
+    // Seek audio/video permissions.
+    static func seekPermissions() {
+        AV.permissions.seekPermissions()
+    }
+    
+    // Render the local stream to the provided video view.
+    static func renderLocalStream(to videoView: VideoView) {
         streamManager.renderLocalStream(to: videoView)
     }
     
+    // Start recording a new AV message.
     static func startRecordingMessage(_ message: Message) {
         streamManager.joinChannel(
             withId: message.id,
@@ -29,11 +36,47 @@ public enum AV {
         )
     }
     
+    // Stop recording the active AV message.
     static func stopRecordingMessage() {
         streamManager.leaveChannel()
     }
+}
+
+class AVPermissions {
+    
+    enum AuthStatus {
+        case unknown
+        case denied
+        case authed
+    }
+    
+    var audioAuthStatus: AuthStatus = .unknown {
+        didSet { onPermissionSet() }
+    }
+    
+    var videoAuthStatus: AuthStatus = .unknown {
+        didSet { onPermissionSet() }
+    }
+    
+    var isAudioAuthed: Bool {
+        switch audioAuthStatus {
+        case .authed:
+            return true
+        default:
+            return false
+        }
+    }
+    
+    var isVideoAuthed: Bool {
+        switch videoAuthStatus {
+        case .authed:
+            return true
+        default:
+            return false
+        }
+    }
         
-    static func seekPermissions() {
+    func seekPermissions() {
         // Ask permission to access the mic.
         seekMicPermission()
         
@@ -43,25 +86,40 @@ public enum AV {
         }
     }
     
-    static func seekMicPermission() {
+    private func onPermissionSet() {
+        if isAudioAuthed && isVideoAuthed {
+            onFullyAuthed()
+        }
+    }
+    
+    private func onFullyAuthed() {
+        // Initialize RTC kit.
+        AV.streamManager.initializeRTCKit()
+    }
+    
+    private func seekMicPermission() {
         // Switch over the current auth status for mic access.
         switch AVCaptureDevice.authorizationStatus(for: .audio) {
 
         // If already authorized, go ahead and configure the mic.
         case .authorized:
-            break
+            audioAuthStatus = .authed
         
         // If user hasn't been asked yet, ask for permission.
         case .notDetermined:
-            AVCaptureDevice.requestAccess(for: .audio) { _ in }
+            AVCaptureDevice.requestAccess(for: .audio) { [weak self] granted in
+                self?.audioAuthStatus = granted ? .authed : .denied
+            }
             
         // Log error if device restricts mic access.
         case .restricted:
             logger.error("Seeking mic permission failed -- device restricts mic access.")
+            audioAuthStatus = .denied
         
         // Log error if user denies mic access.
         case .denied:
             logger.error("Seeking mic permission failed -- user denied access.")
+            audioAuthStatus = .denied
         
         // Handle unknown cases that may arise in future versions.
         default:
@@ -69,25 +127,29 @@ public enum AV {
         }
     }
 
-    static func seekCameraPermission() {
+    private func seekCameraPermission() {
         // Switch over the current auth status for camera access.
         switch AVCaptureDevice.authorizationStatus(for: .video) {
 
         // If already authorized, go ahead and configure the inputs requiring camera access.
         case .authorized:
-            return
+            videoAuthStatus = .authed
         
         // If user hasn't been asked yet, ask for permission.
         case .notDetermined:
-            AVCaptureDevice.requestAccess(for: .video) { _ in }
+            AVCaptureDevice.requestAccess(for: .video) { [weak self] granted in
+                self?.videoAuthStatus = granted ? .authed : .denied
+            }
             
         // Log error if device restricts camera access.
         case .restricted:
             logger.error("Seeking camera permission failed -- device restricts camera access.")
+            videoAuthStatus = .denied
         
         // Log error if user denies camera access.
         case .denied:
             logger.error("Seeking camera permission failed -- user denied access.")
+            videoAuthStatus = .denied
         
         // Handle unknown cases that may arise in future versions.
         default:

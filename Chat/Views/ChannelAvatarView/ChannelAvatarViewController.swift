@@ -687,16 +687,12 @@ class ChannelAvatarViewController: NSViewController {
 
     private func connectVideoPreviewToLocalStream() {
         if let previewView = videoPreviewView {
-            AV.initLocalStream(to: previewView)
+            AV.renderLocalStream(to: previewView)
         }
     }
     
     private func showVideoPreviewView() {
-        // Reveal video preview view.
         videoPreviewView?.alphaValue = 1.0
-        
-        // Fade out the blur.
-//        fadeOutBlurLayer(duration: ChannelAvatarView.AnimationConfig.VideoPreviewLayer.removeBlurDuration)
     }
         
     private func removeVideoPreviewView(lastFrame: NSImage? = nil, wasCancelled: Bool = false) {
@@ -825,10 +821,7 @@ class ChannelAvatarViewController: NSViewController {
         if UserSettings.Video.useCamera {
             // Fade in the loader.
             fadeInLoaderView()
-            
-            // Upsert the video placeholder avatar.
-            upsertVideoPlaceholderAvatar()
-            
+                        
             // Create the video preview view.
             createVideoPreviewView()
             
@@ -843,29 +836,14 @@ class ChannelAvatarViewController: NSViewController {
             // Fade out loader view.
             fadeOutLoaderView()
 
-            // Set the imageView to show the video placeholder avatar.
-            fadeInVideoPlaceholderAvatar()
-            
-            // Fade in blur layer.
-            fadeInBlurLayer(
-                blurRadius: ChannelAvatarView.Style.BlurLayer.videoPlaceholderAvatarBlurRadius,
-                duration: ChannelWindow.AnimationConfig.duration(forState: state),
-                alpha: ChannelAvatarView.Style.BlurLayer.videoPlaceholderAvatarAlpha
-            )
-
             // Fade in video recipient avatar.
             fadeInVideoRecipientView()
             
             // Animate avatar view size.
             animateAvatarViewSize(toState: state)
             
+            // Show the video preview.
             showVideoPreviewView()
-//            // Show video preview.
-//            DispatchQueue.main.asyncAfter(
-//                deadline: .now() + ChannelWindow.AnimationConfig.duration(forState: state) + 0.2
-//            ) { [weak self] in
-//                self?.showVideoPreviewView()
-//            }
         }
     }
     
@@ -890,11 +868,6 @@ class ChannelAvatarViewController: NSViewController {
     }
     
     private func renderSendingRecording(_ state: ChannelState) {
-        // Update avatar placeholder image to last frame of video.
-        if let image = AV.streamManager.cacheLastVideoFrame() {
-            setAvatarImage(to: image)
-        }
-        
         AV.stopRecordingMessage()
 
         // Fade in blur layer to avatar image.

@@ -10,7 +10,7 @@ import Cocoa
 import Combine
 
 // Controller for channel window.
-class ChannelWindowController: NSWindowController, NSWindowDelegate {
+class ChannelWindowController: NSWindowController, NSWindowDelegate, StreamManagerDelegate {
     
     // Channel associated with window.
     var channel: Channel!
@@ -159,6 +159,13 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate {
         }
     }
      
+    func onVideoPreviewStarted() {
+        // If recording is initializing, start the recording.
+        if isRecordingInitializing() {
+            startRecordingMessage(windowModel.currentMessage!)
+        }
+    }
+    
     // Whether the latest state update should render this channel individually or as a group.
     func shouldRenderIndividually() -> Bool {
         let renderAsGroup = stateChangedCase() || (UserSettings.Video.useCamera && isRecordingStarted())
@@ -378,13 +385,7 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate {
             AV.stopRecordingMessage()
             return
         }
-        
-        // If recording is initializing, start the recording.
-        if isRecordingInitializing() {
-            startRecordingMessage(msg)
-            return
-        }
-                
+                        
 //        // Handle newly recorded messages being sent.
 //        if isRecordingSending() {
 //            onRecordingMessageSent(message: msg)
@@ -430,6 +431,9 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate {
     private func initializeRecording() {
         // Pause the UI event queue.
         uiEventQueue.pause()
+        
+        // Set the AV stream manager delegate to this window.
+        AV.streamManager.delegate = self
         
         // Update state to recording:initializing
         toRecordingInitializing()

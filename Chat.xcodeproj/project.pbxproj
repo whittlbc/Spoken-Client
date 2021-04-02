@@ -85,6 +85,7 @@
 		09718FC22616D9ED00D41C05 /* AgoraSoundTouch.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 09718FB32616D9DD00D41C05 /* AgoraSoundTouch.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		09718FC32616D9F100D41C05 /* av1.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 09718FB42616D9DE00D41C05 /* av1.framework */; };
 		09718FC42616D9F100D41C05 /* av1.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 09718FB42616D9DE00D41C05 /* av1.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		09718FC62617751700D41C05 /* StreamManagerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09718FC52617751700D41C05 /* StreamManagerDelegate.swift */; };
 		097228F725B63EA100219591 /* ChannelWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 097228F625B63EA100219591 /* ChannelWindow.swift */; };
 		097228FC25BC8F0C00219591 /* ChannelAvatarViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 097228FB25BC8F0C00219591 /* ChannelAvatarViewModel.swift */; };
 		0972290225BCC98800219591 /* UserDefaults+RawRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0972290125BCC98800219591 /* UserDefaults+RawRepresentable.swift */; };
@@ -227,6 +228,7 @@
 		09718FB32616D9DD00D41C05 /* AgoraSoundTouch.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = AgoraSoundTouch.framework; sourceTree = "<group>"; };
 		09718FB42616D9DE00D41C05 /* av1.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = av1.framework; sourceTree = "<group>"; };
 		09718FB52616D9DE00D41C05 /* Agoraffmpeg.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Agoraffmpeg.framework; sourceTree = "<group>"; };
+		09718FC52617751700D41C05 /* StreamManagerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamManagerDelegate.swift; sourceTree = "<group>"; };
 		097228F625B63EA100219591 /* ChannelWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelWindow.swift; sourceTree = "<group>"; };
 		097228FB25BC8F0C00219591 /* ChannelAvatarViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelAvatarViewModel.swift; sourceTree = "<group>"; };
 		0972290125BCC98800219591 /* UserDefaults+RawRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserDefaults+RawRepresentable.swift"; sourceTree = "<group>"; };
@@ -374,6 +376,7 @@
 			children = (
 				0940E06D25A4D946006184D7 /* AV.swift */,
 				09BFD8B925D0D1FF0071966B /* StreamManager.swift */,
+				09718FC52617751700D41C05 /* StreamManagerDelegate.swift */,
 				09718FA12616B00600D41C05 /* StreamConfig.swift */,
 			);
 			path = AV;
@@ -814,6 +817,7 @@
 				09718F8E26154F1100D41C05 /* VideoView.swift in Sources */,
 				0995DE3B2581CA7500DAA334 /* InternalAPI.swift in Sources */,
 				0968E2BD25C5E044004E0C39 /* FileUploadJob.swift in Sources */,
+				09718FC62617751700D41C05 /* StreamManagerDelegate.swift in Sources */,
 				0990879525797561001660D1 /* AppDelegate.swift in Sources */,
 				099997522595371E008E65FB /* ParticleView.swift in Sources */,
 				094DAB1F25B1335E00CFC2EC /* Publisher+Operators.swift in Sources */,
