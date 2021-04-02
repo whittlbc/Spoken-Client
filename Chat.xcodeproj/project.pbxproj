@@ -86,6 +86,8 @@
 		09718FC32616D9F100D41C05 /* av1.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 09718FB42616D9DE00D41C05 /* av1.framework */; };
 		09718FC42616D9F100D41C05 /* av1.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 09718FB42616D9DE00D41C05 /* av1.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		09718FC62617751700D41C05 /* StreamManagerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09718FC52617751700D41C05 /* StreamManagerDelegate.swift */; };
+		09718FCD26177F2F00D41C05 /* AgoraMediaDataPlugin.mm in Sources */ = {isa = PBXBuildFile; fileRef = 09718FCA26177F2E00D41C05 /* AgoraMediaDataPlugin.mm */; };
+		09718FCE26177F2F00D41C05 /* AgoraMediaRawData.m in Sources */ = {isa = PBXBuildFile; fileRef = 09718FCC26177F2E00D41C05 /* AgoraMediaRawData.m */; };
 		097228F725B63EA100219591 /* ChannelWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 097228F625B63EA100219591 /* ChannelWindow.swift */; };
 		097228FC25BC8F0C00219591 /* ChannelAvatarViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 097228FB25BC8F0C00219591 /* ChannelAvatarViewModel.swift */; };
 		0972290225BCC98800219591 /* UserDefaults+RawRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0972290125BCC98800219591 /* UserDefaults+RawRepresentable.swift */; };
@@ -229,6 +231,11 @@
 		09718FB42616D9DE00D41C05 /* av1.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = av1.framework; sourceTree = "<group>"; };
 		09718FB52616D9DE00D41C05 /* Agoraffmpeg.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Agoraffmpeg.framework; sourceTree = "<group>"; };
 		09718FC52617751700D41C05 /* StreamManagerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamManagerDelegate.swift; sourceTree = "<group>"; };
+		09718FC826177F2D00D41C05 /* Chat-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Chat-Bridging-Header.h"; sourceTree = "<group>"; };
+		09718FC926177F2E00D41C05 /* AgoraMediaDataPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AgoraMediaDataPlugin.h; sourceTree = "<group>"; };
+		09718FCA26177F2E00D41C05 /* AgoraMediaDataPlugin.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AgoraMediaDataPlugin.mm; sourceTree = "<group>"; };
+		09718FCB26177F2E00D41C05 /* AgoraMediaRawData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AgoraMediaRawData.h; sourceTree = "<group>"; };
+		09718FCC26177F2E00D41C05 /* AgoraMediaRawData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AgoraMediaRawData.m; sourceTree = "<group>"; };
 		097228F625B63EA100219591 /* ChannelWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelWindow.swift; sourceTree = "<group>"; };
 		097228FB25BC8F0C00219591 /* ChannelAvatarViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelAvatarViewModel.swift; sourceTree = "<group>"; };
 		0972290125BCC98800219591 /* UserDefaults+RawRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserDefaults+RawRepresentable.swift"; sourceTree = "<group>"; };
@@ -378,6 +385,7 @@
 				09BFD8B925D0D1FF0071966B /* StreamManager.swift */,
 				09718FC52617751700D41C05 /* StreamManagerDelegate.swift */,
 				09718FA12616B00600D41C05 /* StreamConfig.swift */,
+				09718F9526154F2B00D41C05 /* VideoSession.swift */,
 			);
 			path = AV;
 			sourceTree = "<group>";
@@ -466,9 +474,20 @@
 			isa = PBXGroup;
 			children = (
 				09718F8D26154F1100D41C05 /* VideoView.swift */,
-				09718F9526154F2B00D41C05 /* VideoSession.swift */,
 			);
 			path = VideoView;
+			sourceTree = "<group>";
+		};
+		09718FC726177F1600D41C05 /* AgoraRawDataAPI */ = {
+			isa = PBXGroup;
+			children = (
+				09718FC926177F2E00D41C05 /* AgoraMediaDataPlugin.h */,
+				09718FCA26177F2E00D41C05 /* AgoraMediaDataPlugin.mm */,
+				09718FCB26177F2E00D41C05 /* AgoraMediaRawData.h */,
+				09718FCC26177F2E00D41C05 /* AgoraMediaRawData.m */,
+				09718FC826177F2D00D41C05 /* Chat-Bridging-Header.h */,
+			);
+			path = AgoraRawDataAPI;
 			sourceTree = "<group>";
 		};
 		0990878825797561001660D1 = {
@@ -499,6 +518,7 @@
 				0996444F25AE6FC4004473B7 /* DataProviders */,
 				0995DE1D2581698300DAA334 /* Networking */,
 				095C678A25A3D8EB00729845 /* AV */,
+				09718FC726177F1600D41C05 /* AgoraRawDataAPI */,
 				09D3FC1A25B51C3100CC744A /* KeyManagers */,
 				0996446525AE92D0004473B7 /* Caching */,
 				099087BB25799BA2001660D1 /* Utilities */,
@@ -748,6 +768,7 @@
 				TargetAttributes = {
 					0990879025797561001660D1 = {
 						CreatedOnToolsVersion = 11.7;
+						LastSwiftMigration = 1220;
 					};
 				};
 			};
@@ -796,6 +817,7 @@
 				09074D81259934B900E72F93 /* ChannelParticleView.swift in Sources */,
 				094DAAE525AEBA3300CFC2EC /* DataProviderError.swift in Sources */,
 				099087BD25799BC2001660D1 /* Screen.swift in Sources */,
+				09718FCD26177F2F00D41C05 /* AgoraMediaDataPlugin.mm in Sources */,
 				096862EB2582A8D000B9B614 /* Workspace+Arrow.swift in Sources */,
 				096863382586C42B00B9B614 /* RoundShadowView.swift in Sources */,
 				097228FC25BC8F0C00219591 /* ChannelAvatarViewModel.swift in Sources */,
@@ -830,6 +852,7 @@
 				0968E2B525C5DD68004E0C39 /* Job.swift in Sources */,
 				0968632C2584299400B9B614 /* ChannelView.swift in Sources */,
 				0940E06E25A4D946006184D7 /* AV.swift in Sources */,
+				09718FCE26177F2F00D41C05 /* AgoraMediaRawData.m in Sources */,
 				0949C897259686E800B61D1F /* NSView+Subviews.swift in Sources */,
 				0968E29F25C5B8DF004E0C39 /* MessageDataProvider.swift in Sources */,
 				094DAB0325AF948300CFC2EC /* UserDataProvider.swift in Sources */,
@@ -1027,6 +1050,7 @@
 			baseConfigurationReference = 0995DE29258180F600DAA334 /* Development.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Chat/Chat.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
@@ -1045,6 +1069,8 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.benWhittle.Chat.dev;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "Chat/AgoraRawDataAPI/Chat-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 			};
 			name = "Debug (Development)";
@@ -1054,6 +1080,7 @@
 			baseConfigurationReference = 0995DE29258180F600DAA334 /* Development.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Chat/Chat.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
@@ -1071,6 +1098,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
 				PRODUCT_BUNDLE_IDENTIFIER = com.benWhittle.Chat.dev;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "Chat/AgoraRawDataAPI/Chat-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 			};
 			name = "Release (Development)";
@@ -1142,6 +1170,7 @@
 			baseConfigurationReference = 0995DE2A2581814200DAA334 /* Production.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Chat/Chat.entitlements;
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
@@ -1159,6 +1188,8 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
 				PRODUCT_BUNDLE_IDENTIFIER = com.benWhittle.Chat.prod;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "Chat/AgoraRawDataAPI/Chat-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 			};
 			name = "Debug (Production)";
@@ -1223,6 +1254,7 @@
 			baseConfigurationReference = 0995DE2A2581814200DAA334 /* Production.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Chat/Chat.entitlements;
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
@@ -1240,6 +1272,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
 				PRODUCT_BUNDLE_IDENTIFIER = com.benWhittle.Chat.prod;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "Chat/AgoraRawDataAPI/Chat-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 			};
 			name = "Release (Production)";

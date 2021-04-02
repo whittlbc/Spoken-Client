@@ -868,6 +868,11 @@ class ChannelAvatarViewController: NSViewController {
     }
     
     private func renderSendingRecording(_ state: ChannelState) {
+        // Update avatar placeholder image to last frame of video.
+        if let image = AV.streamManager.cacheLastVideoFrame() {
+            setAvatarImage(to: image)
+        }
+        
         AV.stopRecordingMessage()
 
         // Fade in blur layer to avatar image.

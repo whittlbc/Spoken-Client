@@ -10,11 +10,15 @@ import Cocoa
 import AgoraRtcKit
 import Combine
 
-class StreamManager: NSObject, AgoraRtcEngineDelegate {
+class StreamManager: NSObject, AgoraRtcEngineDelegate, AgoraVideoDataPluginDelegate {
         
     private var rtcKit: AgoraRtcEngineKit!
     
+    private var mediaDataPlugin: AgoraMediaDataPlugin!
+    
     private var videoSessions = [VideoSession]()
+    
+    private var lastVideoFrame: AgoraVideoRawData?
     
     weak var delegate: StreamManagerDelegate?
     
@@ -42,6 +46,9 @@ class StreamManager: NSObject, AgoraRtcEngineDelegate {
 
         // Set encryption type.
         setStreamEncryption()
+        
+        // Register media data plugin.
+        registerMediaDataPlugin()
     }
     
     func renderLocalStream(to videoView: VideoView) {
@@ -80,6 +87,17 @@ class StreamManager: NSObject, AgoraRtcEngineDelegate {
         
         // Clear all video sessions.
         videoSessions.removeAll()
+    }
+    
+    func cacheLastVideoFrame() -> NSImage? {
+        if let frame = lastVideoFrame, let pixelBuffer = mediaDataPlugin.rawVideoData(toPixelBuffer: frame) {
+            return CIImage(cvPixelBuffer: pixelBuffer.takeRetainedValue())
+                .oriented(forExifOrientation: 9)
+                .transformed(by: CGAffineTransform(scaleX: -1, y: 1))
+                .nsImage
+        }
+        
+        return nil
     }
     
     // Occurs when the local user joins a specified channel.
@@ -130,6 +148,32 @@ class StreamManager: NSObject, AgoraRtcEngineDelegate {
     // Got remote audio stats.
     func rtcEngine(_ engine: AgoraRtcEngineKit, remoteAudioStats stats: AgoraRtcRemoteAudioStats) {}
     
+    // Occurs each time the SDK receives a video frame captured by the local camera.
+    func mediaDataPlugin(
+        _ mediaDataPlugin: AgoraMediaDataPlugin,
+        didCapturedVideoRawData videoRawData: AgoraVideoRawData
+    ) -> AgoraVideoRawData {
+        lastVideoFrame = videoRawData
+        return videoRawData
+    }
+    
+    // Occurs each time the SDK receives a video frame before sending to encoder.
+    func mediaDataPlugin(
+        _ mediaDataPlugin: AgoraMediaDataPlugin,
+        willPreEncode videoRawData: AgoraVideoRawData
+    ) -> AgoraVideoRawData {
+        return videoRawData
+    }
+    
+    // Occurs each time the SDK receives a video frame sent by the remote user.
+    func mediaDataPlugin(
+        _ mediaDataPlugin: AgoraMediaDataPlugin,
+        willRenderVideoRawData videoRawData: AgoraVideoRawData,
+        ofUid uid: uint
+    ) -> AgoraVideoRawData {
+        return videoRawData
+    }
+
     private func clearSessions() {
         videoSessions.removeAll()
     }
@@ -193,5 +237,16 @@ class StreamManager: NSObject, AgoraRtcEngineDelegate {
     
     private func setStreamEncryption() {
         // TODO: Come back to this.
+    }
+    
+    private func registerMediaDataPlugin() {
+        // Set up raw media data observers.
+        mediaDataPlugin = AgoraMediaDataPlugin(agoraKit: rtcKit)
+        
+        // Register video observer.
+        let videoType: ObserverVideoType = ObserverVideoType(rawValue: ObserverVideoType.captureVideo.rawValue | ObserverVideoType.renderVideo.rawValue | ObserverVideoType.preEncodeVideo.rawValue)
+        
+        mediaDataPlugin.registerVideoRawDataObserver(videoType)
+        mediaDataPlugin.videoDelegate = self
     }
 }
