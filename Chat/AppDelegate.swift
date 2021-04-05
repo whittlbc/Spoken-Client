@@ -19,10 +19,17 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         
         // Start job workers.
         startWorkers()
+        
+        // Start listening for pubsub messages.
+        startPubsubManager()
     }
     
     private func startWorkers() {
         // Start file upload worker.
         fileUploadWorker.start()
+    }
+    
+    private func startPubsubManager() {
+        pubsubManager.start()
     }
 }

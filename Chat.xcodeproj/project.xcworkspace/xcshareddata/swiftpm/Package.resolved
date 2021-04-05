@@ -38,6 +38,15 @@
         }
       },
       {
+        "package": "PubNub",
+        "repositoryURL": "https://github.com/pubnub/swift",
+        "state": {
+          "branch": null,
+          "revision": "2b82413f1f86768a61e624913f8c4c251f4119d8",
+          "version": "3.1.1"
+        }
+      },
+      {
         "package": "swift-log",
         "repositoryURL": "https://github.com/apple/swift-log.git",
         "state": {

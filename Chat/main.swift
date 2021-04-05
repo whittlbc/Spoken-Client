@@ -15,9 +15,7 @@ autoreleasepool {
         
         // Set delegate to AppDelegate.
         app.delegate = delegate
-        
-        logger.info("Launching app...")
-        
+                
         // Start the app.
         app.run()
     }

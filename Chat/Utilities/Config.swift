@@ -11,16 +11,18 @@ import Foundation
 // Global app config
 public enum Config {
     
-    // Environment variable keys
+    // Environment variable keys.
     enum Keys {
         static let env = "ENV"
         static let apiURL = "API_URL"
         static let appName = "APP_NAME"
         static let appBundleID = "APP_BUNDLE_ID"
         static let agoraAppID = "AGORA_APP_ID"
+        static let pubNubPublishKey = "PUBNUB_PUBLISH_KEY"
+        static let pubNubSubscribeKey = "PUBNUB_SUBSCRIBE_KEY"
     }
 
-    // App environment options
+    // App environment options.
     enum Env: String {
         case dev
         case prod
@@ -77,4 +79,10 @@ public enum Config {
     
     // Agora App ID.
     static let agoraAppID = Config.getRequiredStringEnvVar(forKey: Keys.agoraAppID)
+    
+    // PubNub publish key.
+    static let pubNubPublishKey = Config.getRequiredStringEnvVar(forKey: Keys.pubNubPublishKey)
+    
+    // PubNub subscribe key.
+    static let pubNubSubscribeKey = Config.getRequiredStringEnvVar(forKey: Keys.pubNubSubscribeKey)
 }

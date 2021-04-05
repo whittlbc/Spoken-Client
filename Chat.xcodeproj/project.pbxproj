@@ -88,6 +88,10 @@
 		09718FC62617751700D41C05 /* StreamManagerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09718FC52617751700D41C05 /* StreamManagerDelegate.swift */; };
 		09718FCD26177F2F00D41C05 /* AgoraMediaDataPlugin.mm in Sources */ = {isa = PBXBuildFile; fileRef = 09718FCA26177F2E00D41C05 /* AgoraMediaDataPlugin.mm */; };
 		09718FCE26177F2F00D41C05 /* AgoraMediaRawData.m in Sources */ = {isa = PBXBuildFile; fileRef = 09718FCC26177F2E00D41C05 /* AgoraMediaRawData.m */; };
+		09718FD1261B8B0D00D41C05 /* PubsubManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09718FD0261B8B0D00D41C05 /* PubsubManager.swift */; };
+		09718FD4261B8D5800D41C05 /* NewMessageEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09718FD3261B8D5800D41C05 /* NewMessageEvent.swift */; };
+		09718FD7261B9FC900D41C05 /* PubNub in Frameworks */ = {isa = PBXBuildFile; productRef = 09718FD6261B9FC900D41C05 /* PubNub */; };
+		09718FD9261BB68900D41C05 /* PubsubEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09718FD8261BB68900D41C05 /* PubsubEvent.swift */; };
 		097228F725B63EA100219591 /* ChannelWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 097228F625B63EA100219591 /* ChannelWindow.swift */; };
 		097228FC25BC8F0C00219591 /* ChannelAvatarViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 097228FB25BC8F0C00219591 /* ChannelAvatarViewModel.swift */; };
 		0972290225BCC98800219591 /* UserDefaults+RawRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0972290125BCC98800219591 /* UserDefaults+RawRepresentable.swift */; };
@@ -236,6 +240,9 @@
 		09718FCA26177F2E00D41C05 /* AgoraMediaDataPlugin.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AgoraMediaDataPlugin.mm; sourceTree = "<group>"; };
 		09718FCB26177F2E00D41C05 /* AgoraMediaRawData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AgoraMediaRawData.h; sourceTree = "<group>"; };
 		09718FCC26177F2E00D41C05 /* AgoraMediaRawData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AgoraMediaRawData.m; sourceTree = "<group>"; };
+		09718FD0261B8B0D00D41C05 /* PubsubManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PubsubManager.swift; sourceTree = "<group>"; };
+		09718FD3261B8D5800D41C05 /* NewMessageEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewMessageEvent.swift; sourceTree = "<group>"; };
+		09718FD8261BB68900D41C05 /* PubsubEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PubsubEvent.swift; sourceTree = "<group>"; };
 		097228F625B63EA100219591 /* ChannelWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelWindow.swift; sourceTree = "<group>"; };
 		097228FB25BC8F0C00219591 /* ChannelAvatarViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelAvatarViewModel.swift; sourceTree = "<group>"; };
 		0972290125BCC98800219591 /* UserDefaults+RawRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserDefaults+RawRepresentable.swift"; sourceTree = "<group>"; };
@@ -306,6 +313,7 @@
 				09718FBF2616D9EB00D41C05 /* Agoraffmpeg.framework in Frameworks */,
 				09718FA92616D35500D41C05 /* AgoraRtcKit.framework in Frameworks */,
 				09718FAD2616D35E00D41C05 /* SystemConfiguration.framework in Frameworks */,
+				09718FD7261B9FC900D41C05 /* PubNub in Frameworks */,
 				09718FAF2616D36000D41C05 /* VideoToolbox.framework in Frameworks */,
 				09BFD89D25CF62930071966B /* WebRTC in Frameworks */,
 				09718FAB2616D35800D41C05 /* CoreWLAN.framework in Frameworks */,
@@ -490,6 +498,24 @@
 			path = AgoraRawDataAPI;
 			sourceTree = "<group>";
 		};
+		09718FCF261B8AE300D41C05 /* Pubsub */ = {
+			isa = PBXGroup;
+			children = (
+				09718FD2261B8D3400D41C05 /* PubsubEvents */,
+				09718FD0261B8B0D00D41C05 /* PubsubManager.swift */,
+				09718FD8261BB68900D41C05 /* PubsubEvent.swift */,
+			);
+			path = Pubsub;
+			sourceTree = "<group>";
+		};
+		09718FD2261B8D3400D41C05 /* PubsubEvents */ = {
+			isa = PBXGroup;
+			children = (
+				09718FD3261B8D5800D41C05 /* NewMessageEvent.swift */,
+			);
+			path = PubsubEvents;
+			sourceTree = "<group>";
+		};
 		0990878825797561001660D1 = {
 			isa = PBXGroup;
 			children = (
@@ -523,6 +549,7 @@
 				0996446525AE92D0004473B7 /* Caching */,
 				099087BB25799BA2001660D1 /* Utilities */,
 				0968E2A925C5D858004E0C39 /* Workers */,
+				09718FCF261B8AE300D41C05 /* Pubsub */,
 				0994C76625C8C8CC0006919A /* Queues */,
 				0940E07925A7ACD6006184D7 /* Settings */,
 				0995DE1C2581695A00DAA334 /* Extensions */,
@@ -751,6 +778,7 @@
 				096862F72582CF6700B9B614 /* Cache */,
 				09F60AD62592B7CE0020974A /* HotKey */,
 				09BFD89C25CF62930071966B /* WebRTC */,
+				09718FD6261B9FC900D41C05 /* PubNub */,
 			);
 			productName = Chat;
 			productReference = 0990879125797561001660D1 /* Chat.app */;
@@ -788,6 +816,7 @@
 				096862F62582CF6700B9B614 /* XCRemoteSwiftPackageReference "Cache" */,
 				09F60AD52592B7CD0020974A /* XCRemoteSwiftPackageReference "HotKey" */,
 				09BFD89B25CF62930071966B /* XCRemoteSwiftPackageReference "WebRTC" */,
+				09718FD5261B9FC900D41C05 /* XCRemoteSwiftPackageReference "swift" */,
 			);
 			productRefGroup = 0990879225797561001660D1 /* Products */;
 			projectDirPath = "";
@@ -835,7 +864,9 @@
 				09D19A6225B38D5100C0C476 /* Array+Helpers.swift in Sources */,
 				09D3FC0E25B50ADA00CC744A /* WorkspaceKeyManager.swift in Sources */,
 				097228F725B63EA100219591 /* ChannelWindow.swift in Sources */,
+				09718FD4261B8D5800D41C05 /* NewMessageEvent.swift in Sources */,
 				095C677A25A29CC300729845 /* Message+Arrow.swift in Sources */,
+				09718FD1261B8B0D00D41C05 /* PubsubManager.swift in Sources */,
 				09718F8E26154F1100D41C05 /* VideoView.swift in Sources */,
 				0995DE3B2581CA7500DAA334 /* InternalAPI.swift in Sources */,
 				0968E2BD25C5E044004E0C39 /* FileUploadJob.swift in Sources */,
@@ -857,6 +888,7 @@
 				0968E29F25C5B8DF004E0C39 /* MessageDataProvider.swift in Sources */,
 				094DAB0325AF948300CFC2EC /* UserDataProvider.swift in Sources */,
 				0995DE01257AEDEC00DAA334 /* SidebarWindowController.swift in Sources */,
+				09718FD9261BB68900D41C05 /* PubsubEvent.swift in Sources */,
 				09D19A6525B38DDB00C0C476 /* MemberDataProvider.swift in Sources */,
 				09F60AC6258BFD450020974A /* NSRect+Location.swift in Sources */,
 				09D3FC0425B4F80000CC744A /* ImageError.swift in Sources */,
@@ -1329,6 +1361,14 @@
 				minimumVersion = 6.0.0;
 			};
 		};
+		09718FD5261B9FC900D41C05 /* XCRemoteSwiftPackageReference "swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/pubnub/swift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.1.1;
+			};
+		};
 		0995DE2B25818AF000DAA334 /* XCRemoteSwiftPackageReference "swift-log" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/apple/swift-log.git";
@@ -1370,6 +1410,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 096862F62582CF6700B9B614 /* XCRemoteSwiftPackageReference "Cache" */;
 			productName = Cache;
+		};
+		09718FD6261B9FC900D41C05 /* PubNub */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 09718FD5261B9FC900D41C05 /* XCRemoteSwiftPackageReference "swift" */;
+			productName = PubNub;
 		};
 		0995DE2C25818AF000DAA334 /* Logging */ = {
 			isa = XCSwiftPackageProductDependency;

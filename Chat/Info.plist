@@ -63,5 +63,9 @@
 	<true/>
 	<key>NSSupportsSuddenTermination</key>
 	<true/>
+	<key>PUBNUB_PUBLISH_KEY</key>
+	<string>$(PUBNUB_PUBLISH_KEY)</string>
+	<key>PUBNUB_SUBSCRIBE_KEY</key>
+	<string>$(PUBNUB_SUBSCRIBE_KEY)</string>
 </dict>
 </plist>
