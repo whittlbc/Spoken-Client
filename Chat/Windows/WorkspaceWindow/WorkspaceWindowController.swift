@@ -91,13 +91,13 @@ class WorkspaceWindowController: NSWindowController, NSWindowDelegate, Workspace
     // Handle command button key-up event.
     func onCommandUp() {}
     
-    func handleNewIncomingMessage(_ message: Message, cookies: [String: String]) {
+    func handleNewIncomingMessage(_ message: Message) {
         // Get channel window controller by id.
         guard let channelWindowController = channelWindowControllers[message.channelId] else {
             return
         }
         
-        channelWindowController.handleNewIncomingMessage(message, cookies: cookies)
+        channelWindowController.handleNewIncomingMessage(message)
     }
     
     // Handler called whenever a channel updates state.

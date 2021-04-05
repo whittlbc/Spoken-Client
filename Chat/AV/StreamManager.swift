@@ -13,7 +13,7 @@ import Combine
 class StreamManager: NSObject, AgoraRtcEngineDelegate, AgoraVideoDataPluginDelegate {
     
     var camaraHasBeenTurnedOnBefore = false
-        
+            
     private var rtcKit: AgoraRtcEngineKit!
     
     private var mediaDataPlugin: AgoraMediaDataPlugin!
@@ -21,6 +21,14 @@ class StreamManager: NSObject, AgoraRtcEngineDelegate, AgoraVideoDataPluginDeleg
     private var videoSessions = [VideoSession]()
     
     private var lastVideoFrame: AgoraVideoRawData?
+    
+    private var messagePlayerItem: AVPlayerItem?
+    
+    private(set) var messagePlayer: AVPlayer?
+    
+    private var messagePlayerItemContext = 0
+    
+    private var messageToPlay: Message?
     
     weak var delegate: StreamManagerDelegate?
     
@@ -89,6 +97,26 @@ class StreamManager: NSObject, AgoraRtcEngineDelegate, AgoraVideoDataPluginDeleg
         
         // Clear all video sessions.
         videoSessions.removeAll()
+    }
+    
+    func createMessagePlayer(message: Message) {
+        // Create AV asset.
+        guard let asset = createAVAsset(forMessage: message) else {
+            return
+        }
+        
+        // Store this message as the most recent one to play.
+        messageToPlay = message
+        
+        // Create message player item.
+        createMessagePlayerItem(withAsset: asset)
+        
+        // Create message player.
+        messagePlayer = AVPlayer(playerItem: messagePlayerItem)
+    }
+        
+    func playMessage() {
+        messagePlayer?.play()
     }
     
     func cacheLastVideoFrame() -> NSImage? {
@@ -250,5 +278,87 @@ class StreamManager: NSObject, AgoraRtcEngineDelegate, AgoraVideoDataPluginDeleg
         
         mediaDataPlugin.registerVideoRawDataObserver(videoType)
         mediaDataPlugin.videoDelegate = self
+    }
+    
+    private func createAVAsset(forMessage message: Message) -> AVAsset? {
+        guard let url = message.getRecordingURL(), let cookies = message.getCookies() else {
+            return nil
+        }
+        
+        return AVURLAsset(
+            url: url,
+            options: ["AVURLAssetHTTPHeaderFieldsKey": HTTPCookie.requestHeaderFields(with: cookies)]
+        )
+    }
+    
+    private func createMessagePlayerItem(withAsset asset: AVAsset) {
+        messagePlayerItem = AVPlayerItem(
+            asset: asset,
+            automaticallyLoadedAssetKeys: ["playable", "hasProtectedContent"]
+        )
+        
+        // Register as an observer of the player item's status property
+        messagePlayerItem!.addObserver(
+            self,
+            forKeyPath: #keyPath(AVPlayerItem.status),
+            options: [.old, .new],
+            context: &messagePlayerItemContext
+        )
+    }
+    
+    private func onMessageReadyToPlay() {
+        guard let message = messageToPlay else {
+            logger.error("Message is ready to play, but messageToPlay is nil...")
+            return
+        }
+        
+        delegate?.onMessageReadyToPlay(message)
+    }
+    
+    override func observeValue(
+        forKeyPath keyPath: String?,
+        of object: Any?,
+        change: [NSKeyValueChangeKey : Any]?,
+        context: UnsafeMutableRawPointer?
+    ) {
+        // Only handle observations for the messagePlayerItemContext.
+        guard context == &messagePlayerItemContext else {
+            super.observeValue(
+                forKeyPath: keyPath,
+                of: object,
+                change: change,
+                context: context
+            )
+            return
+        }
+
+        if keyPath == #keyPath(AVPlayerItem.status) {
+            let status: AVPlayerItem.Status
+            
+            if let statusNumber = change?[.newKey] as? NSNumber {
+                status = AVPlayerItem.Status(rawValue: statusNumber.intValue)!
+            } else {
+                status = .unknown
+            }
+
+            // Switch over status value
+            switch status {
+            
+            // Player item is ready to play.
+            case .readyToPlay:
+                onMessageReadyToPlay()
+
+            // Player item failed.
+            case .failed:
+                logger.error("Player item failed.")
+                
+            // Player item is not yet ready.
+            case .unknown:
+                break
+            
+            default:
+                break
+            }
+        }
     }
 }

@@ -9,5 +9,5 @@
 import Cocoa
 
 enum UIEvent {
-    case newIncomingMessage(message: Message, cookies: [String: String])
+    case newIncomingMessage(message: Message)
 }

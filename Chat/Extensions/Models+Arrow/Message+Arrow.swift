@@ -21,5 +21,6 @@ extension Message: ArrowParsable {
         failed <-- json["failed"]
         token <-- json["token"]
         url <-- json["url"]
+        cookies <-- json["cookies"]
     }
 }

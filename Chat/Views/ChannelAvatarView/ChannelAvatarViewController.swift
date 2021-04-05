@@ -9,6 +9,7 @@
 import Cocoa
 import Combine
 import AVFoundation
+import AVKit
 import AgoraRtcKit
 
 // Controller for ChannelAvatarView to manage all of its subviews and their interactions.
@@ -43,6 +44,9 @@ class ChannelAvatarViewController: NSViewController {
     
     // Channel video preview view.
     private var videoPreviewView: VideoView?
+
+    // Channel video player view.
+    private var videoPlayerView: AVPlayerView?
 
     // Subscription to av recorder state changes.
     private var avRecorderSubscription: AnyCancellable?
@@ -417,6 +421,44 @@ class ChannelAvatarViewController: NSViewController {
         previewView.layer?.contentsGravity = .resizeAspectFill
     }
     
+    private func createVideoPlayerView() {
+        // Create new video player view.
+        let playerView = AVPlayerView(frame: imageView.frame)
+        
+        // Make it layer based, transparent, and mask it to bounds.
+        playerView.wantsLayer = true
+        playerView.layer?.masksToBounds = true
+        playerView.layer?.backgroundColor = CGColor.clear
+
+        // Hide the view initially.
+        playerView.alphaValue = 0
+        
+        // Add video player view as subview of image view.
+        imageView.addSubview(playerView)
+
+        // Add auto-layout constraints.
+        constrainVideoPlayerView(playerView)
+
+        // Store player view.
+        videoPlayerView = playerView
+    }
+
+    private func constrainVideoPlayerView(_ playerView: AVPlayerView) {
+        // Set up auto-layout for sizing/positioning.
+        playerView.translatesAutoresizingMaskIntoConstraints = false
+        
+        // Fix size to image view size (equal height, width, and center).
+        NSLayoutConstraint.activate([
+            playerView.heightAnchor.constraint(equalTo: imageView.heightAnchor),
+            playerView.widthAnchor.constraint(equalTo: imageView.heightAnchor),
+            playerView.centerXAnchor.constraint(equalTo: imageView.centerXAnchor),
+            playerView.centerYAnchor.constraint(equalTo: imageView.centerYAnchor),
+        ])
+        
+        // Constrain the size to the image view's size.
+        playerView.layer?.contentsGravity = .resizeAspectFill
+    }
+
     // Create loader view to spin around avatar during the loading of arbitrary content.
     private func createLoaderView() -> DashSpinnerView {
         // Get size of image view frame.
@@ -695,24 +737,33 @@ class ChannelAvatarViewController: NSViewController {
         videoPreviewView?.alphaValue = 1.0
     }
         
-    private func removeVideoPreviewView(lastFrame: NSImage? = nil, wasCancelled: Bool = false) {
+    private func removeVideoPreviewView() {
         if videoPreviewView == nil {
             return
         }
         
         videoPreviewView!.alphaValue = 0.0
-        
-        if let image = lastFrame {
-            dataProvider.user.setVideoPlaceholder(id: Session.currentUserId!, image: image)
-        }
-        
+
         DispatchQueue.main.async {
-            if let image = lastFrame, !wasCancelled {
-                self.setAvatarImage(to: image)
-            }
-            
             self.videoPreviewView!.removeFromSuperview()
             self.videoPreviewView = nil
+        }
+    }
+    
+    private func showVideoPlayerView() {
+        videoPlayerView?.alphaValue = 1.0
+    }
+        
+    private func removeVideoPlayerView() {
+        if videoPlayerView == nil {
+            return
+        }
+        
+        videoPlayerView!.alphaValue = 0.0
+
+        DispatchQueue.main.async {
+            self.videoPlayerView!.removeFromSuperview()
+            self.videoPlayerView = nil
         }
     }
     
@@ -863,7 +914,7 @@ class ChannelAvatarViewController: NSViewController {
             fadeOutVideoRecipientView()
             
             // Remove the video preview view.
-            removeVideoPreviewView(wasCancelled: true)
+            removeVideoPreviewView()
         }
     }
     
@@ -910,9 +961,6 @@ class ChannelAvatarViewController: NSViewController {
             
             // Fade out the video recipient avatar.
             fadeOutVideoRecipientView()
-            
-            // Remove the video preview view.
-            removeVideoPreviewView()
         }
     }
     
@@ -933,28 +981,32 @@ class ChannelAvatarViewController: NSViewController {
             renderFinishedRecording(state)
         }
     }
-
-    private func renderInitializingConsuming(_ state: ChannelState) {
-        
-    }
     
     private func renderStartedConsuming(_ state: ChannelState) {
+        // Create the video player view.
+        createVideoPlayerView()
         
+        // Attach player to player view.
+        videoPlayerView!.player = AV.getMessagePlayer()!
+        
+        // Start playing the message.
+        AV.playMessage()
+        
+        // Animate avatar view size.
+        animateAvatarViewSize(toState: state)
     }
     
     private func renderCancellingConsuming(_ state: ChannelState) {
-        
+        removeVideoPlayerView()
     }
     
     private func renderFinishedConsuming(_ state: ChannelState) {
-        
+        removeVideoPlayerView()
     }
 
     // Render consuming-specific view updates.
     private func renderConsuming(_ state: ChannelState, _ message: Message, _ consumingStatus: ConsumingStatus) {
         switch consumingStatus {
-        case .initializing:
-            renderInitializingConsuming(state)
         case .started:
             renderStartedConsuming(state)
         case .cancelling:

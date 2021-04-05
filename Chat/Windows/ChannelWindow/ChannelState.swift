@@ -70,7 +70,6 @@ enum RecordingStatus {
 
 // Consumption statuses of message content.
 enum ConsumingStatus {
-    case initializing
     case started
     case cancelling
     case finished

@@ -40,6 +40,18 @@ public enum AV {
     static func stopRecordingMessage() {
         streamManager.leaveChannel()
     }
+    
+    static func createMessagePlayer(message: Message) {
+        streamManager.createMessagePlayer(message: message)
+    }
+    
+    static func getMessagePlayer() -> AVPlayer? {
+        streamManager.messagePlayer
+    }
+    
+    static func playMessage() {
+        streamManager.playMessage()
+    }
 }
 
 class AVPermissions {

@@ -73,10 +73,6 @@ class ChannelWindow: FloatingWindow {
             case .consuming(let message, let consumingStatus):
                 switch consumingStatus {
                 
-                // Initializing consuming.
-                case .initializing:
-                    return previewingSize
-                
                 // Cancelling or finished consuming.
                 case .cancelling, .finished:
                     return message.isVideo ? consumingSize(withVideo: true) : previewingSize
@@ -117,10 +113,6 @@ class ChannelWindow: FloatingWindow {
             case .consuming(let message, let consumingStatus):
                 switch consumingStatus {
                 
-                // Initializing consuming.
-                case .initializing:
-                    return size(forState: state)
-
                 // Cancelling or finished consuming.
                 case .cancelling, .finished:
                     return message.isVideo ? externalConsumingSize(withVideo: true) : size(forState: state)

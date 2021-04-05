@@ -24,5 +24,6 @@ class VideoView: NSView {
     private func setupLayer() {
         wantsLayer = true
         layer?.masksToBounds = true
+        layer?.backgroundColor = CGColor.clear
     }
 }

@@ -120,7 +120,7 @@ class ChannelWindowModel {
             }
     }
     
-    func sendMessageToInbox(_ message: Message, cookies: [String: String]) {
+    func sendMessageToInbox(_ message: Message) {
         // TODO
     }
 }

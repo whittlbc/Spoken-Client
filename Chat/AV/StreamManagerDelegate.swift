@@ -11,4 +11,6 @@ import Cocoa
 protocol StreamManagerDelegate: NSObjectProtocol {
     
     func onVideoPreviewStarted()
+    
+    func onMessageReadyToPlay(_ message: Message)
 }

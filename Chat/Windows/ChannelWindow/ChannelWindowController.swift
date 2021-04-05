@@ -114,10 +114,8 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate, StreamManag
         fatalError("init(coder:) has not been implemented")
     }
     
-    func handleNewIncomingMessage(_ message: Message, cookies: [String: String]) {
-        canAutoConsumeMessage ?
-            consumeMessage(message, cookies: cookies) :
-            sendMessageToInbox(message, cookies: cookies)
+    func handleNewIncomingMessage(_ message: Message) {
+        canAutoConsumeMessage ? consumeMessage(message) : sendMessageToInbox(message)
     }
 
     // Get window's animation destination -- fallback to frame origin.
@@ -165,6 +163,10 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate, StreamManag
         if isRecordingInitializing() {
             startRecordingMessage(windowModel.currentMessage!)
         }
+    }
+    
+    func onMessageReadyToPlay(_ message: Message) {
+        toConsumingStarted(message: message)
     }
     
     // Whether the latest state update should render this channel individually or as a group.
@@ -261,10 +263,6 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate, StreamManag
     // Set state to recording:finished.
     func toRecordingFinished() {
         state = .recording(.finished)
-    }
-    
-    func toConsumingInitializing(message: Message) {
-        state = .consuming(message, .initializing)
     }
     
     func toConsumingStarted(message: Message) {
@@ -367,17 +365,12 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate, StreamManag
         }
     }
     
-    private func consumeMessage(_ message: Message, cookies: [String: String]) {
-        toConsumingInitializing(message: message)
-        
-        // ^This render should place the av player within ChannelAvatarViewController with an opacity of 0 and get it ready...
-        // ...then, there should be some call back to this class (being the delegate of whatever player class you make) when the
-        // first frame is loaded/rendered? Or maybe you could detect when it's loaded and then just call play from here right before
-        // calling toConsumingStarted
+    private func consumeMessage(_ message: Message) {
+        AV.createMessagePlayer(message: message)
     }
     
-    private func sendMessageToInbox(_ message: Message, cookies: [String: String]) {
-        windowModel.sendMessageToInbox(message, cookies: cookies)
+    private func sendMessageToInbox(_ message: Message) {
+        windowModel.sendMessageToInbox(message)
         renderFromState()
     }
     
@@ -405,16 +398,6 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate, StreamManag
 
         // Create new recording message.
         windowModel.createRecordingMessage()
-    }
-    
-    private func startConsumingMessage(_ message: Message) {
-        // Pause the UI event queue.
-        uiEventQueue.pause()
-        
-        // Switch to main queue and just straight to consuming:started.
-        DispatchQueue.main.async { [weak self] in
-            self?.toConsumingStarted(message: message)
-        }
     }
     
     // Tell parent workspace window controller to toggle the recording-related global hot-keys.

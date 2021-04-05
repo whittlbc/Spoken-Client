@@ -35,6 +35,9 @@ struct Message: Model {
     var failed = false
     var token = ""
     var url = ""
+    var cookies = [String: String]()
+    
+    var recordingURL: URL? { URL(string: url) }
     
     var sender: Member?
         
@@ -60,6 +63,25 @@ struct Message: Model {
     
     func getStatus() -> MessageStatus? {
         MessageStatus(rawValue: status)
+    }
+    
+    func getRecordingURL() -> URL? {
+        URL(string: url)
+    }
+    
+    func getCookies() -> [HTTPCookie]? {
+        guard let recordingURL = getRecordingURL() else {
+            return nil
+        }
+        
+        var httpCookies = [HTTPCookie]()
+        for (key, value) in self.cookies {
+            let cookieField = ["Set-Cookie": "\(key)=\(value)"]
+            let cookie = HTTPCookie.cookies(withResponseHeaderFields: cookieField, for: recordingURL)
+            httpCookies.append(contentsOf: cookie)
+        }
+        
+        return httpCookies
     }
     
     func forCache() -> Message {
