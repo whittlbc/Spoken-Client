@@ -11,12 +11,10 @@ import Combine
 
 // Controller for workspace window.
 class WorkspaceWindowController: NSWindowController, NSWindowDelegate, WorkspaceKeyManagerDelegate {
-    
-    var currentWorkspaceId: String? { windowModel.workspace?.id }
-    
+
     // Manages state and data for workspace window.
     private var windowModel: WorkspaceWindowModel!
-        
+
     // Unique channel window controllers mapped by channel id.
     private var channelWindowControllers = [String: ChannelWindowController]()
 
