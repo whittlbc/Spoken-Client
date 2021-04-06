@@ -62,9 +62,9 @@ class WorkspaceWindowController: NSWindowController, NSWindowDelegate, Workspace
         fatalError("init(coder:) has not been implemented")
     }
 
-    // Load the current workspace.
-    func loadCurrentWorkspace() {
-        windowModel.loadWorkspace()
+    // Load all workspaces.
+    func loadWorkspaces() {
+        windowModel.loadWorkspaces()
     }
     
     // Toggle the key listeners associated with recordings.
@@ -177,7 +177,7 @@ class WorkspaceWindowController: NSWindowController, NSWindowDelegate, Workspace
     
     // Find the first channel with a recording state.
     private func findActiveRecordingChannelWindowController() -> ChannelWindowController? {
-        guard let channels = windowModel.workspace?.channels else {
+        guard let channels = windowModel.channels else {
             return nil
         }
         
@@ -535,9 +535,7 @@ class WorkspaceWindowController: NSWindowController, NSWindowDelegate, Workspace
     }
     
     // Render current workspace.
-    private func renderWorkspace(_ workspace: Workspace, activeChannelId: String? = nil) {
-        let channels = workspace.channels
-        
+    private func renderWorkspace(withChannels channels: [Channel], activeChannelId: String? = nil) {
         // If no channels exist yet, render view to create first channel.
         if channels.isEmpty {
             renderCreateFirstChannel()
@@ -558,9 +556,10 @@ class WorkspaceWindowController: NSWindowController, NSWindowDelegate, Workspace
     }
 
     // Loaded view.
-    private func renderLoaded(workspace: Workspace?, activeChannelId: String? = nil) {
-        if let ws = workspace {
-            renderWorkspace(ws, activeChannelId: activeChannelId)
+    private func renderLoaded(workspaces: [Workspace]?, activeChannelId: String? = nil) {
+        if let spaces = workspaces {
+            // Hack for now where only 1 channel should exist for each workspace.
+            renderWorkspace(withChannels: spaces.map(\.channel), activeChannelId: activeChannelId)
         } else {
             renderCreateFirstWorkspace()
         }
@@ -571,8 +570,8 @@ class WorkspaceWindowController: NSWindowController, NSWindowDelegate, Workspace
         switch state {
         case .loading:
             renderLoading()
-        case .loaded(let workspace):
-            renderLoaded(workspace: workspace, activeChannelId: activeChannelId)
+        case .loaded(let workspaces):
+            renderLoaded(workspaces: workspaces, activeChannelId: activeChannelId)
         case .failed(let error):
             renderError(error)
         }

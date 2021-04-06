@@ -60,7 +60,7 @@ class SidebarWindowController: NSWindowController, NSWindowDelegate {
         window!.addChildWindow(workspaceWindowController.window!, ordered: NSWindow.OrderingMode.above)
         
         // Load current workspace.
-        workspaceWindowController.loadCurrentWorkspace()
+        workspaceWindowController.loadWorkspaces()
     }
     
     // Start the UIEventQueue.

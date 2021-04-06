@@ -21,6 +21,8 @@ struct Workspace: Model {
     var members = [Member]()
     var channels = [Channel]()
     
+    var channel: Channel { channels[0] }
+    
     func forCache() -> Workspace {
         var workspace = self
         workspace.members = []
