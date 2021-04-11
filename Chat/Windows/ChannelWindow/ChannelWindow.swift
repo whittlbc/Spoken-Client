@@ -165,7 +165,7 @@ class ChannelWindow: FloatingWindow {
             case .idle, .previewing:
                 return 0.19
                 
-            // Recording size.
+            // Recording size..
             case .recording(let recordingStatus):
                 switch recordingStatus {
                 
@@ -184,7 +184,7 @@ class ChannelWindow: FloatingWindow {
                 
                 // Started consuming.
                 case .started:
-                    return message.isVideo ? 0.29 : 0.19
+                    return message.isVideo ? (0.29 + 0.19) : 0.19
                 
                 // All other recording statuses.
                 default:

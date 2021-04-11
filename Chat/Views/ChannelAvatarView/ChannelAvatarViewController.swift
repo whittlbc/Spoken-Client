@@ -46,7 +46,10 @@ class ChannelAvatarViewController: NSViewController {
     private var videoPreviewView: VideoView?
 
     // Channel video player view.
-    private var videoPlayerView: AVPlayerView?
+    private var videoPlayerView: VideoPlayerView?
+    
+    // Channel video player layer.
+    private var videoPlayerLayer: AVPlayerLayer?
 
     // Subscription to av recorder state changes.
     private var avRecorderSubscription: AnyCancellable?
@@ -421,40 +424,52 @@ class ChannelAvatarViewController: NSViewController {
         previewView.layer?.contentsGravity = .resizeAspectFill
     }
     
-    private func createVideoPlayerView() {
+    private func createVideoPlayerLayer() {
         // Create new video player view.
-        let playerView = AVPlayerView(frame: imageView.frame)
+        let playerLayer = AVPlayerLayer(player: AV.getMessagePlayer()!)
+                
+//        playerLayer.frame = NSRect(x: 0, y: 0, width: width, height: height)
+        playerLayer.frame = imageView.bounds
         
-        // Make it layer based, transparent, and mask it to bounds.
-        playerView.wantsLayer = true
-        playerView.layer?.masksToBounds = true
-        playerView.layer?.backgroundColor = CGColor.clear
+        playerLayer.videoGravity = .resizeAspectFill
+        playerLayer.masksToBounds = true
+        playerLayer.backgroundColor = CGColor.clear
+                
+        // Add video player view as subview of image view.
+        imageView.layer?.addSublayer(playerLayer)
+
+        videoPlayerLayer = playerLayer
+    }
+
+    private func createVideoPlayerView() {
+        // Create new video preview view.
+        let playerView = VideoPlayerView(frame: imageView.frame)
 
         // Hide the view initially.
         playerView.alphaValue = 0
-        
-        // Add video player view as subview of image view.
+
+        // Add video preview view as subview of image view.
         imageView.addSubview(playerView)
 
         // Add auto-layout constraints.
         constrainVideoPlayerView(playerView)
 
-        // Store player view.
+        // Store preview view.
         videoPlayerView = playerView
     }
-
-    private func constrainVideoPlayerView(_ playerView: AVPlayerView) {
+    
+    private func constrainVideoPlayerView(_ playerView: VideoPlayerView) {
         // Set up auto-layout for sizing/positioning.
         playerView.translatesAutoresizingMaskIntoConstraints = false
-        
+
         // Fix size to image view size (equal height, width, and center).
         NSLayoutConstraint.activate([
             playerView.heightAnchor.constraint(equalTo: imageView.heightAnchor),
-            playerView.widthAnchor.constraint(equalTo: imageView.heightAnchor),
+            playerView.widthAnchor.constraint(equalTo: imageView.widthAnchor),
             playerView.centerXAnchor.constraint(equalTo: imageView.centerXAnchor),
             playerView.centerYAnchor.constraint(equalTo: imageView.centerYAnchor),
         ])
-        
+
         // Constrain the size to the image view's size.
         playerView.layer?.contentsGravity = .resizeAspectFill
     }
@@ -983,14 +998,13 @@ class ChannelAvatarViewController: NSViewController {
     }
     
     private func renderStartedConsuming(_ state: ChannelState) {
-        // Create the video player view.
+        // Create the video player layer.
         createVideoPlayerView()
-        
-        // Attach player to player view.
-        videoPlayerView!.player = AV.getMessagePlayer()!
         
         // Start playing the message.
         AV.playMessage()
+        
+        showVideoPlayerView()
         
         // Animate avatar view size.
         animateAvatarViewSize(toState: state)

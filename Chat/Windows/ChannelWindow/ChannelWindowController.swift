@@ -366,6 +366,10 @@ class ChannelWindowController: NSWindowController, NSWindowDelegate, StreamManag
     }
     
     private func consumeMessage(_ message: Message) {
+        // Set the AV stream manager delegate to this window.
+        AV.streamManager.delegate = self
+
+        // Create new AV message player.
         AV.createMessagePlayer(message: message)
     }
     

@@ -507,7 +507,7 @@ class WorkspaceWindowController: NSWindowController, NSWindowDelegate, Workspace
             channels: channels,
             activeChannelId: activeChannelId
         )
-                
+                        
         // Don't render with animation unless specified.
         guard withAnimation else {
             renderChannelWindows(forSpecs: channelRenderSpecs)

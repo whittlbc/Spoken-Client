@@ -129,6 +129,7 @@
 		099997522595371E008E65FB /* ParticleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 099997512595371E008E65FB /* ParticleView.swift */; };
 		09BFD89D25CF62930071966B /* WebRTC in Frameworks */ = {isa = PBXBuildFile; productRef = 09BFD89C25CF62930071966B /* WebRTC */; };
 		09BFD8BA25D0D1FF0071966B /* StreamManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09BFD8B925D0D1FF0071966B /* StreamManager.swift */; };
+		09C9F037262287140068189D /* VideoPlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09C9F036262287140068189D /* VideoPlayerView.swift */; };
 		09D19A5F25B25DAD00C0C476 /* ChannelDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09D19A5E25B25DAD00C0C476 /* ChannelDataProvider.swift */; };
 		09D19A6225B38D5100C0C476 /* Array+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09D19A6125B38D5100C0C476 /* Array+Helpers.swift */; };
 		09D19A6525B38DDB00C0C476 /* MemberDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09D19A6425B38DDB00C0C476 /* MemberDataProvider.swift */; };
@@ -283,6 +284,7 @@
 		0999974E25953600008E65FB /* ParticleShader.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = ParticleShader.metal; sourceTree = "<group>"; };
 		099997512595371E008E65FB /* ParticleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParticleView.swift; sourceTree = "<group>"; };
 		09BFD8B925D0D1FF0071966B /* StreamManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamManager.swift; sourceTree = "<group>"; };
+		09C9F036262287140068189D /* VideoPlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerView.swift; sourceTree = "<group>"; };
 		09D19A5E25B25DAD00C0C476 /* ChannelDataProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelDataProvider.swift; sourceTree = "<group>"; };
 		09D19A6125B38D5100C0C476 /* Array+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+Helpers.swift"; sourceTree = "<group>"; };
 		09D19A6425B38DDB00C0C476 /* MemberDataProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemberDataProvider.swift; sourceTree = "<group>"; };
@@ -482,6 +484,7 @@
 			isa = PBXGroup;
 			children = (
 				09718F8D26154F1100D41C05 /* VideoView.swift */,
+				09C9F036262287140068189D /* VideoPlayerView.swift */,
 			);
 			path = VideoView;
 			sourceTree = "<group>";
@@ -912,6 +915,7 @@
 				096862E82582A88600B9B614 /* Workspace.swift in Sources */,
 				0994C75225C5F43E0006919A /* FileDataProvider.swift in Sources */,
 				0995DE352581A51F00DAA334 /* Keychain.swift in Sources */,
+				09C9F037262287140068189D /* VideoPlayerView.swift in Sources */,
 				0995DE3D2581CF6A00DAA334 /* API.swift in Sources */,
 				096862F12582ACE100B9B614 /* Member+Arrow.swift in Sources */,
 				09FF53D025B524930083CD28 /* ChannelWindowController.swift in Sources */,

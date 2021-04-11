@@ -44,6 +44,19 @@ class SidebarWindowController: NSWindowController, NSWindowDelegate {
         
         // Run the UIEvent queue.
         startUIEventQueue()
+        
+        DispatchQueue.main.asyncAfter(
+            deadline: .now() + 2.0
+        ) {
+            var message = Message()
+            message.id = "abc123"
+            message.channelId = "a"
+            message.senderId = "tyler"
+            message.messageType = "video"
+            message.status = "sent"
+            message.url = "https://spoken-recordings-dev.s3-us-west-1.amazonaws.com/dcdcfa6a464abb492a5d1a8beb20ca5e_general.m3u8"
+            uiEventQueue.addItem(UIEvent.newIncomingMessage(message: message))
+        }
     }
     
     // Add child windows to sidebar window.

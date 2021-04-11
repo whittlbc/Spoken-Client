@@ -112,7 +112,7 @@ class StreamManager: NSObject, AgoraRtcEngineDelegate, AgoraVideoDataPluginDeleg
         createMessagePlayerItem(withAsset: asset)
         
         // Create message player.
-        messagePlayer = AVPlayer(playerItem: messagePlayerItem)
+        createMessagePlayer()
     }
         
     func playMessage() {
@@ -285,10 +285,12 @@ class StreamManager: NSObject, AgoraRtcEngineDelegate, AgoraVideoDataPluginDeleg
             return nil
         }
         
-        return AVURLAsset(
-            url: url,
-            options: ["AVURLAssetHTTPHeaderFieldsKey": HTTPCookie.requestHeaderFields(with: cookies)]
-        )
+        return AVURLAsset(url: url)
+
+//        return AVURLAsset(
+//            url: url,
+//            options: ["AVURLAssetHTTPHeaderFieldsKey": HTTPCookie.requestHeaderFields(with: cookies)]
+//        )
     }
     
     private func createMessagePlayerItem(withAsset asset: AVAsset) {
@@ -304,6 +306,10 @@ class StreamManager: NSObject, AgoraRtcEngineDelegate, AgoraVideoDataPluginDeleg
             options: [.old, .new],
             context: &messagePlayerItemContext
         )
+    }
+
+    private func createMessagePlayer() {
+        messagePlayer = AVPlayer(playerItem: messagePlayerItem)
     }
     
     private func onMessageReadyToPlay() {
